@@ -1,0 +1,102 @@
+@import "tailwindcss";
+
+@variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-outfit: "Outfit", sans-serif;
+
+  /* Breakpoints */
+  --breakpoint-2xsm: 375px;
+  --breakpoint-xsm: 425px;
+  --breakpoint-2xl: 1536px;
+
+  /* Colors */
+  --color-primary: #465fff;
+  --color-brand-500: #465fff;
+  --color-brand-600: #3641f5;
+  
+  --color-stroke: #E2E8F0;
+  --color-strokedark: #2E3A47;
+  
+  --color-black: #1C2434;
+  --color-gray-200: #e4e7ec;
+  --color-gray-500: #667085;
+  --color-gray-700: #344054;
+  --color-gray-800: #1d2939;
+  --color-gray-900: #101828;
+  --color-gray-dark: #1a2231;
+
+  --color-body: #64748B;
+  --color-bodydark: #AEB7C0;
+  --color-bodydark1: #DEE4EE;
+  --color-bodydark2: #8A99AF;
+  
+  --color-whiten: #F1F5F9;
+  --color-whiter: #F5F7FD;
+  --color-boxdark: #24303F;
+  --color-boxdark-2: #1A222C;
+
+  --color-meta-1: #FB5454;
+  --color-meta-2: #EFF4FB;
+  --color-meta-3: #219653;
+  --color-meta-4: #313D4A;
+  --color-meta-5: #259AE6;
+  --color-meta-6: #FFBA00;
+  --color-meta-7: #FF6766;
+  --color-meta-8: #F0950C;
+  --color-meta-9: #E5E7EB;
+  
+  --color-success: #12b76a;
+  --color-success-500: #12b76a;
+  --color-error: #f04438;
+  --color-error-500: #f04438;
+  --color-warning: #FFA70B;
+
+  /* Shadows */
+  --shadow-default: 0px 8px 13px 0px rgba(0, 0, 0, 0.05);
+  --shadow-theme-lg: 0px 12px 16px -4px rgba(16, 24, 40, 0.08);
+  --shadow-theme-xl: 0px 20px 24px -4px rgba(16, 24, 40, 0.08);
+}
+
+@source "../../../**/*.{html,py,js}";
+@source "../../../../templates/**/*.html";
+
+@layer base {
+  body {
+    @apply font-outfit text-body dark:text-bodydark bg-whiten dark:bg-boxdark-2;
+  }
+}
+
+@layer components {
+  /* Sidebar Menu Items */
+  .menu-item {
+    @apply flex items-center gap-3 rounded-lg px-3 py-2.5 font-medium duration-300 ease-in-out;
+  }
+  .menu-item-active {
+    @apply bg-gray-100 text-primary dark:bg-white/[0.05] dark:text-white;
+  }
+  .menu-item-inactive {
+    @apply text-gray-700 hover:bg-gray-100 hover:text-primary dark:text-gray-400 dark:hover:bg-white/[0.05] dark:hover:text-white;
+  }
+
+  /* Dropdown Items */
+  .menu-dropdown-item {
+    @apply relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium duration-300 ease-in-out;
+  }
+  .menu-dropdown-item-active {
+    @apply text-primary dark:text-white;
+  }
+  .menu-dropdown-item-inactive {
+    @apply text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-white;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}

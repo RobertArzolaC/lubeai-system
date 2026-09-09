@@ -1,0 +1,27 @@
+{% load static %}
+{% load tailwind_tags %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>{{ site.name }} | {% block title_page %}{% endblock title_page %}</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="shortcut icon" href="{% static 'assets/images/logos/logo-short.png' %}" />
+    <link href="https://fonts.cdnfonts.com/css/satoshi" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" />
+    {% tailwind_css %}
+    {% block extra_css %}{% endblock extra_css %}
+</head>
+
+<body class="bg-whiten dark:bg-boxdark-2 text-body dark:text-bodydark">
+    <div class="flex min-h-screen items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div class="w-full max-w-[1000px]">
+            {% block content %}{% endblock content %}
+        </div>
+    </div>
+
+    {% include 'includes/alerts.html' %}
+    {% block extra_js %}{% endblock extra_js %}
+</body>
+</html>

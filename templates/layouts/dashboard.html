@@ -1,0 +1,115 @@
+{% load static %}
+{% load i18n %}
+{% load breadcrumb_tags %}
+{% load tailwind_tags %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>{{ site.name }} | {% block title_page %}{% endblock title_page %}</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="shortcut icon" href="{% static 'assets/images/logos/logo-short.png' %}" />
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+
+    <!-- Theme Initializer (Avoid Flicker) -->
+    <script>
+        if (localStorage.getItem('darkMode') === 'true' ||
+            (!('darkMode' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+
+    {% tailwind_css %}
+    <style>
+        /* Sidebar Collapse Transitions */
+        #sidebar { transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    </style>
+    {% block extra_css %}{% endblock extra_css %}
+</head>
+
+<body class="bg-whiten dark:bg-boxdark-2 text-body dark:text-bodydark transition-colors duration-300">
+
+    <!-- ===== Page Wrapper Start ===== -->
+    <div class="flex h-screen overflow-hidden">
+
+        <!-- ===== Sidebar Start ===== -->
+        {% include 'includes/aside.html' %}
+        <!-- ===== Sidebar End ===== -->
+
+        <!-- ===== Content Area Start ===== -->
+        <div class="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
+
+            <!-- ===== Header Start ===== -->
+            {% include 'includes/navbar.html' %}
+            <!-- ===== Header End ===== -->
+
+            <!-- ===== Main Content Start ===== -->
+            <main>
+                <div class="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+                    <!-- Breadcrumb Start -->
+                    <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                        <h2 class="text-title-md2 font-bold text-black dark:text-white">
+                            {% block toolbar_title %}{% endblock %}
+                        </h2>
+
+                        <nav>
+                            {% breadcrumb as breadcrumbs %}
+                            {% include 'includes/breadcrumb.html' with breadcrumbs=breadcrumbs %}
+                        </nav>
+                    </div>
+                    <!-- Breadcrumb End -->
+
+                    {% block content %}{% endblock content %}
+                </div>
+            </main>
+            <!-- ===== Main Content End ===== -->
+
+            <!-- {% include 'includes/footer.html' %} -->
+        </div>
+        <!-- ===== Content Area End ===== -->
+    </div>
+    <!-- ===== Page Wrapper End ===== -->
+
+    {% include 'includes/alerts.html' %}
+
+    <!-- Vanilla JS for Global Interactions -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Sidebar mobile toggle (already handled in navbar.html script usually, but keeping it robust here)
+            const sidebar = document.getElementById('sidebar');
+            const sidebarToggleMobile = document.getElementById('sidebar-toggle-mobile');
+            const sidebarClose = document.getElementById('sidebar-close');
+
+            if (sidebarToggleMobile && sidebar) {
+                sidebarToggleMobile.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (window.innerWidth < 1024) {
+                        sidebar.classList.toggle('-translate-x-full');
+                    }
+                });
+            }
+
+            if (sidebarClose && sidebar) {
+                sidebarClose.addEventListener('click', () => {
+                    sidebar.classList.add('-translate-x-full');
+                });
+            }
+
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', (e) => {
+                if (window.innerWidth < 1024 && sidebar && !sidebar.contains(e.target) && !sidebarToggleMobile?.contains(e.target)) {
+                    sidebar.classList.add('-translate-x-full');
+                }
+            });
+        });
+    </script>
+
+    {% block extra_js %}{% endblock extra_js %}
+</body>
+</html>

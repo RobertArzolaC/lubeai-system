@@ -1,0 +1,68 @@
+{% extends "layouts/home.html" %}
+{% load static %}
+{% load i18n %}
+{% load account %}
+{% load allauth %}
+
+{% block title_page %}
+    {% trans "Confirm Email Address" %}
+{% endblock %}
+
+{% block content %}
+<div class="card bg-base-100 shadow-xl border border-base-200 w-full animate-fade-in">
+    <div class="card-body gap-6 p-10 text-center">
+        <div class="flex justify-center mb-2">
+            <a href="/">
+                <img alt="Logo" src="{% static 'assets/images/logos/logo.png' %}" class="h-10" />
+            </a>
+        </div>
+        
+        <h2 class="card-title justify-center text-2xl font-bold">{% trans "Confirm Email Address" %}</h2>
+
+        {% if confirmation %}
+            {% user_display confirmation.email_address.user as user_display %}
+            {% if can_confirm %}
+                <div class="flex flex-col gap-4 opacity-70">
+                    <p>
+                        {% blocktrans with confirmation.email_address.email as email %}
+                            Please confirm that <span class="font-bold">{{ email }}</span> is an email address for user <span class="font-bold">{{ user_display }}</span>.
+                        {% endblocktrans %}
+                    </p>
+                </div>
+
+                <div class="alert alert-info text-sm text-left mt-4 shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <div>
+                        <h3 class="font-bold">{% trans "Next steps:" %}</h3>
+                        <ul class="list-disc list-inside ml-2">
+                            <li>{% trans "Return to login" %}</li>
+                            <li>{% trans "Use Forgot Password if needed" %}</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card-actions justify-center mt-6">
+                    <form method="post" action="{% url 'account_confirm_email' confirmation.key %}" class="w-full">
+                        {% csrf_token %}
+                        {{ redirect_field }}
+                        <button type="submit" class="btn btn-primary btn-block">
+                            {% trans 'Confirm' %}
+                        </button>
+                    </form>
+                </div>
+            {% else %}
+                <div class="alert alert-error shadow-sm">
+                    <p>{% blocktrans %}Unable to confirm {{ email }} because it is already confirmed by a different account.{% endblocktrans %}</p>
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="alert alert-warning shadow-sm">
+                <p>{% blocktrans %}This email confirmation link expired or is invalid.{% endblocktrans %}</p>
+            </div>
+            <div class="mt-4">
+                <a href="{% url 'account_email' %}" class="link link-primary">{% trans "Issue a new email confirmation request" %}</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock content %}

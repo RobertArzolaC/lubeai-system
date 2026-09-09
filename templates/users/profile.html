@@ -1,0 +1,186 @@
+{% extends "layouts/dashboard.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block title_page %}{{ user.get_full_name }}{% endblock title_page %}
+{% block toolbar_title %}{% trans "Profile" %}{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-242.5">
+    <!-- Profile Card -->
+    <div class="overflow-hidden rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+        <!-- Cover Section -->
+        <div class="relative z-20 h-35 md:h-65 bg-gradient-to-r from-primary/80 to-blue-600/80">
+            <div class="absolute inset-0 bg-black/5"></div>
+        </div>
+
+        <!-- Profile Info Section -->
+        <div class="px-4 pb-6 text-center lg:pb-8 xl:pb-11.5">
+            <div class="relative z-30 mx-auto -mt-22 h-30 w-full max-w-30 rounded-full bg-white/20 p-1 backdrop-blur sm:h-44 sm:max-w-44 sm:p-3 shadow-md">
+                <div class="relative h-full w-full rounded-full overflow-hidden border-4 border-white dark:border-boxdark shadow-inner">
+                    {% if user.avatar %}
+                        <img src="{{ user.avatar.url }}" alt="{{ user.get_full_name }}" class="h-full w-full object-cover" />
+                    {% else %}
+                        <div class="bg-primary text-white flex items-center justify-center text-4xl font-bold h-full w-full">
+                            {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <h3 class="mb-1 text-2xl font-semibold text-black dark:text-white">
+                    {{ user.get_full_name }}
+                </h3>
+                <p class="font-medium text-gray-500 dark:text-bodydark mb-4">
+                    {% if user.is_superuser %}
+                        {% trans "Administrator" %}
+                    {% elif user.is_staff %}
+                        {% trans "Staff Member" %}
+                    {% else %}
+                        {% trans "User" %}
+                    {% endif %}
+                </p>
+
+                <!-- Stats/Summary Grid -->
+                <div class="mx-auto mt-4.5 mb-5.5 grid max-w-94 grid-cols-3 rounded-md border border-stroke py-2.5 shadow-1 dark:border-strokedark dark:bg-[#37404E]">
+                    <div class="flex flex-col items-center justify-center gap-1 border-r border-stroke px-4 dark:border-strokedark">
+                        <span class="font-semibold text-black dark:text-white">
+                            {% if user.is_active %}
+                                <span class="text-meta-3">{% trans "Active" %}</span>
+                            {% else %}
+                                <span class="text-meta-1">{% trans "Inactive" %}</span>
+                            {% endif %}
+                        </span>
+                        <span class="text-[10px] uppercase font-bold opacity-50 tracking-wider">{% trans "Status" %}</span>
+                    </div>
+                    <div class="flex flex-col items-center justify-center gap-1 border-r border-stroke px-4 dark:border-strokedark">
+                        <span class="font-semibold text-black dark:text-white text-sm">
+                            {% if user.is_account %}
+                                {% trans "Account" %}
+                            {% else %}
+                                {% trans "Guest" %}
+                            {% endif %}
+                        </span>
+                        <span class="text-[10px] uppercase font-bold opacity-50 tracking-wider">{% trans "Type" %}</span>
+                    </div>
+                    <div class="flex flex-col items-center justify-center gap-1 px-4">
+                        <span class="font-semibold text-black dark:text-white">
+                            {{ user.date_joined|date:"M Y" }}
+                        </span>
+                        <span class="text-[10px] uppercase font-bold opacity-50 tracking-wider">{% trans "Joined" %}</span>
+                    </div>
+                </div>
+
+                <div class="mx-auto max-w-180">
+                    <h4 class="font-semibold text-black dark:text-white">
+                        {% trans "Contact Information" %}
+                    </h4>
+                    <div class="mt-4 flex items-center justify-center gap-2 text-sm opacity-80">
+                        <svg class="fill-current text-primary" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M15.75 3.375H2.25C1.63125 3.375 1.125 3.88125 1.125 4.5V13.5C1.125 14.1188 1.63125 14.625 2.25 14.625H15.75C16.3687 14.625 16.875 14.1188 16.875 13.5V4.5C16.875 3.88125 16.3687 3.375 15.75 3.375ZM15.75 4.5V5.0625L9 10.5188L15.75 6.35625V13.5H2.25Z" fill="currentColor"/>
+                        </svg>
+                        {{ user.email }}
+                    </div>
+                </div>
+
+                <div class="mt-6.5 flex justify-center gap-4">
+                    <a href="{% url 'apps.users:settings' %}" 
+                       class="inline-flex items-center justify-center rounded-md border border-stroke dark:border-strokedark py-2 px-10 text-center font-medium text-black dark:text-white hover:bg-gray-50 dark:hover:bg-meta-4 transition-all lg:px-8 xl:px-10">
+                        <svg class="fill-current mr-2" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M16.863 4.487L19.5 7.125" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        {% trans "Edit Profile" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Grid -->
+    <div class="mt-9 grid grid-cols-1 gap-9 lg:grid-cols-2">
+        <!-- Account Details -->
+        {% if user.is_account and user.account %}
+        <div class="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+            <div class="border-b border-stroke py-4 px-7 dark:border-strokedark">
+                <h3 class="font-medium text-black dark:text-white">
+                    {% trans "Account Information" %}
+                </h3>
+            </div>
+            <div class="p-7">
+                <div class="flex flex-col gap-4">
+                    <div class="flex items-center justify-between border-b border-stroke pb-3 dark:border-strokedark">
+                        <span class="text-sm opacity-70">{% trans "Verification" %}</span>
+                        <span class="font-semibold text-black dark:text-white">
+                            {% if user.account.is_email_verified %}
+                                <span class="rounded bg-success bg-opacity-10 py-1 px-3 text-xs font-medium text-success">{% trans "Verified" %}</span>
+                            {% else %}
+                                <span class="rounded bg-warning bg-opacity-10 py-1 px-3 text-xs font-medium text-warning">{% trans "Pending" %}</span>
+                            {% endif %}
+                        </span>
+                    </div>
+                    {% if user.account.parent_account %}
+                    <div class="flex items-center justify-between border-b border-stroke pb-3 dark:border-strokedark">
+                        <span class="text-sm opacity-70">{% trans "Parent Account" %}</span>
+                        <span class="font-semibold text-black dark:text-white">{{ user.account.parent_account.user.get_full_name }}</span>
+                    </div>
+                    {% endif %}
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm opacity-70">{% trans "Full Name" %}</span>
+                        <span class="font-semibold text-black dark:text-white">{{ user.get_full_name }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Permissions Table -->
+        <div class="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+            <div class="border-b border-stroke py-4 px-7 dark:border-strokedark">
+                <h3 class="font-medium text-black dark:text-white">
+                    {% trans "System Permissions" %}
+                </h3>
+            </div>
+            <div class="p-7">
+                <div class="max-w-full overflow-x-auto">
+                    <table class="w-full table-auto text-sm">
+                        <thead>
+                            <tr class="bg-gray-2 text-left dark:bg-meta-4">
+                                <th class="py-2 px-4 font-medium text-black dark:text-white">{% trans "Module" %}</th>
+                                <th class="text-center py-2 px-2">V</th>
+                                <th class="text-center py-2 px-2">C</th>
+                                <th class="text-center py-2 px-2">U</th>
+                                <th class="text-center py-2 px-2">D</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="py-3 px-4 border-b border-[#eee] dark:border-strokedark">
+                                    <p class="text-black dark:text-white font-medium">{% trans "Accounts" %}</p>
+                                </td>
+                                <td class="py-3 px-2 border-b border-[#eee] dark:border-strokedark text-center">
+                                    {% if perms.users.view_account %}<span class="text-meta-3 text-xl">●</span>{% else %}<span class="text-meta-1 text-xl">○</span>{% endif %}
+                                </td>
+                                <td class="py-3 px-2 border-b border-[#eee] dark:border-strokedark text-center">
+                                    {% if perms.users.add_account %}<span class="text-meta-3 text-xl">●</span>{% else %}<span class="text-meta-1 text-xl">○</span>{% endif %}
+                                </td>
+                                <td class="py-3 px-2 border-b border-[#eee] dark:border-strokedark text-center">
+                                    {% if perms.users.change_account %}<span class="text-meta-3 text-xl">●</span>{% else %}<span class="text-meta-1 text-xl">○</span>{% endif %}
+                                </td>
+                                <td class="py-3 px-2 border-b border-[#eee] dark:border-strokedark text-center">
+                                    {% if perms.users.delete_account %}<span class="text-meta-3 text-xl">●</span>{% else %}<span class="text-meta-1 text-xl">○</span>{% endif %}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-4 flex items-center gap-4 text-[10px] uppercase font-bold tracking-wider opacity-60">
+                    <span class="flex items-center gap-1"><span class="text-meta-3 text-lg leading-none">●</span> {% trans "Enabled" %}</span>
+                    <span class="flex items-center gap-1"><span class="text-meta-1 text-lg leading-none">○</span> {% trans "Disabled" %}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

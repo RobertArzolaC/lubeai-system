@@ -1,0 +1,242 @@
+{% extends "layouts/dashboard.html" %}
+{% load static %}
+{% load i18n %}
+{% load widget_tweaks %}
+
+{% block title_page %}{% trans "Accounts" %}{% endblock title_page %}
+{% block toolbar_title %}{{ entity }}{% endblock %}
+
+{% block content %}
+<form method="post" enctype="multipart/form-data" action="{% if form.instance.pk %}{% url 'apps.users:account_update' form.instance.pk %}{% else %}{% url 'apps.users:account_create' %}{% endif %}">
+    {% csrf_token %}
+    
+    <div class="grid grid-cols-1 gap-9 lg:grid-cols-12">
+        <!-- Left Column: Avatar & Summary -->
+        <div class="lg:col-span-4 xl:col-span-3 flex flex-col gap-9">
+            <div class="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+                <div class="border-b border-stroke py-4 px-7 dark:border-strokedark">
+                    <h3 class="font-medium text-black dark:text-white">
+                        {% trans 'Avatar' %}
+                    </h3>
+                </div>
+                <div class="p-7">
+                    <div class="mb-4 flex items-center justify-center">
+                        <div class="relative h-30 w-30 rounded-full bg-gray-2 dark:bg-meta-4 flex items-center justify-center overflow-hidden border border-stroke dark:border-strokedark">
+                            <img id="avatar-preview" 
+                                 src="{% if account.user.avatar %}{{ account.user.avatar.url }}{% else %}{% static 'assets/images/avatars/blank.png' %}{% endif %}" 
+                                 alt="Avatar"
+                                 class="h-full w-full object-cover" />
+                        </div>
+                    </div>
+
+                    <div id="FileUpload" class="relative mb-5.5 block w-full cursor-pointer appearance-none rounded border border-dashed border-primary bg-gray py-4 px-4 dark:bg-meta-4 sm:py-7.5">
+                        <input type="file" name="avatar" id="avatar-input" accept=".png, .jpg, .jpeg"
+                               class="hidden" />
+                        <div class="flex flex-col items-center justify-center space-gap-3">
+                            <span class="flex h-10 w-10 items-center justify-center rounded-full border border-stroke bg-white dark:border-strokedark dark:bg-boxdark">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M1.33333 11.3333V12.6667C1.33333 13.3333 1.33333 14 2 14.6667C2.66667 15.3333 3.33333 15.3333 4 15.3333H12C12.6667 15.3333 13.3333 15.3333 14 14.6667C14.6667 14 14.6667 13.3333 14 12.6667V11.3333" stroke="#3C50E0" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M10.6667 4.66667L8 2L5.33333 4.66667" stroke="#3C50E0" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M8 2V10.6667" stroke="#3C50E0" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </span>
+                            <p class="text-sm">
+                                <span class="text-primary">{% trans "Click to upload" %}</span> 
+                                {% trans "or drag and drop" %}
+                            </p>
+                            <p class="mt-1.5 text-xs">{% trans 'Allowed: *.png, *.jpg, *.jpeg' %}</p>
+                        </div>
+                    </div>
+                    
+                    <input type="hidden" name="avatar_remove" id="avatar-remove-input" value="" />
+                    <button type="button" id="remove-avatar-btn" class="flex w-full justify-center rounded border border-stroke py-2 px-6 font-medium text-black hover:shadow-1 dark:border-strokedark dark:text-white {% if not account.user.avatar %}hidden{% endif %}">
+                        {% trans "Remove Photo" %}
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Form Fields -->
+        <div class="lg:col-span-8 xl:col-span-9 flex flex-col gap-9">
+            <!-- Account Details Card -->
+            <div class="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+                <div class="border-b border-stroke py-4 px-7 dark:border-strokedark">
+                    <h3 class="font-medium text-black dark:text-white">
+                        {{ entity }} {% trans "Details" %}
+                    </h3>
+                </div>
+                <div class="p-7">
+                    <div class="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
+                        <div class="w-full sm:w-1/2">
+                            <label class="mb-3 block text-sm font-medium text-black dark:text-white" for="id_first_name">
+                                {% trans "First Name" %}
+                            </label>
+                            <div class="relative">
+                                {% render_field form.first_name class="w-full rounded border border-stroke bg-gray py-3 px-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary" %}
+                                {% if form.first_name.errors %}
+                                    <p class="mt-1 text-xs text-danger">{{ form.first_name.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="w-full sm:w-1/2">
+                            <label class="mb-3 block text-sm font-medium text-black dark:text-white" for="id_last_name">
+                                {% trans "Last Name" %}
+                            </label>
+                            <div class="relative">
+                                {% render_field form.last_name class="w-full rounded border border-stroke bg-gray py-3 px-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary" %}
+                                {% if form.last_name.errors %}
+                                    <p class="mt-1 text-xs text-danger">{{ form.last_name.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-5.5">
+                        <label class="mb-3 block text-sm font-medium text-black dark:text-white" for="id_email">
+                            {{ form.email.label }}
+                        </label>
+                        <div class="relative">
+                            {% render_field form.email class="w-full rounded border border-stroke bg-gray py-3 px-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary" %}
+                            {% if form.email.errors %}
+                                <p class="mt-1 text-xs text-danger">{{ form.email.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Permissions Card -->
+            <div class="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+                <div class="border-b border-stroke py-4 px-7 dark:border-strokedark">
+                    <h3 class="font-medium text-black dark:text-white">
+                        {% trans "Permissions Management" %}
+                    </h3>
+                </div>
+                <div class="p-7">
+                    <div class="max-w-full overflow-x-auto">
+                        <table class="w-full table-auto">
+                            <thead>
+                                <tr class="bg-gray-2 text-left dark:bg-meta-4">
+                                    <th class="py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
+                                        {% trans "Module" %}
+                                    </th>
+                                    <th class="py-4 px-4 font-medium text-black dark:text-white text-center">
+                                        {% trans "View" %}
+                                    </th>
+                                    <th class="py-4 px-4 font-medium text-black dark:text-white text-center">
+                                        {% trans "Create" %}
+                                    </th>
+                                    <th class="py-4 px-4 font-medium text-black dark:text-white text-center">
+                                        {% trans "Update" %}
+                                    </th>
+                                    <th class="py-4 px-4 font-medium text-black dark:text-white text-center">
+                                        {% trans "Delete" %}
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if request.user.is_superuser or request.user.is_staff %}
+                                <tr>
+                                    <td class="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
+                                        <h5 class="font-medium text-black dark:text-white">{% trans "Accounts" %}</h5>
+                                    </td>
+                                    <td class="border-b border-[#eee] py-5 px-4 dark:border-strokedark text-center">
+                                        <label class="relative inline-flex cursor-pointer items-center justify-center">
+                                            {% render_field form.can_view_account class="sr-only peer" %}
+                                            <div class="box h-5 w-5 rounded border border-stroke bg-white dark:border-strokedark dark:bg-boxdark-2 flex items-center justify-center transition-all peer-checked:bg-primary peer-checked:border-primary">
+                                                <span class="opacity-0 transition-all peer-checked:opacity-100">
+                                                    <svg width="11" height="8" viewBox="0 0 11 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.0915 0.951972L10.0867 0.946045L10.0813 0.940568C9.90076 0.753564 9.61034 0.753146 9.42927 0.939309L4.16201 6.22962L1.58507 3.63469C1.40401 3.44841 1.11359 3.44879 0.932892 3.63584C0.755703 3.81933 0.755703 4.10875 0.932892 4.29224L0.932878 4.29225L0.934851 4.29424L3.58046 6.95833C3.73808 7.11978 3.9498 7.2 4.1473 7.2C4.36196 7.2 4.55963 7.11773 4.71406 6.9584L10.0468 1.60234C10.2436 1.4199 10.2421 1.1339 10.0915 0.951972Z" fill="white" stroke="white"></path></svg>
+                                                </span>
+                                            </div>
+                                        </label>
+                                    </td>
+                                    <td class="border-b border-[#eee] py-5 px-4 dark:border-strokedark text-center">
+                                        <label class="relative inline-flex cursor-pointer items-center justify-center">
+                                            {% render_field form.can_add_account class="sr-only peer" %}
+                                            <div class="box h-5 w-5 rounded border border-stroke bg-white dark:border-strokedark dark:bg-boxdark-2 flex items-center justify-center transition-all peer-checked:bg-primary peer-checked:border-primary">
+                                                <span class="opacity-0 transition-all peer-checked:opacity-100">
+                                                    <svg width="11" height="8" viewBox="0 0 11 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.0915 0.951972L10.0867 0.946045L10.0813 0.940568C9.90076 0.753564 9.61034 0.753146 9.42927 0.939309L4.16201 6.22962L1.58507 3.63469C1.40401 3.44841 1.11359 3.44879 0.932892 3.63584C0.755703 3.81933 0.755703 4.10875 0.932892 4.29224L0.932878 4.29225L0.934851 4.29424L3.58046 6.95833C3.73808 7.11978 3.9498 7.2 4.1473 7.2C4.36196 7.2 4.55963 7.11773 4.71406 6.9584L10.0468 1.60234C10.2436 1.4199 10.2421 1.1339 10.0915 0.951972Z" fill="white" stroke="white"></path></svg>
+                                                </span>
+                                            </div>
+                                        </label>
+                                    </td>
+                                    <td class="border-b border-[#eee] py-5 px-4 dark:border-strokedark text-center">
+                                        <label class="relative inline-flex cursor-pointer items-center justify-center">
+                                            {% render_field form.can_change_account class="sr-only peer" %}
+                                            <div class="box h-5 w-5 rounded border border-stroke bg-white dark:border-strokedark dark:bg-boxdark-2 flex items-center justify-center transition-all peer-checked:bg-primary peer-checked:border-primary">
+                                                <span class="opacity-0 transition-all peer-checked:opacity-100">
+                                                    <svg width="11" height="8" viewBox="0 0 11 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.0915 0.951972L10.0867 0.946045L10.0813 0.940568C9.90076 0.753564 9.61034 0.753146 9.42927 0.939309L4.16201 6.22962L1.58507 3.63469C1.40401 3.44841 1.11359 3.44879 0.932892 3.63584C0.755703 3.81933 0.755703 4.10875 0.932892 4.29224L0.932878 4.29225L0.934851 4.29424L3.58046 6.95833C3.73808 7.11978 3.9498 7.2 4.1473 7.2C4.36196 7.2 4.55963 7.11773 4.71406 6.9584L10.0468 1.60234C10.2436 1.4199 10.2421 1.1339 10.0915 0.951972Z" fill="white" stroke="white"></path></svg>
+                                                </span>
+                                            </div>
+                                        </label>
+                                    </td>
+                                    <td class="border-b border-[#eee] py-5 px-4 dark:border-strokedark text-center">
+                                        <label class="relative inline-flex cursor-pointer items-center justify-center">
+                                            {% render_field form.can_delete_account class="sr-only peer" %}
+                                            <div class="box h-5 w-5 rounded border border-stroke bg-white dark:border-strokedark dark:bg-boxdark-2 flex items-center justify-center transition-all peer-checked:bg-primary peer-checked:border-primary">
+                                                <span class="opacity-0 transition-all peer-checked:opacity-100">
+                                                    <svg width="11" height="8" viewBox="0 0 11 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.0915 0.951972L10.0867 0.946045L10.0813 0.940568C9.90076 0.753564 9.61034 0.753146 9.42927 0.939309L4.16201 6.22962L1.58507 3.63469C1.40401 3.44841 1.11359 3.44879 0.932892 3.63584C0.755703 3.81933 0.755703 4.10875 0.932892 4.29224L0.932878 4.29225L0.934851 4.29424L3.58046 6.95833C3.73808 7.11978 3.9498 7.2 4.1473 7.2C4.36196 7.2 4.55963 7.11773 4.71406 6.9584L10.0468 1.60234C10.2436 1.4199 10.2421 1.1339 10.0915 0.951972Z" fill="white" stroke="white"></path></svg>
+                                                </span>
+                                            </div>
+                                        </label>
+                                    </td>
+                                </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="flex justify-end gap-4.5 mt-7.5">
+                        <a href="{{ back_url }}" class="flex justify-center rounded border border-stroke py-2 px-6 font-medium text-black hover:shadow-1 dark:border-strokedark dark:text-white">
+                            {% trans "Discard" %}
+                        </a>
+                        <button type="submit" class="flex justify-center rounded bg-primary py-2 px-6 font-medium text-white hover:bg-opacity-90">
+                            {% trans "Save Changes" %}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock content %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const avatarInput = document.getElementById('avatar-input');
+        const avatarPreview = document.getElementById('avatar-preview');
+        const avatarRemoveInput = document.getElementById('avatar-remove-input');
+        const removeAvatarBtn = document.getElementById('remove-avatar-btn');
+        const fileUploadBox = document.getElementById('FileUpload');
+
+        // Make the whole dashed box clickable
+        if (fileUploadBox) {
+            fileUploadBox.addEventListener('click', () => {
+                avatarInput.click();
+            });
+        }
+
+        avatarInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    avatarPreview.src = event.target.result;
+                    avatarRemoveInput.value = '';
+                    removeAvatarBtn.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        removeAvatarBtn.addEventListener('click', () => {
+            avatarPreview.src = "{% static 'assets/images/avatars/blank.png' %}";
+            avatarInput.value = '';
+            avatarRemoveInput.value = '1';
+            removeAvatarBtn.classList.add('hidden');
+        });
+    });
+</script>
+{% endblock extra_js %}

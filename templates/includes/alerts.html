@@ -1,0 +1,54 @@
+{% load static %}
+{% load i18n %}
+<script src="{% static 'js/vendor/sweetalert2/sweetalert2.all.min.js' %}"></script>
+<script>
+    function swalIcon(type) {
+        if (type === 'error' || type === 'success' || type === 'warning') {
+            return type;
+        }
+        return 'info';
+    }
+
+    function showAlert(title, message, type = 'info') {
+        Swal.fire({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            icon: swalIcon(type),
+            title: title || undefined,
+            text: message,
+            timer: 3500,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer);
+                toast.addEventListener('mouseleave', Swal.resumeTimer);
+            },
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        {% if messages %}
+            {% for message in messages %}
+                showAlert('', '{{ message|escapejs }}', '{{ message.tags|escapejs }}');
+            {% endfor %}
+        {% endif %}
+
+        {% if errors %}
+            {% for form_name, form_errors in errors.items %}
+                {% for field, error_list in form_errors.items %}
+                    {% for error in error_list %}
+                        showAlert('{{ field|escapejs }}', '{{ error|escapejs }}', 'error');
+                    {% endfor %}
+                {% endfor %}
+            {% endfor %}
+        {% endif %}
+
+        {% if form.errors %}
+            {% for error_list in form.errors.values %}
+                {% for error in error_list %}
+                    showAlert('{% trans "Error" %}', '{{ error|escapejs }}', 'error');
+                {% endfor %}
+            {% endfor %}
+        {% endif %}
+    });
+</script>

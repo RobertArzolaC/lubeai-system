@@ -1,0 +1,1338 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-07 16:14-0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: apps/authentication/forms.py:12 templates/users/account/form.html:72
+#: templates/users/settings.html:24
+msgid "First Name"
+msgstr "Nombre"
+
+#: apps/authentication/forms.py:17 templates/users/account/form.html:84
+#: templates/users/settings.html:42
+msgid "Last Name"
+msgstr "Apellido"
+
+#: apps/authentication/forms.py:29 apps/core/models.py:35
+#: apps/users/forms.py:79 templates/account/password_reset.html:47
+msgid "Email"
+msgstr "Correo electrónico"
+
+#: apps/authentication/forms.py:36
+msgid "The email address is not registered with us."
+msgstr "La dirección de correo electrónico no está registrada con nosotros."
+
+#: apps/core/choices.py:6 templates/users/profile.html:119
+msgid "Pending"
+msgstr "Pendiente"
+
+#: apps/core/choices.py:7
+msgid "Validating"
+msgstr "Validando"
+
+#: apps/core/choices.py:8
+msgid "Processing"
+msgstr "En proceso"
+
+#: apps/core/choices.py:9
+msgid "Completed"
+msgstr "Completado"
+
+#: apps/core/choices.py:10
+msgid "Failed"
+msgstr "Fallido"
+
+#: apps/core/choices.py:11
+msgid "Canceled"
+msgstr "Cancelado"
+
+#: apps/core/choices.py:12
+msgid "Approved"
+msgstr "Aprobado"
+
+#: apps/core/choices.py:16
+msgid "January"
+msgstr "Enero"
+
+#: apps/core/choices.py:17
+msgid "February"
+msgstr "Febrero"
+
+#: apps/core/choices.py:18
+msgid "March"
+msgstr "Marzo"
+
+#: apps/core/choices.py:19
+msgid "April"
+msgstr "Abril"
+
+#: apps/core/choices.py:20
+msgid "May"
+msgstr "Mayo"
+
+#: apps/core/choices.py:21
+msgid "June"
+msgstr "Junio"
+
+#: apps/core/choices.py:22
+msgid "July"
+msgstr "Julio"
+
+#: apps/core/choices.py:23
+msgid "August"
+msgstr "Agosto"
+
+#: apps/core/choices.py:24
+msgid "September"
+msgstr "Septiembre"
+
+#: apps/core/choices.py:25
+msgid "October"
+msgstr "Octubre"
+
+#: apps/core/choices.py:26
+msgid "November"
+msgstr "Noviembre"
+
+#: apps/core/choices.py:27
+msgid "December"
+msgstr "Diciembre"
+
+#: apps/core/choices.py:31
+msgid "National Identity Document"
+msgstr "Documento Nacional de Identidad"
+
+#: apps/core/choices.py:32
+msgid "Unique Taxpayer Registry"
+msgstr "Registro Único de Contribuyentes"
+
+#: apps/core/choices.py:33
+msgid "Passport"
+msgstr "Pasaporte"
+
+#: apps/core/choices.py:34
+msgid "Foreigner ID"
+msgstr "Cédula de Extranjería"
+
+#: apps/core/choices.py:38
+msgid "Male"
+msgstr "Masculino"
+
+#: apps/core/choices.py:39
+msgid "Female"
+msgstr "Femenino"
+
+#: apps/core/choices.py:40
+msgid "Other"
+msgstr "Otro"
+
+#: apps/core/mixins/views.py:87
+msgid "You do not have permission to delete this account."
+msgstr "No tienes permiso para eliminar esta cuenta."
+
+#: apps/core/models.py:14
+msgid "Address"
+msgstr "Dirección"
+
+#: apps/core/models.py:15
+msgid "Zip code"
+msgstr "Código postal"
+
+#: apps/core/models.py:34
+msgid "Phone"
+msgstr "Teléfono"
+
+#: apps/core/models.py:62 apps/users/forms.py:26 apps/users/forms.py:77
+msgid "First name"
+msgstr "Nombre"
+
+#: apps/core/models.py:64
+msgid "Paternal last name"
+msgstr "Apellido paterno"
+
+#: apps/core/models.py:67
+msgid "Maternal last name"
+msgstr "Apellido materno"
+
+#: apps/core/models.py:70
+msgid "Document type"
+msgstr "Tipo de documento"
+
+#: apps/core/models.py:76
+msgid "Document number"
+msgstr "Número de documento"
+
+#: apps/core/models.py:79
+msgid "Gender"
+msgstr "Género"
+
+#: apps/core/models.py:84
+msgid "Birth date"
+msgstr "Fecha de nacimiento"
+
+#: apps/core/models.py:91 apps/users/models.py:38
+#: templates/users/profile.html:41
+msgid "User"
+msgstr "Usuario"
+
+#: apps/core/models.py:92
+msgid "User account associated with this person"
+msgstr "Cuenta de usuario asociada con esta persona"
+
+#: apps/core/models.py:137
+msgid "Name"
+msgstr "Nombre"
+
+#: apps/core/models.py:138
+msgid "Description"
+msgstr "Descripción"
+
+#: apps/core/models.py:149
+msgid "Is active"
+msgstr "Está activo"
+
+#: apps/core/models.py:151
+msgid "Designates whether this entry is active"
+msgstr "Designa si esta entrada está activa"
+
+#: apps/core/models.py:162 apps/users/filtersets.py:15
+#: templates/users/profile.html:55
+msgid "Status"
+msgstr "Estado"
+
+#: apps/core/models.py:164
+msgid "New status value."
+msgstr "Nuevo valor de estado."
+
+#: apps/core/models.py:167
+msgid "Previous Status"
+msgstr "Estado anterior"
+
+#: apps/core/models.py:170
+msgid "Previous status value."
+msgstr "Valor del estado anterior."
+
+#: apps/core/models.py:173
+msgid "Note"
+msgstr "Nota"
+
+#: apps/core/models.py:175
+msgid "Optional note about the status change."
+msgstr "Nota opcional sobre el cambio de estado."
+
+#: apps/core/models.py:180
+msgid "Status History"
+msgstr "Historial de estado"
+
+#: apps/core/models.py:181
+msgid "Status Histories"
+msgstr "Historiales de estado"
+
+#: apps/core/templatetags/breadcrumb_tags.py:14
+#: templates/includes/aside.html:44 templates/includes/aside.html:51
+msgid "Dashboard"
+msgstr "Tablero"
+
+#: apps/users/api.py:19
+msgid "User not found"
+msgstr "Usuario no encontrado"
+
+#: apps/users/api.py:28
+msgid "Invalid action"
+msgstr "Acción no válida"
+
+#: apps/users/api.py:35
+msgid "User status has been successfully updated"
+msgstr "El estado del usuario se ha actualizado con éxito"
+
+#: apps/users/api.py:46
+msgid "User ID is required"
+msgstr "Se requiere ID de usuario"
+
+#: apps/users/api.py:52
+msgid "Email address not found"
+msgstr "No se encontró la dirección de correo electrónico"
+
+#: apps/users/api.py:62
+msgid "Verification email has been successfully sent"
+msgstr "El correo electrónico de verificación se ha enviado con éxito"
+
+#: apps/users/filtersets.py:10
+msgid "Search"
+msgstr "Buscar"
+
+#: apps/users/filtersets.py:14
+msgid "Is Active?"
+msgstr "¿Está activo?"
+
+#: apps/users/filtersets.py:17 templates/users/profile.html:50
+msgid "Active"
+msgstr "Activo"
+
+#: apps/users/filtersets.py:18 templates/users/profile.html:52
+msgid "Inactive"
+msgstr "Inactivo"
+
+#: apps/users/forms.py:27 apps/users/forms.py:78
+msgid "Last name"
+msgstr "Apellido"
+
+#: apps/users/forms.py:49
+msgid "An account with this email already exists"
+msgstr "Ya existe una cuenta con este correo electrónico."
+
+#: apps/users/managers.py:16
+msgid "The Email must be set"
+msgstr "El correo electrónico debe estar configurado"
+
+#: apps/users/managers.py:32
+msgid "Superuser must have is_staff=True."
+msgstr "El superusuario debe tener is_staff=True."
+
+#: apps/users/managers.py:34
+msgid "Superuser must have is_superuser=True."
+msgstr "El superusuario debe tener is_superuser=True."
+
+#: apps/users/models.py:13
+msgid "email address"
+msgstr "dirección de correo electrónico"
+
+#: apps/users/models.py:44 apps/users/views.py:92 apps/users/views.py:118
+#: apps/users/views.py:139 templates/users/profile.html:60
+msgid "Account"
+msgstr "Cuenta"
+
+#: apps/users/models.py:45 apps/users/views.py:93
+#: templates/includes/aside.html:63 templates/includes/aside.html:68
+#: templates/includes/navbar.html:105 templates/users/account/form.html:6
+#: templates/users/account/form.html:142 templates/users/account/list.html:8
+#: templates/users/account/list.html:12 templates/users/profile.html:160
+msgid "Accounts"
+msgstr "Cuentas"
+
+#: apps/users/views.py:21 templates/users/profile.html:6
+msgid "Profile"
+msgstr "Perfil"
+
+#: apps/users/views.py:29
+msgid "Settings updated successfully"
+msgstr "Configuración actualizada con éxito"
+
+#: apps/users/views.py:36 templates/users/settings.html:5
+msgid "Settings"
+msgstr "Configuración"
+
+#: apps/users/views.py:104
+msgid "Account created successfully"
+msgstr "Cuenta creada con éxito"
+
+#: apps/users/views.py:129
+msgid "Account updated successfully"
+msgstr "Cuenta actualizada con éxito"
+
+#: config/settings/base.py:161
+msgid "Spanish"
+msgstr "Español"
+
+#: config/settings/tools/django_constance.py:16
+msgid "Company logo"
+msgstr "Logo de la empresa"
+
+#: config/settings/tools/django_constance.py:17
+msgid "Test json field"
+msgstr "Campo json de prueba"
+
+#: config/settings/tools/django_constance.py:18
+msgid "Enable sending emails."
+msgstr "Habilitar el envío de correos electrónicos."
+
+#: config/settings/tools/django_constance.py:19
+msgid "Enable email verification."
+msgstr "Habilitar la verificación de correo electrónico."
+
+#: templates/account/account_inactive.html:6
+#: templates/account/account_inactive.html:18
+msgid "Account Inactive"
+msgstr "Cuenta Inactiva"
+
+#: templates/account/account_inactive.html:20
+msgid ""
+"Your account is currently deactivated. Please contact support to reactivate "
+"your account."
+msgstr ""
+"Tu cuenta está actualmente desactivada. Por favor contacta al soporte para "
+"reactivar tu cuenta."
+
+#: templates/account/account_inactive.html:25 templates/account/login.html:7
+#: templates/account/login.html:36 templates/account/login.html:80
+#: templates/account/password_reset_from_key_done.html:25
+#: templates/account/signup.html:122
+msgid "Sign In"
+msgstr "Iniciar Sesión"
+
+#: templates/account/email_confirm.html:8
+#: templates/account/email_confirm.html:20
+msgid "Confirm Email Address"
+msgstr "Confirmar Dirección de Correo Electrónico"
+
+#: templates/account/email_confirm.html:27
+#, python-format
+msgid ""
+"\n"
+"                            Please confirm that <span class=\"font-"
+"bold\">%(email)s</span> is an email address for user <span class=\"font-"
+"bold\">%(user_display)s</span>.\n"
+"                        "
+msgstr ""
+"\n"
+"                            Por favor confirma que <span class=\"font-"
+"bold\">%(email)s</span> es una dirección de correo electrónico del usuario "
+"<span class=\"font-bold\">%(user_display)s</span>.\n"
+"                        "
+
+#: templates/account/email_confirm.html:36
+msgid "Next steps:"
+msgstr "Próximos pasos:"
+
+#: templates/account/email_confirm.html:38
+#: templates/account/password_reset_done.html:47
+#: templates/account/verification_sent.html:26
+msgid "Return to login"
+msgstr "Volver al inicio de sesión"
+
+#: templates/account/email_confirm.html:39
+msgid "Use Forgot Password if needed"
+msgstr "Usa la opción '¿Olvidaste tu contraseña?' si es necesario"
+
+#: templates/account/email_confirm.html:49
+msgid "Confirm"
+msgstr "Confirmar"
+
+#: templates/account/email_confirm.html:55
+#, python-format
+msgid ""
+"Unable to confirm %(email)s because it is already confirmed by a different "
+"account."
+msgstr ""
+"No se puede confirmar %(email)s porque ya ha sido confirmado por una cuenta "
+"diferente."
+
+#: templates/account/email_confirm.html:60
+msgid "This email confirmation link expired or is invalid."
+msgstr ""
+"Este enlace de confirmación de correo electrónico ha expirado o no es válido."
+
+#: templates/account/email_confirm.html:63
+msgid "Issue a new email confirmation request"
+msgstr "Solicita una nueva confirmación de correo electrónico"
+
+#: templates/account/login.html:20
+msgid "Sign in to your account"
+msgstr "Inicia sesión en tu cuenta"
+
+#: templates/account/login.html:23
+msgid ""
+"Enter your details to access your dashboard and manage your applications."
+msgstr ""
+"Ingresa tus datos para acceder a tu tablero y gestionar tus aplicaciones."
+
+#: templates/account/login.html:34
+msgid "Welcome back"
+msgstr "Bienvenido de nuevo"
+
+#: templates/account/login.html:62 templates/account/password_reset.html:34
+msgid "Forgot Password?"
+msgstr "¿Olvidaste tu contraseña?"
+
+#: templates/account/login.html:86
+msgid "Don't have an account?"
+msgstr "¿No tienes una cuenta?"
+
+#: templates/account/login.html:87
+msgid "Sign Up"
+msgstr "Registrarse"
+
+#: templates/account/password_change.html:5
+#: templates/account/password_change.html:6
+#: templates/account/password_change.html:14
+#: templates/account/password_reset_from_key.html:6
+#: templates/account/password_reset_from_key.html:58
+#: templates/account/password_reset_from_key_done.html:6
+#: templates/users/settings.html:162
+msgid "Change Password"
+msgstr "Cambiar Contraseña"
+
+#: templates/account/password_change.html:37
+#: templates/account/password_change.html:58
+#: templates/account/password_change.html:105
+msgid "Toggle password visibility"
+msgstr "Alternar visibilidad de la contraseña"
+
+#: templates/account/password_change.html:119
+#: templates/account/password_reset.html:66 templates/users/settings.html:94
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: templates/account/password_change.html:122
+msgid "Update Password"
+msgstr "Actualizar Contraseña"
+
+#: templates/account/password_change.html:145
+#: templates/account/password_change.html:146
+msgid "Weak"
+msgstr "Débil"
+
+#: templates/account/password_change.html:147
+msgid "Fair"
+msgstr "Regular"
+
+#: templates/account/password_change.html:148
+msgid "Good"
+msgstr "Buena"
+
+#: templates/account/password_change.html:149
+msgid "Strong"
+msgstr "Fuerte"
+
+#: templates/account/password_change.html:200
+msgid "Passwords match"
+msgstr "Las contraseñas coinciden"
+
+#: templates/account/password_change.html:201
+msgid "Passwords do not match"
+msgstr "Las contraseñas no coinciden"
+
+#: templates/account/password_reset.html:6
+#: templates/account/password_reset_done.html:5
+msgid "Password Reset"
+msgstr "Restablecimiento de Contraseña"
+
+#: templates/account/password_reset.html:18
+msgid "Reset your password"
+msgstr "Restablece tu contraseña"
+
+#: templates/account/password_reset.html:21
+msgid ""
+"Enter your email address and we'll send you instructions to reset your "
+"password."
+msgstr ""
+"Ingresa tu dirección de correo electrónico y te enviaremos instrucciones "
+"para restablecer tu contraseña."
+
+#: templates/account/password_reset.html:32
+#: templates/account/password_reset_done.html:31
+msgid "Password Recovery"
+msgstr "Recuperación de Contraseña"
+
+#: templates/account/password_reset.html:60
+msgid "Submit"
+msgstr "Enviar"
+
+#: templates/account/password_reset_done.html:17
+msgid "Check your email"
+msgstr "Revisa tu correo electrónico"
+
+#: templates/account/password_reset_done.html:20
+msgid "We've sent you the instructions to reset your password."
+msgstr "Te hemos enviado las instrucciones para restablecer tu contraseña."
+
+#: templates/account/password_reset_done.html:33
+msgid "Password Reset Sent"
+msgstr "Restablecimiento de Contraseña Enviado"
+
+#: templates/account/password_reset_done.html:41
+msgid ""
+"We have sent you an email. If you have not received it please check your "
+"spam folder."
+msgstr ""
+"Te hemos enviado un correo electrónico. Si no lo has recibido, revisa tu "
+"carpeta de spam."
+
+#: templates/account/password_reset_done.html:42
+msgid "Otherwise contact us if you do not receive it in a few minutes."
+msgstr "De lo contrario, contáctanos si no lo recibes en unos minutos."
+
+#: templates/account/password_reset_from_key.html:18
+msgid "Setup New Password"
+msgstr "Configurar Nueva Contraseña"
+
+#: templates/account/password_reset_from_key.html:23
+#, python-format
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used. Please request a <a href=\"%(passwd_reset_url)s\" "
+"class=\"underline\">new password reset</a>."
+msgstr ""
+"El enlace de restablecimiento de contraseña no es válido, posiblemente "
+"porque ya se ha utilizado. Solicita un <a href=\"%(passwd_reset_url)s\" "
+"class=\"underline\">nuevo restablecimiento de contraseña</a>."
+
+#: templates/account/password_reset_from_key.html:41
+msgid "New Password"
+msgstr "Nueva Contraseña"
+
+#: templates/account/password_reset_from_key.html:45
+msgid "Use 8 or more characters with a mix of letters, numbers & symbols."
+msgstr ""
+"Usa 8 o más caracteres con una combinación de letras, números y símbolos."
+
+#: templates/account/password_reset_from_key.html:51
+msgid "Confirm Password"
+msgstr "Confirmar Contraseña"
+
+#: templates/account/password_reset_from_key_done.html:18
+msgid "Password Changed"
+msgstr "Contraseña cambiada"
+
+#: templates/account/password_reset_from_key_done.html:20
+msgid ""
+"Your password has been successfully changed. You can now sign in to your "
+"account."
+msgstr ""
+"Tu contraseña ha sido cambiada con éxito. Ahora puedes iniciar sesión en tu "
+"cuenta."
+
+#: templates/account/signup.html:7
+msgid "Signup"
+msgstr "Registro"
+
+#: templates/account/signup.html:20
+msgid "Join our platform"
+msgstr "Únete a nuestra plataforma"
+
+#: templates/account/signup.html:23
+msgid ""
+"Create an account to start managing your laboratory processes and track your "
+"samples."
+msgstr ""
+"Crea una cuenta para comenzar a gestionar tus procesos de laboratorio y "
+"hacer seguimiento de tus muestras."
+
+#: templates/account/signup.html:34
+msgid "Get started"
+msgstr "Comenzar"
+
+#: templates/account/signup.html:36 templates/account/signup.html:115
+msgid "Create Account"
+msgstr "Crear Cuenta"
+
+#: templates/account/signup.html:121
+msgid "Already have an account?"
+msgstr "¿Ya tienes una cuenta?"
+
+#: templates/account/verification_sent.html:6
+msgid "Verify Your Email Address"
+msgstr "Verificar su dirección de correo electrónico"
+
+#: templates/account/verification_sent.html:18
+msgid "Verify Your Email"
+msgstr "Verifica tu correo electrónico"
+
+#: templates/account/verification_sent.html:20
+msgid "We have sent a verification email to your address."
+msgstr "Hemos enviado un correo electrónico de verificación a tu dirección."
+
+#: templates/account/verification_sent.html:21
+msgid "Please follow the link in that email to complete your registration."
+msgstr "Sigue el enlace en ese correo electrónico para completar tu registro."
+
+#: templates/dashboard/index.html:12
+msgid "Last updated"
+msgstr "Última actualización"
+
+#: templates/dashboard/index.html:32
+msgid "Total views"
+msgstr "Vistas totales"
+
+#: templates/dashboard/index.html:51
+msgid "Total Profit"
+msgstr "Beneficio total"
+
+#: templates/dashboard/index.html:70
+msgid "Total Product"
+msgstr "Total de productos"
+
+#: templates/dashboard/index.html:89
+msgid "Total Users"
+msgstr "Total de usuarios"
+
+#: templates/dashboard/index.html:103
+msgid "Welcome back,"
+msgstr "Bienvenido de nuevo,"
+
+#: templates/dashboard/index.html:105
+msgid ""
+"Manage your laboratory processes, track samples and validate results from "
+"one central place."
+msgstr ""
+"Gestiona tus procesos de laboratorio, haz seguimiento de muestras y valida "
+"resultados desde un solo lugar central."
+
+#: templates/dashboard/index.html:110
+msgid "Get Started"
+msgstr "Comenzar"
+
+#: templates/dashboard/index.html:114
+msgid "View Profile"
+msgstr "Ver perfil"
+
+#: templates/errors/403.html:5
+msgid "Access Denied"
+msgstr "Acceso denegado"
+
+#: templates/errors/403.html:11
+msgid "Forbidden"
+msgstr "Prohibido"
+
+#: templates/errors/403.html:12
+msgid "You don't have permission to access this resource."
+msgstr "No tienes permiso para acceder a este recurso."
+
+#: templates/errors/403.html:18 templates/errors/404.html:18
+#: templates/errors/500.html:18
+msgid "Go back home"
+msgstr "Volver al inicio"
+
+#: templates/errors/404.html:5
+msgid "Page not found"
+msgstr "Página no encontrada"
+
+#: templates/errors/404.html:11
+msgid "Seems there is nothing here"
+msgstr "Parece que no hay nada aquí"
+
+#: templates/errors/404.html:12
+msgid "The page you are looking for doesn't exist or has been moved."
+msgstr "La página que buscas no existe o ha sido movida."
+
+#: templates/errors/500.html:5
+msgid "Server Error"
+msgstr "Error del servidor"
+
+#: templates/errors/500.html:11
+msgid "Internal Server Error"
+msgstr "Error interno del servidor"
+
+#: templates/errors/500.html:12
+msgid "Something went wrong on our end. We're working on fixing it."
+msgstr "Algo salió mal de nuestro lado. Estamos trabajando para solucionarlo."
+
+#: templates/includes/aside.html:37
+msgid "Main Menu"
+msgstr "Menú principal"
+
+#: templates/includes/aside.html:58
+msgid "Administration"
+msgstr "Administración"
+
+#: templates/includes/footer.html:7
+msgid "Collection Instructions"
+msgstr "Instrucciones de colección"
+
+#: templates/includes/footer.html:10
+msgid "FAQS"
+msgstr "Preguntas frecuentes"
+
+#: templates/includes/footer.html:13
+msgid "Terms of service"
+msgstr "Términos de servicio"
+
+#: templates/includes/navbar.html:43
+msgid "Type to search..."
+msgstr "Escribe para buscar..."
+
+#: templates/includes/navbar.html:98
+msgid "My Profile"
+msgstr "Mi Perfil"
+
+#: templates/includes/navbar.html:112 templates/users/settings.html:6
+msgid "Account Settings"
+msgstr "Configuración de la Cuenta"
+
+#: templates/includes/navbar.html:118
+msgid "Sign Out"
+msgstr "Cerrar Sesión"
+
+#: templates/includes/pagination.html:8
+#, python-format
+msgid ""
+"\n"
+"                Showing %(start)s to %(end)s of %(total)s entries\n"
+"            "
+msgstr ""
+"\n"
+"                Mostrando %(start)s a %(end)s de %(total)s entradas\n"
+"            "
+
+#: templates/includes/pagination.html:14
+msgid "Show"
+msgstr "Mostrar"
+
+#: templates/includes/pagination.html:33
+#, python-format
+msgid ""
+"\n"
+"                Page %(current)s of %(total)s\n"
+"            "
+msgstr ""
+"\n"
+"                Página %(current)s de %(total)s\n"
+"            "
+
+#: templates/includes/pagination.html:41
+msgid "Previous"
+msgstr "Anterior"
+
+#: templates/includes/pagination.html:69
+msgid "Next"
+msgstr "Siguiente"
+
+#: templates/users/account/form.html:19
+msgid "Avatar"
+msgstr "Avatar"
+
+#: templates/users/account/form.html:44 templates/users/settings.html:140
+msgid "Click to upload"
+msgstr "Haz clic para subir"
+
+#: templates/users/account/form.html:45 templates/users/settings.html:141
+msgid "or drag and drop"
+msgstr "o arrastra y suelta"
+
+#: templates/users/account/form.html:47
+msgid "Allowed: *.png, *.jpg, *.jpeg"
+msgstr "Permitidos: *.png, *.jpg, *.jpeg"
+
+#: templates/users/account/form.html:53
+msgid "Remove Photo"
+msgstr "Eliminar foto"
+
+#: templates/users/account/form.html:65
+msgid "Details"
+msgstr "Detalles"
+
+#: templates/users/account/form.html:113
+msgid "Permissions Management"
+msgstr "Gestión de Permisos"
+
+#: templates/users/account/form.html:122 templates/users/profile.html:150
+msgid "Module"
+msgstr "Módulo"
+
+#: templates/users/account/form.html:125
+msgid "View"
+msgstr "Ver"
+
+#: templates/users/account/form.html:128
+msgid "Create"
+msgstr "Crear"
+
+#: templates/users/account/form.html:131 templates/users/settings.html:123
+msgid "Update"
+msgstr "Actualizar"
+
+#: templates/users/account/form.html:134 templates/users/settings.html:122
+msgid "Delete"
+msgstr "Eliminar"
+
+#: templates/users/account/form.html:192
+msgid "Discard"
+msgstr "Descartar"
+
+#: templates/users/account/form.html:195 templates/users/settings.html:98
+msgid "Save Changes"
+msgstr "Guardar Cambios"
+
+#: templates/users/account/list.html:20
+msgid "Accounts Management"
+msgstr "Gestión de cuentas"
+
+#: templates/users/account/list.html:23
+msgid ""
+"Efficiently manage user access, verification status, and organizational "
+"roles."
+msgstr ""
+"Gestiona de manera eficiente el acceso de los usuarios, el estado de "
+"verificación y los roles organizacionales."
+
+#: templates/users/account/list.html:32
+msgid "Create New Account"
+msgstr "Crear nueva cuenta"
+
+#: templates/users/account/list.html:57
+msgid "Refine Search"
+msgstr "Refinar búsqueda"
+
+#: templates/users/account/list.html:63
+msgid "Filters"
+msgstr "Filtros"
+
+#: templates/users/account/list.html:64
+msgid "Clear all"
+msgstr "Limpiar todo"
+
+#: templates/users/account/list.html:69
+msgid "Account Status"
+msgstr "Estado de la cuenta"
+
+#: templates/users/account/list.html:80
+msgid "Account Category"
+msgstr "Categoría de cuenta"
+
+#: templates/users/account/list.html:92
+msgid "Apply Filters"
+msgstr "Aplicar filtros"
+
+#: templates/users/account/list.html:106
+msgid "Identity"
+msgstr "Identidad"
+
+#: templates/users/account/list.html:109
+msgid "Current Status"
+msgstr "Estado actual"
+
+#: templates/users/account/list.html:112 templates/users/settings.html:154
+msgid "Security"
+msgstr "Seguridad"
+
+#: templates/users/account/list.html:115
+msgid "Management"
+msgstr "Gestión"
+
+#: templates/users/account/list.html:139
+msgid "ORGANIZATION"
+msgstr "ORGANIZACIÓN"
+
+#: templates/users/account/list.html:142
+msgid "SUBSIDIARY"
+msgstr "SUBSIDIARIA"
+
+#: templates/users/account/list.html:156
+msgid "Active Access"
+msgstr "Acceso activo"
+
+#: templates/users/account/list.html:162
+msgid "Restricted"
+msgstr "Restringido"
+
+#: templates/users/account/list.html:177
+msgid "Trusted Device"
+msgstr "Dispositivo de confianza"
+
+#: templates/users/account/list.html:178
+msgid "Verified Identity"
+msgstr "Identidad verificada"
+
+#: templates/users/account/list.html:189
+msgid "Pending Review"
+msgstr "Revisión pendiente"
+
+#: templates/users/account/list.html:190
+msgid "Needs Verification"
+msgstr "Requiere verificación"
+
+#: templates/users/account/list.html:200
+msgid "Update Profile"
+msgstr "Actualizar perfil"
+
+#: templates/users/account/list.html:205
+msgid "Suspend Access"
+msgstr "Suspender acceso"
+
+#: templates/users/account/list.html:205
+msgid "Restore Access"
+msgstr "Restaurar acceso"
+
+#: templates/users/account/list.html:214
+msgid "Remove Permanent"
+msgstr "Eliminar permanentemente"
+
+#: templates/users/account/list.html:228
+msgid "No accounts found"
+msgstr "No se encontraron cuentas"
+
+#: templates/users/account/list.html:230
+msgid ""
+"We couldn't find any accounts matching your current search or filters. Try "
+"adjusting your criteria or create a new account."
+msgstr ""
+"No pudimos encontrar cuentas que coincidan con tu búsqueda o filtros "
+"actuales. Intenta ajustar tus criterios o crea una nueva cuenta."
+
+#: templates/users/account/list.html:274
+msgid "Are you sure?"
+msgstr "¿Estás seguro?"
+
+#: templates/users/account/list.html:287
+msgid "Success"
+msgstr "Éxito"
+
+#: templates/users/account/list.html:293
+msgid "Error"
+msgstr "Error"
+
+#: templates/users/account/list.html:293
+msgid "There was a problem processing your request."
+msgstr "Hubo un problema al procesar tu solicitud."
+
+#: templates/users/account/list.html:302
+msgid "The user has been verified."
+msgstr "El usuario ha sido verificado."
+
+#: templates/users/account/list.html:311
+msgid "The account has been deleted."
+msgstr "La cuenta ha sido eliminada."
+
+#: templates/users/account/list.html:320
+msgid "Status updated successfully."
+msgstr "Estado actualizado con éxito."
+
+#: templates/users/profile.html:37
+msgid "Administrator"
+msgstr "Administrador"
+
+#: templates/users/profile.html:39
+msgid "Staff Member"
+msgstr "Miembro del personal"
+
+#: templates/users/profile.html:62
+msgid "Guest"
+msgstr "Invitado"
+
+#: templates/users/profile.html:65
+msgid "Type"
+msgstr "Tipo"
+
+#: templates/users/profile.html:71
+msgid "Joined"
+msgstr "Se unió"
+
+#: templates/users/profile.html:77
+msgid "Contact Information"
+msgstr "Información de contacto"
+
+#: templates/users/profile.html:94
+msgid "Edit Profile"
+msgstr "Editar Perfil"
+
+#: templates/users/profile.html:108 templates/users/settings.html:71
+msgid "Account Information"
+msgstr "Información de la Cuenta"
+
+#: templates/users/profile.html:114
+msgid "Verification"
+msgstr "Verificación"
+
+#: templates/users/profile.html:117
+msgid "Verified"
+msgstr "Verificado"
+
+#: templates/users/profile.html:125
+msgid "Parent Account"
+msgstr "Cuenta Principal"
+
+#: templates/users/profile.html:130
+msgid "Full Name"
+msgstr "Nombre Completo"
+
+#: templates/users/profile.html:142
+msgid "System Permissions"
+msgstr "Permisos del sistema"
+
+#: templates/users/profile.html:179
+msgid "Enabled"
+msgstr "Habilitado"
+
+#: templates/users/profile.html:180
+msgid "Disabled"
+msgstr "Deshabilitado"
+
+#: templates/users/settings.html:17
+msgid "Personal Information"
+msgstr "Información Personal"
+
+#: templates/users/settings.html:51
+msgid "Email Address"
+msgstr "Dirección de correo electrónico"
+
+#: templates/users/settings.html:65
+msgid "Email cannot be changed"
+msgstr "El correo electrónico no se puede cambiar"
+
+#: templates/users/settings.html:75
+msgid "Type:"
+msgstr "Tipo:"
+
+#: templates/users/settings.html:77
+msgid "Organization"
+msgstr "Organización"
+
+#: templates/users/settings.html:79
+msgid "Individual"
+msgstr "Individual"
+
+#: templates/users/settings.html:84
+msgid "Parent:"
+msgstr "Principal:"
+
+#: templates/users/settings.html:99
+msgid "Saving..."
+msgstr "Guardando..."
+
+#: templates/users/settings.html:111
+msgid "Your Photo"
+msgstr "Tu foto"
+
+#: templates/users/settings.html:120
+msgid "Edit your photo"
+msgstr "Edita tu foto"
+
+#: templates/users/settings.html:159
+msgid ""
+"Protect your account by ensuring your password is strong and updated "
+"regularly."
+msgstr ""
+"Protege tu cuenta asegurándote de que tu contraseña sea segura y se "
+"actualice regularmente."
+
+#~ msgid "No file uploaded"
+#~ msgstr "No se ha subido ningún archivo"
+
+#~ msgid "Avatar has been successfully uploaded"
+#~ msgstr "El avatar se ha subido con éxito"
+
+#~ msgid "English"
+#~ msgstr "Inglés"
+
+#~ msgid "Agency"
+#~ msgstr "Agencia"
+
+#~ msgid "Agency associated with this person"
+#~ msgstr "Agencia asociada con esta persona"
+
+#~ msgid "Content type of the related object."
+#~ msgstr "Tipo de contenido del objeto relacionado."
+
+#~ msgid "Primary key of the related object."
+#~ msgstr "Clave primaria del objeto relacionado."
+
+#~ msgid "Project name."
+#~ msgstr "Nombre del proyecto."
+
+#~ msgid "Website domain."
+#~ msgstr "Dominio del sitio web."
+
+#~ msgid "After confirming your email, please follow these steps:"
+#~ msgstr "Después de confirmar su correo electrónico, siga estos pasos:"
+
+#~ msgid "Go to the login page"
+#~ msgstr "Ir a la página de inicio de sesión"
+
+#, python-format
+#~ msgid ""
+#~ "This email confirmation link expired or is invalid. Please <a "
+#~ "href=\"%(email_url)s\">issue a new email confirmation request</a>."
+#~ msgstr ""
+#~ "Este enlace de confirmación de correo electrónico ha expirado o es "
+#~ "inválido. Por favor <a href=\"%(email_url)s\">emita una nueva solicitud "
+#~ "de confirmación de correo electrónico</a>."
+
+#~ msgid ""
+#~ "Set the product thumbnail image. Only *.png, *.jpg and *.jpeg image files "
+#~ "are accepted"
+#~ msgstr ""
+#~ "Establezca la imagen en miniatura del producto. Solo se aceptan archivos "
+#~ "de imagen *.png, *.jpg y *.jpeg"
+
+#~ msgid "Add Account"
+#~ msgstr "Agregar Cuenta"
+
+#~ msgid "Is Organization"
+#~ msgstr "Es Organización"
+
+#~ msgid "Is Child Account"
+#~ msgstr "Es Cuenta Infantil"
+
+#~ msgid "Actions"
+#~ msgstr "Acciones"
+
+#~ msgid "Yes"
+#~ msgstr "Sí"
+
+#~ msgid "No"
+#~ msgstr "No"
+
+#~ msgid "Desactivate"
+#~ msgstr "Desactivar"
+
+#~ msgid "Activate"
+#~ msgstr "Activar"
+
+#~ msgid "Edit"
+#~ msgstr "Editar"
+
+#~ msgid "Verify"
+#~ msgstr "Verificar"
+
+#~ msgid "Yes, delete it!"
+#~ msgstr "¡Sí, elimínalo!"
+
+#~ msgid "Successfully verified account."
+#~ msgstr "Cuenta verificada con éxito."
+
+#~ msgid "There was a problem verifying the account."
+#~ msgstr "Hubo un problema al verificar la cuenta."
+
+#~ msgid "Deleted!"
+#~ msgstr "¡Eliminado!"
+
+#~ msgid "Yes, activate it!"
+#~ msgstr "¡Sí, actívalo!"
+
+#~ msgid "Successfully activated/deactivated user."
+#~ msgstr "Usuario activado/desactivado con éxito."
+
+#~ msgid "The user has been activated/deactivated."
+#~ msgstr "El usuario ha sido activado/desactivado."
+
+#~ msgid "There was a problem activating/deactivating the user."
+#~ msgstr "Hubo un problema al activar/desactivar el usuario."
+
+#~ msgid "Account Type"
+#~ msgstr "Tipo de Cuenta"
+
+#~ msgid "No permissions assigned"
+#~ msgstr "No se asignaron permisos"
+
+#~ msgid "Change avatar"
+#~ msgstr "Cambiar avatar"
+
+#~ msgid "Cancel avatar"
+#~ msgstr "Cancelar avatar"
+
+#~ msgid "Please wait..."
+#~ msgstr "Por favor espera..."
+
+#~ msgid ""
+#~ "To change your password, please contact your administrator or use the "
+#~ "password reset option."
+#~ msgstr ""
+#~ "Para cambiar su contraseña, comuníquese con su administrador o use la "
+#~ "opción de restablecimiento de contraseña."
+
+#~ msgid "Patients"
+#~ msgstr "Pacientes"
+
+#~ msgid "Medical Tests"
+#~ msgstr "Pruebas Médicas"
+
+#~ msgid "Panels"
+#~ msgstr "Paneles"
+
+#~ msgid "Orders"
+#~ msgstr "Órdenes"
+
+#~ msgid "Most Used Medical Tests"
+#~ msgstr "Pruebas Médicas Más Usadas"
+
+#~ msgid "Represent completed orders"
+#~ msgstr "Representar órdenes completadas"
+
+#~ msgid "View All"
+#~ msgstr "Ver Todos"
+
+#~ msgid "No medical tests found"
+#~ msgstr "No se encontraron pruebas médicas"
+
+#~ msgid "Order Results"
+#~ msgstr "Resultados de Órdenes"
+
+#~ msgid "Order Results Quantity"
+#~ msgstr "Cantidad de Resultados de Órdenes"
+
+#~ msgid "Most Used Panels"
+#~ msgstr "Paneles Más Usados"
+
+#~ msgid "Morning"
+#~ msgstr "Mañana"
+
+#~ msgid "Afternoon"
+#~ msgstr "Tarde"
+
+#~ msgid "Night"
+#~ msgstr "Noche"
+
+#~ msgid "Delivered"
+#~ msgstr "Entregado"
+
+#~ msgid "Not delivered"
+#~ msgstr "No entregado"
+
+#~ msgid "PDF"
+#~ msgstr "PDF"
+
+#~ msgid "Excel"
+#~ msgstr "Excel"
+
+#~ msgid "Many-to-Many Change"
+#~ msgstr "Muchos a muchos cambio"
+
+#~ msgid "Reverse Many-to-Many Change"
+#~ msgstr "Reverso muchos a muchos cambio"
+
+#~ msgid "Many-to-Many Add"
+#~ msgstr "Muchos a muchos agregar"
+
+#~ msgid "Reverse Many-to-Many Add"
+#~ msgstr "Reverso muchos a muchos agregar"
+
+#~ msgid "Many-to-Many Remove"
+#~ msgstr "Muchos a muchos eliminar"
+
+#~ msgid "Reverse Many-to-Many Remove"
+#~ msgstr "Reverso muchos a muchos eliminar"
+
+#~ msgid "Many-to-Many Clear"
+#~ msgstr "Muchos a muchos claro"
+
+#~ msgid "Reverse Many-to-Many Clear"
+#~ msgstr "Reverso muchos a muchos claro"
+
+#: templates/users/account/list.html
+msgid "Yes, proceed"
+msgstr "Sí, continuar"
+
+#: templates/users/account/list.html
+msgid "Delete Account"
+msgstr "Eliminar cuenta"
+
+#: templates/users/account/list.html
+msgid "This action is permanent and cannot be undone."
+msgstr "Esta acción es permanente y no se puede deshacer."
+
+#: templates/users/account/list.html
+msgid "This user will no longer be able to log in. You can restore access at any time."
+msgstr "Este usuario ya no podrá iniciar sesión. Puede restaurar el acceso en cualquier momento."
+
+#: templates/users/account/list.html
+msgid "This user will regain access to the platform."
+msgstr "Este usuario recuperará el acceso a la plataforma."
+
+#: templates/users/account/list.html
+msgid "Search by name, email or keyword..."
+msgstr "Buscar por nombre, correo electrónico o palabra clave..."

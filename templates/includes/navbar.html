@@ -1,0 +1,196 @@
+{% load static %}
+{% load i18n %}
+
+<header class="sticky top-0 z-999 flex w-full bg-white drop-shadow-1 dark:bg-boxdark dark:drop-shadow-none border-b border-stroke dark:border-strokedark transition-colors duration-300">
+    <div class="flex flex-grow items-center justify-between px-4 py-4 md:px-6 2xl:px-11">
+        <div class="flex items-center gap-2 sm:gap-4 lg:hidden">
+            <!-- Hamburger Toggle BTN (Mobile) -->
+            <button id="sidebar-toggle-mobile"
+                    class="z-99999 block rounded-sm border border-stroke bg-white p-1.5 shadow-sm dark:border-strokedark dark:bg-boxdark lg:hidden">
+                <span class="relative block h-5.5 w-5.5 cursor-pointer">
+                    <span class="du-block absolute right-0 h-full w-full">
+                        <span class="relative top-0 left-0 my-1 block h-0.5 w-full rounded-sm bg-black delay-[0] duration-200 ease-in-out dark:bg-white"></span>
+                        <span class="relative top-0 left-0 my-1 block h-0.5 w-full rounded-sm bg-black delay-150 duration-200 ease-in-out dark:bg-white"></span>
+                        <span class="relative top-0 left-0 my-1 block h-0.5 w-full rounded-sm bg-black delay-200 duration-200 ease-in-out dark:bg-white"></span>
+                    </span>
+                </span>
+            </button>
+            <!-- Hamburger Toggle BTN -->
+
+            <a class="block flex-shrink-0 lg:hidden" href="/">
+                <img src="{% static 'assets/images/logos/logo-short.png' %}" alt="Logo" class="h-8" />
+            </a>
+        </div>
+
+        <!-- Desktop Sidebar Toggle (Left) -->
+        <div class="hidden lg:block">
+            <button id="sidebar-toggle-desktop" class="flex items-center justify-center h-10 w-10 rounded-md border border-stroke bg-whiten hover:text-primary dark:border-strokedark dark:bg-meta-4 dark:text-white transition-all shadow-sm">
+                <svg class="fill-current w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 12H21M3 6H21M3 18H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="hidden sm:block">
+            <form action="#" method="GET">
+                <div class="relative">
+                    <button class="absolute top-1/2 left-3 -translate-y-1/2 text-body dark:text-bodydark hover:text-primary dark:hover:text-primary transition-colors">
+                        <svg class="fill-current w-5 h-5" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M9.16666 3.33332C5.945 3.33332 3.33332 5.945 3.33332 9.16666C3.33332 12.3883 5.945 15 9.16666 15C12.3883 15 15 12.3883 15 9.16666C15 5.945 12.3883 3.33332 9.16666 3.33332ZM1.66666 9.16666C1.66666 5.02452 5.02452 1.66666 9.16666 1.66666C13.3088 1.66666 16.6667 5.02452 16.6667 9.16666C16.6667 13.3088 13.3088 16.6667 9.16666 16.6667C5.02452 16.6667 1.66666 13.3088 1.66666 9.16666Z" />
+                        </svg>
+                    </button>
+                    <input type="text" placeholder="{% trans 'Type to search...' %}" class="w-full bg-[#F1F5F9] dark:bg-boxdark-2 rounded-lg border border-stroke dark:border-strokedark py-2 pl-10 pr-4 focus:border-primary focus:bg-white dark:focus:bg-boxdark focus:outline-none text-sm text-black dark:text-white transition-all xl:w-125" />
+                </div>
+            </form>
+        </div>
+
+        <div class="flex items-center gap-3 2xsm:gap-7">
+            <ul class="flex items-center gap-2 2xsm:gap-4">
+                <!-- Theme Toggle Button -->
+                <li>
+                    <button id="theme-toggle-btn" class="relative flex h-8.5 w-8.5 items-center justify-center rounded-full border-[0.5px] border-stroke bg-whiten hover:text-primary dark:border-strokedark dark:bg-meta-4 dark:text-white transition-colors">
+                        <span id="theme-toggle-dark-icon" class="hidden">
+                            <svg class="fill-current w-5 h-5" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                        </span>
+                        <span id="theme-toggle-light-icon" class="hidden">
+                            <svg class="fill-current w-5 h-5" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"></path></svg>
+                        </span>
+                    </button>
+                </li>
+
+                <!-- Notification Area -->
+                <li class="relative">
+                    <a class="relative flex h-8.5 w-8.5 items-center justify-center rounded-full border-[0.5px] border-stroke bg-whiten hover:text-primary dark:border-strokedark dark:bg-meta-4 text-body dark:text-white transition-colors" href="#">
+                        <span class="absolute -top-0.5 right-0 z-1 h-2 w-2 rounded-full bg-meta-1 border-2 border-white dark:border-boxdark"></span>
+                        <svg class="fill-current w-5 h-5" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16.1999 14.9344L15.6374 14.0625C15.5249 13.8938 15.4687 13.725 15.4687 13.5281V8.4375C15.4687 5.20312 13.0499 2.44687 10.0687 1.85625V1.6875C10.0687 1.125 9.59053 0.61875 8.9999 0.61875C8.40928 0.61875 7.93115 1.125 7.93115 1.6875V1.85625C4.9499 2.44687 2.53115 5.20312 2.53115 8.4375V13.5281C2.53115 13.725 2.4749 13.8938 2.3624 14.0625L1.7999 14.9344C1.63115 15.1875 1.5749 15.4969 1.65928 15.7781C1.74365 16.0594 1.96865 16.3125 2.27803 16.425C2.50303 16.5094 2.72803 16.5375 2.98115 16.5375H15.0187C15.2718 16.5375 15.4968 16.5094 15.7218 16.425C16.0312 16.3125 16.2562 16.0594 16.3405 15.7781C16.4249 15.4969 16.3687 15.1875 16.1999 14.9344ZM14.3999 15.4125H3.5999C3.45928 15.4125 3.31865 15.3844 3.20615 15.3281C3.12178 15.2719 3.06553 15.2156 3.0374 15.1312C3.00928 15.0469 3.00928 14.9625 3.00928 14.9625C3.06553 14.8781 3.62803 14.0062 3.62803 14.0062C3.8249 13.725 3.9374 13.3875 3.9374 13.0219V8.4375C3.9374 5.65312 6.21553 3.375 8.9999 3.375C11.7843 3.375 14.0624 5.65312 14.0624 8.4375V13.0219C14.0624 13.3875 14.1749 13.725 14.3718 14.0062L14.9343 14.8781C14.9905 14.9625 14.9905 15.0469 14.9624 15.1312C14.9343 15.2156 14.878 15.2719 14.7937 15.3281C14.6812 15.3844 14.5405 15.4125 14.3999 15.4125Z" />
+                            <path d="M8.9999 19.3781C10.1249 19.3781 11.053 18.45 11.053 17.325H6.94678C6.94678 18.45 7.8749 19.3781 8.9999 19.3781Z" />
+                        </svg>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- User Area -->
+            <div class="relative" id="user-dropdown-wrapper">
+                <button class="flex items-center gap-4 text-gray-700 dark:text-bodydark hover:text-primary transition-colors" id="user-dropdown-toggle">
+                    <span class="hidden text-right lg:block">
+                        <span class="block text-sm font-semibold text-black dark:text-white">{{ request.user.first_name }} {{ request.user.last_name }}</span>
+                        <span class="block text-xs font-medium dark:text-bodydark2">{{ request.user.email }}</span>
+                    </span>
+
+                    <span class="h-12 w-12 rounded-full border border-gray-200 dark:border-gray-800 p-0.5 overflow-hidden shadow-sm">
+                        <img src="{% if request.user.avatar %}{{ request.user.avatar.url }}{% else %}{% static 'assets/images/avatars/blank.png' %}{% endif %}" alt="User" class="rounded-full h-full w-full object-cover" />
+                    </span>
+
+                    <svg class="hidden fill-current sm:block opacity-50 w-3 h-2" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M0.410765 0.910734C0.736202 0.585297 1.26384 0.585297 1.58928 0.910734L6.00002 5.32148L10.4108 0.910734C10.7362 0.585297 11.2638 0.585297 11.5893 0.910734C11.9147 1.23617 11.9147 1.76381 11.5893 2.08924L6.58928 7.08924C6.26384 7.41468 5.7362 7.41468 5.41077 7.08924L0.410765 2.08924C0.0853277 1.76381 0.0853277 1.23617 0.410765 0.910734Z" />
+                    </svg>
+                </button>
+
+                <!-- Dropdown Start -->
+                <div id="user-dropdown-menu"
+                     class="absolute right-0 mt-4 flex w-64 flex-col rounded-xl border border-gray-200 bg-white shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark hidden p-2 origin-top-right animate-fade-in">
+                    <ul class="flex flex-col gap-1 border-b border-gray-200 dark:border-gray-800 pb-2 mb-2 text-black dark:text-white">
+                        <li>
+                            <a href="{% url 'apps.users:profile' %}" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 hover:text-primary transition-all">
+                                <svg class="fill-current w-4.5 h-4.5" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 9C11.0711 9 12.75 7.32107 12.75 5.25C12.75 3.17893 11.0711 1.5 9 1.5C6.92893 1.5 5.25 3.17893 5.25 5.25C5.25 7.32107 6.92893 9 9 9Z" /><path d="M9 10.5C6.09848 10.5 3.75 12.8485 3.75 15.75C3.75 16.1642 4.08579 16.5 4.5 16.5H13.5C13.9142 16.5 14.25 16.1642 14.25 15.75C14.25 12.8485 11.9015 10.5 9 10.5Z" /></svg>
+                                {% trans "My Profile" %}
+                            </a>
+                        </li>
+                        {% if request.user.is_superuser or request.user.is_staff %}
+                        <li>
+                            <a href="{% url 'apps.users:account_list' %}" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 hover:text-primary transition-all">
+                                <svg class="fill-current w-4.5 h-4.5" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 9.75H6C4.34315 9.75 3 11.0931 3 12.75V14.25C3 15.0784 3.67157 15.75 4.5 15.75H13.5C14.3284 15.75 15 15.0784 15 14.25V12.75C15 11.0931 13.6569 9.75 12 9.75Z" /><path d="M9 8.25C10.6569 8.25 12 6.90685 12 5.25C12 3.59315 10.6569 2.25 9 2.25C7.34315 2.25 6 3.59315 6 5.25C6 6.90685 7.34315 8.25 9 8.25Z" /></svg>
+                                {% trans "Accounts" %}
+                            </a>
+                        </li>
+                        {% endif %}
+                        <li>
+                            <a href="{% url 'apps.users:settings' %}" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 hover:text-primary transition-all">
+                                <svg class="fill-current w-4.5 h-4.5" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 12.75C11.0711 12.75 12.75 11.0711 12.75 9C12.75 6.92893 11.0711 5.25 9 5.25C6.92893 5.25 5.25 6.92893 5.25 9C5.25 11.0711 6.92893 12.75 9 12.75Z" /><path fill-rule="evenodd" clip-rule="evenodd" d="M10.146 1.58151C9.8341 1.23151 9.3341 1.23151 9.0222 1.58151L8.5222 2.14351C8.2103 2.49351 7.7103 2.49351 7.3984 2.14351L6.8984 1.58151C6.5865 1.23151 6.0865 1.23151 5.7746 1.58151L5.2746 2.14351C4.9627 2.49351 4.4627 2.49351 4.1508 2.14351L3.6508 1.58151C3.3389 1.23151 2.8389 1.23151 2.527 1.58151V1.58151C2.2151 1.93151 2.2151 2.43151 2.527 2.74341L3.089 3.24341C3.439 3.55531 3.439 4.05531 3.089 4.36721L2.527 4.86721C2.2151 5.17911 2.2151 5.67911 2.527 5.99101L3.089 6.49101C3.439 6.80291 3.439 7.30291 3.089 7.61481L2.527 8.11481C2.2151 8.42671 2.2151 8.92671 2.527 9.23861L3.089 9.73861C3.439 10.0505 3.439 10.5505 3.089 10.8624L2.527 11.3624C2.2151 11.6743 2.2151 12.1743 2.527 12.4862L3.089 12.9862C3.439 13.2981 3.439 13.7981 3.089 14.11L2.527 14.61C2.2151 14.9219 2.2151 15.4219 2.527 15.7338L3.089 16.2338C3.439 16.5457 3.439 17.0457 3.089 17.3576L2.527 17.8576C2.2151 18.1695 2.2151 18.6695 2.527 18.9814C2.8389 19.3314 3.3389 19.3314 3.6508 18.9814L4.1508 18.4194C4.4627 18.0694 4.9627 18.0694 5.2746 18.4194L5.7746 18.9814C6.0865 19.3314 6.5865 19.3314 6.8984 18.9814L7.3984 18.4194C7.7103 18.0694 8.2103 18.0694 8.5222 18.4194L9.0222 18.9814C9.3341 19.3314 9.8341 19.3314 10.146 18.9814V1.58151Z" /></svg>
+                                {% trans "Account Settings" %}
+                            </a>
+                        </li>
+                    </ul>
+                    <a href="{% url 'account_logout' %}" class="flex items-center gap-3 px-4 py-2 text-sm font-medium text-danger hover:bg-danger/5 rounded-lg transition-all">
+                        <svg class="fill-current w-4.5 h-4.5" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.25 1.5H4.5C3.67157 1.5 3 2.17157 3 3V15C3 15.8284 3.67157 16.5 4.5 16.5H11.25C12.0784 16.5 12.75 15.8284 12.75 15V13.5H11.25V15H4.5V3H11.25V4.5H12.75V3C12.75 2.17157 12.0784 1.5 11.25 1.5Z" /><path d="M13.0607 5.43934L16.6213 9L13.0607 12.5607L11.9999 11.5L13.7499 9.75H7.5V8.25H13.7499L11.9999 6.5L13.0607 5.43934Z" /></svg>
+                        {% trans "Sign Out" %}
+                    </a>
+                </div>
+                <!-- Dropdown End -->
+            </div>
+            <!-- User Area -->
+        </div>
+    </div>
+</header>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const userMenuButton = document.getElementById('user-dropdown-toggle');
+        const userMenu = document.getElementById('user-dropdown-menu');
+        const themeToggleBtn = document.getElementById('theme-toggle-btn');
+        const darkIcon = document.getElementById('theme-toggle-dark-icon');
+        const lightIcon = document.getElementById('theme-toggle-light-icon');
+        const sidebarToggleMobile = document.getElementById('sidebar-toggle-mobile');
+        const sidebarToggleDesktop = document.getElementById('sidebar-toggle-desktop');
+        const sidebarToggleAside = document.getElementById('sidebar-toggle-aside');
+        const sidebar = document.getElementById('sidebar');
+
+        // Theme Initialization & Sync
+        const updateThemeUI = (isDark) => {
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+                if (lightIcon) lightIcon.classList.remove('hidden');
+                if (darkIcon) darkIcon.classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                if (darkIcon) darkIcon.classList.remove('hidden');
+                if (lightIcon) lightIcon.classList.add('hidden');
+            }
+        };
+
+        const isInitiallyDark = localStorage.getItem('darkMode') === 'true' || 
+            (!('darkMode' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        updateThemeUI(isInitiallyDark);
+
+        // Theme Toggle Handler
+        if (themeToggleBtn) {
+            themeToggleBtn.addEventListener('click', () => {
+                const isDark = document.documentElement.classList.toggle('dark');
+                localStorage.setItem('darkMode', isDark);
+                updateThemeUI(isDark);
+            });
+        }
+
+        // Sidebar Toggle Handler
+        const toggleSidebar = () => {
+            if (sidebar) {
+                if (window.innerWidth < 1024) {
+                    sidebar.classList.toggle('-translate-x-full');
+                } else {
+                    sidebar.classList.toggle('collapsed');
+                    document.body.classList.toggle('sidebar-collapsed');
+                }
+            }
+        };
+
+        if (sidebarToggleMobile) sidebarToggleMobile.addEventListener('click', (e) => { e.stopPropagation(); toggleSidebar(); });
+        if (sidebarToggleDesktop) sidebarToggleDesktop.addEventListener('click', (e) => { e.stopPropagation(); toggleSidebar(); });
+        if (sidebarToggleAside) sidebarToggleAside.addEventListener('click', (e) => { e.stopPropagation(); toggleSidebar(); });
+
+        // User Dropdown Handler
+        if (userMenuButton && userMenu) {
+            userMenuButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                userMenu.classList.toggle('hidden');
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!userMenu.contains(e.target) && !userMenuButton.contains(e.target)) {
+                    userMenu.classList.add('hidden');
+                }
+            });
+        }
+    });
+</script>

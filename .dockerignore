@@ -1,0 +1,16 @@
+.git
+.venv
+venv
+__pycache__
+*.pyc
+db.sqlite3
+htmlcov
+.coverage
+.pytest_cache
+.env
+media
+staticfiles
+apps/theme/static_src/node_modules
+.playwright-mcp
+.vscode
+.python-version

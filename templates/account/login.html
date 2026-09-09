@@ -1,0 +1,95 @@
+{% extends "layouts/home.html" %}
+{% load static %}
+{% load i18n allauth account %}
+{% load widget_tweaks %}
+
+{% block title_page %}
+    {% trans "Sign In" %}
+{% endblock %}
+
+{% block content %}
+<div class="rounded-2xl border border-gray-200 bg-white shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark overflow-hidden">
+    <div class="flex flex-wrap items-center">
+        <!-- Left Side: Branding/Illustration -->
+        <div class="hidden w-full xl:block xl:w-1/2 bg-gray-50 dark:bg-white/[0.02]">
+            <div class="py-20 px-10 text-center">
+                <a class="mb-10 inline-block" href="/">
+                    <img src="{% static 'assets/images/logos/logo.png' %}" alt="Logo" class="h-12 mx-auto" />
+                </a>
+                <h3 class="mb-4 text-2xl font-bold text-black dark:text-white">
+                    {% trans "Sign in to your account" %}
+                </h3>
+                <p class="text-base font-medium text-gray-500 px-10">
+                    {% trans "Enter your details to access your dashboard and manage your applications." %}
+                </p>
+                <div class="mt-10">
+                    <img src="{% static 'assets/images/logos/logo-short.png' %}" alt="Illustration" class="mx-auto opacity-20 grayscale h-32" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side: Sign In Form -->
+        <div class="w-full xl:w-1/2 border-l border-gray-200 dark:border-gray-800">
+            <div class="w-full p-8 sm:p-12.5 xl:p-15">
+                <span class="mb-1.5 block font-medium text-primary">{% trans "Welcome back" %}</span>
+                <h2 class="mb-9 text-2xl font-bold text-black dark:text-white sm:text-3xl">
+                    {% trans "Sign In" %}
+                </h2>
+
+                <form method="POST" action="{% url "account_login" %}">
+                    {% csrf_token %}
+                    
+                    <!-- Email/Username Input -->
+                    <div class="mb-4">
+                        <label class="mb-2.5 block font-medium text-black dark:text-white">
+                            {{ form.login.label }}
+                        </label>
+                        <div class="relative">
+                            {{ form.login|add_class:"w-full rounded-lg border border-gray-200 bg-transparent py-4 px-6 outline-none focus:border-primary focus-visible:shadow-none dark:border-gray-800 dark:bg-white/[0.03] dark:focus:border-primary transition-all" }}
+                            {% if form.login.errors %}
+                                <p class="mt-1 text-xs text-error">{{ form.login.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Password Input -->
+                    <div class="mb-6">
+                        <div class="flex justify-between items-center mb-2.5">
+                            <label class="block font-medium text-black dark:text-white">
+                                {{ form.password.label }}
+                            </label>
+                            <a href="{% url 'account_reset_password' %}" class="text-primary text-sm font-medium hover:underline">
+                                {% trans "Forgot Password?" %}
+                            </a>
+                        </div>
+                        <div class="relative">
+                            {{ form.password|add_class:"w-full rounded-lg border border-gray-200 bg-transparent py-4 px-6 outline-none focus:border-primary focus-visible:shadow-none dark:border-gray-800 dark:bg-white/[0.03] dark:focus:border-primary transition-all" }}
+                            {% if form.password.errors %}
+                                <p class="mt-1 text-xs text-error">{{ form.password.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {% if redirect_field_value %}
+                        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                    {% endif %}
+
+                    <!-- Submit Button -->
+                    <div class="mb-5">
+                        <button type="submit" class="w-full cursor-pointer rounded-lg bg-primary p-4 text-white font-bold transition hover:bg-opacity-90 shadow-theme-lg">
+                            {% trans "Sign In" %}
+                        </button>
+                    </div>
+
+                    <div class="mt-6 text-center">
+                        <p class="font-medium text-gray-500">
+                            {% trans "Don't have an account?" %} 
+                            <a href="{% url 'account_signup' %}" class="text-primary hover:underline font-bold">{% trans "Sign Up" %}</a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

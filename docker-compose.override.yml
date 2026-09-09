@@ -1,0 +1,50 @@
+services:
+  django:
+    command: python manage.py tailwind dev
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.development
+      DEBUG: "True"
+      EMAIL_BACKEND: django.core.mail.backends.smtp.EmailBackend
+      EMAIL_HOST: mailpit
+      EMAIL_PORT: "1025"
+      EMAIL_USE_TLS: "False"
+      EMAIL_USE_SSL: "False"
+      DEFAULT_FROM_EMAIL: "Project Name <dev@localhost>"
+    volumes:
+      - ./apps:/app/apps
+      - ./config:/app/config
+      - ./templates:/app/templates
+      - ./static:/app/static
+      - ./locale:/app/locale
+      - ./prompts:/app/prompts
+      - ./manage.py:/app/manage.py
+      - ./Procfile.tailwind:/app/Procfile.tailwind
+      - ./pyproject.toml:/app/pyproject.toml
+      - ./uv.lock:/app/uv.lock
+      - media_data:/app/media
+
+  celery:
+    volumes:
+      - ./apps:/app/apps
+      - ./config:/app/config
+      - ./templates:/app/templates
+      - ./static:/app/static
+      - ./locale:/app/locale
+      - ./prompts:/app/prompts
+      - ./manage.py:/app/manage.py
+      - ./pyproject.toml:/app/pyproject.toml
+      - ./uv.lock:/app/uv.lock
+      - media_data:/app/media
+
+  celerybeat:
+    volumes:
+      - ./apps:/app/apps
+      - ./config:/app/config
+      - ./templates:/app/templates
+      - ./static:/app/static
+      - ./locale:/app/locale
+      - ./prompts:/app/prompts
+      - ./manage.py:/app/manage.py
+      - ./pyproject.toml:/app/pyproject.toml
+      - ./uv.lock:/app/uv.lock
+      - media_data:/app/media

@@ -1,0 +1,130 @@
+{% extends "layouts/home.html" %}
+{% load static %}
+{% load i18n allauth account %}
+{% load widget_tweaks %}
+
+{% block title_page %}
+    {% trans "Signup" %}
+{% endblock %}
+
+{% block content %}
+<div class="rounded-2xl border border-gray-200 bg-white shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark overflow-hidden">
+    <div class="flex flex-wrap items-center">
+        <!-- Left Side: Branding/Illustration -->
+        <div class="hidden w-full xl:block xl:w-1/2 bg-gray-50 dark:bg-white/[0.02]">
+            <div class="py-20 px-10 text-center">
+                <a class="mb-10 inline-block" href="/">
+                    <img src="{% static 'assets/images/logos/logo.png' %}" alt="Logo" class="h-12 mx-auto" />
+                </a>
+                <h3 class="mb-4 text-2xl font-bold text-black dark:text-white">
+                    {% trans "Join our platform" %}
+                </h3>
+                <p class="text-base font-medium text-gray-500 px-10">
+                    {% trans "Create an account to start managing your laboratory processes and track your samples." %}
+                </p>
+                <div class="mt-10">
+                    <img src="{% static 'assets/images/logos/logo-short.png' %}" alt="Illustration" class="mx-auto opacity-20 grayscale h-32" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side: Sign Up Form -->
+        <div class="w-full xl:w-1/2 border-l border-gray-200 dark:border-gray-800">
+            <div class="w-full p-8 sm:p-12.5 xl:p-15">
+                <span class="mb-1.5 block font-medium text-primary">{% trans "Get started" %}</span>
+                <h2 class="mb-9 text-2xl font-bold text-black dark:text-white sm:text-3xl">
+                    {% trans "Create Account" %}
+                </h2>
+
+                <form method="POST" action="{% url "account_signup" %}">
+                    {% csrf_token %}
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <!-- First Name -->
+                        <div>
+                            <label class="mb-2.5 block font-medium text-black dark:text-white">
+                                {{ form.first_name.label }}
+                            </label>
+                            <div class="relative">
+                                {{ form.first_name|add_class:"w-full rounded-lg border border-gray-200 bg-transparent py-4 px-6 outline-none focus:border-primary focus-visible:shadow-none dark:border-gray-800 dark:bg-white/[0.03] dark:focus:border-primary transition-all" }}
+                                {% if form.first_name.errors %}
+                                    <p class="mt-1 text-xs text-error">{{ form.first_name.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <!-- Last Name -->
+                        <div>
+                            <label class="mb-2.5 block font-medium text-black dark:text-white">
+                                {{ form.last_name.label }}
+                            </label>
+                            <div class="relative">
+                                {{ form.last_name|add_class:"w-full rounded-lg border border-gray-200 bg-transparent py-4 px-6 outline-none focus:border-primary focus-visible:shadow-none dark:border-gray-800 dark:bg-white/[0.03] dark:focus:border-primary transition-all" }}
+                                {% if form.last_name.errors %}
+                                    <p class="mt-1 text-xs text-error">{{ form.last_name.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="mb-4">
+                        <label class="mb-2.5 block font-medium text-black dark:text-white">
+                            {{ form.email.label }}
+                        </label>
+                        <div class="relative">
+                            {{ form.email|add_class:"w-full rounded-lg border border-gray-200 bg-transparent py-4 px-6 outline-none focus:border-primary focus-visible:shadow-none dark:border-gray-800 dark:bg-white/[0.03] dark:focus:border-primary transition-all" }}
+                            {% if form.email.errors %}
+                                <p class="mt-1 text-xs text-error">{{ form.email.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Password 1 -->
+                    <div class="mb-4">
+                        <label class="mb-2.5 block font-medium text-black dark:text-white">
+                            {{ form.password1.label }}
+                        </label>
+                        <div class="relative">
+                            {{ form.password1|add_class:"w-full rounded-lg border border-gray-200 bg-transparent py-4 px-6 outline-none focus:border-primary focus-visible:shadow-none dark:border-gray-800 dark:bg-white/[0.03] dark:focus:border-primary transition-all" }}
+                            {% if form.password1.errors %}
+                                <p class="mt-1 text-xs text-error">{{ form.password1.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Password 2 -->
+                    <div class="mb-6">
+                        <label class="mb-2.5 block font-medium text-black dark:text-white">
+                            {{ form.password2.label }}
+                        </label>
+                        <div class="relative">
+                            {{ form.password2|add_class:"w-full rounded-lg border border-gray-200 bg-transparent py-4 px-6 outline-none focus:border-primary focus-visible:shadow-none dark:border-gray-800 dark:bg-white/[0.03] dark:focus:border-primary transition-all" }}
+                            {% if form.password2.errors %}
+                                <p class="mt-1 text-xs text-error">{{ form.password2.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {% if redirect_field_value %}
+                        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                    {% endif %}
+
+                    <!-- Submit Button -->
+                    <div class="mb-5">
+                        <button type="submit" class="w-full cursor-pointer rounded-lg bg-primary p-4 text-white font-bold transition hover:bg-opacity-90 shadow-theme-lg">
+                            {% trans "Create Account" %}
+                        </button>
+                    </div>
+
+                    <div class="mt-6 text-center">
+                        <p class="font-medium text-gray-500">
+                            {% trans "Already have an account?" %} 
+                            <a href="{% url 'account_login' %}" class="text-primary hover:underline font-bold">{% trans "Sign In" %}</a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

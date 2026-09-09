@@ -1,0 +1,21 @@
+{% extends "layouts/home.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block title_page %}{% trans "Page not found" %}{% endblock %}
+
+{% block content %}
+<div class="flex flex-col items-center justify-center gap-8 py-10 text-center">
+    <div class="text-9xl font-black text-primary/20">404</div>
+    <div class="flex flex-col gap-2">
+        <h1 class="text-3xl font-bold">{% trans "Seems there is nothing here" %}</h1>
+        <p class="opacity-60">{% trans "The page you are looking for doesn't exist or has been moved." %}</p>
+    </div>
+    <a href="/" class="btn btn-primary px-8">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+        </svg>
+        {% trans "Go back home" %}
+    </a>
+</div>
+{% endblock content %}

@@ -1,0 +1,121 @@
+{% extends "layouts/dashboard.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block title_page %}Dashboard{% endblock title_page %}
+{% block toolbar_title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="flex flex-col gap-6">
+    <div class="flex justify-end">
+        <span class="text-xs font-medium text-gray-500 italic">
+            {% trans "Last updated" %}: {{ last_updated|date:"Y-m-d H:i" }}
+        </span>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-4 2xl:gap-7.5 mb-6">
+        <!-- Card 1 -->
+        <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark">
+            <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <svg class="fill-current" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="mt-4 flex items-end justify-between">
+                <div>
+                    <h4 class="text-2xl font-bold text-black dark:text-white">
+                        $3.456K
+                    </h4>
+                    <span class="text-sm font-medium text-gray-500">{% trans "Total views" %}</span>
+                </div>
+                <span class="flex items-center gap-1 text-sm font-medium text-success">
+                    0.43%
+                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 1L9 5M5 1L1 5M5 1V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+            </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark">
+            <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-success/10 text-success">
+                <svg class="fill-current" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 21V19C16 17.9391 15.5786 16.9217 14.8284 16.1716C14.0783 15.4214 13.0609 15 12 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8.5 11C10.7091 11 12.5 8.76142 12.5 6C12.5 3.23858 10.7091 1 8.5 1C6.29086 1 4.5 3.23858 4.5 6C4.5 8.76142 6.29086 11 8.5 11Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 11L19 13L23 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="mt-4 flex items-end justify-between">
+                <div>
+                    <h4 class="text-2xl font-bold text-black dark:text-white">
+                        45.2K
+                    </h4>
+                    <span class="text-sm font-medium text-gray-500">{% trans "Total Profit" %}</span>
+                </div>
+                <span class="flex items-center gap-1 text-sm font-medium text-success">
+                    4.35%
+                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 1L9 5M5 1L1 5M5 1V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+            </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark">
+            <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-warning/10 text-warning">
+                <svg class="fill-current" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 7H4C2.89543 7 2 7.89543 2 9V19C2 20.1046 2.89543 21 4 21H20C21.1046 21 22 20.1046 22 19V9C22 7.89543 21.1046 7 20 7Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 21V5C16 4.46957 15.7893 3.96086 15.4142 3.58579C15.0391 3.21071 14.5304 3 14 3H10C9.46957 3 8.96086 3.21071 8.58579 3.58579C8.21071 3.96086 8 4.46957 8 5V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="mt-4 flex items-end justify-between">
+                <div>
+                    <h4 class="text-2xl font-bold text-black dark:text-white">
+                        2.450
+                    </h4>
+                    <span class="text-sm font-medium text-gray-500">{% trans "Total Product" %}</span>
+                </div>
+                <span class="flex items-center gap-1 text-sm font-medium text-success">
+                    2.59%
+                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 1L9 5M5 1L1 5M5 1V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+            </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark">
+            <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-error/10 text-error">
+                <svg class="fill-current" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17 21V19C17 17.9391 16.5786 16.9217 15.8284 16.1716C15.0783 15.4214 14.0609 15 13 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 11C11.2091 11 13 8.76142 13 6C13 3.23858 11.2091 1 9 1C6.79086 1 5 3.23858 5 6C5 8.76142 6.79086 11 9 11Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M23 21V19C22.9993 18.1137 22.7044 17.2528 22.1614 16.5523C21.6184 15.8519 20.8581 15.3516 20 15.13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 3.13C16.8604 3.35031 17.623 3.85071 18.1676 4.55232C18.7122 5.25392 19.0078 6.11683 19.0078 7.005C19.0078 7.89317 18.7122 8.75608 18.1676 9.45768C17.623 10.1593 16.8604 10.6597 16 10.88" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="mt-4 flex items-end justify-between">
+                <div>
+                    <h4 class="text-2xl font-bold text-black dark:text-white">
+                        3.456
+                    </h4>
+                    <span class="text-sm font-medium text-gray-500">{% trans "Total Users" %}</span>
+                </div>
+                <span class="flex items-center gap-1 text-sm font-medium text-error">
+                    0.95%
+                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 9L1 5M5 9L9 5M5 9V1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Welcome Section -->
+    <div class="rounded-2xl border border-gray-200 bg-white p-8 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark">
+        <div class="text-center">
+            <div class="mx-auto max-w-lg">
+                <h3 class="text-3xl font-bold text-black dark:text-white mb-4">{% trans "Welcome back," %} {{ request.user.first_name }}!</h3>
+                <p class="text-lg font-medium text-gray-500 mb-8">
+                    {% trans "Manage your laboratory processes, track samples and validate results from one central place." %}
+                </p>
+                <div class="flex justify-center gap-4">
+                    <a href="{% url 'apps.users:account_list' %}" 
+                       class="inline-flex items-center justify-center rounded-lg bg-primary py-3 px-10 text-center font-medium text-white hover:bg-opacity-90 transition-all">
+                        {% trans "Get Started" %}
+                    </a>
+                    <a href="{% url 'apps.users:profile' %}" 
+                       class="inline-flex items-center justify-center rounded-lg border border-gray-200 py-3 px-10 text-center font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-800 dark:text-white dark:hover:bg-white/5 transition-all">
+                        {% trans "View Profile" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
