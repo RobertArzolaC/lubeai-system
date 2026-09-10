@@ -19,7 +19,7 @@
                     {% endfor %}
                 </select>
                 <span class="absolute top-1/2 right-2 z-30 -translate-y-1/2 pointer-events-none">
-                    <svg class="fill-current" width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.29289 8.29289C5.68342 7.90237 6.31658 7.90237 6.70711 8.29289L12 13.5858L17.2929 8.29289C17.6834 7.90237 18.3166 7.90237 18.7071 8.29289C19.0976 8.68342 19.0976 9.31658 18.7071 9.70711L12.7071 16.1142C12.3166 16.5047 11.6834 16.5047 11.2929 16.1142L5.29289 9.70711C4.90237 9.31658 4.90237 8.68342 5.29289 8.29289Z" fill=""></path></svg>
+                    <i data-lucide="chevron-down" class="h-3.5 w-3.5" stroke-width="1.8" aria-hidden="true"></i>
                 </span>
             </div>
         </div>
@@ -38,15 +38,11 @@
             <!-- Previous Button -->
             {% if page_obj.has_previous %}
                 <a href="{% param_replace page=page_obj.previous_page_number %}" class="flex h-8.5 w-9 items-center justify-center border-r border-stroke hover:bg-gray-2 dark:border-strokedark dark:hover:bg-meta-4 text-black dark:text-white transition-colors" title="{% trans 'Previous' %}">
-                    <svg class="fill-current" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12.1777 16.1156C12.009 16.1156 11.8402 16.0593 11.7277 15.9187L6.27148 9.36562C6.07461 9.14062 6.07461 8.85938 6.27148 8.63438L11.7277 2.08125C11.9246 1.85625 12.2621 1.82812 12.4871 2.025C12.7121 2.22187 12.7402 2.55937 12.5433 2.78437L7.50898 9L12.5433 15.2156C12.7402 15.4406 12.7121 15.7781 12.4871 15.975C12.3746 16.0593 12.2621 16.1156 12.1777 16.1156Z" />
-                    </svg>
+                    <i data-lucide="chevron-left" class="h-4.5 w-4.5" stroke-width="1.8" aria-hidden="true"></i>
                 </a>
             {% else %}
                 <span class="flex h-8.5 w-9 items-center justify-center border-r border-stroke bg-gray-2 dark:bg-meta-4 opacity-40 cursor-not-allowed">
-                    <svg class="fill-current" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12.1777 16.1156C12.009 16.1156 11.8402 16.0593 11.7277 15.9187L6.27148 9.36562C6.07461 9.14062 6.07461 8.85938 6.27148 8.63438L11.7277 2.08125C11.9246 1.85625 12.2621 1.82812 12.4871 2.025C12.7121 2.22187 12.7402 2.55937 12.5433 2.78437L7.50898 9L12.5433 15.2156C12.7402 15.4406 12.7121 15.7781 12.4871 15.975C12.3746 16.0593 12.2621 16.1156 12.1777 16.1156Z" />
-                    </svg>
+                    <i data-lucide="chevron-left" class="h-4.5 w-4.5" stroke-width="1.8" aria-hidden="true"></i>
                 </span>
             {% endif %}
 
@@ -66,15 +62,11 @@
             <!-- Next Button -->
             {% if page_obj.has_next %}
                 <a href="{% param_replace page=page_obj.next_page_number %}" class="flex h-8.5 w-9 items-center justify-center hover:bg-gray-2 dark:border-strokedark dark:hover:bg-meta-4 text-black dark:text-white transition-colors" title="{% trans 'Next' %}">
-                    <svg class="fill-current" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M5.82148 16.1156C5.73711 16.1156 5.62461 16.0875 5.53984 16.0312C5.31484 15.8344 5.28672 15.4969 5.48359 15.2719L10.518 9L5.48359 2.72812C5.28672 2.50312 5.31484 2.16562 5.53984 1.96875C5.76484 1.77187 6.10234 1.8 6.29922 2.025L11.7555 8.57812C11.9523 8.80312 11.9523 9.08437 11.7555 9.30937L6.29922 15.8625C6.15859 16.0312 5.99023 16.1156 5.82148 16.1156Z" />
-                    </svg>
+                    <i data-lucide="chevron-right" class="h-4.5 w-4.5" stroke-width="1.8" aria-hidden="true"></i>
                 </a>
             {% else %}
                 <span class="flex h-8.5 w-9 items-center justify-center bg-gray-2 dark:bg-meta-4 opacity-40 cursor-not-allowed">
-                    <svg class="fill-current" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M5.82148 16.1156C5.73711 16.1156 5.62461 16.0875 5.53984 16.0312C5.31484 15.8344 5.28672 15.4969 5.48359 15.2719L10.518 9L5.48359 2.72812C5.28672 2.50312 5.31484 2.16562 5.53984 1.96875C5.76484 1.77187 6.10234 1.8 6.29922 2.025L11.7555 8.57812C11.9523 8.80312 11.9523 9.08437 11.7555 9.30937L6.29922 15.8625C6.15859 16.0312 5.99023 16.1156 5.82148 16.1156Z" />
-                    </svg>
+                    <i data-lucide="chevron-right" class="h-4.5 w-4.5" stroke-width="1.8" aria-hidden="true"></i>
                 </span>
             {% endif %}
         </div>

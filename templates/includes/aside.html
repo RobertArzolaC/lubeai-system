@@ -13,16 +13,12 @@
         <div class="flex items-center gap-2 group-[.collapsed]:hidden">
             <!-- Desktop Toggle -->
             <button id="sidebar-toggle-aside" class="hidden lg:block text-gray-500 hover:text-primary transition-colors">
-                <svg class="fill-current rotate-180 transition-transform duration-300" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M13.2 15.8L7.4 10L13.2 4.2L11.8 2.8L4.6 10L11.8 17.2L13.2 15.8Z" />
-                </svg>
+                <i data-lucide="panel-left-close" class="h-5 w-5" stroke-width="1.8" aria-hidden="true"></i>
             </button>
 
             <!-- Mobile Close -->
             <button id="sidebar-close" class="block lg:hidden text-gray-500 hover:text-primary">
-                <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M19 3.3L16.7 1L10 7.7L3.3 1L1 3.3L7.7 10L1 16.7L3.3 19L10 12.3L16.7 19L19 16.7L12.3 10L19 3.3Z" />
-                </svg>
+                <i data-lucide="x" class="h-5 w-5" stroke-width="1.8" aria-hidden="true"></i>
             </button>
         </div>
     </div>
@@ -42,12 +38,7 @@
                     <li>
                         <a class="flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-gray-600 dark:text-bodydark1 duration-300 ease-in-out hover:bg-gray-2 dark:hover:bg-meta-4 transition-all group-[.collapsed]:justify-center group-[.collapsed]:px-0 {% if request.resolver_match.url_name == 'index' and 'dashboard' in request.path %}bg-gray-2 dark:bg-meta-4 !text-primary{% endif %}"
                            href="{% url 'apps.dashboard:index' %}" title="{% trans 'Dashboard' %}">
-                            <svg class="fill-current flex-shrink-0" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M1.66666 4.16667C1.66666 3.24619 2.41285 2.5 3.33332 2.5H7.49999C8.42047 2.5 9.16666 3.24619 9.16666 4.16667V7.5C9.16666 8.42048 8.42047 9.16667 7.49999 9.16667H3.33332C2.41285 9.16667 1.66666 8.42048 1.66666 7.5V4.16667Z" />
-                                <path d="M1.66666 12.5C1.66666 11.5795 2.41285 10.8333 3.33332 10.8333H7.49999C8.42047 10.8333 9.16666 11.5795 9.16666 12.5V15.8333C9.16666 16.7538 8.42047 17.5 7.49999 17.5H3.33332C2.41285 17.5 1.66666 16.7538 1.66666 15.8333V12.5Z" />
-                                <path d="M10.8333 4.16667C10.8333 3.24619 11.5795 2.5 12.5 2.5H16.6667C17.5871 2.5 18.3333 3.24619 18.3333 4.16667V7.5C18.3333 8.42048 17.5871 9.16667 16.6667 9.16667H12.5C11.5795 9.16667 10.8333 8.42048 10.8333 7.5V4.16667Z" />
-                                <path d="M10.8333 12.5C10.8333 11.5795 11.5795 10.8333 12.5 10.8333H16.6667C17.5871 10.8333 18.3333 11.5795 18.3333 12.5V15.8333C18.3333 16.7538 17.5871 17.5 16.6667 17.5H12.5C11.5795 17.5 10.8333 16.7538 10.8333 15.8333V12.5Z" />
-                            </svg>
+                            <i data-lucide="layout-dashboard" class="h-5 w-5 flex-shrink-0" stroke-width="1.8" aria-hidden="true"></i>
                             <span class="group-[.collapsed]:hidden duration-300 ease-in-out overflow-hidden whitespace-nowrap">{% trans "Dashboard" %}</span>
                         </a>
                     </li>
@@ -62,10 +53,7 @@
                     <li>
                         <a class="flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-gray-600 dark:text-bodydark1 duration-300 ease-in-out hover:bg-gray-2 dark:hover:bg-meta-4 transition-all group-[.collapsed]:justify-center group-[.collapsed]:px-0 {% if "machines" in request.path %}bg-gray-2 dark:bg-meta-4 !text-primary{% endif %}"
                            href="{% url 'apps.equipment:machine_list' %}" title="{% trans 'Machines' %}">
-                            <svg class="fill-current flex-shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
+                            <i data-lucide="cog" class="h-5 w-5 flex-shrink-0" stroke-width="1.8" aria-hidden="true"></i>
                             <span class="group-[.collapsed]:hidden duration-300 ease-in-out overflow-hidden whitespace-nowrap">{% trans "Machines" %}</span>
                         </a>
                     </li>
@@ -74,10 +62,7 @@
                     <li>
                         <a class="flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-gray-600 dark:text-bodydark1 duration-300 ease-in-out hover:bg-gray-2 dark:hover:bg-meta-4 transition-all group-[.collapsed]:justify-center group-[.collapsed]:px-0 {% if "branches" in request.path %}bg-gray-2 dark:bg-meta-4 !text-primary{% endif %}"
                            href="{% url 'apps.equipment:branch_list' %}" title="{% trans 'Branches' %}">
-                            <svg class="fill-current flex-shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
+                            <i data-lucide="map-pin" class="h-5 w-5 flex-shrink-0" stroke-width="1.8" aria-hidden="true"></i>
                             <span class="group-[.collapsed]:hidden duration-300 ease-in-out overflow-hidden whitespace-nowrap">{% trans "Branches" %}</span>
                         </a>
                     </li>
@@ -86,9 +71,7 @@
                     <li>
                         <a class="flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-gray-600 dark:text-bodydark1 duration-300 ease-in-out hover:bg-gray-2 dark:hover:bg-meta-4 transition-all group-[.collapsed]:justify-center group-[.collapsed]:px-0 {% if "fleets" in request.path %}bg-gray-2 dark:bg-meta-4 !text-primary{% endif %}"
                            href="{% url 'apps.equipment:fleet_list' %}" title="{% trans 'Fleets' %}">
-                            <svg class="fill-current flex-shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M3 7h18M3 12h18M3 17h18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
+                            <i data-lucide="truck" class="h-5 w-5 flex-shrink-0" stroke-width="1.8" aria-hidden="true"></i>
                             <span class="group-[.collapsed]:hidden duration-300 ease-in-out overflow-hidden whitespace-nowrap">{% trans "Fleets" %}</span>
                         </a>
                     </li>
@@ -97,10 +80,7 @@
                     <li>
                         <a class="flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-gray-600 dark:text-bodydark1 duration-300 ease-in-out hover:bg-gray-2 dark:hover:bg-meta-4 transition-all group-[.collapsed]:justify-center group-[.collapsed]:px-0 {% if "component-types" in request.path %}bg-gray-2 dark:bg-meta-4 !text-primary{% endif %}"
                            href="{% url 'apps.equipment:component_type_list' %}" title="{% trans 'Component Types' %}">
-                            <svg class="fill-current flex-shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M12 3v18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
+                            <i data-lucide="puzzle" class="h-5 w-5 flex-shrink-0" stroke-width="1.8" aria-hidden="true"></i>
                             <span class="group-[.collapsed]:hidden duration-300 ease-in-out overflow-hidden whitespace-nowrap">{% trans "Component Types" %}</span>
                         </a>
                     </li>
@@ -117,10 +97,7 @@
                     <li>
                         <a class="flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-gray-600 dark:text-bodydark1 duration-300 ease-in-out hover:bg-gray-2 dark:hover:bg-meta-4 transition-all group-[.collapsed]:justify-center group-[.collapsed]:px-0 {% if "laboratories" in request.path %}bg-gray-2 dark:bg-meta-4 !text-primary{% endif %}"
                            href="{% url 'apps.reports:laboratory_list' %}" title="{% trans 'Laboratories' %}">
-                            <svg class="fill-current flex-shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M9 3h6l1 4H8l1-4z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M6 7h12v12a1 1 0 01-1 1H7a1 1 0 01-1-1V7z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
+                            <i data-lucide="flask-conical" class="h-5 w-5 flex-shrink-0" stroke-width="1.8" aria-hidden="true"></i>
                             <span class="group-[.collapsed]:hidden duration-300 ease-in-out overflow-hidden whitespace-nowrap">{% trans "Laboratories" %}</span>
                         </a>
                     </li>
@@ -129,9 +106,7 @@
                     <li>
                         <a class="flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-gray-600 dark:text-bodydark1 duration-300 ease-in-out hover:bg-gray-2 dark:hover:bg-meta-4 transition-all group-[.collapsed]:justify-center group-[.collapsed]:px-0 {% if request.resolver_match.url_name == 'report_list' or 'report' in request.resolver_match.url_name %}bg-gray-2 dark:bg-meta-4 !text-primary{% endif %}"
                            href="{% url 'apps.reports:report_list' %}" title="{% trans 'Reports' %}">
-                            <svg class="fill-current flex-shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
+                            <i data-lucide="file-text" class="h-5 w-5 flex-shrink-0" stroke-width="1.8" aria-hidden="true"></i>
                             <span class="group-[.collapsed]:hidden duration-300 ease-in-out overflow-hidden whitespace-nowrap">{% trans "Reports" %}</span>
                         </a>
                     </li>
@@ -140,9 +115,7 @@
                     <li>
                         <a class="flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-gray-600 dark:text-bodydark1 duration-300 ease-in-out hover:bg-gray-2 dark:hover:bg-meta-4 transition-all group-[.collapsed]:justify-center group-[.collapsed]:px-0 {% if "thresholds" in request.path %}bg-gray-2 dark:bg-meta-4 !text-primary{% endif %}"
                            href="{% url 'apps.reports:analysisthreshold_list' %}" title="{% trans 'Thresholds' %}">
-                            <svg class="fill-current flex-shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M10.5 3.75a6.75 6.75 0 100 13.5 6.75 6.75 0 000-13.5zM2.25 10.5a8.25 8.25 0 1114.59 5.28l4.69 4.69a.75.75 0 11-1.06 1.06l-4.69-4.69A8.25 8.25 0 012.25 10.5z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
+                            <i data-lucide="sliders-horizontal" class="h-5 w-5 flex-shrink-0" stroke-width="1.8" aria-hidden="true"></i>
                             <span class="group-[.collapsed]:hidden duration-300 ease-in-out overflow-hidden whitespace-nowrap">{% trans "Thresholds" %}</span>
                         </a>
                     </li>
@@ -158,9 +131,7 @@
                     <li>
                         <a class="flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-gray-600 dark:text-bodydark1 duration-300 ease-in-out hover:bg-gray-2 dark:hover:bg-meta-4 transition-all group-[.collapsed]:justify-center group-[.collapsed]:px-0 {% if "alerts" in request.path %}bg-gray-2 dark:bg-meta-4 !text-primary{% endif %}"
                            href="{% url 'apps.alerts:alert_list' %}" title="{% trans 'Alerts' %}">
-                            <svg class="fill-current flex-shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
+                            <i data-lucide="bell-ring" class="h-5 w-5 flex-shrink-0" stroke-width="1.8" aria-hidden="true"></i>
                             <span class="group-[.collapsed]:hidden duration-300 ease-in-out overflow-hidden whitespace-nowrap">{% trans "Alerts" %}</span>
                         </a>
                     </li>
@@ -175,10 +146,7 @@
                     <li>
                         <a class="flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-gray-600 dark:text-bodydark1 duration-300 ease-in-out hover:bg-gray-2 dark:hover:bg-meta-4 transition-all group-[.collapsed]:justify-center group-[.collapsed]:px-0 {% if "accounts" in request.path %}bg-gray-2 dark:bg-meta-4 !text-primary{% endif %}"
                            href="{% url 'apps.users:account_list' %}" title="{% trans 'Accounts' %}">
-                            <svg class="fill-current flex-shrink-0" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M10 10C12.3012 10 14.1667 8.13452 14.1667 5.83333C14.1667 3.53215 12.3012 1.66667 10 1.66667C7.69882 1.66667 5.83334 3.53215 5.83334 5.83333C5.83334 8.13452 7.69882 10 10 10Z" />
-                                <path d="M10 11.6667C6.77834 11.6667 4.16667 14.2783 4.16667 17.5C4.16667 17.9602 4.53977 18.3333 5 18.3333H15C15.4602 18.3333 15.8333 17.9602 15.8333 17.5C15.8333 14.2783 13.2217 11.6667 10 11.6667Z" />
-                            </svg>
+                            <i data-lucide="users" class="h-5 w-5 flex-shrink-0" stroke-width="1.8" aria-hidden="true"></i>
                             <span class="group-[.collapsed]:hidden duration-300 ease-in-out overflow-hidden whitespace-nowrap">{% trans "Accounts" %}</span>
                         </a>
                     </li>
@@ -191,7 +159,7 @@
 
     <!-- Sidebar Footer / Bottom Actions -->
     <div class="p-6 border-t border-stroke dark:border-strokedark group-[.collapsed]:p-4 group-[.collapsed]:flex group-[.collapsed]:justify-center transition-all">
-        <span class="text-xs font-medium text-gray-500 group-[.collapsed]:hidden">v1.0.0</span>
+        <span class="text-xs font-medium text-gray-500 group-[.collapsed]:hidden"></span>
         <div class="hidden group-[.collapsed]:block">
             <span class="text-[10px] font-bold text-gray-500">v1</span>
         </div>

@@ -25,9 +25,7 @@
         <!-- Desktop Sidebar Toggle (Left) -->
         <div class="hidden lg:block">
             <button id="sidebar-toggle-desktop" class="flex items-center justify-center h-10 w-10 rounded-md border border-stroke bg-whiten hover:text-primary dark:border-strokedark dark:bg-meta-4 dark:text-white transition-all shadow-sm">
-                <svg class="fill-current w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M3 12H21M3 6H21M3 18H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
+                <i data-lucide="menu" class="h-5 w-5" stroke-width="1.8" aria-hidden="true"></i>
             </button>
         </div>
 
@@ -37,10 +35,10 @@
                 <li>
                     <button id="theme-toggle-btn" class="relative flex h-8.5 w-8.5 items-center justify-center rounded-full border-[0.5px] border-stroke bg-whiten hover:text-primary dark:border-strokedark dark:bg-meta-4 dark:text-white transition-colors">
                         <span id="theme-toggle-dark-icon" class="hidden">
-                            <svg class="fill-current w-5 h-5" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                            <i data-lucide="moon" class="h-5 w-5" stroke-width="1.8" aria-hidden="true"></i>
                         </span>
                         <span id="theme-toggle-light-icon" class="hidden">
-                            <svg class="fill-current w-5 h-5" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"></path></svg>
+                            <i data-lucide="sun" class="h-5 w-5" stroke-width="1.8" aria-hidden="true"></i>
                         </span>
                     </button>
                 </li>
@@ -58,9 +56,7 @@
                         <img src="{% if request.user.avatar %}{{ request.user.avatar.url }}{% else %}{% static 'assets/images/avatars/blank.png' %}{% endif %}" alt="User" class="rounded-full h-full w-full object-cover" />
                     </span>
 
-                    <svg class="hidden fill-current sm:block opacity-50 w-3 h-2" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" clip-rule="evenodd" d="M0.410765 0.910734C0.736202 0.585297 1.26384 0.585297 1.58928 0.910734L6.00002 5.32148L10.4108 0.910734C10.7362 0.585297 11.2638 0.585297 11.5893 0.910734C11.9147 1.23617 11.9147 1.76381 11.5893 2.08924L6.58928 7.08924C6.26384 7.41468 5.7362 7.41468 5.41077 7.08924L0.410765 2.08924C0.0853277 1.76381 0.0853277 1.23617 0.410765 0.910734Z" />
-                    </svg>
+                    <i data-lucide="chevron-down" class="hidden sm:block opacity-50 h-4 w-4" stroke-width="1.8" aria-hidden="true"></i>
                 </button>
 
                 <!-- Dropdown Start -->
@@ -69,27 +65,27 @@
                     <ul class="flex flex-col gap-1 border-b border-gray-200 dark:border-gray-800 pb-2 mb-2 text-black dark:text-white">
                         <li>
                             <a href="{% url 'apps.users:profile' %}" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 hover:text-primary transition-all">
-                                <svg class="fill-current w-4.5 h-4.5" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 9C11.0711 9 12.75 7.32107 12.75 5.25C12.75 3.17893 11.0711 1.5 9 1.5C6.92893 1.5 5.25 3.17893 5.25 5.25C5.25 7.32107 6.92893 9 9 9Z" /><path d="M9 10.5C6.09848 10.5 3.75 12.8485 3.75 15.75C3.75 16.1642 4.08579 16.5 4.5 16.5H13.5C13.9142 16.5 14.25 16.1642 14.25 15.75C14.25 12.8485 11.9015 10.5 9 10.5Z" /></svg>
+                                <i data-lucide="user" class="h-4.5 w-4.5" stroke-width="1.8" aria-hidden="true"></i>
                                 {% trans "My Profile" %}
                             </a>
                         </li>
                         {% if request.user.is_superuser or request.user.is_staff %}
                         <li>
                             <a href="{% url 'apps.users:account_list' %}" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 hover:text-primary transition-all">
-                                <svg class="fill-current w-4.5 h-4.5" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 9.75H6C4.34315 9.75 3 11.0931 3 12.75V14.25C3 15.0784 3.67157 15.75 4.5 15.75H13.5C14.3284 15.75 15 15.0784 15 14.25V12.75C15 11.0931 13.6569 9.75 12 9.75Z" /><path d="M9 8.25C10.6569 8.25 12 6.90685 12 5.25C12 3.59315 10.6569 2.25 9 2.25C7.34315 2.25 6 3.59315 6 5.25C6 6.90685 7.34315 8.25 9 8.25Z" /></svg>
+                                <i data-lucide="users" class="h-4.5 w-4.5" stroke-width="1.8" aria-hidden="true"></i>
                                 {% trans "Accounts" %}
                             </a>
                         </li>
                         {% endif %}
                         <li>
                             <a href="{% url 'apps.users:settings' %}" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 hover:text-primary transition-all">
-                                <svg class="fill-current w-4.5 h-4.5" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 12.75C11.0711 12.75 12.75 11.0711 12.75 9C12.75 6.92893 11.0711 5.25 9 5.25C6.92893 5.25 5.25 6.92893 5.25 9C5.25 11.0711 6.92893 12.75 9 12.75Z" /><path fill-rule="evenodd" clip-rule="evenodd" d="M10.146 1.58151C9.8341 1.23151 9.3341 1.23151 9.0222 1.58151L8.5222 2.14351C8.2103 2.49351 7.7103 2.49351 7.3984 2.14351L6.8984 1.58151C6.5865 1.23151 6.0865 1.23151 5.7746 1.58151L5.2746 2.14351C4.9627 2.49351 4.4627 2.49351 4.1508 2.14351L3.6508 1.58151C3.3389 1.23151 2.8389 1.23151 2.527 1.58151V1.58151C2.2151 1.93151 2.2151 2.43151 2.527 2.74341L3.089 3.24341C3.439 3.55531 3.439 4.05531 3.089 4.36721L2.527 4.86721C2.2151 5.17911 2.2151 5.67911 2.527 5.99101L3.089 6.49101C3.439 6.80291 3.439 7.30291 3.089 7.61481L2.527 8.11481C2.2151 8.42671 2.2151 8.92671 2.527 9.23861L3.089 9.73861C3.439 10.0505 3.439 10.5505 3.089 10.8624L2.527 11.3624C2.2151 11.6743 2.2151 12.1743 2.527 12.4862L3.089 12.9862C3.439 13.2981 3.439 13.7981 3.089 14.11L2.527 14.61C2.2151 14.9219 2.2151 15.4219 2.527 15.7338L3.089 16.2338C3.439 16.5457 3.439 17.0457 3.089 17.3576L2.527 17.8576C2.2151 18.1695 2.2151 18.6695 2.527 18.9814C2.8389 19.3314 3.3389 19.3314 3.6508 18.9814L4.1508 18.4194C4.4627 18.0694 4.9627 18.0694 5.2746 18.4194L5.7746 18.9814C6.0865 19.3314 6.5865 19.3314 6.8984 18.9814L7.3984 18.4194C7.7103 18.0694 8.2103 18.0694 8.5222 18.4194L9.0222 18.9814C9.3341 19.3314 9.8341 19.3314 10.146 18.9814V1.58151Z" /></svg>
+                                <i data-lucide="settings" class="h-4.5 w-4.5" stroke-width="1.8" aria-hidden="true"></i>
                                 {% trans "Account Settings" %}
                             </a>
                         </li>
                     </ul>
                     <a href="{% url 'account_logout' %}" class="flex items-center gap-3 px-4 py-2 text-sm font-medium text-danger hover:bg-danger/5 rounded-lg transition-all">
-                        <svg class="fill-current w-4.5 h-4.5" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.25 1.5H4.5C3.67157 1.5 3 2.17157 3 3V15C3 15.8284 3.67157 16.5 4.5 16.5H11.25C12.0784 16.5 12.75 15.8284 12.75 15V13.5H11.25V15H4.5V3H11.25V4.5H12.75V3C12.75 2.17157 12.0784 1.5 11.25 1.5Z" /><path d="M13.0607 5.43934L16.6213 9L13.0607 12.5607L11.9999 11.5L13.7499 9.75H7.5V8.25H13.7499L11.9999 6.5L13.0607 5.43934Z" /></svg>
+                        <i data-lucide="log-out" class="h-4.5 w-4.5" stroke-width="1.8" aria-hidden="true"></i>
                         {% trans "Sign Out" %}
                     </a>
                 </div>

@@ -51,9 +51,7 @@
                 {% trans "Search by parameter, machine or key..." as search_placeholder %}
                 <div class="relative">
                     <span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-bodydark2">
-                        <svg class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-                        </svg>
+                        <i data-lucide="search" class="h-4.5 w-4.5" stroke-width="1.8" aria-hidden="true"></i>
                     </span>
                     {% render_field filter.form.search class="w-full rounded-xl border border-stroke bg-whiten py-3 pl-11 pr-5 text-black transition-all duration-300 focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/5 focus:outline-none dark:border-strokedark dark:bg-boxdark-2 dark:text-white" placeholder=search_placeholder %}
                 </div>
@@ -68,9 +66,7 @@
             </div>
             <div class="md:col-span-2">
                 <button type="submit" class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3 px-4 text-sm font-bold text-white shadow-lg shadow-primary/20 transition-all duration-300 hover:bg-opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
-                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-                    </svg>
+                    <i data-lucide="search" class="h-4 w-4" stroke-width="1.8" aria-hidden="true"></i>
                     {% trans "Apply" %}
                 </button>
             </div>
@@ -81,17 +77,13 @@
         <details class="group rounded-xl border border-stroke bg-gray-2/40 dark:border-strokedark dark:bg-meta-4/20" {% if mach or cat or after or before %}open{% endif %}>
             <summary class="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 [&::-webkit-details-marker]:hidden">
                 <span class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-bodydark2">
-                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z" />
-                    </svg>
+                    <i data-lucide="filter" class="h-4 w-4" stroke-width="1.8" aria-hidden="true"></i>
                     {% trans "Advanced filters" %}
                     {% if mach or cat or after or before %}
                     <span class="h-2 w-2 rounded-full bg-primary" aria-hidden="true"></span>
                     {% endif %}
                 </span>
-                <svg class="h-4 w-4 text-bodydark2 transition-transform duration-200 group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                </svg>
+                <i data-lucide="chevron-down" class="h-4 w-4 text-bodydark2 transition-transform duration-200 group-open:rotate-180" stroke-width="1.8" aria-hidden="true"></i>
             </summary>
             <div class="grid grid-cols-1 gap-4 border-t border-stroke p-4 md:grid-cols-12 dark:border-strokedark">
                 <div class="md:col-span-3">
@@ -117,9 +109,7 @@
         <div class="flex flex-wrap items-center justify-between gap-3">
             <p class="text-xs font-medium text-bodydark2">{% trans "Search by parameter, machine or key, then refine with the advanced filters." %}</p>
             <a href="{% url 'apps.alerts:alert_list' %}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline">
-                <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <i data-lucide="x" class="h-3.5 w-3.5" stroke-width="1.8" aria-hidden="true"></i>
                 {% trans "Clear all filters" %}
             </a>
         </div>
@@ -187,7 +177,7 @@
         {% empty %}
         {% trans "No alerts found" as empty_title %}
         {% trans "We couldn't find any alerts matching your search. Try adjusting your criteria." as empty_message %}
-        {% include "includes/empty_state.html" with title=empty_title message=empty_message icon_path="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" %}
+        {% include "includes/empty_state.html" with title=empty_title message=empty_message icon="bell-ring" %}
         {% endfor %}
     </div>
 

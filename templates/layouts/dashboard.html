@@ -78,9 +78,17 @@
 
     {% include 'includes/alerts.html' %}
 
+    <!-- Icon Library (Lucide, vendored locally) -->
+    <script src="{% static 'js/vendor/lucide/lucide.min.js' %}"></script>
+
     <!-- Vanilla JS for Global Interactions -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Render Lucide icons (replaces [data-lucide] placeholders with SVG)
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+
             // Sidebar mobile toggle (already handled in navbar.html script usually, but keeping it robust here)
             const sidebar = document.getElementById('sidebar');
             const sidebarToggleMobile = document.getElementById('sidebar-toggle-mobile');

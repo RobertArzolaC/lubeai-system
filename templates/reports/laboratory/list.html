@@ -22,9 +22,7 @@
     {% if perms.reports.add_laboratory %}
     <div class="flex items-center gap-3">
         <a href="{{ add_entity_url }}" class="inline-flex items-center justify-center gap-2 rounded-lg bg-primary py-3 px-7 text-center font-semibold text-white shadow-lg transition-all duration-300 hover:bg-opacity-90 hover:shadow-primary/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="h-5 w-5" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
+            <i data-lucide="plus" class="h-5 w-5" stroke-width="1.8" aria-hidden="true"></i>
             {% trans "Create Laboratory" %}
         </a>
     </div>
@@ -102,7 +100,7 @@
         {% empty %}
         {% trans "No laboratories found" as empty_title %}
         {% trans "We couldn't find any laboratories matching your search. Try adjusting your criteria or create a new laboratory." as empty_message %}
-        {% include "includes/empty_state.html" with title=empty_title message=empty_message icon_path="M9 3h6l1 4h-8l1-4zM6 7h12v12a1 1 0 01-1 1H7a1 1 0 01-1-1V7z" %}
+        {% include "includes/empty_state.html" with title=empty_title message=empty_message icon="flask-conical" %}
         {% endfor %}
     </div>
 
