@@ -29,6 +29,7 @@ urlpatterns += [
     path("authentication/", include("apps.authentication.urls")),
     path("equipment/", include("apps.equipment.urls")),
     path("reports/", include("apps.reports.urls")),
+    path("alerts/", include("apps.alerts.urls")),
 ]
 
 if settings.DEBUG:

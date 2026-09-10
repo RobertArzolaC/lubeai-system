@@ -31,20 +31,6 @@
             </button>
         </div>
 
-        <!-- Search Bar -->
-        <div class="hidden sm:block">
-            <form action="#" method="GET">
-                <div class="relative">
-                    <button class="absolute top-1/2 left-3 -translate-y-1/2 text-body dark:text-bodydark hover:text-primary dark:hover:text-primary transition-colors">
-                        <svg class="fill-current w-5 h-5" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd" clip-rule="evenodd" d="M9.16666 3.33332C5.945 3.33332 3.33332 5.945 3.33332 9.16666C3.33332 12.3883 5.945 15 9.16666 15C12.3883 15 15 12.3883 15 9.16666C15 5.945 12.3883 3.33332 9.16666 3.33332ZM1.66666 9.16666C1.66666 5.02452 5.02452 1.66666 9.16666 1.66666C13.3088 1.66666 16.6667 5.02452 16.6667 9.16666C16.6667 13.3088 13.3088 16.6667 9.16666 16.6667C5.02452 16.6667 1.66666 13.3088 1.66666 9.16666Z" />
-                        </svg>
-                    </button>
-                    <input type="text" placeholder="{% trans 'Type to search...' %}" class="w-full bg-[#F1F5F9] dark:bg-boxdark-2 rounded-lg border border-stroke dark:border-strokedark py-2 pl-10 pr-4 focus:border-primary focus:bg-white dark:focus:bg-boxdark focus:outline-none text-sm text-black dark:text-white transition-all xl:w-125" />
-                </div>
-            </form>
-        </div>
-
         <div class="flex items-center gap-3 2xsm:gap-7">
             <ul class="flex items-center gap-2 2xsm:gap-4">
                 <!-- Theme Toggle Button -->
@@ -57,17 +43,6 @@
                             <svg class="fill-current w-5 h-5" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"></path></svg>
                         </span>
                     </button>
-                </li>
-
-                <!-- Notification Area -->
-                <li class="relative">
-                    <a class="relative flex h-8.5 w-8.5 items-center justify-center rounded-full border-[0.5px] border-stroke bg-whiten hover:text-primary dark:border-strokedark dark:bg-meta-4 text-body dark:text-white transition-colors" href="#">
-                        <span class="absolute -top-0.5 right-0 z-1 h-2 w-2 rounded-full bg-meta-1 border-2 border-white dark:border-boxdark"></span>
-                        <svg class="fill-current w-5 h-5" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M16.1999 14.9344L15.6374 14.0625C15.5249 13.8938 15.4687 13.725 15.4687 13.5281V8.4375C15.4687 5.20312 13.0499 2.44687 10.0687 1.85625V1.6875C10.0687 1.125 9.59053 0.61875 8.9999 0.61875C8.40928 0.61875 7.93115 1.125 7.93115 1.6875V1.85625C4.9499 2.44687 2.53115 5.20312 2.53115 8.4375V13.5281C2.53115 13.725 2.4749 13.8938 2.3624 14.0625L1.7999 14.9344C1.63115 15.1875 1.5749 15.4969 1.65928 15.7781C1.74365 16.0594 1.96865 16.3125 2.27803 16.425C2.50303 16.5094 2.72803 16.5375 2.98115 16.5375H15.0187C15.2718 16.5375 15.4968 16.5094 15.7218 16.425C16.0312 16.3125 16.2562 16.0594 16.3405 15.7781C16.4249 15.4969 16.3687 15.1875 16.1999 14.9344ZM14.3999 15.4125H3.5999C3.45928 15.4125 3.31865 15.3844 3.20615 15.3281C3.12178 15.2719 3.06553 15.2156 3.0374 15.1312C3.00928 15.0469 3.00928 14.9625 3.00928 14.9625C3.06553 14.8781 3.62803 14.0062 3.62803 14.0062C3.8249 13.725 3.9374 13.3875 3.9374 13.0219V8.4375C3.9374 5.65312 6.21553 3.375 8.9999 3.375C11.7843 3.375 14.0624 5.65312 14.0624 8.4375V13.0219C14.0624 13.3875 14.1749 13.725 14.3718 14.0062L14.9343 14.8781C14.9905 14.9625 14.9905 15.0469 14.9624 15.1312C14.9343 15.2156 14.878 15.2719 14.7937 15.3281C14.6812 15.3844 14.5405 15.4125 14.3999 15.4125Z" />
-                            <path d="M8.9999 19.3781C10.1249 19.3781 11.053 18.45 11.053 17.325H6.94678C6.94678 18.45 7.8749 19.3781 8.9999 19.3781Z" />
-                        </svg>
-                    </a>
                 </li>
             </ul>
 
@@ -150,7 +125,7 @@
             }
         };
 
-        const isInitiallyDark = localStorage.getItem('darkMode') === 'true' || 
+        const isInitiallyDark = localStorage.getItem('darkMode') === 'true' ||
             (!('darkMode' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
         updateThemeUI(isInitiallyDark);
 

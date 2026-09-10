@@ -1,0 +1,123 @@
+{% extends "layouts/dashboard.html" %}
+{% load static %}
+{% load i18n %}
+{% load breadcrumb_tags %}
+
+{% block title_page %}{{ entity }}{% endblock title_page %}
+
+{% block toolbar_title %}{{ entity }}{% endblock %}
+
+{% block content %}
+<div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+    <div>
+        <h2 class="text-3xl font-bold tracking-tight text-black dark:text-white">{{ alert.get_parameter_display }}</h2>
+        <p class="mt-1 text-sm font-medium text-bodydark2">{{ alert.get_category_display }}</p>
+        <div class="mt-4 flex flex-wrap items-center gap-3">
+            {% include "alerts/includes/severity_badge.html" with severity=alert.severity %}
+            {% include "alerts/includes/status_badge.html" with status=alert.status %}
+        </div>
+    </div>
+    <div class="flex items-center gap-3">
+        <a href="{{ back_url }}" class="inline-flex items-center justify-center rounded-xl border border-stroke py-3 px-6 text-sm font-semibold text-black transition hover:bg-gray-50 dark:border-strokedark dark:text-white dark:hover:bg-white/5">
+            {% trans "Back" %}
+        </a>
+        {% if perms.alerts.change_alert %}
+        <a href="{{ edit_url }}" class="inline-flex items-center justify-center rounded-xl bg-primary py-3 px-6 text-sm font-bold text-white shadow-lg shadow-primary/20 transition-all duration-300 hover:bg-opacity-90">
+            {% trans "Edit Alert" %}
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+    <div class="flex flex-col gap-6">
+        <div class="rounded-2xl border border-stroke bg-white p-6 shadow-sm dark:border-strokedark dark:bg-boxdark">
+            <h3 class="mb-5 text-lg font-bold text-black dark:text-white">{% trans "Information" %}</h3>
+            <dl class="flex flex-col gap-4">
+                <div>
+                    <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Machine" %}</dt>
+                    <dd class="mt-1 text-sm font-semibold text-black dark:text-white">
+                        {% if alert.machine %}
+                        <a href="{% url 'apps.equipment:machine_detail' alert.machine.pk %}" class="text-primary hover:underline">{{ alert.machine.name }}</a>
+                        {% else %}—{% endif %}
+                    </dd>
+                </div>
+                <div>
+                    <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Component" %}</dt>
+                    <dd class="mt-1 text-sm font-semibold text-black dark:text-white">{% if alert.component %}{{ alert.component }}{% else %}—{% endif %}</dd>
+                </div>
+                <div>
+                    <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Source Report" %}</dt>
+                    <dd class="mt-1 text-sm font-semibold text-black dark:text-white">
+                        {% if alert.report %}
+                        <a href="{% url 'apps.reports:report_detail' alert.report.pk %}" class="text-primary hover:underline">{{ alert.report.lab_number }}</a>
+                        {% else %}—{% endif %}
+                    </dd>
+                </div>
+                <div>
+                    <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Rule Type" %}</dt>
+                    <dd class="mt-1 text-sm font-semibold text-black dark:text-white">{{ alert.get_rule_type_display }}</dd>
+                </div>
+                <div>
+                    <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Dedup Key" %}</dt>
+                    <dd class="mt-1 break-all text-xs font-medium text-bodydark2">{{ alert.dedup_key }}</dd>
+                </div>
+            </dl>
+        </div>
+    </div>
+
+    <div class="flex flex-col gap-6 lg:col-span-2">
+        <div class="rounded-2xl border border-stroke bg-white p-6 shadow-sm dark:border-strokedark dark:bg-boxdark">
+            <h3 class="mb-5 text-lg font-bold text-black dark:text-white">{% trans "Reading and Limits" %}</h3>
+            <dl class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <div class="rounded-xl bg-gray-2 p-4 dark:bg-meta-4">
+                    <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Measured Value" %}</dt>
+                    <dd class="mt-1 text-xl font-bold text-black dark:text-white">{{ alert.value|default:"—" }} <span class="text-sm font-medium text-bodydark2">{{ alert.unit }}</span></dd>
+                </div>
+                <div class="rounded-xl bg-gray-2 p-4 dark:bg-meta-4">
+                    <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Warning Limit" %}</dt>
+                    <dd class="mt-1 text-xl font-bold text-warning">{{ alert.warning_limit|default:"—" }}</dd>
+                </div>
+                <div class="rounded-xl bg-gray-2 p-4 dark:bg-meta-4">
+                    <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Critical Limit" %}</dt>
+                    <dd class="mt-1 text-xl font-bold text-danger">{{ alert.critical_limit|default:"—" }}</dd>
+                </div>
+            </dl>
+        </div>
+
+        <div class="rounded-2xl border border-stroke bg-white p-6 shadow-sm dark:border-strokedark dark:bg-boxdark">
+            <h3 class="mb-5 text-lg font-bold text-black dark:text-white">{% trans "Lifecycle" %}</h3>
+            <dl class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <div>
+                    <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Detected At" %}</dt>
+                    <dd class="mt-1 text-sm font-semibold text-black dark:text-white">{{ alert.detected_at|date:"d/m/Y H:i"|default:"—" }}</dd>
+                </div>
+                <div>
+                    <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Acknowledged At" %}</dt>
+                    <dd class="mt-1 text-sm font-semibold text-black dark:text-white">{{ alert.acknowledged_at|date:"d/m/Y H:i"|default:"—" }}</dd>
+                    {% if alert.acknowledged_by %}
+                    <dd class="mt-0.5 text-xs font-medium text-bodydark2">{{ alert.acknowledged_by }}</dd>
+                    {% endif %}
+                </div>
+                <div>
+                    <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Resolved At" %}</dt>
+                    <dd class="mt-1 text-sm font-semibold text-black dark:text-white">{{ alert.resolved_at|date:"d/m/Y H:i"|default:"—" }}</dd>
+                </div>
+            </dl>
+        </div>
+
+        <div class="rounded-2xl border border-stroke bg-white p-6 shadow-sm dark:border-strokedark dark:bg-boxdark">
+            <h3 class="mb-5 text-lg font-bold text-black dark:text-white">{% trans "Notifications" %}</h3>
+            {% if alert.sent_channels %}
+            <div class="flex flex-wrap gap-2">
+                {% for channel in alert.sent_channels %}
+                <span class="inline-flex items-center rounded-full border border-stroke bg-gray-2 py-1.5 px-3.5 text-xs font-bold text-bodydark2 dark:border-strokedark dark:bg-meta-4">{{ channel }}</span>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-sm font-medium text-bodydark2">{% trans "No notifications have been sent for this alert." %}</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock content %}

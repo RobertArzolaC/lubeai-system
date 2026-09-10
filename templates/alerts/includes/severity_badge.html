@@ -1,0 +1,15 @@
+{% load i18n %}
+
+{% if severity == "CRITICAL" %}
+<span class="inline-flex items-center gap-1.5 rounded-full border border-danger/20 bg-danger/10 py-1.5 px-3.5 text-xs font-bold text-danger">
+    <span class="h-1.5 w-1.5 rounded-full bg-danger" aria-hidden="true"></span>{% trans "Critical" %}
+</span>
+{% elif severity == "CAUTION" %}
+<span class="inline-flex items-center gap-1.5 rounded-full border border-warning/20 bg-warning/10 py-1.5 px-3.5 text-xs font-bold text-warning">
+    <span class="h-1.5 w-1.5 rounded-full bg-warning" aria-hidden="true"></span>{% trans "Caution" %}
+</span>
+{% else %}
+<span class="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 py-1.5 px-3.5 text-xs font-bold text-primary">
+    <span class="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden="true"></span>{% trans "Warning" %}
+</span>
+{% endif %}

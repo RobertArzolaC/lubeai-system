@@ -17,9 +17,69 @@ class DeleteTestView(core_mixins.BaseDeleteView):
     permission_required = "users.delete_account"
 
 
+class ListTestView(core_mixins.BaseListView):
+    """Minimal list view bound to the Account model."""
+
+    model = users_models.Account
+    permission_required = "users.view_account"
+    template_name = "users/account/list.html"
+
+
+class CustomPageSizeListView(ListTestView):
+    """List view overriding the default page size."""
+
+    paginate_by = 50
+
+
 def parse_json(response) -> dict:
     """Decode a plain :class:`django.http.JsonResponse` body."""
     return json.loads(response.content)
+
+
+class BaseListViewPaginationTests(TestCase):
+    """Tests for the pagination behavior of :class:`BaseListView`."""
+
+    def setUp(self) -> None:
+        self.factory = RequestFactory()
+
+    def build_view(self, view_class, query: str = ""):
+        """Build a list view bound to a GET request with ``query``."""
+        request = self.factory.get(f"/?{query}" if query else "/")
+        request.user = UserFactory(is_staff=True, is_superuser=True)
+        view = view_class()
+        view.request = request
+        view.kwargs = {}
+        return view
+
+    def test_default_page_size_is_5(self) -> None:
+        """Without parameters the default page size is 5."""
+        view = self.build_view(ListTestView)
+        self.assertEqual(view.get_paginate_by(users_models.Account.objects.all()), 5)
+
+    def test_items_per_page_param_is_used(self) -> None:
+        """A valid ``items_per_page`` parameter overrides the default."""
+        view = self.build_view(ListTestView, "items_per_page=10")
+        self.assertEqual(view.get_paginate_by(users_models.Account.objects.all()), 10)
+
+    def test_invalid_items_per_page_falls_back(self) -> None:
+        """An out-of-range ``items_per_page`` falls back to the default."""
+        view = self.build_view(ListTestView, "items_per_page=999")
+        self.assertEqual(view.get_paginate_by(users_models.Account.objects.all()), 5)
+
+    def test_non_numeric_items_per_page_falls_back(self) -> None:
+        """A non-numeric ``items_per_page`` falls back to the default."""
+        view = self.build_view(ListTestView, "items_per_page=abc")
+        self.assertEqual(view.get_paginate_by(users_models.Account.objects.all()), 5)
+
+    def test_subclass_default_is_respected(self) -> None:
+        """A subclass ``paginate_by`` value is used when no param is given."""
+        view = self.build_view(CustomPageSizeListView)
+        self.assertEqual(view.get_paginate_by(users_models.Account.objects.all()), 50)
+
+    def test_param_overrides_subclass_default(self) -> None:
+        """The ``items_per_page`` parameter overrides a subclass default."""
+        view = self.build_view(CustomPageSizeListView, "items_per_page=5")
+        self.assertEqual(view.get_paginate_by(users_models.Account.objects.all()), 5)
 
 
 class BaseDeleteViewTests(TestCase):

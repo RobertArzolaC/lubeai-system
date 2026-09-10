@@ -85,7 +85,6 @@ class AccountListView(core_mixins.BaseListView):
     filterset_class = filtersets.AccountFilter
     template_name = "users/account/list.html"
     context_object_name = "accounts"
-    paginate_by = 5
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

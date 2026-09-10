@@ -28,7 +28,6 @@ class LaboratoryListView(core_mixins.BaseListView):
     filterset_class = filtersets.LaboratoryFilter
     template_name = "reports/laboratory/list.html"
     context_object_name = "laboratories"
-    paginate_by = 5
 
     def get_queryset(self) -> QuerySet:
         """Return laboratories annotated with their active report count."""
@@ -125,7 +124,6 @@ class ReportListView(core_mixins.BaseListView):
     filterset_class = filtersets.ReportFilter
     template_name = "reports/report/list.html"
     context_object_name = "reports"
-    paginate_by = 5
 
     def get_queryset(self) -> QuerySet:
         """Return reports with related objects to avoid N+1 queries."""
@@ -338,7 +336,6 @@ class AnalysisThresholdListView(core_mixins.BaseListView):
     filterset_class = filtersets.AnalysisThresholdFilter
     template_name = "reports/analysis_threshold/list.html"
     context_object_name = "thresholds"
-    paginate_by = 5
 
     def get_queryset(self) -> QuerySet:
         """Return thresholds with the related component type preloaded."""

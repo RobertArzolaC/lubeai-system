@@ -1,3 +1,5 @@
+from typing import Any, ClassVar
+
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
@@ -40,7 +42,41 @@ class BaseUpdateView(
 
 
 class BaseListView(LoginRequiredMixin, PermissionRequiredMixin, FilterView, ListView):
-    pass
+    """List view with reusable ``items_per_page`` pagination handling.
+
+    Subclasses may override ``paginate_by`` to change the default page size;
+    ``page_size_options`` defines the values accepted from the query string.
+    """
+
+    page_size_options: ClassVar[tuple[int, ...]] = (5, 10, 25, 50)
+    default_page_size: ClassVar[int] = 5
+    paginate_by: int | None = 5
+
+    def get_paginate_by(self, queryset) -> int:
+        """Return the page size from ``items_per_page`` or the view default.
+
+        Args:
+            queryset: The queryset being paginated (unused).
+
+        Returns:
+            A page size from ``page_size_options`` when the query parameter is
+            valid, otherwise ``paginate_by`` or ``default_page_size``.
+        """
+        requested = self.request.GET.get("items_per_page")
+        if requested is not None:
+            try:
+                size = int(requested)
+            except (TypeError, ValueError):
+                size = None
+            if size in self.page_size_options:
+                return size
+        return self.paginate_by or self.default_page_size
+
+    def get_context_data(self, **kwargs: Any) -> dict:
+        """Expose the allowed page sizes to the pagination template."""
+        context = super().get_context_data(**kwargs)
+        context["page_size_options"] = self.page_size_options
+        return context
 
 
 class BaseTemplateView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):

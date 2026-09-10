@@ -12,7 +12,6 @@ class MachineListView(core_mixins.BaseListView):
     filterset_class = filtersets.MachineFilter
     template_name = "equipment/machine/list.html"
     context_object_name = "machines"
-    paginate_by = 5
 
     def get_queryset(self) -> QuerySet:
         """Return machines with related branch and fleet to avoid N+1 queries."""
@@ -118,7 +117,6 @@ class BranchListView(core_mixins.BaseListView):
     filterset_class = filtersets.BranchFilter
     template_name = "equipment/branch/list.html"
     context_object_name = "branches"
-    paginate_by = 5
 
     def get_queryset(self) -> QuerySet:
         """Return branches with location relations to avoid N+1 queries."""
@@ -210,7 +208,6 @@ class FleetListView(core_mixins.BaseListView):
     filterset_class = filtersets.FleetFilter
     template_name = "equipment/fleet/list.html"
     context_object_name = "fleets"
-    paginate_by = 5
 
     def get_context_data(self, **kwargs: object) -> dict:
         """Add entity context variables."""
@@ -296,7 +293,6 @@ class ComponentTypeListView(core_mixins.BaseListView):
     filterset_class = filtersets.ComponentTypeFilter
     template_name = "equipment/component_type/list.html"
     context_object_name = "component_types"
-    paginate_by = 5
 
     def get_context_data(self, **kwargs: object) -> dict:
         """Add entity context variables."""

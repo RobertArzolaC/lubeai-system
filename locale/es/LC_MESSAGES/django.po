@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-10 16:09-0500\n"
+"POT-Creation-Date: 2026-09-10 17:24-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,40 +18,29 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: apps/alerts/apps.py:12 apps/alerts/models.py:106
 msgid "Alerts"
 msgstr "Alertas"
 
-#: apps/alerts/choices.py:10 apps/reports/choices.py:19
-#: templates/reports/includes/condition_badge.html:13
 msgid "Critical"
-msgstr "Crítico"
+msgstr "Crítica"
 
-#: apps/alerts/choices.py:11 apps/reports/choices.py:18
-#: templates/reports/includes/condition_badge.html:9
 msgid "Caution"
 msgstr "Precaución"
 
-#: apps/alerts/choices.py:12
-#| msgid "Morning"
 msgid "Warning"
 msgstr "Advertencia"
 
-#: apps/alerts/choices.py:18
 msgid "Open"
 msgstr "Abierta"
 
-#: apps/alerts/choices.py:19
 msgid "Acknowledged"
-msgstr "Reconocido"
+msgstr "Reconocida"
 
-#: apps/alerts/choices.py:20
 msgid "Resolved"
-msgstr "Resuelto"
+msgstr "Resuelta"
 
-#: apps/alerts/choices.py:21
 msgid "Dismissed"
-msgstr "Descartado"
+msgstr "Descartada"
 
 #: apps/alerts/choices.py:27
 msgid "Threshold"
@@ -69,66 +58,23 @@ msgstr "Tendencia a la baja"
 msgid "Parameter Missing"
 msgstr "Parámetro faltante"
 
-#: apps/alerts/models.py:27 apps/equipment/models.py:91
-#: apps/equipment/models.py:134 apps/equipment/views.py:23
-#: apps/equipment/views.py:38 apps/equipment/views.py:57
-#: apps/equipment/views.py:87 apps/reports/filtersets.py:52
-#: apps/reports/filtersets.py:126 apps/reports/models.py:66
-#: templates/equipment/machine/list.html:69
-#: templates/reports/report/detail.html:74
-msgid "Machine"
-msgstr "Máquina"
+msgid "Search"
+msgstr "Buscar"
 
-#: apps/alerts/models.py:32
-#| msgid "Agency associated with this person"
-msgid "Machine associated with this alert"
-msgstr "Máquina asociada con esta alerta"
+msgid "All Severities"
+msgstr "Todas las severidades"
 
-#: apps/alerts/models.py:36 apps/equipment/models.py:150
-#: apps/reports/filtersets.py:57 apps/reports/filtersets.py:131
-#: apps/reports/models.py:75 templates/reports/report/detail.html:78
-msgid "Component"
-msgstr "Componente"
-
-#: apps/alerts/models.py:41
-#| msgid "Agency associated with this person"
-msgid "Component associated with this alert"
-msgstr "Componente asociado con esta alerta"
-
-#: apps/alerts/models.py:45 apps/reports/models.py:230
-#: apps/reports/models.py:264 apps/reports/views.py:139
-#: apps/reports/views.py:164 apps/reports/views.py:186
-#: apps/reports/views.py:206 templates/reports/report/list.html:131
-msgid "Report"
-msgstr "Informe"
-
-#: apps/alerts/models.py:50
-msgid "Source report of this alert"
-msgstr "Informe de origen de esta alerta"
-
-#: apps/alerts/models.py:53 apps/reports/models.py:584
-#: templates/reports/analysis_threshold/detail.html:33
-#: templates/reports/analysis_threshold/list.html:65
-msgid "Parameter"
-msgstr "Parámetro"
-
-#: apps/alerts/models.py:58 apps/reports/filtersets.py:170
-#: apps/reports/models.py:578
-#: templates/reports/analysis_threshold/detail.html:37
-#: templates/reports/analysis_threshold/list.html:68
-#| msgid "Account Category"
-msgid "Category"
-msgstr "Categoría"
-
-#: apps/alerts/models.py:63
-#| msgid "Security"
 msgid "Severity"
 msgstr "Severidad"
 
-#: apps/alerts/models.py:69 apps/core/models.py:154
-#: apps/equipment/filtersets.py:17 apps/equipment/filtersets.py:40
-#: apps/equipment/filtersets.py:73 apps/equipment/filtersets.py:100
-#: apps/reports/models.py:143 apps/users/filtersets.py:15
+msgid "All Statuses"
+msgstr "Todos los estados"
+
+#: apps/alerts/filtersets.py:25 apps/alerts/models.py:68
+#: apps/core/models.py:154 apps/equipment/filtersets.py:17
+#: apps/equipment/filtersets.py:40 apps/equipment/filtersets.py:73
+#: apps/equipment/filtersets.py:100 apps/reports/models.py:143
+#: apps/users/filtersets.py:15 templates/alerts/alert/list.html:145
 #: templates/equipment/branch/detail.html:38
 #: templates/equipment/branch/list.html:67
 #: templates/equipment/component_type/detail.html:42
@@ -144,67 +90,112 @@ msgstr "Severidad"
 msgid "Status"
 msgstr "Estado"
 
-#: apps/alerts/models.py:75
+msgid "All Rules"
+msgstr "Todas las reglas"
+
+msgid "Rule Type"
+msgstr "Tipo de regla"
+
+msgid "All Categories"
+msgstr "Todas las categorías"
+
+msgid "Category"
+msgstr "Categoría"
+
+msgid "All Parameters"
+msgstr "Todos los parámetros"
+
+msgid "Parameter"
+msgstr "Parámetro"
+
+msgid "All Machines"
+msgstr "Todas las máquinas"
+
+msgid "Machine"
+msgstr "Máquina"
+
+msgid "All Components"
+msgstr "Todos los componentes"
+
+msgid "Component"
+msgstr "Componente"
+
+msgid "Detected After"
+msgstr "Detectada después de"
+
+msgid "Detected Before"
+msgstr "Detectada antes de"
+
+msgid "The critical limit must differ from the warning limit."
+msgstr "El límite crítico debe ser diferente del límite de advertencia."
+
+#: apps/alerts/models.py:31
+msgid "Machine associated with this alert"
+msgstr "Máquina asociada con esta alerta"
+
+#: apps/alerts/models.py:40
+msgid "Component associated with this alert"
+msgstr "Componente asociado con esta alerta"
+
+#: apps/alerts/models.py:44 apps/reports/models.py:230
+#: apps/reports/models.py:264 apps/reports/views.py:139
+#: apps/reports/views.py:164 apps/reports/views.py:186
+#: apps/reports/views.py:206 templates/reports/report/list.html:131
+msgid "Report"
+msgstr "Informe"
+
+#: apps/alerts/models.py:49
+msgid "Source report of this alert"
+msgstr "Informe de origen de esta alerta"
+
 msgid "Value"
 msgstr "Valor"
 
-#: apps/alerts/models.py:76 apps/reports/models.py:590
-#: templates/reports/analysis_threshold/detail.html:58
 msgid "Warning Limit"
 msgstr "Límite de advertencia"
 
-#: apps/alerts/models.py:77 apps/reports/models.py:594
-#: templates/reports/analysis_threshold/detail.html:62
 msgid "Critical Limit"
 msgstr "Límite crítico"
 
-#: apps/alerts/models.py:78 apps/reports/models.py:598
+#: apps/alerts/models.py:77 apps/reports/models.py:598
 #: templates/reports/analysis_threshold/detail.html:70
 #: templates/reports/analysis_threshold/list.html:74
 msgid "Unit"
 msgstr "Unidad"
 
-#: apps/alerts/models.py:80
-#| msgid "Type"
-msgid "Rule Type"
-msgstr "Tipo de regla"
-
-#: apps/alerts/models.py:85
 msgid "Detected At"
-msgstr "Detectado el"
+msgstr "Detectada el"
 
-#: apps/alerts/models.py:86
 msgid "Acknowledged At"
-msgstr "Reconocido el"
+msgstr "Reconocida el"
 
-#: apps/alerts/models.py:89
+#: apps/alerts/models.py:88
 msgid "Acknowledged By"
 msgstr "Reconocido por"
 
-#: apps/alerts/models.py:95
 msgid "Resolved At"
-msgstr "Resuelto el"
+msgstr "Resuelta el"
 
-#: apps/alerts/models.py:96
-#| msgid "Save Changes"
+#: apps/alerts/models.py:95
 msgid "Sent Channels"
 msgstr "Canales de envío"
 
-#: apps/alerts/models.py:98
 msgid "Dedup Key"
 msgstr "Clave de deduplicación"
 
-#: apps/alerts/models.py:101
+#: apps/alerts/models.py:100
 msgid "Idempotency key"
 msgstr "Clave de idempotencia"
 
-#: apps/alerts/models.py:105
 msgid "Alert"
 msgstr "Alerta"
 
-#: apps/alerts/models.py:109
+#: apps/alerts/models.py:108
 msgid "Can acknowledge alert"
 msgstr "Puede reconocer alertas"
+
+msgid "Alert updated successfully"
+msgstr "Alerta actualizada correctamente"
 
 #: apps/authentication/forms.py:12 templates/users/account/form.html:72
 #: templates/users/settings.html:24
@@ -334,13 +325,11 @@ msgstr "Otro"
 
 #: apps/core/mixins/views.py:68
 #, python-format
-#| msgid "User status has been successfully updated"
 msgid "The %(entity_name)s was successfully deleted."
 msgstr "El %(entity_name)s se eliminó correctamente."
 
 #: apps/core/mixins/views.py:76
 #, python-format
-#| msgid "Page not found"
 msgid "%(entity_name)s not found."
 msgstr "%(entity_name)s no encontrado."
 
@@ -492,13 +481,6 @@ msgstr "Horas"
 msgid "Ambos"
 msgstr "Ambos"
 
-#: apps/equipment/filtersets.py:13 apps/equipment/filtersets.py:36
-#: apps/equipment/filtersets.py:59 apps/equipment/filtersets.py:96
-#: apps/reports/filtersets.py:14 apps/reports/filtersets.py:42
-#: apps/reports/filtersets.py:164 apps/users/filtersets.py:11
-msgid "Search"
-msgstr "Buscar"
-
 #: apps/equipment/filtersets.py:16 apps/equipment/filtersets.py:39
 #: apps/equipment/filtersets.py:72 apps/equipment/filtersets.py:99
 #: apps/users/filtersets.py:14
@@ -578,14 +560,14 @@ msgid "Fleet name"
 msgstr "Nombre de la flota"
 
 #: apps/equipment/models.py:16 apps/equipment/views.py:219
-#: templates/dashboard/index.html:129 templates/includes/aside.html:106
-#: templates/includes/aside.html:110
+#: templates/dashboard/index.html:129 templates/includes/aside.html:88
+#: templates/includes/aside.html:92
 msgid "Fleets"
 msgstr "Flotas"
 
 #: apps/equipment/models.py:33 apps/equipment/views.py:133
-#: templates/dashboard/index.html:119 templates/includes/aside.html:94
-#: templates/includes/aside.html:99
+#: templates/dashboard/index.html:119 templates/includes/aside.html:76
+#: templates/includes/aside.html:81
 msgid "Branches"
 msgstr "Sucursales"
 
@@ -626,10 +608,9 @@ msgid "Unit of measurement for machine usage"
 msgstr "Unidad de medida para el uso de la máquina"
 
 #: apps/equipment/models.py:92 apps/equipment/views.py:24
-#: templates/dashboard/index.html:109
-#: templates/equipment/branch/detail.html:84
-#: templates/equipment/fleet/detail.html:53 templates/includes/aside.html:82
-#: templates/includes/aside.html:87
+#: templates/dashboard/index.html:109 templates/equipment/branch/detail.html:84
+#: templates/equipment/fleet/detail.html:53 templates/includes/aside.html:64
+#: templates/includes/aside.html:69
 msgid "Machines"
 msgstr "Máquinas"
 
@@ -642,8 +623,8 @@ msgid "Component Type"
 msgstr "Tipo de componente"
 
 #: apps/equipment/models.py:121 apps/equipment/views.py:305
-#: templates/dashboard/index.html:139 templates/includes/aside.html:117
-#: templates/includes/aside.html:122
+#: templates/dashboard/index.html:139 templates/includes/aside.html:99
+#: templates/includes/aside.html:104
 msgid "Component Types"
 msgstr "Tipos de componente"
 
@@ -705,12 +686,11 @@ msgid ""
 "Warning and critical limits for this parameter. Set 'Is Inverse Logic' to "
 "True for additives (where low values are critical)."
 msgstr ""
-"Límites de advertencia y críticos para este parámetro. Establezca 'Es lógica"
-" inversa' en Verdadero para los aditivos (donde los valores bajos son "
+"Límites de advertencia y críticos para este parámetro. Establezca 'Es lógica "
+"inversa' en Verdadero para los aditivos (donde los valores bajos son "
 "críticos)."
 
 #: apps/reports/apps.py:10
-#| msgid "Accounts Management"
 msgid "Reports Management"
 msgstr "Gestión de informes"
 
@@ -721,22 +701,18 @@ msgstr "Revisado"
 
 #: apps/reports/choices.py:11
 #: templates/reports/includes/report_status_badge.html:13
-#| msgid "Restricted"
 msgid "Rejected"
 msgstr "Rechazado"
 
-#: apps/reports/choices.py:17
-#: templates/reports/includes/condition_badge.html:5
+#: apps/reports/choices.py:17 templates/reports/includes/condition_badge.html:5
 msgid "Normal"
 msgstr "Normal"
 
 #: apps/reports/choices.py:25
-#| msgid "Clear all"
 msgid "Wear Metals"
 msgstr "Metales de desgaste"
 
 #: apps/reports/choices.py:26
-#| msgid "Contact Information"
 msgid "Contamination"
 msgstr "Contaminación"
 
@@ -745,7 +721,6 @@ msgid "Oil Health"
 msgstr "Estado del aceite"
 
 #: apps/reports/choices.py:28
-#| msgid "Active"
 msgid "Additives"
 msgstr "Aditivos"
 
@@ -822,12 +797,10 @@ msgid "TAN (Total Acid Number)"
 msgstr "TAN (Índice de acidez total)"
 
 #: apps/reports/choices.py:56
-#| msgid "Organization"
 msgid "Oxidation"
 msgstr "Oxidación"
 
 #: apps/reports/choices.py:57
-#| msgid "Administration"
 msgid "Nitration"
 msgstr "Nitración"
 
@@ -889,13 +862,11 @@ msgstr "Manganeso (Mn)"
 
 #: apps/reports/filtersets.py:17 apps/reports/filtersets.py:73
 #: apps/reports/filtersets.py:174
-#| msgid "Account Category"
 msgid "All Records"
 msgstr "Todos los registros"
 
 #: apps/reports/filtersets.py:18 apps/reports/filtersets.py:74
 #: apps/reports/filtersets.py:175
-#| msgid "Account Status"
 msgid "Record Status"
 msgstr "Estado del registro"
 
@@ -904,30 +875,15 @@ msgid "All Laboratories"
 msgstr "Todos los laboratorios"
 
 #: apps/reports/filtersets.py:47 apps/reports/filtersets.py:121
-#: apps/reports/models.py:34 apps/reports/models.py:57
-#: apps/reports/views.py:42 apps/reports/views.py:60 apps/reports/views.py:84
-#: apps/reports/views.py:103 templates/reports/laboratory/list.html:61
+#: apps/reports/models.py:34 apps/reports/models.py:57 apps/reports/views.py:42
+#: apps/reports/views.py:60 apps/reports/views.py:84 apps/reports/views.py:103
+#: templates/reports/laboratory/list.html:61
 #: templates/reports/report/detail.html:53
 #: templates/reports/report/list.html:137
 msgid "Laboratory"
 msgstr "Laboratorio"
 
-#: apps/reports/filtersets.py:51 apps/reports/filtersets.py:125
-msgid "All Machines"
-msgstr "Todas las máquinas"
-
-#: apps/reports/filtersets.py:56 apps/reports/filtersets.py:130
-#| msgid "Components"
-msgid "All Components"
-msgstr "Todos los componentes"
-
-#: apps/reports/filtersets.py:61 apps/reports/filtersets.py:141
-#| msgid "Status"
-msgid "All Statuses"
-msgstr "Todos los estados"
-
 #: apps/reports/filtersets.py:62 apps/reports/filtersets.py:142
-#| msgid "Account Status"
 msgid "Report Status"
 msgstr "Estado del informe"
 
@@ -948,23 +904,17 @@ msgstr "Fecha de inicio"
 msgid "End Date"
 msgstr "Fecha de fin"
 
-#: apps/reports/filtersets.py:169
-#| msgid "Account Category"
-msgid "All Categories"
-msgstr "Todas las categorías"
-
 #: apps/reports/forms.py:189
 msgid ""
-"For inverse logic, warning limit should be greater than or equal to critical"
-" limit."
+"For inverse logic, warning limit should be greater than or equal to critical "
+"limit."
 msgstr ""
 "Para la lógica inversa, el límite de advertencia debe ser mayor o igual que "
 "el límite crítico."
 
 #: apps/reports/forms.py:198
 msgid "Warning limit should be less than or equal to critical limit."
-msgstr ""
-"El límite de advertencia debe ser menor o igual que el límite crítico."
+msgstr "El límite de advertencia debe ser menor o igual que el límite crítico."
 
 #: apps/reports/models.py:27 templates/reports/laboratory/detail.html:38
 msgid "Code"
@@ -975,7 +925,7 @@ msgid "Unique laboratory identification code"
 msgstr "Código único de identificación del laboratorio"
 
 #: apps/reports/models.py:35 apps/reports/views.py:43
-#: templates/includes/aside.html:137 templates/includes/aside.html:142
+#: templates/includes/aside.html:119 templates/includes/aside.html:124
 msgid "Laboratories"
 msgstr "Laboratorios"
 
@@ -984,12 +934,10 @@ msgid "Laboratory that performed the analysis"
 msgstr "Laboratorio que realizó el análisis"
 
 #: apps/reports/models.py:71
-#| msgid "User account associated with this person"
 msgid "Machine/Equipment associated with this report"
 msgstr "Máquina/Equipo asociado con este informe"
 
 #: apps/reports/models.py:80
-#| msgid "Agency associated with this person"
 msgid "Component associated with this report"
 msgstr "Componente asociado con este informe"
 
@@ -1051,7 +999,6 @@ msgstr "Código de número de serie del informe (Cód./Núm. de Serie)"
 
 #: apps/reports/models.py:125 templates/reports/report/detail.html:91
 #: templates/reports/report/list.html:140
-#| msgid "Completed"
 msgid "Sample Date"
 msgstr "Fecha de muestra"
 
@@ -1076,7 +1023,6 @@ msgid "Date when the sample was received (Fecha de Recepción)"
 msgstr "Fecha en que se recibió la muestra (Fecha de Recepción)"
 
 #: apps/reports/models.py:147
-#| msgid "Current Status"
 msgid "Current status of the report"
 msgstr "Estado actual del informe"
 
@@ -1085,7 +1031,6 @@ msgid "Equipment condition assessment"
 msgstr "Evaluación de la condición del equipo"
 
 #: apps/reports/models.py:157 templates/reports/report/detail.html:111
-#| msgid "Note"
 msgid "Notes"
 msgstr "Notas"
 
@@ -1102,7 +1047,6 @@ msgid "Date when the report was generated (Fecha de Reporte)"
 msgstr "Fecha en que se generó el informe (Fecha de Reporte)"
 
 #: apps/reports/models.py:168
-#| msgid "Save Changes"
 msgid "Filter Change"
 msgstr "Cambio de filtro"
 
@@ -1111,7 +1055,6 @@ msgid "Filter change indicator (Cambio de Filtro)"
 msgstr "Indicador de cambio de filtro (Cambio de Filtro)"
 
 #: apps/reports/models.py:174
-#| msgid "Save Changes"
 msgid "Oil Change"
 msgstr "Cambio de aceite"
 
@@ -1120,7 +1063,6 @@ msgid "Oil change indicator (Cambio de Aceite)"
 msgstr "Indicador de cambio de aceite (Cambio de Aceite)"
 
 #: apps/reports/models.py:180 templates/reports/report/detail.html:123
-#| msgid "Other"
 msgid "Others"
 msgstr "Otros"
 
@@ -1187,8 +1129,8 @@ msgid "Laboratory turnaround time in days (TR dias)"
 msgstr "Tiempo de respuesta del laboratorio en días (TR días)"
 
 #: apps/reports/models.py:231 apps/reports/views.py:140
-#: templates/includes/aside.html:131 templates/includes/aside.html:149
-#: templates/includes/aside.html:153 templates/reports/laboratory/list.html:67
+#: templates/includes/aside.html:113 templates/includes/aside.html:131
+#: templates/includes/aside.html:135 templates/reports/laboratory/list.html:67
 msgid "Reports"
 msgstr "Informes"
 
@@ -1417,13 +1359,12 @@ msgid ""
 "If True, values below limits are problematic (e.g., additives). If False, "
 "values above limits are problematic (e.g., wear metals)."
 msgstr ""
-"Si es Verdadero, los valores por debajo de los límites son problemáticos (p."
-" ej., aditivos). Si es Falso, los valores por encima de los límites son "
+"Si es Verdadero, los valores por debajo de los límites son problemáticos (p. "
+"ej., aditivos). Si es Falso, los valores por encima de los límites son "
 "problemáticos (p. ej., metales de desgaste)."
 
 #: apps/reports/models.py:612
 #: templates/reports/analysis_threshold/detail.html:77
-#| msgid "Description"
 msgid "Wear Source Description"
 msgstr "Descripción de la fuente de desgaste"
 
@@ -1452,32 +1393,26 @@ msgid "REPORTE DE INSPECCIONES"
 msgstr "REPORTE DE INSPECCIONES"
 
 #: apps/reports/views.py:78
-#| msgid "Account created successfully"
 msgid "Laboratory created successfully"
 msgstr "Laboratorio creado correctamente"
 
 #: apps/reports/views.py:96
-#| msgid "Account updated successfully"
 msgid "Laboratory updated successfully"
 msgstr "Laboratorio actualizado correctamente"
 
 #: apps/reports/views.py:180
-#| msgid "Account created successfully"
 msgid "Report created successfully"
 msgstr "Informe creado correctamente"
 
 #: apps/reports/views.py:188 templates/reports/report/list.html:36
-#| msgid "Create Account"
 msgid "Create Report"
 msgstr "Crear informe"
 
 #: apps/reports/views.py:199
-#| msgid "Account updated successfully"
 msgid "Report updated successfully"
 msgstr "Informe actualizado correctamente"
 
 #: apps/reports/views.py:208 templates/reports/report/detail.html:29
-#| msgid "Edit your photo"
 msgid "Edit Report"
 msgstr "Editar informe"
 
@@ -1494,12 +1429,10 @@ msgstr ""
 "El resultado supera el máximo de %(max)s registros. Refine sus filtros."
 
 #: apps/reports/views.py:386
-#| msgid "Account created successfully"
 msgid "Analysis threshold created successfully"
 msgstr "Umbral de análisis creado correctamente"
 
 #: apps/reports/views.py:404
-#| msgid "Account updated successfully"
 msgid "Analysis threshold updated successfully"
 msgstr "Umbral de análisis actualizado correctamente"
 
@@ -1562,7 +1495,7 @@ msgid "Account"
 msgstr "Cuenta"
 
 #: apps/users/models.py:45 apps/users/views.py:93
-#: templates/includes/aside.html:63 templates/includes/aside.html:68
+#: templates/includes/aside.html:177 templates/includes/aside.html:182
 #: templates/includes/navbar.html:105 templates/users/account/form.html:6
 #: templates/users/account/form.html:142 templates/users/account/list.html:8
 #: templates/users/account/list.html:12 templates/users/profile.html:160
@@ -1589,7 +1522,7 @@ msgstr "Cuenta creada con éxito"
 msgid "Account updated successfully"
 msgstr "Cuenta actualizada con éxito"
 
-#: config/settings/base.py:168
+#: config/settings/base.py:169
 msgid "Spanish"
 msgstr "Español"
 
@@ -1638,11 +1571,15 @@ msgstr "Confirmar Dirección de Correo Electrónico"
 #, python-format
 msgid ""
 "\n"
-"                            Please confirm that <span class=\"font-bold\">%(email)s</span> is an email address for user <span class=\"font-bold\">%(user_display)s</span>.\n"
+"                            Please confirm that <span class=\"font-"
+"bold\">%(email)s</span> is an email address for user <span class=\"font-"
+"bold\">%(user_display)s</span>.\n"
 "                        "
 msgstr ""
 "\n"
-"                            Por favor confirma que <span class=\"font-bold\">%(email)s</span> es una dirección de correo electrónico del usuario <span class=\"font-bold\">%(user_display)s</span>.\n"
+"                            Por favor confirma que <span class=\"font-"
+"bold\">%(email)s</span> es una dirección de correo electrónico del usuario "
+"<span class=\"font-bold\">%(user_display)s</span>.\n"
 "                        "
 
 #: templates/account/email_confirm.html:36
@@ -1675,8 +1612,7 @@ msgstr ""
 #: templates/account/email_confirm.html:60
 msgid "This email confirmation link expired or is invalid."
 msgstr ""
-"Este enlace de confirmación de correo electrónico ha expirado o no es "
-"válido."
+"Este enlace de confirmación de correo electrónico ha expirado o no es válido."
 
 #: templates/account/email_confirm.html:63
 msgid "Issue a new email confirmation request"
@@ -1860,8 +1796,8 @@ msgstr "Únete a nuestra plataforma"
 
 #: templates/account/signup.html:23
 msgid ""
-"Create an account to start managing your laboratory processes and track your"
-" samples."
+"Create an account to start managing your laboratory processes and track your "
+"samples."
 msgstr ""
 "Crea una cuenta para comenzar a gestionar tus procesos de laboratorio y "
 "hacer seguimiento de tus muestras."
@@ -1894,6 +1830,81 @@ msgstr "Hemos enviado un correo electrónico de verificación a tu dirección."
 msgid "Please follow the link in that email to complete your registration."
 msgstr "Sigue el enlace en ese correo electrónico para completar tu registro."
 
+msgid "Back"
+msgstr "Volver"
+
+msgid "Edit Alert"
+msgstr "Editar alerta"
+
+msgid "Information"
+msgstr "Información"
+
+msgid "Source Report"
+msgstr "Informe de origen"
+
+msgid "Reading and Limits"
+msgstr "Lectura y límites"
+
+msgid "Measured Value"
+msgstr "Valor medido"
+
+msgid "Lifecycle"
+msgstr "Ciclo de vida"
+
+msgid "Notifications"
+msgstr "Notificaciones"
+
+msgid "No notifications have been sent for this alert."
+msgstr "No se han enviado notificaciones para esta alerta."
+
+msgid "Alerts Center"
+msgstr "Centro de Alertas"
+
+msgid "Monitor and manage the alerts generated from laboratory reports."
+msgstr "Monitorea y gestiona las alertas generadas a partir de los informes de laboratorio."
+
+msgid "Search by parameter, machine or key..."
+msgstr "Buscar por parámetro, máquina o clave..."
+
+msgid "Apply"
+msgstr "Aplicar"
+
+msgid "Advanced filters"
+msgstr "Filtros avanzados"
+
+msgid "Search by parameter, machine or key, then refine with the advanced filters."
+msgstr "Busca por parámetro, máquina o clave y luego refina con los filtros avanzados."
+
+msgid "Clear all filters"
+msgstr "Limpiar todos los filtros"
+
+msgid "Machine / Component"
+msgstr "Máquina / Componente"
+
+msgid "Management"
+msgstr "Gestión"
+
+msgid "No alerts found"
+msgstr "No se encontraron alertas"
+
+msgid "We couldn't find any alerts matching your search. Try adjusting your criteria."
+msgstr "No encontramos alertas que coincidan con tu búsqueda. Intenta ajustar los criterios."
+
+msgid "Delete Alert"
+msgstr "Eliminar alerta"
+
+msgid "Alert deleted successfully."
+msgstr "Alerta eliminada correctamente."
+
+msgid "Alert notification"
+msgstr "Notificación de alerta"
+
+msgid "Condition alerts detected"
+msgstr "Alertas de condición detectadas"
+
+msgid "The following alerts were generated from laboratory reports:"
+msgstr "Se generaron las siguientes alertas a partir de los informes de laboratorio:"
+
 #: templates/dashboard/index.html:12
 msgid "Last updated"
 msgstr "Última actualización"
@@ -1914,7 +1925,7 @@ msgstr "Total de productos"
 msgid "Total Users"
 msgstr "Total de usuarios"
 
-#: templates/dashboard/index.html:102 templates/includes/aside.html:76
+#: templates/dashboard/index.html:102 templates/includes/aside.html:58
 #: templates/reports/report/detail.html:71
 msgid "Equipment"
 msgstr "Equipos"
@@ -1964,29 +1975,9 @@ msgstr "Ver perfil"
 msgid "Branch details and machines at this location."
 msgstr "Detalles de la sucursal y máquinas en esta ubicación."
 
-#: templates/equipment/branch/detail.html:18
-#: templates/equipment/component_type/detail.html:18
-#: templates/equipment/fleet/detail.html:18
-#: templates/equipment/machine/detail.html:18
-#: templates/reports/analysis_threshold/detail.html:18
-#: templates/reports/laboratory/detail.html:18
-#: templates/reports/report/detail.html:25
-#: templates/reports/report/export.html:23
-msgid "Back"
-msgstr "Volver"
-
 #: templates/equipment/branch/detail.html:22
 msgid "Edit Branch"
 msgstr "Editar sucursal"
-
-#: templates/equipment/branch/detail.html:31
-#: templates/equipment/component_type/detail.html:31
-#: templates/equipment/fleet/detail.html:31
-#: templates/equipment/machine/detail.html:31
-#: templates/reports/analysis_threshold/detail.html:30
-#: templates/reports/laboratory/detail.html:31
-msgid "Information"
-msgstr "Información"
 
 #: templates/equipment/branch/detail.html:64
 msgid "Country"
@@ -2020,32 +2011,8 @@ msgstr "Crear sucursal"
 msgid "Search branches by name or address..."
 msgstr "Buscar sucursales por nombre o dirección..."
 
-#: templates/equipment/branch/list.html:48
-#: templates/equipment/component_type/list.html:48
-#: templates/equipment/fleet/list.html:48
-#: templates/equipment/machine/list.html:56
-#: templates/reports/analysis_threshold/list.html:52
-#: templates/reports/laboratory/list.html:48
-#: templates/reports/report/list.html:72
-msgid "Apply"
-msgstr "Aplicar"
-
-#: templates/equipment/branch/list.html:51
-#: templates/equipment/component_type/list.html:51
-#: templates/equipment/fleet/list.html:51
 msgid "Clear"
 msgstr "Limpiar"
-
-#: templates/equipment/branch/list.html:70
-#: templates/equipment/component_type/list.html:70
-#: templates/equipment/fleet/list.html:67
-#: templates/equipment/machine/list.html:81
-#: templates/reports/analysis_threshold/list.html:80
-#: templates/reports/laboratory/list.html:73
-#: templates/reports/report/list.html:146
-#: templates/users/account/list.html:116
-msgid "Management"
-msgstr "Gestión"
 
 #: templates/equipment/branch/list.html:96
 msgid "No branches found"
@@ -2109,8 +2076,8 @@ msgid ""
 "We couldn't find any component types matching your search. Try adjusting "
 "your criteria or create a new one."
 msgstr ""
-"No encontramos tipos de componente que coincidan con tu búsqueda. Ajusta los"
-" criterios o crea uno nuevo."
+"No encontramos tipos de componente que coincidan con tu búsqueda. Ajusta los "
+"criterios o crea uno nuevo."
 
 #: templates/equipment/component_type/list.html:109
 msgid "Delete Component Type"
@@ -2142,8 +2109,7 @@ msgstr "Gestión de flotas"
 
 #: templates/equipment/fleet/list.html:19
 msgid "Group machines into fleets to organize maintenance and monitoring."
-msgstr ""
-"Agrupa máquinas en flotas para organizar el mantenimiento y monitoreo."
+msgstr "Agrupa máquinas en flotas para organizar el mantenimiento y monitoreo."
 
 #: templates/equipment/fleet/list.html:28
 msgid "Create Fleet"
@@ -2213,9 +2179,6 @@ msgstr "Crear máquina"
 msgid "Name, serial or model"
 msgstr "Nombre, serie o modelo"
 
-#: templates/equipment/machine/list.html:60
-#: templates/reports/analysis_threshold/list.html:56
-#: templates/reports/laboratory/list.html:52
 msgid "Clear filters"
 msgstr "Limpiar filtros"
 
@@ -2289,26 +2252,22 @@ msgstr "Error"
 msgid "Main Menu"
 msgstr "Menú principal"
 
-#: templates/includes/aside.html:58
-msgid "Administration"
-msgstr "Administración"
-
-#: templates/includes/aside.html:160 templates/includes/aside.html:164
+#: templates/includes/aside.html:142 templates/includes/aside.html:146
 msgid "Thresholds"
 msgstr "Umbrales"
 
-#: templates/includes/base_form.html:7 templates/users/account/form.html:65
+#: templates/includes/aside.html:172
+msgid "Administration"
+msgstr "Administración"
+
 msgid "Details"
 msgstr "Detalles"
 
-#: templates/includes/base_form.html:16 templates/users/account/form.html:192
 msgid "Discard"
 msgstr "Descartar"
 
-#: templates/includes/base_form.html:19 templates/users/account/form.html:195
-#: templates/users/settings.html:98
 msgid "Save Changes"
-msgstr "Guardar Cambios"
+msgstr "Guardar cambios"
 
 #: templates/includes/delete_script.html:9
 #: templates/users/account/list.html:315
@@ -2392,21 +2351,16 @@ msgstr "Anterior"
 msgid "Next"
 msgstr "Siguiente"
 
-#: templates/includes/row_actions.html:5 templates/users/account/form.html:125
 msgid "View"
 msgstr "Ver"
 
-#: templates/includes/row_actions.html:10
 msgid "Edit"
 msgstr "Editar"
 
-#: templates/includes/row_actions.html:15
-#: templates/users/account/form.html:134 templates/users/settings.html:122
 msgid "Delete"
 msgstr "Eliminar"
 
 #: templates/reports/analysis_threshold/detail.html:22
-#| msgid "Edit Profile"
 msgid "Edit Threshold"
 msgstr "Editar umbral"
 
@@ -2427,7 +2381,6 @@ msgid "No"
 msgstr "No"
 
 #: templates/reports/analysis_threshold/list.html:16
-#| msgid "Account created successfully"
 msgid "Analysis Threshold Management"
 msgstr "Gestión de umbrales de análisis"
 
@@ -2440,12 +2393,10 @@ msgstr ""
 "resultados del análisis de aceite."
 
 #: templates/reports/analysis_threshold/list.html:28
-#| msgid "Create Account"
 msgid "Create Threshold"
 msgstr "Crear umbral"
 
 #: templates/reports/analysis_threshold/list.html:39
-#| msgid "Search by name, email or keyword..."
 msgid "Search by parameter or unit..."
 msgstr "Buscar por parámetro o unidad..."
 
@@ -2454,14 +2405,10 @@ msgid "Warning / Critical"
 msgstr "Advertencia / Crítico"
 
 #: templates/reports/analysis_threshold/list.html:113
-#| msgid "No branches found"
 msgid "No thresholds found"
 msgstr "No se encontraron umbrales"
 
 #: templates/reports/analysis_threshold/list.html:114
-#| msgid ""
-#| "We couldn't find any branches matching your search. Try adjusting your "
-#| "criteria or create a new branch."
 msgid ""
 "We couldn't find any thresholds matching your search. Try adjusting your "
 "criteria or create a new threshold."
@@ -2470,22 +2417,18 @@ msgstr ""
 "criterios o cree un nuevo umbral."
 
 #: templates/reports/analysis_threshold/list.html:128
-#| msgid "Delete Branch"
 msgid "Delete Threshold"
 msgstr "Eliminar umbral"
 
 #: templates/reports/analysis_threshold/list.html:129
-#| msgid "Account created successfully"
 msgid "Analysis threshold deleted successfully."
 msgstr "Umbral de análisis eliminado correctamente."
 
 #: templates/reports/laboratory/detail.html:22
-#| msgid "Edit your photo"
 msgid "Edit Laboratory"
 msgstr "Editar laboratorio"
 
 #: templates/reports/laboratory/detail.html:58
-#| msgid "Create Account"
 msgid "Recent Reports"
 msgstr "Informes recientes"
 
@@ -2494,7 +2437,6 @@ msgid "No reports registered for this laboratory."
 msgstr "No hay informes registrados para este laboratorio."
 
 #: templates/reports/laboratory/list.html:16
-#| msgid "Accounts Management"
 msgid "Laboratory Management"
 msgstr "Gestión de laboratorios"
 
@@ -2504,24 +2446,18 @@ msgstr ""
 "Gestione los laboratorios que realizan análisis de aceite y emiten informes."
 
 #: templates/reports/laboratory/list.html:28
-#| msgid "Create Account"
 msgid "Create Laboratory"
 msgstr "Crear laboratorio"
 
 #: templates/reports/laboratory/list.html:39
-#| msgid "Search branches by name or address..."
 msgid "Search laboratories by name, code or description..."
 msgstr "Buscar laboratorios por nombre, código o descripción..."
 
 #: templates/reports/laboratory/list.html:103
-#| msgid "No branches found"
 msgid "No laboratories found"
 msgstr "No se encontraron laboratorios"
 
 #: templates/reports/laboratory/list.html:104
-#| msgid ""
-#| "We couldn't find any branches matching your search. Try adjusting your "
-#| "criteria or create a new branch."
 msgid ""
 "We couldn't find any laboratories matching your search. Try adjusting your "
 "criteria or create a new laboratory."
@@ -2530,17 +2466,14 @@ msgstr ""
 "criterios o cree un nuevo laboratorio."
 
 #: templates/reports/laboratory/list.html:118
-#| msgid "Delete Branch"
 msgid "Delete Laboratory"
 msgstr "Eliminar laboratorio"
 
 #: templates/reports/laboratory/list.html:119
-#| msgid "Branch deleted successfully."
 msgid "Laboratory deleted successfully."
 msgstr "Laboratorio eliminado correctamente."
 
 #: templates/reports/report/detail.html:38
-#| msgid "Verification"
 msgid "Identification"
 msgstr "Identificación"
 
@@ -2561,17 +2494,14 @@ msgid "Laboratory Analysis"
 msgstr "Análisis de laboratorio"
 
 #: templates/reports/report/detail.html:140
-#| msgid "Clear all"
 msgid "Total Wear Metals"
 msgstr "Total de metales de desgaste"
 
 #: templates/reports/report/detail.html:144
-#| msgid "Contact Information"
 msgid "Total Contaminants"
 msgstr "Total de contaminantes"
 
 #: templates/reports/report/detail.html:148
-#| msgid "Active"
 msgid "Additive Health"
 msgstr "Salud de aditivos"
 
@@ -2600,7 +2530,6 @@ msgid "No laboratory analysis has been registered for this report."
 msgstr "No se ha registrado ningún análisis de laboratorio para este informe."
 
 #: templates/reports/report/export.html:16
-#| msgid "Edit your photo"
 msgid "Export Reports"
 msgstr "Exportar informes"
 
@@ -2611,7 +2540,6 @@ msgstr ""
 
 #: templates/reports/report/export.html:60
 #: templates/reports/report/export.html:77
-#| msgid "Previous"
 msgid "Preview"
 msgstr "Vista previa"
 
@@ -2633,7 +2561,6 @@ msgstr ""
 "exportación."
 
 #: templates/reports/report/export.html:151
-#| msgid "Pending Review"
 msgid "Loading preview..."
 msgstr "Cargando vista previa..."
 
@@ -2646,13 +2573,11 @@ msgid "No reports match the selected filters."
 msgstr "Ningún informe coincide con los filtros seleccionados."
 
 #: templates/reports/report/list.html:16
-#| msgid "Accounts Management"
 msgid "Report Management"
 msgstr "Gestión de informes"
 
 #: templates/reports/report/list.html:19
-msgid ""
-"Review oil analysis reports, condition assessments and recommendations."
+msgid "Review oil analysis reports, condition assessments and recommendations."
 msgstr ""
 "Revise los informes de análisis de aceite, las evaluaciones de condición y "
 "las recomendaciones."
@@ -2662,42 +2587,21 @@ msgid "Export"
 msgstr "Exportar"
 
 #: templates/reports/report/list.html:49
-#| msgid "Name, serial or model"
 msgid "Lab, PER, serial or machine"
 msgstr "Lab, PER, serie o máquina"
 
-#: templates/reports/report/list.html:85
-#| msgid "Clear filters"
-msgid "Advanced filters"
-msgstr "Filtros avanzados"
-
 #: templates/reports/report/list.html:116
 msgid ""
-"Search by lab, PER, serial or machine, then refine with the advanced "
-"filters."
+"Search by lab, PER, serial or machine, then refine with the advanced filters."
 msgstr ""
 "Busque por lab, PER, serie o máquina y luego refine con los filtros "
 "avanzados."
 
-#: templates/reports/report/list.html:121
-#| msgid "Clear filters"
-msgid "Clear all filters"
-msgstr "Borrar todos los filtros"
-
-#: templates/reports/report/list.html:134
-#| msgid "Machine this component belongs to"
-msgid "Machine / Component"
-msgstr "Máquina / Componente"
-
 #: templates/reports/report/list.html:182
-#| msgid "No fleets found"
 msgid "No reports found"
 msgstr "No se encontraron informes"
 
 #: templates/reports/report/list.html:183
-#| msgid ""
-#| "We couldn't find any fleets matching your search. Try adjusting your "
-#| "criteria or create a new fleet."
 msgid ""
 "We couldn't find any reports matching your search. Try adjusting your "
 "criteria or create a new report."
@@ -2706,12 +2610,10 @@ msgstr ""
 "criterios o cree un nuevo informe."
 
 #: templates/reports/report/list.html:197
-#| msgid "Create Account"
 msgid "Delete Report"
 msgstr "Eliminar informe"
 
 #: templates/reports/report/list.html:198
-#| msgid "Fleet deleted successfully."
 msgid "Report deleted successfully."
 msgstr "Informe eliminado correctamente."
 
@@ -2999,6 +2901,18 @@ msgstr ""
 "Protege tu cuenta asegurándote de que tu contraseña sea segura y se "
 "actualice regularmente."
 
+#~ msgid "More filters"
+#~ msgstr "Más filtros"
+
+#~ msgid "Detection range"
+#~ msgstr "Rango de detección"
+
+#~ msgid "From"
+#~ msgstr "Desde"
+
+#~ msgid "To"
+#~ msgstr "Hasta"
+
 #, fuzzy
 #~ msgid "MarcoLab"
 #~ msgstr "Marzo"
@@ -3064,16 +2978,16 @@ msgstr ""
 #~ "This email confirmation link expired or is invalid. Please <a "
 #~ "href=\"%(email_url)s\">issue a new email confirmation request</a>."
 #~ msgstr ""
-#~ "Este enlace de confirmación de correo electrónico ha expirado o es inválido."
-#~ " Por favor <a href=\"%(email_url)s\">emita una nueva solicitud de "
-#~ "confirmación de correo electrónico</a>."
+#~ "Este enlace de confirmación de correo electrónico ha expirado o es "
+#~ "inválido. Por favor <a href=\"%(email_url)s\">emita una nueva solicitud "
+#~ "de confirmación de correo electrónico</a>."
 
 #~ msgid ""
 #~ "Set the product thumbnail image. Only *.png, *.jpg and *.jpeg image files "
 #~ "are accepted"
 #~ msgstr ""
-#~ "Establezca la imagen en miniatura del producto. Solo se aceptan archivos de "
-#~ "imagen *.png, *.jpg y *.jpeg"
+#~ "Establezca la imagen en miniatura del producto. Solo se aceptan archivos "
+#~ "de imagen *.png, *.jpg y *.jpeg"
 
 #~ msgid "Add Account"
 #~ msgstr "Agregar Cuenta"
@@ -3130,8 +3044,8 @@ msgstr ""
 #~ "To change your password, please contact your administrator or use the "
 #~ "password reset option."
 #~ msgstr ""
-#~ "Para cambiar su contraseña, comuníquese con su administrador o use la opción"
-#~ " de restablecimiento de contraseña."
+#~ "Para cambiar su contraseña, comuníquese con su administrador o use la "
+#~ "opción de restablecimiento de contraseña."
 
 #~ msgid "Patients"
 #~ msgstr "Pacientes"
