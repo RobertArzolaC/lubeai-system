@@ -4,7 +4,6 @@ from typing import Any
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
-from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.generic import TemplateView
@@ -21,12 +20,11 @@ class DashboardView(LoginRequiredMixin, CacheMixin, TemplateView):
     cache_timeout = constants.DEFAULT_CACHE_TIMEOUT
 
     def get_context_data(self, **kwargs: Any) -> dict:
-        """Add the initial payload, filter options and timestamp."""
+        """Add the initial payload and the available filter options."""
         context = super().get_context_data(**kwargs)
         service = DashboardService()
         context["dashboard_data"] = service.build_context()
         context["filter_options"] = service.get_filter_options()
-        context["last_updated"] = timezone.now()
         return context
 
 

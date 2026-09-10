@@ -56,7 +56,6 @@ class DashboardServiceSeriesTests(TestCase):
 
     def setUp(self) -> None:
         self.machine = equipment_factories.MachineFactory(name="Buque Dos")
-        self.other_machine = equipment_factories.MachineFactory(name="Buque Tres")
         reports_factories.ReportFactory(
             machine=self.machine, condition="CRITICAL", sample_date=date(2024, 1, 10)
         )
