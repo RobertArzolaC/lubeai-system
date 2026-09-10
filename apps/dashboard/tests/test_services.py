@@ -1,8 +1,10 @@
 """Tests for apps.dashboard.services.dashboard_service."""
 
-from datetime import date
+import json
+from datetime import date, datetime
 
 from django.test import TestCase
+from django.utils import timezone
 
 from apps.alerts import factories as alerts_factories
 from apps.dashboard.services.dashboard_service import (
@@ -93,6 +95,36 @@ class DashboardServiceSeriesTests(TestCase):
         self.assertEqual(data["alerts"], [])
         self.assertEqual(data["cautions"], [])
 
+    def test_alerts_over_time_buckets_detected_alerts(self) -> None:
+        """Alerts with a real detected_at are bucketed by month and severity."""
+        may = datetime(2024, 5, 10, 12, 0, tzinfo=timezone.get_current_timezone())
+        june = datetime(2024, 6, 2, 9, 30, tzinfo=timezone.get_current_timezone())
+        alerts_factories.AlertFactory(
+            report=None,
+            component=None,
+            machine=self.machine,
+            severity="CRITICAL",
+            detected_at=may,
+        )
+        alerts_factories.AlertFactory(
+            report=None,
+            component=None,
+            machine=self.machine,
+            severity="CAUTION",
+            detected_at=may,
+        )
+        alerts_factories.AlertFactory(
+            report=None,
+            component=None,
+            machine=self.machine,
+            severity="CAUTION",
+            detected_at=june,
+        )
+        data = DashboardService().get_alerts_over_time()
+        self.assertEqual(data["categories"], ["2024-05", "2024-06"])
+        self.assertEqual(data["alerts"], [1, 0])
+        self.assertEqual(data["cautions"], [1, 1])
+
 
 class DashboardServiceFilterTests(TestCase):
     """Filtering behaviour tests."""
@@ -127,6 +159,31 @@ class DashboardServiceFilterTests(TestCase):
         """Filtering by component type narrows the report queryset."""
         service = DashboardService(DashboardFilters(component_type_id=self.component_type.pk))
         self.assertEqual(service.get_kpis()["total"], 1)
+
+    def test_filter_alerts_by_year(self) -> None:
+        """Alert queryset honours the year filter."""
+        alerts_factories.AlertFactory(
+            report=None,
+            component=None,
+            machine=self.machine,
+            severity="CRITICAL",
+            detected_at=datetime(
+                2024, 6, 15, 10, 0, tzinfo=timezone.get_current_timezone()
+            ),
+        )
+        alerts_factories.AlertFactory(
+            report=None,
+            component=None,
+            machine=self.machine,
+            severity="CRITICAL",
+            detected_at=datetime(
+                2023, 6, 15, 10, 0, tzinfo=timezone.get_current_timezone()
+            ),
+        )
+        service = DashboardService(DashboardFilters(year=2024))
+        alerts = service.get_alerts()
+        self.assertEqual(alerts.count(), 1)
+        self.assertEqual(alerts.first().detected_at.year, 2024)
 
 
 class DashboardServiceISOTests(TestCase):
@@ -178,8 +235,54 @@ class DashboardServiceAuxTests(TestCase):
         self.assertEqual(rows[0]["machine"], "Buque Cuatro")
         self.assertIn("condition_display", rows[0])
 
+    def test_recent_reports_respects_limit(self) -> None:
+        """The limit narrows the rows and the most recent sample comes first."""
+        rows = DashboardService().get_recent_reports(limit=1)
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["sample_date"], "2024-12-31")
+
     def test_filter_options(self) -> None:
         """Filter options expose years, fleets, machines and component types."""
         options = DashboardService.get_filter_options()
         self.assertIn(2024, options["years"])
         self.assertTrue(options["fleets"])
+
+
+class DashboardServiceBuildContextTests(TestCase):
+    """Full dashboard payload assembly tests."""
+
+    def setUp(self) -> None:
+        self.machine = equipment_factories.MachineFactory(name="Buque Cinco")
+        self.report = reports_factories.ReportFactory(
+            machine=self.machine, condition="CRITICAL", sample_date=date(2024, 5, 15)
+        )
+        reports_factories.LabAnalysisFactory(
+            report=self.report, particle_count_iso="23/21/18"
+        )
+        alerts_factories.AlertFactory(
+            report=None,
+            component=None,
+            machine=self.machine,
+            severity="CRITICAL",
+            detected_at=datetime(
+                2024, 5, 10, 12, 0, tzinfo=timezone.get_current_timezone()
+            ),
+        )
+
+    def test_build_context_returns_expected_keys_and_is_json_serialisable(self) -> None:
+        """The full payload exposes every section and is JSON serialisable."""
+        payload = DashboardService().build_context()
+        expected_keys = {
+            "kpis",
+            "total",
+            "condition_distribution",
+            "samples_by_month",
+            "alerts_by_fleet",
+            "alerts_over_time",
+            "iso4406",
+            "range",
+            "recent_reports",
+        }
+        self.assertEqual(set(payload.keys()), expected_keys)
+        serialised = json.dumps(payload)
+        self.assertIsInstance(serialised, str)
