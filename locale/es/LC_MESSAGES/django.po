@@ -169,7 +169,7 @@ msgstr "Todas las máquinas"
 #: templates/equipment/machine/list.html:67
 #: templates/reports/report/detail.html:74
 msgid "Machine"
-msgstr "Equipo"
+msgstr "Máquina"
 
 #: apps/alerts/filtersets.py:49 apps/reports/filtersets.py:56
 #: apps/reports/filtersets.py:130
@@ -812,7 +812,7 @@ msgstr "Contaminación"
 
 #: apps/reports/choices.py:27 templates/dashboard/includes/tabs.html:8
 msgid "Oil Health"
-msgstr "Estado Aceite"
+msgstr "Estado del aceite"
 
 #: apps/reports/choices.py:28
 msgid "Additives"
