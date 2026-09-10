@@ -56,6 +56,8 @@ LOCAL_APPS = [
     "apps.users.apps.UsersConfig",
     "apps.theme.apps.ThemeConfig",
     "apps.equipment.apps.EquipmentConfig",
+    "apps.reports.apps.ReportsConfig",
+    "apps.alerts.apps.AlertsConfig",
 ]
 
 TAILWIND_APP_NAME = "apps.theme"

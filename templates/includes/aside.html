@@ -52,24 +52,6 @@
                         </a>
                     </li>
 
-                    {% if perms.users.view_account %}
-                    <li class="group-[.collapsed]:hidden">
-                        <h3 class="mb-4 ml-4 mt-8 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                            {% trans "Administration" %}
-                        </h3>
-                    </li>
-                    <li>
-                        <a class="flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-gray-600 dark:text-bodydark1 duration-300 ease-in-out hover:bg-gray-2 dark:hover:bg-meta-4 transition-all group-[.collapsed]:justify-center group-[.collapsed]:px-0 {% if "accounts" in request.path %}bg-gray-2 dark:bg-meta-4 !text-primary{% endif %}"
-                           href="{% url 'apps.users:account_list' %}" title="{% trans 'Accounts' %}">
-                            <svg class="fill-current flex-shrink-0" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M10 10C12.3012 10 14.1667 8.13452 14.1667 5.83333C14.1667 3.53215 12.3012 1.66667 10 1.66667C7.69882 1.66667 5.83334 3.53215 5.83334 5.83333C5.83334 8.13452 7.69882 10 10 10Z" />
-                                <path d="M10 11.6667C6.77834 11.6667 4.16667 14.2783 4.16667 17.5C4.16667 17.9602 4.53977 18.3333 5 18.3333H15C15.4602 18.3333 15.8333 17.9602 15.8333 17.5C15.8333 14.2783 13.2217 11.6667 10 11.6667Z" />
-                            </svg>
-                            <span class="group-[.collapsed]:hidden duration-300 ease-in-out overflow-hidden whitespace-nowrap">{% trans "Accounts" %}</span>
-                        </a>
-                    </li>
-                    {% endif %}
-
                     {% if perms.equipment.view_machine or perms.equipment.view_branch or perms.equipment.view_fleet or perms.equipment.view_componenttype %}
                     <li class="group-[.collapsed]:hidden">
                         <h3 class="mb-4 ml-4 mt-8 text-xs font-semibold text-gray-500 uppercase tracking-wider">
@@ -123,6 +105,66 @@
                         </a>
                     </li>
                     {% endif %}
+                    {% endif %}
+
+                    {% if perms.reports.view_laboratory or perms.reports.view_report or perms.reports.view_analysisthreshold %}
+                    <li class="group-[.collapsed]:hidden">
+                        <h3 class="mb-4 ml-4 mt-8 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                            {% trans "Reports" %}
+                        </h3>
+                    </li>
+                    {% if perms.reports.view_laboratory %}
+                    <li>
+                        <a class="flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-gray-600 dark:text-bodydark1 duration-300 ease-in-out hover:bg-gray-2 dark:hover:bg-meta-4 transition-all group-[.collapsed]:justify-center group-[.collapsed]:px-0 {% if "laboratories" in request.path %}bg-gray-2 dark:bg-meta-4 !text-primary{% endif %}"
+                           href="{% url 'apps.reports:laboratory_list' %}" title="{% trans 'Laboratories' %}">
+                            <svg class="fill-current flex-shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9 3h6l1 4H8l1-4z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M6 7h12v12a1 1 0 01-1 1H7a1 1 0 01-1-1V7z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span class="group-[.collapsed]:hidden duration-300 ease-in-out overflow-hidden whitespace-nowrap">{% trans "Laboratories" %}</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% if perms.reports.view_report %}
+                    <li>
+                        <a class="flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-gray-600 dark:text-bodydark1 duration-300 ease-in-out hover:bg-gray-2 dark:hover:bg-meta-4 transition-all group-[.collapsed]:justify-center group-[.collapsed]:px-0 {% if request.resolver_match.url_name == 'report_list' or 'report' in request.resolver_match.url_name %}bg-gray-2 dark:bg-meta-4 !text-primary{% endif %}"
+                           href="{% url 'apps.reports:report_list' %}" title="{% trans 'Reports' %}">
+                            <svg class="fill-current flex-shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span class="group-[.collapsed]:hidden duration-300 ease-in-out overflow-hidden whitespace-nowrap">{% trans "Reports" %}</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% if perms.reports.view_analysisthreshold %}
+                    <li>
+                        <a class="flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-gray-600 dark:text-bodydark1 duration-300 ease-in-out hover:bg-gray-2 dark:hover:bg-meta-4 transition-all group-[.collapsed]:justify-center group-[.collapsed]:px-0 {% if "thresholds" in request.path %}bg-gray-2 dark:bg-meta-4 !text-primary{% endif %}"
+                           href="{% url 'apps.reports:analysisthreshold_list' %}" title="{% trans 'Thresholds' %}">
+                            <svg class="fill-current flex-shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M10.5 3.75a6.75 6.75 0 100 13.5 6.75 6.75 0 000-13.5zM2.25 10.5a8.25 8.25 0 1114.59 5.28l4.69 4.69a.75.75 0 11-1.06 1.06l-4.69-4.69A8.25 8.25 0 012.25 10.5z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span class="group-[.collapsed]:hidden duration-300 ease-in-out overflow-hidden whitespace-nowrap">{% trans "Thresholds" %}</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% endif %}
+
+                    {% if perms.users.view_account %}
+                    <li class="group-[.collapsed]:hidden">
+                        <h3 class="mb-4 ml-4 mt-8 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                            {% trans "Administration" %}
+                        </h3>
+                    </li>
+                    <li>
+                        <a class="flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-gray-600 dark:text-bodydark1 duration-300 ease-in-out hover:bg-gray-2 dark:hover:bg-meta-4 transition-all group-[.collapsed]:justify-center group-[.collapsed]:px-0 {% if "accounts" in request.path %}bg-gray-2 dark:bg-meta-4 !text-primary{% endif %}"
+                           href="{% url 'apps.users:account_list' %}" title="{% trans 'Accounts' %}">
+                            <svg class="fill-current flex-shrink-0" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M10 10C12.3012 10 14.1667 8.13452 14.1667 5.83333C14.1667 3.53215 12.3012 1.66667 10 1.66667C7.69882 1.66667 5.83334 3.53215 5.83334 5.83333C5.83334 8.13452 7.69882 10 10 10Z" />
+                                <path d="M10 11.6667C6.77834 11.6667 4.16667 14.2783 4.16667 17.5C4.16667 17.9602 4.53977 18.3333 5 18.3333H15C15.4602 18.3333 15.8333 17.9602 15.8333 17.5C15.8333 14.2783 13.2217 11.6667 10 11.6667Z" />
+                            </svg>
+                            <span class="group-[.collapsed]:hidden duration-300 ease-in-out overflow-hidden whitespace-nowrap">{% trans "Accounts" %}</span>
+                        </a>
+                    </li>
                     {% endif %}
                 </ul>
             </div>

@@ -1,0 +1,187 @@
+{% extends "layouts/dashboard.html" %}
+{% load static %}
+{% load i18n %}
+{% load breadcrumb_tags %}
+
+{% block title_page %}{{ entity }}{% endblock title_page %}
+
+{% block toolbar_title %}{{ entity }}{% endblock %}
+
+{% block content %}
+<div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+        <div class="flex flex-wrap items-center gap-3">
+            <h2 class="text-3xl font-bold tracking-tight text-black dark:text-white">{{ report.lab_number }}</h2>
+            {% include "reports/includes/condition_badge.html" with condition=report.condition label=report.get_condition_display %}
+            {% include "reports/includes/report_status_badge.html" with status=report.status label=report.get_status_display %}
+        </div>
+        <p class="mt-1 text-sm font-medium text-bodydark2">
+            {% if report.machine %}{{ report.machine.name }}{% endif %}
+            {% if report.component %}· {{ report.component.type.name }}{% endif %}
+        </p>
+    </div>
+    <div class="flex items-center gap-3">
+        <a href="{{ back_url }}" class="inline-flex items-center justify-center rounded-xl border border-stroke py-3 px-6 text-sm font-semibold text-black transition hover:bg-gray-50 dark:border-strokedark dark:text-white dark:hover:bg-white/5">
+            {% trans "Back" %}
+        </a>
+        {% if perms.reports.change_report %}
+        <a href="{{ edit_url }}" class="inline-flex items-center justify-center rounded-xl bg-primary py-3 px-6 text-sm font-bold text-white shadow-lg shadow-primary/20 transition-all duration-300 hover:bg-opacity-90">
+            {% trans "Edit Report" %}
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+    <!-- Identification -->
+    <div class="rounded-2xl border border-stroke bg-white p-6 shadow-sm dark:border-strokedark dark:bg-boxdark">
+        <h3 class="mb-5 text-lg font-bold text-black dark:text-white">{% trans "Identification" %}</h3>
+        <dl class="flex flex-col gap-4">
+            <div>
+                <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Lab Number" %}</dt>
+                <dd class="mt-1 text-sm font-semibold text-black dark:text-white">{{ report.lab_number }}</dd>
+            </div>
+            <div>
+                <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "PER Number" %}</dt>
+                <dd class="mt-1 text-sm font-semibold text-black dark:text-white">{{ report.per_number|default:"—" }}</dd>
+            </div>
+            <div>
+                <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Serial Number Code" %}</dt>
+                <dd class="mt-1 text-sm font-semibold text-black dark:text-white">{{ report.serial_number_code|default:"—" }}</dd>
+            </div>
+            <div>
+                <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Laboratory" %}</dt>
+                <dd class="mt-1 text-sm font-semibold text-black dark:text-white">
+                    {% if report.laboratory %}
+                    <a href="{% url 'apps.reports:laboratory_detail' report.laboratory.pk %}" class="text-primary hover:underline">{{ report.laboratory.name }}</a>
+                    {% else %}—{% endif %}
+                </dd>
+            </div>
+            <div>
+                <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Lubricant" %}</dt>
+                <dd class="mt-1 text-sm font-semibold text-black dark:text-white">{{ report.lubricant|default:"—" }}</dd>
+            </div>
+        </dl>
+    </div>
+
+    <!-- Equipment & usage -->
+    <div class="flex flex-col gap-6 lg:col-span-2">
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <div class="rounded-2xl border border-stroke bg-white p-6 shadow-sm dark:border-strokedark dark:bg-boxdark">
+                <h3 class="mb-5 text-lg font-bold text-black dark:text-white">{% trans "Equipment" %}</h3>
+                <dl class="flex flex-col gap-4">
+                    <div>
+                        <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Machine" %}</dt>
+                        <dd class="mt-1 text-sm font-semibold text-black dark:text-white">{{ report.machine.name|default:"—" }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Component" %}</dt>
+                        <dd class="mt-1 text-sm font-semibold text-black dark:text-white">{{ report.component_name }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Machine Hours / Kms" %}</dt>
+                        <dd class="mt-1 text-sm font-semibold text-black dark:text-white">{{ report.machine_hours|default:"—" }} / {{ report.machine_kms|default:"—" }}</dd>
+                    </div>
+                </dl>
+            </div>
+            <div class="rounded-2xl border border-stroke bg-white p-6 shadow-sm dark:border-strokedark dark:bg-boxdark">
+                <h3 class="mb-5 text-lg font-bold text-black dark:text-white">{% trans "Dates" %}</h3>
+                <dl class="flex flex-col gap-4">
+                    <div>
+                        <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Sample Date" %}</dt>
+                        <dd class="mt-1 text-sm font-semibold text-black dark:text-white">{{ report.sample_date|date:"d/m/Y"|default:"—" }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Reception Date" %}</dt>
+                        <dd class="mt-1 text-sm font-semibold text-black dark:text-white">{{ report.reception_date|date:"d/m/Y"|default:"—" }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Report Date" %}</dt>
+                        <dd class="mt-1 text-sm font-semibold text-black dark:text-white">{{ report.report_date|date:"d/m/Y"|default:"—" }}</dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        <!-- Notes -->
+        <div class="rounded-2xl border border-stroke bg-white p-6 shadow-sm dark:border-strokedark dark:bg-boxdark">
+            <h3 class="mb-5 text-lg font-bold text-black dark:text-white">{% trans "Notes & Recommendations" %}</h3>
+            <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                    <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Notes" %}</dt>
+                    <dd class="mt-1 text-sm font-medium text-bodydark2">{{ report.notes|default:"—" }}</dd>
+                </div>
+                <div>
+                    <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Recommendations" %}</dt>
+                    <dd class="mt-1 text-sm font-medium text-bodydark2">{{ report.recommendations|default:"—" }}</dd>
+                </div>
+                <div>
+                    <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Action Required" %}</dt>
+                    <dd class="mt-1 text-sm font-medium text-bodydark2">{{ report.action_required|default:"—" }}</dd>
+                </div>
+                <div>
+                    <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Others" %}</dt>
+                    <dd class="mt-1 text-sm font-medium text-bodydark2">{{ report.others|default:"—" }}</dd>
+                </div>
+            </dl>
+        </div>
+    </div>
+</div>
+
+<!-- Analysis -->
+<div class="mt-6 rounded-2xl border border-stroke bg-white shadow-sm dark:border-strokedark dark:bg-boxdark">
+    <div class="border-b border-stroke py-4 px-6 dark:border-strokedark">
+        <h3 class="text-lg font-bold text-black dark:text-white">{% trans "Laboratory Analysis" %}</h3>
+    </div>
+    {% if analysis %}
+    <div class="grid grid-cols-1 gap-6 p-6 lg:grid-cols-3">
+        <dl class="flex flex-col gap-4">
+            <div>
+                <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Total Wear Metals" %}</dt>
+                <dd class="mt-1 text-sm font-semibold text-black dark:text-white">{{ analysis.total_wear_metals }} ppm</dd>
+            </div>
+            <div>
+                <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Total Contaminants" %}</dt>
+                <dd class="mt-1 text-sm font-semibold text-black dark:text-white">{{ analysis.total_contaminants }} ppm</dd>
+            </div>
+            <div>
+                <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Additive Health" %}</dt>
+                <dd class="mt-1 text-sm font-semibold text-black dark:text-white">
+                    {% if analysis.additive_depletion_pct is not None %}{{ analysis.additive_depletion_pct|floatformat:1 }}%{% else %}—{% endif %}
+                </dd>
+            </div>
+        </dl>
+        <dl class="flex flex-col gap-4">
+            <div>
+                <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Viscosity @ 40°C / 100°C" %}</dt>
+                <dd class="mt-1 text-sm font-semibold text-black dark:text-white">{{ analysis.viscosity_40c|default:"—" }} / {{ analysis.viscosity_100c|default:"—" }} cSt</dd>
+            </div>
+            <div>
+                <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "TBN / TAN" %}</dt>
+                <dd class="mt-1 text-sm font-semibold text-black dark:text-white">{{ analysis.tbn|default:"—" }} / {{ analysis.tan|default:"—" }}</dd>
+            </div>
+            <div>
+                <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Water (Crackle / FTIR)" %}</dt>
+                <dd class="mt-1 text-sm font-semibold text-black dark:text-white">{{ analysis.water_crackle|default:"—" }} / {{ analysis.water_ftir|default:"—" }}%</dd>
+            </div>
+        </dl>
+        <dl class="flex flex-col gap-4">
+            <div>
+                <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Oxidation / Nitration / Sulfation" %}</dt>
+                <dd class="mt-1 text-sm font-semibold text-black dark:text-white">{{ analysis.oxidation|default:"—" }} / {{ analysis.nitration|default:"—" }} / {{ analysis.sulfation|default:"—" }}</dd>
+            </div>
+            <div>
+                <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "PQ Index / ISO Count" %}</dt>
+                <dd class="mt-1 text-sm font-semibold text-black dark:text-white">{{ analysis.pq_index|default:"—" }} / {{ analysis.particle_count_iso|default:"—" }}</dd>
+            </div>
+            <div>
+                <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Visual Appearance" %}</dt>
+                <dd class="mt-1 text-sm font-semibold text-black dark:text-white">{{ analysis.visual_appearance|default:"—" }}</dd>
+            </div>
+        </dl>
+    </div>
+    {% else %}
+    <p class="px-6 py-8 text-center text-sm font-medium text-bodydark2">{% trans "No laboratory analysis has been registered for this report." %}</p>
+    {% endif %}
+</div>
+{% endblock content %}

@@ -1,0 +1,82 @@
+{% extends "layouts/dashboard.html" %}
+{% load static %}
+{% load i18n %}
+{% load breadcrumb_tags %}
+
+{% block title_page %}{{ entity }}{% endblock title_page %}
+
+{% block toolbar_title %}{{ entity }}{% endblock %}
+
+{% block content %}
+<div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+        <h2 class="text-3xl font-bold tracking-tight text-black dark:text-white">{{ threshold.get_parameter_display }}</h2>
+        <p class="mt-1 text-sm font-medium text-bodydark2">{{ threshold.get_category_display }}</p>
+    </div>
+    <div class="flex items-center gap-3">
+        <a href="{{ back_url }}" class="inline-flex items-center justify-center rounded-xl border border-stroke py-3 px-6 text-sm font-semibold text-black transition hover:bg-gray-50 dark:border-strokedark dark:text-white dark:hover:bg-white/5">
+            {% trans "Back" %}
+        </a>
+        {% if perms.reports.change_analysisthreshold %}
+        <a href="{{ edit_url }}" class="inline-flex items-center justify-center rounded-xl bg-primary py-3 px-6 text-sm font-bold text-white shadow-lg shadow-primary/20 transition-all duration-300 hover:bg-opacity-90">
+            {% trans "Edit Threshold" %}
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+    <div class="rounded-2xl border border-stroke bg-white p-6 shadow-sm dark:border-strokedark dark:bg-boxdark">
+        <h3 class="mb-5 text-lg font-bold text-black dark:text-white">{% trans "Information" %}</h3>
+        <dl class="flex flex-col gap-4">
+            <div>
+                <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Parameter" %}</dt>
+                <dd class="mt-1 text-sm font-semibold text-black dark:text-white">{{ threshold.get_parameter_display }}</dd>
+            </div>
+            <div>
+                <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Category" %}</dt>
+                <dd class="mt-1 text-sm font-semibold text-black dark:text-white">{{ threshold.get_category_display }}</dd>
+            </div>
+            <div>
+                <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Component Type" %}</dt>
+                <dd class="mt-1 text-sm font-semibold text-black dark:text-white">{% if threshold.component_type %}{{ threshold.component_type.name }}{% else %}{% trans "Global" %}{% endif %}</dd>
+            </div>
+            <div>
+                <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Status" %}</dt>
+                <dd class="mt-1">
+                    {% include "includes/status_badge.html" with is_active=threshold.is_active %}
+                </dd>
+            </div>
+        </dl>
+    </div>
+
+    <div class="flex flex-col gap-6 lg:col-span-2">
+        <div class="rounded-2xl border border-stroke bg-white p-6 shadow-sm dark:border-strokedark dark:bg-boxdark">
+            <h3 class="mb-5 text-lg font-bold text-black dark:text-white">{% trans "Limits" %}</h3>
+            <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                    <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Warning Limit" %}</dt>
+                    <dd class="mt-1 text-sm font-semibold text-warning">{{ threshold.warning_limit }} {{ threshold.unit }}</dd>
+                </div>
+                <div>
+                    <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Critical Limit" %}</dt>
+                    <dd class="mt-1 text-sm font-semibold text-danger">{{ threshold.critical_limit }} {{ threshold.unit }}</dd>
+                </div>
+                <div>
+                    <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Inverse Logic" %}</dt>
+                    <dd class="mt-1 text-sm font-semibold text-black dark:text-white">{% if threshold.is_inverse %}{% trans "Yes" %}{% else %}{% trans "No" %}{% endif %}</dd>
+                </div>
+                <div>
+                    <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Unit" %}</dt>
+                    <dd class="mt-1 text-sm font-semibold text-black dark:text-white">{{ threshold.unit }}</dd>
+                </div>
+            </dl>
+        </div>
+
+        <div class="rounded-2xl border border-stroke bg-white p-6 shadow-sm dark:border-strokedark dark:bg-boxdark">
+            <h3 class="mb-5 text-lg font-bold text-black dark:text-white">{% trans "Wear Source Description" %}</h3>
+            <p class="text-sm font-medium text-bodydark2">{{ threshold.wear_source_description|default:"—" }}</p>
+        </div>
+    </div>
+</div>
+{% endblock content %}

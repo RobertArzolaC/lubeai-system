@@ -83,19 +83,19 @@
                 </p>
             </div>
             <div class="col-span-2 flex items-center">
-                {% include "equipment/includes/status_badge.html" with is_active=branch.is_active %}
+                {% include "includes/status_badge.html" with is_active=branch.is_active %}
             </div>
             <div class="col-span-2 flex items-center justify-end">
                 {% url "apps.equipment:branch_detail" branch.pk as detail_url %}
                 {% url "apps.equipment:branch_update" branch.pk as update_url %}
                 {% url "apps.equipment:branch_delete" branch.pk as delete_url %}
-                {% include "equipment/includes/row_actions.html" with detail_url=detail_url update_url=update_url delete_url=delete_url view_perm="equipment.view_branch" change_perm="equipment.change_branch" delete_perm="equipment.delete_branch" %}
+                {% include "includes/row_actions.html" with detail_url=detail_url update_url=update_url delete_url=delete_url view_perm="equipment.view_branch" change_perm="equipment.change_branch" delete_perm="equipment.delete_branch" %}
             </div>
         </div>
         {% empty %}
         {% trans "No branches found" as empty_title %}
         {% trans "We couldn't find any branches matching your search. Try adjusting your criteria or create a new branch." as empty_message %}
-        {% include "equipment/includes/empty_state.html" with title=empty_title message=empty_message icon_path="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z" icon_path2="M15 11a3 3 0 11-6 0 3 3 0 016 0z" %}
+        {% include "includes/empty_state.html" with title=empty_title message=empty_message icon_path="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z" icon_path2="M15 11a3 3 0 11-6 0 3 3 0 016 0z" %}
         {% endfor %}
     </div>
 
@@ -110,5 +110,5 @@
 {% block extra_js %}
 {% trans "Delete Branch" as confirm_title %}
 {% trans "Branch deleted successfully." as success_message %}
-{% include "equipment/includes/delete_script.html" with confirm_title=confirm_title success_message=success_message %}
+{% include "includes/delete_script.html" with confirm_title=confirm_title success_message=success_message %}
 {% endblock extra_js %}

@@ -1,0 +1,186 @@
+{% extends "layouts/dashboard.html" %}
+{% load static %}
+{% load i18n %}
+{% load widget_tweaks %}
+{% load breadcrumb_tags %}
+
+{% block title_page %}{{ entity }}{% endblock title_page %}
+
+{% block toolbar_title %}{{ entity }}{% endblock %}
+
+{% block content %}
+<!-- Page Header & Actions -->
+<div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+        <h2 class="text-3xl font-bold tracking-tight text-black dark:text-white">
+            {% trans "Export Reports" %}
+        </h2>
+        <p class="mt-1 text-sm font-medium text-bodydark2">
+            {% trans "Filter the inspection reports and download them as an Excel workbook." %}
+        </p>
+    </div>
+    <a href="{{ back_url }}" class="inline-flex items-center justify-center rounded-xl border border-stroke py-3 px-6 text-sm font-semibold text-black transition hover:bg-gray-50 dark:border-strokedark dark:text-white dark:hover:bg-white/5">
+        {% trans "Back" %}
+    </a>
+</div>
+
+<!-- Filter Card -->
+<div class="mb-8 rounded-2xl border border-stroke bg-white p-6 shadow-sm dark:border-strokedark dark:bg-boxdark">
+    <form id="export-form" method="get" class="grid grid-cols-1 gap-4 md:grid-cols-12 md:items-end">
+        <div class="md:col-span-3">
+            <label for="id_start_date" class="mb-2.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{{ filter.form.start_date.label }}</label>
+            {% render_field filter.form.start_date class="w-full rounded-xl border border-stroke bg-whiten py-3 px-4 text-sm font-semibold text-black outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/5 dark:border-form-strokedark dark:bg-meta-4 dark:text-white" type="date" %}
+        </div>
+        <div class="md:col-span-3">
+            <label for="id_end_date" class="mb-2.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{{ filter.form.end_date.label }}</label>
+            {% render_field filter.form.end_date class="w-full rounded-xl border border-stroke bg-whiten py-3 px-4 text-sm font-semibold text-black outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/5 dark:border-form-strokedark dark:bg-meta-4 dark:text-white" type="date" %}
+        </div>
+        <div class="md:col-span-3">
+            <label for="id_laboratory" class="mb-2.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{{ filter.form.laboratory.label }}</label>
+            {% render_field filter.form.laboratory class="w-full rounded-xl border border-stroke bg-whiten py-3 px-4 text-sm font-semibold text-black outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/5 dark:border-form-strokedark dark:bg-meta-4 dark:text-white" %}
+        </div>
+        <div class="md:col-span-3">
+            <label for="id_machine" class="mb-2.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{{ filter.form.machine.label }}</label>
+            {% render_field filter.form.machine class="w-full rounded-xl border border-stroke bg-whiten py-3 px-4 text-sm font-semibold text-black outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/5 dark:border-form-strokedark dark:bg-meta-4 dark:text-white" %}
+        </div>
+        <div class="md:col-span-3">
+            <label for="id_component" class="mb-2.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{{ filter.form.component.label }}</label>
+            {% render_field filter.form.component class="w-full rounded-xl border border-stroke bg-whiten py-3 px-4 text-sm font-semibold text-black outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/5 dark:border-form-strokedark dark:bg-meta-4 dark:text-white" %}
+        </div>
+        <div class="md:col-span-3">
+            <label for="id_status" class="mb-2.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{{ filter.form.status.label }}</label>
+            {% render_field filter.form.status class="w-full rounded-xl border border-stroke bg-whiten py-3 px-4 text-sm font-semibold text-black outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/5 dark:border-form-strokedark dark:bg-meta-4 dark:text-white" %}
+        </div>
+        <div class="md:col-span-3">
+            <label for="id_condition" class="mb-2.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{{ filter.form.condition.label }}</label>
+            {% render_field filter.form.condition class="w-full rounded-xl border border-stroke bg-whiten py-3 px-4 text-sm font-semibold text-black outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/5 dark:border-form-strokedark dark:bg-meta-4 dark:text-white" %}
+        </div>
+        <div class="flex flex-wrap items-center gap-3 md:col-span-3">
+            <button id="preview-btn" type="button" class="inline-flex items-center justify-center rounded-xl bg-primary py-3 px-5 text-sm font-bold text-white shadow-lg shadow-primary/20 transition-all duration-300 hover:bg-opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
+                {% trans "Preview" %}
+            </button>
+            <a id="download-link" href="{{ download_url }}" class="inline-flex items-center justify-center rounded-xl border border-stroke py-3 px-5 text-sm font-semibold text-black transition hover:bg-gray-50 dark:border-strokedark dark:text-white dark:hover:bg-white/5">
+                {% trans "Download Excel" %}
+            </a>
+        </div>
+        <div class="md:col-span-12">
+            <p class="text-xs font-medium text-bodydark2">
+                {% blocktrans %}A maximum of {{ max_records }} records can be exported in a single file.{% endblocktrans %}
+            </p>
+        </div>
+    </form>
+</div>
+
+<!-- Preview -->
+<div class="overflow-hidden rounded-2xl border border-stroke bg-white shadow-sm dark:border-strokedark dark:bg-boxdark">
+    <div class="flex items-center justify-between border-b border-stroke py-4 px-6 dark:border-strokedark">
+        <h3 class="text-lg font-bold text-black dark:text-white">{% trans "Preview" %}</h3>
+        <span id="preview-count" class="text-xs font-semibold text-bodydark2"></span>
+    </div>
+    <div id="preview-message" class="px-6 py-8 text-center text-sm font-medium text-bodydark2">
+        {% trans "Apply your filters and press Preview to see the first rows of the export." %}
+    </div>
+    <div id="preview-wrapper" class="hidden overflow-x-auto">
+        <table class="min-w-full text-left">
+            <thead id="preview-head" class="bg-gray-2/50 dark:bg-meta-4/30"></thead>
+            <tbody id="preview-body" class="divide-y divide-stroke dark:divide-strokedark"></tbody>
+        </table>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+<script>
+    (function () {
+        const form = document.getElementById('export-form');
+        const previewUrl = '{{ preview_url }}';
+        const downloadUrl = '{{ download_url }}';
+        const previewBtn = document.getElementById('preview-btn');
+        const downloadLink = document.getElementById('download-link');
+        const head = document.getElementById('preview-head');
+        const body = document.getElementById('preview-body');
+        const wrapper = document.getElementById('preview-wrapper');
+        const message = document.getElementById('preview-message');
+        const countLabel = document.getElementById('preview-count');
+
+        function buildQuery() {
+            const params = new URLSearchParams();
+            new FormData(form).forEach((value, key) => {
+                if (value !== '') {
+                    params.append(key, value);
+                }
+            });
+            const query = params.toString();
+            return query ? '?' + query : '';
+        }
+
+        function updateDownloadLink() {
+            downloadLink.setAttribute('href', downloadUrl + buildQuery());
+        }
+
+        function renderPreview(data) {
+            head.replaceChildren();
+            body.replaceChildren();
+
+            const headerRow = document.createElement('tr');
+            data.columns.forEach((column) => {
+                const th = document.createElement('th');
+                th.className = 'whitespace-nowrap px-4 py-3 text-xs font-bold uppercase tracking-wider text-black dark:text-white';
+                th.textContent = column;
+                headerRow.appendChild(th);
+            });
+            head.appendChild(headerRow);
+
+            data.rows.forEach((row) => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-gray-50 dark:hover:bg-meta-4/20';
+                row.forEach((cell) => {
+                    const td = document.createElement('td');
+                    td.className = 'whitespace-nowrap px-4 py-3 text-sm font-medium text-bodydark2';
+                    td.textContent = cell === null || cell === undefined ? '' : cell;
+                    tr.appendChild(td);
+                });
+                body.appendChild(tr);
+            });
+
+            wrapper.classList.remove('hidden');
+        }
+
+        async function loadPreview() {
+            updateDownloadLink();
+            message.textContent = '{% trans "Loading preview..." %}';
+            message.classList.remove('hidden');
+            wrapper.classList.add('hidden');
+            countLabel.textContent = '';
+
+            try {
+                const response = await fetch(previewUrl + buildQuery(), {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                });
+                const data = await response.json();
+                if (!response.ok || data.status !== 'success') {
+                    throw new Error(data.message || 'error');
+                }
+                countLabel.textContent = data.count + ' {% trans "records" %}';
+                if (data.rows.length === 0) {
+                    message.textContent = '{% trans "No reports match the selected filters." %}';
+                    return;
+                }
+                renderPreview(data);
+                message.classList.add('hidden');
+            } catch (error) {
+                message.textContent = error.message || '{% trans "There was a problem processing your request." %}';
+                message.classList.remove('hidden');
+            }
+        }
+
+        previewBtn.addEventListener('click', loadPreview);
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            loadPreview();
+        });
+        form.addEventListener('change', updateDownloadLink);
+        updateDownloadLink();
+    })();
+</script>
+{% endblock extra_js %}

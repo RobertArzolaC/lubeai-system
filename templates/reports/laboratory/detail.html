@@ -1,0 +1,79 @@
+{% extends "layouts/dashboard.html" %}
+{% load static %}
+{% load i18n %}
+{% load breadcrumb_tags %}
+
+{% block title_page %}{{ entity }}{% endblock title_page %}
+
+{% block toolbar_title %}{{ entity }}{% endblock %}
+
+{% block content %}
+<div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+        <h2 class="text-3xl font-bold tracking-tight text-black dark:text-white">{{ laboratory.name }}</h2>
+        <p class="mt-1 text-sm font-medium text-bodydark2">{{ laboratory.code }}</p>
+    </div>
+    <div class="flex items-center gap-3">
+        <a href="{{ back_url }}" class="inline-flex items-center justify-center rounded-xl border border-stroke py-3 px-6 text-sm font-semibold text-black transition hover:bg-gray-50 dark:border-strokedark dark:text-white dark:hover:bg-white/5">
+            {% trans "Back" %}
+        </a>
+        {% if perms.reports.change_laboratory %}
+        <a href="{{ edit_url }}" class="inline-flex items-center justify-center rounded-xl bg-primary py-3 px-6 text-sm font-bold text-white shadow-lg shadow-primary/20 transition-all duration-300 hover:bg-opacity-90">
+            {% trans "Edit Laboratory" %}
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+    <!-- Summary -->
+    <div class="rounded-2xl border border-stroke bg-white p-6 shadow-sm dark:border-strokedark dark:bg-boxdark">
+        <h3 class="mb-5 text-lg font-bold text-black dark:text-white">{% trans "Information" %}</h3>
+        <dl class="flex flex-col gap-4">
+            <div>
+                <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Name" %}</dt>
+                <dd class="mt-1 text-sm font-semibold text-black dark:text-white">{{ laboratory.name }}</dd>
+            </div>
+            <div>
+                <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Code" %}</dt>
+                <dd class="mt-1 text-sm font-semibold text-black dark:text-white">{{ laboratory.code }}</dd>
+            </div>
+            <div>
+                <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Status" %}</dt>
+                <dd class="mt-1">
+                    {% include "includes/status_badge.html" with is_active=laboratory.is_active %}
+                </dd>
+            </div>
+            <div>
+                <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Description" %}</dt>
+                <dd class="mt-1 text-sm font-medium text-bodydark2">{{ laboratory.description|default:"—" }}</dd>
+            </div>
+        </dl>
+    </div>
+
+    <!-- Related reports -->
+    <div class="lg:col-span-2">
+        <div class="rounded-2xl border border-stroke bg-white shadow-sm dark:border-strokedark dark:bg-boxdark">
+            <div class="border-b border-stroke py-4 px-6 dark:border-strokedark">
+                <h3 class="text-lg font-bold text-black dark:text-white">{% trans "Recent Reports" %}</h3>
+            </div>
+            <div class="divide-y divide-stroke dark:divide-strokedark">
+                {% for report in reports %}
+                <div class="flex items-center justify-between gap-4 px-6 py-4">
+                    <div>
+                        <a href="{% url 'apps.reports:report_detail' report.pk %}" class="text-sm font-bold text-primary hover:underline">{{ report.lab_number }}</a>
+                        <p class="text-xs font-medium text-bodydark2">
+                            {% if report.machine %}{{ report.machine.name }}{% else %}—{% endif %}
+                            {% if report.component %}· {{ report.component.type.name }}{% endif %}
+                        </p>
+                    </div>
+                    {% include "reports/includes/condition_badge.html" with condition=report.condition label=report.get_condition_display %}
+                </div>
+                {% empty %}
+                <p class="px-6 py-8 text-center text-sm font-medium text-bodydark2">{% trans "No reports registered for this laboratory." %}</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

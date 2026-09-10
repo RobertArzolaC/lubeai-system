@@ -81,19 +81,19 @@
                 <p class="line-clamp-2 text-sm font-medium text-bodydark2">{{ component_type.description|default:"—" }}</p>
             </div>
             <div class="col-span-2 flex items-center">
-                {% include "equipment/includes/status_badge.html" with is_active=component_type.is_active %}
+                {% include "includes/status_badge.html" with is_active=component_type.is_active %}
             </div>
             <div class="col-span-2 flex items-center justify-end">
                 {% url "apps.equipment:component_type_detail" component_type.pk as detail_url %}
                 {% url "apps.equipment:component_type_update" component_type.pk as update_url %}
                 {% url "apps.equipment:component_type_delete" component_type.pk as delete_url %}
-                {% include "equipment/includes/row_actions.html" with detail_url=detail_url update_url=update_url delete_url=delete_url view_perm="equipment.view_componenttype" change_perm="equipment.change_componenttype" delete_perm="equipment.delete_componenttype" %}
+                {% include "includes/row_actions.html" with detail_url=detail_url update_url=update_url delete_url=delete_url view_perm="equipment.view_componenttype" change_perm="equipment.change_componenttype" delete_perm="equipment.delete_componenttype" %}
             </div>
         </div>
         {% empty %}
         {% trans "No component types found" as empty_title %}
         {% trans "We couldn't find any component types matching your search. Try adjusting your criteria or create a new one." as empty_message %}
-        {% include "equipment/includes/empty_state.html" with title=empty_title message=empty_message icon_path="M11 4a7 7 0 100 14 7 7 0 000-14zm0 0v14" %}
+        {% include "includes/empty_state.html" with title=empty_title message=empty_message icon_path="M11 4a7 7 0 100 14 7 7 0 000-14zm0 0v14" %}
         {% endfor %}
     </div>
 
@@ -108,5 +108,5 @@
 {% block extra_js %}
 {% trans "Delete Component Type" as confirm_title %}
 {% trans "Component type deleted successfully." as success_message %}
-{% include "equipment/includes/delete_script.html" with confirm_title=confirm_title success_message=success_message %}
+{% include "includes/delete_script.html" with confirm_title=confirm_title success_message=success_message %}
 {% endblock extra_js %}

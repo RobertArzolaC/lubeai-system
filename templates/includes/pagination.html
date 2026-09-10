@@ -9,12 +9,12 @@
                 Showing {{ start }} to {{ end }} of {{ total }} entries
             {% endblocktrans %}
         </p>
-        
+
         <div class="flex items-center gap-2">
             <span class="text-sm opacity-60">{% trans "Show" %}:</span>
             <div class="relative z-20 bg-transparent">
                 <select class="relative z-20 w-full appearance-none rounded border border-stroke bg-transparent py-1 pl-3 pr-8 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input text-xs font-medium" id="itemsPerPageSelect">
-                    <option value="6" {% if paginator.per_page == 6 %}selected{% endif %}>6</option>
+                    <option value="5" {% if paginator.per_page == 5 %}selected{% endif %}>5</option>
                     <option value="10" {% if paginator.per_page == 10 %}selected{% endif %}>10</option>
                     <option value="25" {% if paginator.per_page == 25 %}selected{% endif %}>25</option>
                     <option value="50" {% if paginator.per_page == 50 %}selected{% endif %}>50</option>

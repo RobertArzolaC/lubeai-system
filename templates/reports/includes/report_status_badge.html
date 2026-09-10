@@ -1,0 +1,23 @@
+{% load i18n %}
+
+{% if status == "APPROVED" %}
+<span class="inline-flex items-center gap-1.5 rounded-full border border-success/20 bg-success/10 py-1.5 px-4 text-xs font-bold text-success">
+    <span class="h-1.5 w-1.5 rounded-full bg-success" aria-hidden="true"></span>{% if label %}{{ label }}{% else %}{% trans "Approved" %}{% endif %}
+</span>
+{% elif status == "REVIEWED" %}
+<span class="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 py-1.5 px-4 text-xs font-bold text-primary">
+    <span class="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden="true"></span>{% if label %}{{ label }}{% else %}{% trans "Reviewed" %}{% endif %}
+</span>
+{% elif status == "REJECTED" %}
+<span class="inline-flex items-center gap-1.5 rounded-full border border-danger/20 bg-danger/10 py-1.5 px-4 text-xs font-bold text-danger">
+    <span class="h-1.5 w-1.5 rounded-full bg-danger" aria-hidden="true"></span>{% if label %}{{ label }}{% else %}{% trans "Rejected" %}{% endif %}
+</span>
+{% elif status == "PENDING" %}
+<span class="inline-flex items-center gap-1.5 rounded-full border border-warning/20 bg-warning/10 py-1.5 px-4 text-xs font-bold text-warning">
+    <span class="h-1.5 w-1.5 rounded-full bg-warning" aria-hidden="true"></span>{% if label %}{{ label }}{% else %}{% trans "Pending" %}{% endif %}
+</span>
+{% else %}
+<span class="inline-flex items-center gap-1.5 rounded-full border border-stroke bg-gray-2 py-1.5 px-4 text-xs font-bold text-bodydark2 dark:border-strokedark dark:bg-meta-4">
+    {{ label|default:"—" }}
+</span>
+{% endif %}
