@@ -1,0 +1,33 @@
+{% load i18n %}
+<div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-5">
+    <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark">
+        <div class="mb-3 h-1 w-10 rounded-full bg-primary"></div>
+        <span class="text-xs font-semibold uppercase text-gray-500">{% trans "Total Samples" %}</span>
+        <p id="kpi-total" class="mt-1 text-3xl font-bold text-black dark:text-white">{{ dashboard_data.kpis.total }}</p>
+        <span class="text-xs text-gray-500">{{ dashboard_data.total }} {% trans "records" %}</span>
+    </div>
+    <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark">
+        <div class="mb-3 h-1 w-10 rounded-full bg-success"></div>
+        <span class="text-xs font-semibold uppercase text-gray-500">{% trans "Normal" %}</span>
+        <p id="kpi-normal" class="mt-1 text-3xl font-bold text-success">{{ dashboard_data.kpis.normal }}</p>
+        <span class="text-xs text-gray-500">{{ dashboard_data.kpis.normal|floatformat:0 }} {% trans "samples" %}</span>
+    </div>
+    <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark">
+        <div class="mb-3 h-1 w-10 rounded-full bg-warning"></div>
+        <span class="text-xs font-semibold uppercase text-gray-500">{% trans "Precaution" %}</span>
+        <p id="kpi-caution" class="mt-1 text-3xl font-bold text-warning">{{ dashboard_data.kpis.caution }}</p>
+        <span class="text-xs text-gray-500">{% trans "monitor" %}</span>
+    </div>
+    <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark">
+        <div class="mb-3 h-1 w-10 rounded-full bg-error"></div>
+        <span class="text-xs font-semibold uppercase text-gray-500">{% trans "Alert" %}</span>
+        <p id="kpi-critical" class="mt-1 text-3xl font-bold text-error">{{ dashboard_data.kpis.critical }}</p>
+        <span class="text-xs text-gray-500">{% trans "action required" %}</span>
+    </div>
+    <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark">
+        <div class="mb-3 h-1 w-10 rounded-full bg-warning"></div>
+        <span class="text-xs font-semibold uppercase text-gray-500">{% trans "Non-Conformance Rate" %}</span>
+        <p id="kpi-rate" class="mt-1 text-3xl font-bold text-warning">{{ dashboard_data.kpis.non_conformance_rate }}%</p>
+        <span class="text-xs text-gray-500">{% trans "alert + precaution" %}</span>
+    </div>
+</div>

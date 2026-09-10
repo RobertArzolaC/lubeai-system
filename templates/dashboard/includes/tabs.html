@@ -1,0 +1,66 @@
+{% load i18n %}
+<div class="rounded-2xl border border-gray-200 bg-white shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark">
+    <div class="flex flex-wrap gap-1 border-b border-gray-200 px-2 pt-2 dark:border-gray-800">
+        <button type="button" class="tab-btn rounded-t-lg px-4 py-2 text-sm font-medium" data-tab="resumen">{% trans "Summary" %}</button>
+        <button type="button" class="tab-btn rounded-t-lg px-4 py-2 text-sm font-medium" data-tab="tendencias">{% trans "Trends" %}</button>
+        <button type="button" class="tab-btn rounded-t-lg px-4 py-2 text-sm font-medium" data-tab="desgaste">{% trans "Wear" %}</button>
+        <button type="button" class="tab-btn rounded-t-lg px-4 py-2 text-sm font-medium" data-tab="contaminacion">{% trans "Contamination" %}</button>
+        <button type="button" class="tab-btn rounded-t-lg px-4 py-2 text-sm font-medium" data-tab="estado">{% trans "Oil Health" %}</button>
+        <a href="{% url 'apps.alerts:alert_list' %}" class="rounded-t-lg px-4 py-2 text-sm font-medium text-gray-500 hover:text-primary">{% trans "Alerts" %}</a>
+        <button type="button" class="tab-btn rounded-t-lg px-4 py-2 text-sm font-medium" data-tab="datos">{% trans "Data Table" %}</button>
+        <button type="button" class="tab-btn rounded-t-lg px-4 py-2 text-sm font-medium" data-tab="referencias">{% trans "References" %}</button>
+    </div>
+
+    <div class="p-4">
+        <div id="tab-panel-resumen" class="tab-panel flex flex-col gap-6">
+            {% include "dashboard/includes/kpis.html" %}
+            {% include "dashboard/includes/charts.html" %}
+        </div>
+        <div id="tab-panel-tendencias" class="tab-panel hidden">
+            <p class="text-sm text-gray-500">{% trans "Trend analysis will reuse the monthly series above." %}</p>
+        </div>
+        <div id="tab-panel-desgaste" class="tab-panel hidden">
+            <p class="text-sm text-gray-500">{% trans "Wear metal trends (Fe, Cu, Al, Cr, Pb)." %}</p>
+        </div>
+        <div id="tab-panel-contaminacion" class="tab-panel hidden">
+            <p class="text-sm text-gray-500">{% trans "Contaminants (Si, Na, K) and water/fuel ingress." %}</p>
+        </div>
+        <div id="tab-panel-estado" class="tab-panel hidden">
+            <p class="text-sm text-gray-500">{% trans "Viscosity, TBN/TAN and oxidation status." %}</p>
+        </div>
+        <div id="tab-panel-datos" class="tab-panel hidden">
+            <h3 class="mb-3 text-base font-semibold text-black dark:text-white">{% trans "Recent Samples" %}</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead class="text-xs uppercase text-gray-500">
+                        <tr>
+                            <th class="px-3 py-2">{% trans "Lab No." %}</th>
+                            <th class="px-3 py-2">{% trans "Machine" %}</th>
+                            <th class="px-3 py-2">{% trans "Fleet" %}</th>
+                            <th class="px-3 py-2">{% trans "Component" %}</th>
+                            <th class="px-3 py-2">{% trans "Date" %}</th>
+                            <th class="px-3 py-2">{% trans "Condition" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dashboard-table-body">
+                        {% for row in dashboard_data.recent_reports %}
+                        <tr class="border-t border-gray-100 dark:border-gray-800" data-condition="{{ row.condition }}">
+                            <td class="px-3 py-2">{{ row.lab_number }}</td>
+                            <td class="px-3 py-2">{{ row.machine }}</td>
+                            <td class="px-3 py-2">{{ row.fleet }}</td>
+                            <td class="px-3 py-2">{{ row.component }}</td>
+                            <td class="px-3 py-2">{{ row.sample_date }}</td>
+                            <td class="px-3 py-2">{{ row.condition_display }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="6" class="px-3 py-6 text-center text-gray-500">{% trans "No samples found." %}</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div id="tab-panel-referencias" class="tab-panel hidden">
+            <p class="text-sm text-gray-500">{% trans "ISO 4406 target" %}: &le; 22/20/17. {% trans "Codes above the limit are flagged in red." %}</p>
+        </div>
+    </div>
+</div>
