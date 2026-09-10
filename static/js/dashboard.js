@@ -12,6 +12,8 @@
     var charts = {};
 
     var COLORS = { NORMAL: "#12b76a", CAUTION: "#FFA70B", CRITICAL: "#f04438" };
+    var CONDITIONS = ["NORMAL", "CAUTION", "CRITICAL"];
+    var EMPTY_MESSAGE = "No samples found.";
 
     function isDark() {
         return document.documentElement.classList.contains("dark");
@@ -35,7 +37,16 @@
         var el = document.getElementById("chart-condition");
         if (!el) return;
         charts.condition = new ApexCharts(el, Object.assign(baseOptions(), {
-            chart: Object.assign(baseOptions().chart, { type: "donut", height: 280 }),
+            chart: Object.assign(baseOptions().chart, {
+                type: "donut",
+                height: 280,
+                events: {
+                    dataPointSelection: function (event, chartContext, config) {
+                        var condition = CONDITIONS[config.dataPointIndex];
+                        if (condition) filterTable({ condition: condition });
+                    }
+                }
+            }),
             labels: ["Normal", "Precaución", "Alerta"],
             series: [
                 data.condition_distribution.NORMAL || 0,
@@ -69,7 +80,16 @@
         var el = document.getElementById("chart-fleet");
         if (!el) return;
         charts.fleet = new ApexCharts(el, Object.assign(baseOptions(), {
-            chart: Object.assign(baseOptions().chart, { type: "bar", height: 280 }),
+            chart: Object.assign(baseOptions().chart, {
+                type: "bar",
+                height: 280,
+                events: {
+                    dataPointSelection: function (event, chartContext, config) {
+                        var fleet = data.alerts_by_fleet.categories[config.dataPointIndex];
+                        if (fleet) filterTable({ fleet: fleet });
+                    }
+                }
+            }),
             series: [{ name: "Alertas", data: data.alerts_by_fleet.values }],
             colors: [COLORS.CAUTION],
             plotOptions: { bar: { horizontal: true, borderRadius: 4 } },
@@ -104,7 +124,16 @@
             return data.iso4406.status[index] === "normal" ? 0 : value;
         });
         charts.iso = new ApexCharts(el, Object.assign(baseOptions(), {
-            chart: Object.assign(baseOptions().chart, { type: "bar", height: 280, stacked: true }),
+            chart: Object.assign(baseOptions().chart, {
+                type: "bar",
+                height: 280,
+                stacked: true,
+                events: {
+                    dataPointSelection: function () {
+                        filterTable({});
+                    }
+                }
+            }),
             series: [
                 { name: "Dentro de meta (≤ 22/20/17)", data: withinTarget },
                 { name: "Sobre la meta", data: aboveTarget }
@@ -159,9 +188,81 @@
         }
     }
 
+    function renderTable(reports) {
+        var body = document.getElementById("dashboard-table-body");
+        if (!body) return;
+        reports = reports || [];
+        while (body.firstChild) body.removeChild(body.firstChild);
+        reports.forEach(function (report) {
+            var row = document.createElement("tr");
+            row.className = "border-t border-gray-100 dark:border-gray-800";
+            row.setAttribute("data-condition", report.condition || "");
+            row.setAttribute("data-fleet", report.fleet || "");
+            [
+                report.lab_number,
+                report.machine,
+                report.fleet,
+                report.component,
+                report.sample_date,
+                report.condition_display
+            ].forEach(function (value) {
+                var cell = document.createElement("td");
+                cell.className = "px-3 py-2";
+                cell.textContent = value == null ? "" : value;
+                row.appendChild(cell);
+            });
+            body.appendChild(row);
+        });
+        var emptyRow = document.createElement("tr");
+        emptyRow.setAttribute("data-empty-state", "true");
+        if (reports.length > 0) emptyRow.classList.add("hidden");
+        var emptyCell = document.createElement("td");
+        emptyCell.className = "px-3 py-6 text-center text-gray-500";
+        emptyCell.colSpan = 6;
+        emptyCell.textContent = EMPTY_MESSAGE;
+        emptyRow.appendChild(emptyCell);
+        body.appendChild(emptyRow);
+    }
+
+    function showTab(slug) {
+        var buttons = document.querySelectorAll(".tab-btn");
+        Array.prototype.forEach.call(buttons, function (button) {
+            var active = button.id === "tab-btn-" + slug;
+            button.classList.toggle("bg-gray-100", active);
+            button.classList.toggle("text-primary", active);
+            button.classList.toggle("dark:bg-white/[0.05]", active);
+        });
+        Array.prototype.forEach.call(document.querySelectorAll(".tab-panel"), function (panel) {
+            panel.classList.toggle("hidden", panel.id !== "tab-panel-" + slug);
+        });
+    }
+
+    function filterTable(criteria) {
+        var body = document.getElementById("dashboard-table-body");
+        if (!body) return;
+        criteria = criteria || {};
+        var matches = 0;
+        Array.prototype.forEach.call(
+            body.querySelectorAll("tr[data-condition][data-fleet]"),
+            function (row) {
+                var conditionOk = !criteria.condition
+                    || row.getAttribute("data-condition") === criteria.condition;
+                var fleetOk = !criteria.fleet
+                    || row.getAttribute("data-fleet") === criteria.fleet;
+                var visible = conditionOk && fleetOk;
+                row.classList.toggle("hidden", !visible);
+                if (visible) matches += 1;
+            }
+        );
+        var emptyRow = body.querySelector("tr[data-empty-state]");
+        if (emptyRow) emptyRow.classList.toggle("hidden", matches > 0);
+        showTab("datos");
+    }
+
     function applyData(data) {
         updateKpis(data.kpis);
         updateSummary(data);
+        renderTable(data.recent_reports);
         renderAll(data);
     }
 
@@ -188,19 +289,10 @@
         var buttons = document.querySelectorAll(".tab-btn");
         Array.prototype.forEach.call(buttons, function (button) {
             button.addEventListener("click", function () {
-                var target = button.getAttribute("data-tab");
-                Array.prototype.forEach.call(buttons, function (other) {
-                    other.classList.toggle("bg-gray-100", other === button);
-                    other.classList.toggle("text-primary", other === button);
-                    other.classList.toggle("dark:bg-white/[0.05]", other === button);
-                });
-                Array.prototype.forEach.call(document.querySelectorAll(".tab-panel"), function (panel) {
-                    panel.classList.toggle("hidden", panel.id !== "tab-panel-" + target);
-                });
+                showTab(button.getAttribute("data-tab"));
             });
         });
-        var first = document.querySelector('.tab-btn[data-tab="resumen"]');
-        if (first) first.click();
+        showTab("resumen");
     }
 
     function setupFilters() {
@@ -226,6 +318,6 @@
     document.addEventListener("DOMContentLoaded", function () {
         setupTabs();
         setupFilters();
-        renderAll(currentData);
+        applyData(currentData);
     });
 })();

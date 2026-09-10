@@ -29,7 +29,9 @@ class DashboardFilterTests(TestCase):
 
     def test_filter_by_year(self) -> None:
         """The year filter uses the sample_date year lookup."""
-        filterset = DashboardFilter({"year": 2023}, queryset=reports_models.Report.objects.all())
+        filterset = DashboardFilter(
+            {"year": 2023}, queryset=reports_models.Report.objects.all()
+        )
         self.assertIn(self.match, filterset.qs)
         self.assertNotIn(self.other, filterset.qs)
 

@@ -6,7 +6,9 @@
         <button type="button" id="tab-btn-desgaste" class="tab-btn rounded-t-lg px-4 py-2 text-sm font-medium" data-tab="desgaste">{% trans "Wear" %}</button>
         <button type="button" id="tab-btn-contaminacion" class="tab-btn rounded-t-lg px-4 py-2 text-sm font-medium" data-tab="contaminacion">{% trans "Contamination" %}</button>
         <button type="button" id="tab-btn-estado" class="tab-btn rounded-t-lg px-4 py-2 text-sm font-medium" data-tab="estado">{% trans "Oil Health" %}</button>
+        {% if perms.alerts.view_alert %}
         <a href="{% url 'apps.alerts:alert_list' %}" class="rounded-t-lg px-4 py-2 text-sm font-medium text-gray-500 hover:text-primary">{% trans "Alerts" %}</a>
+        {% endif %}
         <button type="button" id="tab-btn-datos" class="tab-btn rounded-t-lg px-4 py-2 text-sm font-medium" data-tab="datos">{% trans "Data Table" %}</button>
         <button type="button" id="tab-btn-referencias" class="tab-btn rounded-t-lg px-4 py-2 text-sm font-medium" data-tab="referencias">{% trans "References" %}</button>
     </div>
@@ -44,7 +46,7 @@
                     </thead>
                     <tbody id="dashboard-table-body">
                         {% for row in dashboard_data.recent_reports %}
-                        <tr class="border-t border-gray-100 dark:border-gray-800" data-condition="{{ row.condition }}">
+                        <tr class="border-t border-gray-100 dark:border-gray-800" data-condition="{{ row.condition }}" data-fleet="{{ row.fleet }}">
                             <td class="px-3 py-2">{{ row.lab_number }}</td>
                             <td class="px-3 py-2">{{ row.machine }}</td>
                             <td class="px-3 py-2">{{ row.fleet }}</td>
@@ -53,7 +55,7 @@
                             <td class="px-3 py-2">{{ row.condition_display }}</td>
                         </tr>
                         {% empty %}
-                        <tr><td colspan="6" class="px-3 py-6 text-center text-gray-500">{% trans "No samples found." %}</td></tr>
+                        <tr data-empty-state="true"><td colspan="6" class="px-3 py-6 text-center text-gray-500">{% trans "No samples found." %}</td></tr>
                         {% endfor %}
                     </tbody>
                 </table>

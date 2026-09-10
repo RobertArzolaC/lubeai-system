@@ -37,5 +37,14 @@ class DashboardTemplateContentTests(SimpleTestCase):
     def test_tabs_are_present(self) -> None:
         """All expected tabs are rendered (English msgids; translated at runtime)."""
         content = self._read(TEMPLATE_DIR / "includes" / "tabs.html")
-        for label in ("Summary", "Trends", "Wear", "Contamination", "Oil Health", "Alerts", "Data Table", "References"):
+        for label in (
+            "Summary",
+            "Trends",
+            "Wear",
+            "Contamination",
+            "Oil Health",
+            "Alerts",
+            "Data Table",
+            "References",
+        ):
             self.assertIn(label, content)

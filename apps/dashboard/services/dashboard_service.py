@@ -99,9 +99,7 @@ class DashboardService:
             result[row["condition"]] = row["total"]
         return result
 
-    def get_samples_by_month(
-        self, reports: QuerySet | None = None
-    ) -> dict[str, list]:
+    def get_samples_by_month(self, reports: QuerySet | None = None) -> dict[str, list]:
         """Return monthly totals and condition splits for samples."""
         reports = reports if reports is not None else self.get_reports()
         rows = (
@@ -152,9 +150,7 @@ class DashboardService:
             values.append(row["total"])
         return {"categories": categories, "values": values}
 
-    def get_alerts_over_time(
-        self, alerts: QuerySet | None = None
-    ) -> dict[str, list]:
+    def get_alerts_over_time(self, alerts: QuerySet | None = None) -> dict[str, list]:
         """Return monthly alert and caution counts by detection date."""
         alerts = alerts if alerts is not None else self.get_alerts()
         rows = (
@@ -240,7 +236,9 @@ class DashboardService:
             "max": bounds["max"].isoformat() if bounds["max"] else None,
         }
 
-    def get_recent_reports(self, limit: int = constants.DEFAULT_RECENT_REPORTS) -> list[dict[str, Any]]:
+    def get_recent_reports(
+        self, limit: int = constants.DEFAULT_RECENT_REPORTS
+    ) -> list[dict[str, Any]]:
         """Return a serialisable list of the most recent samples."""
         reports = self.get_reports().select_related(
             "machine", "machine__fleet", "component", "component__type"

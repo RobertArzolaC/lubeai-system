@@ -141,7 +141,9 @@ class DashboardServiceFilterTests(TestCase):
             sample_date=date(2023, 6, 1),
         )
         reports_factories.ReportFactory(
-            machine=self.other_machine, condition="CRITICAL", sample_date=date(2024, 6, 1)
+            machine=self.other_machine,
+            condition="CRITICAL",
+            sample_date=date(2024, 6, 1),
         )
 
     def test_filter_by_year(self) -> None:
@@ -156,7 +158,9 @@ class DashboardServiceFilterTests(TestCase):
 
     def test_filter_by_component_type(self) -> None:
         """Filtering by component type narrows the report queryset."""
-        service = DashboardService(DashboardFilters(component_type_id=self.component_type.pk))
+        service = DashboardService(
+            DashboardFilters(component_type_id=self.component_type.pk)
+        )
         self.assertEqual(service.get_kpis()["total"], 1)
 
     def test_filter_alerts_by_year(self) -> None:

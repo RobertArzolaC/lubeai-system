@@ -3,6 +3,7 @@
 from datetime import date
 
 from django.conf import settings
+from django.core.cache import cache
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
@@ -117,3 +118,26 @@ class DashboardViewTests(TestCase):
         DashboardService()  # warm up any lazy imports
         with self.assertNumQueries(13):
             self.client.get(reverse("apps.dashboard:data"))
+
+
+class DashboardRealTemplateSmokeTests(TestCase):
+    """Render the real dashboard template with the default template engine."""
+
+    def setUp(self) -> None:
+        """Avoid leaking cached dashboard pages across tests."""
+        cache.clear()
+
+    def tearDown(self) -> None:
+        """Drop any cached dashboard page produced by the view."""
+        cache.clear()
+
+    def test_index_renders_real_template(self) -> None:
+        """A logged-in user gets the full dashboard shell from the real engine."""
+        user = users_factories.UserFactory()
+        self.client.force_login(user)
+        response = self.client.get(reverse("apps.dashboard:index"))
+        self.assertEqual(response.status_code, 200)
+        content = response.content.decode("utf-8")
+        self.assertIn("dashboard-data", content)
+        self.assertIn("apexcharts.min.js", content)
+        self.assertIn("Total Muestras", content)

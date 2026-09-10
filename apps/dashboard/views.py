@@ -45,9 +45,7 @@ class DashboardDataView(LoginRequiredMixin, View):
             fleet_id=cleaned["fleet"].pk if cleaned.get("fleet") else None,
             machine_id=cleaned["machine"].pk if cleaned.get("machine") else None,
             component_type_id=(
-                cleaned["component_type"].pk
-                if cleaned.get("component_type")
-                else None
+                cleaned["component_type"].pk if cleaned.get("component_type") else None
             ),
         )
         return JsonResponse(DashboardService(filters).build_context())
