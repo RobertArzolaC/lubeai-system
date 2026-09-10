@@ -97,14 +97,21 @@
     function renderIsoChart(data) {
         var el = document.getElementById("chart-iso");
         if (!el) return;
+        var withinTarget = data.iso4406.values.map(function (value, index) {
+            return data.iso4406.status[index] === "normal" ? value : 0;
+        });
+        var aboveTarget = data.iso4406.values.map(function (value, index) {
+            return data.iso4406.status[index] === "normal" ? 0 : value;
+        });
         charts.iso = new ApexCharts(el, Object.assign(baseOptions(), {
-            chart: Object.assign(baseOptions().chart, { type: "bar", height: 280 }),
-            series: [{ name: "Muestras", data: data.iso4406.values }],
-            colors: data.iso4406.status.map(function (status) {
-                return status === "normal" ? COLORS.NORMAL : COLORS.CRITICAL;
-            }),
-            plotOptions: { bar: { columnWidth: "55%", borderRadius: 4, distributed: true } },
-            legend: { show: false },
+            chart: Object.assign(baseOptions().chart, { type: "bar", height: 280, stacked: true }),
+            series: [
+                { name: "Dentro de meta (≤ 22/20/17)", data: withinTarget },
+                { name: "Sobre la meta", data: aboveTarget }
+            ],
+            colors: [COLORS.NORMAL, COLORS.CRITICAL],
+            plotOptions: { bar: { columnWidth: "55%", borderRadius: 4 } },
+            legend: { show: true, position: "bottom" },
             xaxis: { categories: data.iso4406.categories }
         }));
         charts.iso.render();
@@ -145,7 +152,7 @@
 
     function updateSummary(data) {
         var total = document.getElementById("dashboard-total");
-        if (total) total.textContent = data.total + " muestras";
+        if (total) total.textContent = data.total;
         var range = document.getElementById("dashboard-range");
         if (range && data.range.min) {
             range.textContent = data.range.min + " → " + data.range.max;

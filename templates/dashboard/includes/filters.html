@@ -41,7 +41,7 @@
             {% trans "Reset" %}
         </button>
         <div class="ml-auto flex items-center gap-4 text-sm text-gray-500">
-            <span id="dashboard-total">{{ dashboard_data.total }} {% trans "samples" %}</span>
+            <span><span id="dashboard-total">{{ dashboard_data.total }}</span> {% trans "samples" %}</span>
             <span id="dashboard-range" class="italic">
                 {% if dashboard_data.range.min %}{{ dashboard_data.range.min }} &rarr; {{ dashboard_data.range.max }}{% endif %}
             </span>
