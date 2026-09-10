@@ -1,0 +1,34 @@
+{% load i18n %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.js-delete').forEach((button) => {
+            button.addEventListener('click', async () => {
+                const { isConfirmed } = await Swal.fire({
+                    title: '{{ confirm_title }}',
+                    text: '{% trans "This action is permanent and cannot be undone." %}',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: '{% trans "Yes, delete" %}',
+                    cancelButtonText: '{% trans "Cancel" %}',
+                });
+                if (!isConfirmed) return;
+
+                try {
+                    const response = await fetch(button.dataset.url, {
+                        method: 'POST',
+                        headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+                    });
+                    if (response.ok) {
+                        showAlert('{% trans "Success" %}', '{{ success_message }}', 'success');
+                        setTimeout(() => location.reload(), 800);
+                    } else {
+                        throw new Error('Request failed');
+                    }
+                } catch (error) {
+                    showAlert('{% trans "Error" %}', '{% trans "There was a problem processing your request." %}', 'error');
+                }
+            });
+        });
+    });
+</script>

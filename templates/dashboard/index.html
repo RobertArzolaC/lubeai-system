@@ -96,6 +96,55 @@
         </div>
     </div>
 
+    <!-- Equipment Modules -->
+    {% if perms.equipment.view_machine or perms.equipment.view_branch or perms.equipment.view_fleet or perms.equipment.view_componenttype %}
+    <div>
+        <h3 class="mb-4 text-xl font-bold text-black dark:text-white">{% trans "Equipment" %}</h3>
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4 2xl:gap-7.5 mb-6">
+            {% if perms.equipment.view_machine %}
+            <a href="{% url 'apps.equipment:machine_list' %}" class="group rounded-2xl border border-gray-200 bg-white p-6 shadow-theme-lg transition hover:border-primary/40 hover:shadow-primary/10 dark:border-gray-800 dark:bg-gray-dark">
+                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                    <svg class="fill-current" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <h4 class="mt-4 text-lg font-bold text-black dark:text-white">{% trans "Machines" %}</h4>
+                <p class="mt-1 text-sm font-medium text-gray-500">{% trans "Equipment registry and components." %}</p>
+                <span class="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-primary">{% trans "Manage" %} &rarr;</span>
+            </a>
+            {% endif %}
+            {% if perms.equipment.view_branch %}
+            <a href="{% url 'apps.equipment:branch_list' %}" class="group rounded-2xl border border-gray-200 bg-white p-6 shadow-theme-lg transition hover:border-primary/40 hover:shadow-primary/10 dark:border-gray-800 dark:bg-gray-dark">
+                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-success/10 text-success">
+                    <svg class="fill-current" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <h4 class="mt-4 text-lg font-bold text-black dark:text-white">{% trans "Branches" %}</h4>
+                <p class="mt-1 text-sm font-medium text-gray-500">{% trans "Physical locations and addresses." %}</p>
+                <span class="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-primary">{% trans "Manage" %} &rarr;</span>
+            </a>
+            {% endif %}
+            {% if perms.equipment.view_fleet %}
+            <a href="{% url 'apps.equipment:fleet_list' %}" class="group rounded-2xl border border-gray-200 bg-white p-6 shadow-theme-lg transition hover:border-primary/40 hover:shadow-primary/10 dark:border-gray-800 dark:bg-gray-dark">
+                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-warning/10 text-warning">
+                    <svg class="fill-current" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 7h18M3 12h18M3 17h18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <h4 class="mt-4 text-lg font-bold text-black dark:text-white">{% trans "Fleets" %}</h4>
+                <p class="mt-1 text-sm font-medium text-gray-500">{% trans "Machine groupings for maintenance." %}</p>
+                <span class="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-primary">{% trans "Manage" %} &rarr;</span>
+            </a>
+            {% endif %}
+            {% if perms.equipment.view_componenttype %}
+            <a href="{% url 'apps.equipment:component_type_list' %}" class="group rounded-2xl border border-gray-200 bg-white p-6 shadow-theme-lg transition hover:border-primary/40 hover:shadow-primary/10 dark:border-gray-800 dark:bg-gray-dark">
+                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-error/10 text-error">
+                    <svg class="fill-current" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 3v18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <h4 class="mt-4 text-lg font-bold text-black dark:text-white">{% trans "Component Types" %}</h4>
+                <p class="mt-1 text-sm font-medium text-gray-500">{% trans "Catalog of component categories." %}</p>
+                <span class="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-primary">{% trans "Manage" %} &rarr;</span>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
     <!-- Welcome Section -->
     <div class="rounded-2xl border border-gray-200 bg-white p-8 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark">
         <div class="text-center">

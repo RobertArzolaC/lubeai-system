@@ -7,6 +7,7 @@ from django.http import JsonResponse
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import (
     CreateView,
+    DetailView,
     FormView,
     ListView,
     TemplateView,
@@ -43,6 +44,10 @@ class BaseListView(LoginRequiredMixin, PermissionRequiredMixin, FilterView, List
 
 
 class BaseTemplateView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView):
+    pass
+
+
+class BaseDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
     pass
 
 

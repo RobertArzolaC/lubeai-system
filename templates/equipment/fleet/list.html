@@ -1,0 +1,106 @@
+{% extends "layouts/dashboard.html" %}
+{% load static %}
+{% load i18n %}
+{% load widget_tweaks %}
+{% load breadcrumb_tags %}
+
+{% block title_page %}{{ entity_plural }}{% endblock title_page %}
+
+{% block toolbar_title %}{{ entity_plural }}{% endblock %}
+
+{% block content %}
+<!-- Page Header & Actions -->
+<div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+        <h2 class="text-3xl font-bold tracking-tight text-black dark:text-white">
+            {% trans "Fleet Management" %}
+        </h2>
+        <p class="mt-1 text-sm font-medium text-bodydark2">
+            {% trans "Group machines into fleets to organize maintenance and monitoring." %}
+        </p>
+    </div>
+    {% if perms.equipment.add_fleet %}
+    <div class="flex items-center gap-3">
+        <a href="{{ add_entity_url }}" class="inline-flex items-center justify-center gap-2 rounded-lg bg-primary py-3 px-7 text-center font-semibold text-white shadow-lg transition-all duration-300 hover:bg-opacity-90 hover:shadow-primary/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="h-5 w-5" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            {% trans "Create Fleet" %}
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Search & Filter Card -->
+<div class="mb-8 rounded-2xl border border-stroke bg-white p-6 shadow-sm dark:border-strokedark dark:bg-boxdark">
+    <form method="get" role="search" class="flex flex-col gap-4 md:flex-row md:items-end">
+        <div class="flex-grow">
+            <label for="id_name_search" class="mb-2.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{{ filter.form.name_search.label }}</label>
+            {% trans "Search fleets by name..." as search_placeholder %}
+            {% render_field filter.form.name_search class="w-full rounded-xl border border-stroke bg-whiten py-3 px-5 text-black transition-all duration-300 focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/5 focus:outline-none dark:border-strokedark dark:bg-boxdark-2 dark:text-white" placeholder=search_placeholder %}
+        </div>
+        <div class="w-full md:w-56">
+            <label for="id_is_active" class="mb-2.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{{ filter.form.is_active.label }}</label>
+            {% render_field filter.form.is_active class="w-full rounded-xl border border-stroke bg-whiten py-3 px-4 text-sm font-semibold text-black outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/5 dark:border-form-strokedark dark:bg-meta-4 dark:text-white" %}
+        </div>
+        <div class="flex items-center gap-3">
+            <button type="submit" class="inline-flex items-center justify-center rounded-xl bg-primary py-3 px-6 text-sm font-bold text-white shadow-lg shadow-primary/20 transition-all duration-300 hover:bg-opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
+                {% trans "Apply" %}
+            </button>
+            <a href="{% url 'apps.equipment:fleet_list' %}" class="inline-flex items-center justify-center rounded-xl border border-stroke py-3 px-6 text-sm font-semibold text-black transition hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 dark:border-strokedark dark:text-white dark:hover:bg-white/5">
+                {% trans "Clear" %}
+            </a>
+        </div>
+    </form>
+</div>
+
+<!-- Table Container -->
+<div class="overflow-hidden rounded-2xl border border-stroke bg-white shadow-sm dark:border-strokedark dark:bg-boxdark">
+    <div class="grid grid-cols-12 border-b border-stroke bg-gray-2/50 py-5 px-6 dark:border-strokedark dark:bg-meta-4/30">
+        <div class="col-span-6 flex items-center">
+            <p class="text-xs font-bold uppercase tracking-widest text-black dark:text-white">{% trans "Name" %}</p>
+        </div>
+        <div class="col-span-3 flex items-center">
+            <p class="text-xs font-bold uppercase tracking-widest text-black dark:text-white">{% trans "Status" %}</p>
+        </div>
+        <div class="col-span-3 flex items-center justify-end">
+            <p class="text-xs font-bold uppercase tracking-widest text-black dark:text-white">{% trans "Management" %}</p>
+        </div>
+    </div>
+
+    <div class="flex flex-col">
+        {% for fleet in fleets %}
+        <div class="grid grid-cols-12 border-b border-stroke py-6 px-6 transition-all duration-200 last:border-b-0 hover:bg-gray-50 dark:border-strokedark dark:hover:bg-meta-4/20">
+            <div class="col-span-6 flex items-center">
+                <p class="text-base font-bold text-black dark:text-white">{{ fleet.name }}</p>
+            </div>
+            <div class="col-span-3 flex items-center">
+                {% include "equipment/includes/status_badge.html" with is_active=fleet.is_active %}
+            </div>
+            <div class="col-span-3 flex items-center justify-end">
+                {% url "apps.equipment:fleet_detail" fleet.pk as detail_url %}
+                {% url "apps.equipment:fleet_update" fleet.pk as update_url %}
+                {% url "apps.equipment:fleet_delete" fleet.pk as delete_url %}
+                {% include "equipment/includes/row_actions.html" with detail_url=detail_url update_url=update_url delete_url=delete_url view_perm="equipment.view_fleet" change_perm="equipment.change_fleet" delete_perm="equipment.delete_fleet" %}
+            </div>
+        </div>
+        {% empty %}
+        {% trans "No fleets found" as empty_title %}
+        {% trans "We couldn't find any fleets matching your search. Try adjusting your criteria or create a new fleet." as empty_message %}
+        {% include "equipment/includes/empty_state.html" with title=empty_title message=empty_message icon_path="M3 7h18M3 12h18M3 17h18" %}
+        {% endfor %}
+    </div>
+
+    {% if is_paginated %}
+    <div class="bg-gray-2/20 dark:bg-meta-4/10">
+        {% include "includes/pagination.html" %}
+    </div>
+    {% endif %}
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+{% trans "Delete Fleet" as confirm_title %}
+{% trans "Fleet deleted successfully." as success_message %}
+{% include "equipment/includes/delete_script.html" with confirm_title=confirm_title success_message=success_message %}
+{% endblock extra_js %}

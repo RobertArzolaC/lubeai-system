@@ -1,0 +1,72 @@
+{% extends "layouts/dashboard.html" %}
+{% load static %}
+{% load i18n %}
+{% load breadcrumb_tags %}
+
+{% block title_page %}{{ entity }}{% endblock title_page %}
+
+{% block toolbar_title %}{{ entity }}{% endblock %}
+
+{% block content %}
+<div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+        <h2 class="text-3xl font-bold tracking-tight text-black dark:text-white">{{ fleet.name }}</h2>
+        <p class="mt-1 text-sm font-medium text-bodydark2">{% trans "Fleet details and assigned machines." %}</p>
+    </div>
+    <div class="flex items-center gap-3">
+        <a href="{{ back_url }}" class="inline-flex items-center justify-center rounded-xl border border-stroke py-3 px-6 text-sm font-semibold text-black transition hover:bg-gray-50 dark:border-strokedark dark:text-white dark:hover:bg-white/5">
+            {% trans "Back" %}
+        </a>
+        {% if perms.equipment.change_fleet %}
+        <a href="{{ edit_url }}" class="inline-flex items-center justify-center rounded-xl bg-primary py-3 px-6 text-sm font-bold text-white shadow-lg shadow-primary/20 transition-all duration-300 hover:bg-opacity-90">
+            {% trans "Edit Fleet" %}
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+    <!-- Summary -->
+    <div class="rounded-2xl border border-stroke bg-white p-6 shadow-sm dark:border-strokedark dark:bg-boxdark">
+        <h3 class="mb-5 text-lg font-bold text-black dark:text-white">{% trans "Information" %}</h3>
+        <dl class="flex flex-col gap-4">
+            <div>
+                <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Name" %}</dt>
+                <dd class="mt-1 text-sm font-semibold text-black dark:text-white">{{ fleet.name }}</dd>
+            </div>
+            <div>
+                <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Status" %}</dt>
+                <dd class="mt-1">
+                    {% include "equipment/includes/status_badge.html" with is_active=fleet.is_active %}
+                </dd>
+            </div>
+            <div>
+                <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Created" %}</dt>
+                <dd class="mt-1 text-sm font-semibold text-black dark:text-white">{{ fleet.created|date:"Y-m-d H:i" }}</dd>
+            </div>
+        </dl>
+    </div>
+
+    <!-- Machines -->
+    <div class="lg:col-span-2 rounded-2xl border border-stroke bg-white shadow-sm dark:border-strokedark dark:bg-boxdark">
+        <div class="border-b border-stroke py-4 px-6 dark:border-strokedark">
+            <h3 class="text-lg font-bold text-black dark:text-white">{% trans "Machines" %}</h3>
+        </div>
+        <div class="divide-y divide-stroke dark:divide-strokedark">
+            {% for machine in machines %}
+            <div class="flex items-center justify-between gap-4 px-6 py-4">
+                <div>
+                    <p class="text-sm font-bold text-black dark:text-white">{{ machine.name }}</p>
+                    <p class="text-xs font-medium text-bodydark2">{{ machine.serial_number }}</p>
+                </div>
+                {% if machine.branch %}
+                <span class="text-xs font-semibold text-bodydark2">{{ machine.branch.name }}</span>
+                {% endif %}
+            </div>
+            {% empty %}
+            <p class="px-6 py-8 text-center text-sm font-medium text-bodydark2">{% trans "No machines assigned to this fleet." %}</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,19 @@
+{% load i18n %}
+
+<div class="flex items-center gap-1.5 rounded-xl border border-stroke bg-gray-2 p-1.5 shadow-inner dark:border-strokedark dark:bg-meta-4">
+    {% if view_perm in perms %}
+    <a href="{{ detail_url }}" class="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-bodydark2 transition-all duration-300 hover:text-primary hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 dark:bg-boxdark" title="{% trans 'View' %}" aria-label="{% trans 'View' %}">
+        <svg class="h-4.5 w-4.5 fill-current" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M9 3C4.5 3 1.2 6.3 0 9C1.2 11.7 4.5 15 9 15C13.5 15 16.8 11.7 18 9C16.8 6.3 13.5 3 9 3ZM9 13C6.8 13 5 11.2 5 9C5 6.8 6.8 5 9 5C11.2 5 13 6.8 13 9C13 11.2 11.2 13 9 13ZM9 7C7.9 7 7 7.9 7 9C7 10.1 7.9 11 9 11C10.1 11 11 10.1 11 9C11 7.9 10.1 7 9 7Z" /></svg>
+    </a>
+    {% endif %}
+    {% if change_perm in perms %}
+    <a href="{{ update_url }}" class="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-bodydark2 transition-all duration-300 hover:text-primary hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 dark:bg-boxdark" title="{% trans 'Edit' %}" aria-label="{% trans 'Edit' %}">
+        <svg class="h-4.5 w-4.5 fill-current" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M15.0914 2.90856C14.6771 2.49433 14.0357 2.49433 13.6214 2.90856L12.1464 4.38356L13.6164 5.85356L15.0914 4.37856C15.5057 3.96433 15.5057 3.3228 15.0914 2.90856Z"></path><path d="M11.1107 5.41929L12.5807 6.88929L4.51571 14.9543L3.04071 14.9543L3.04071 13.4793L11.1107 5.41929Z"></path></svg>
+    </a>
+    {% endif %}
+    {% if delete_perm in perms %}
+    <button type="button" class="js-delete flex h-9 w-9 items-center justify-center rounded-lg bg-white text-bodydark2 transition-all duration-300 hover:text-danger hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger/40 dark:bg-boxdark" data-url="{{ delete_url }}" title="{% trans 'Delete' %}" aria-label="{% trans 'Delete' %}">
+        <svg class="h-4.5 w-4.5 fill-current" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M13.7535 2.47502H11.5879V1.9969C11.5879 1.15315 10.9129 0.478149 10.0691 0.478149H7.90352C7.05977 0.478149 6.38477 1.15315 6.38477 1.9969V2.47502H4.21914C3.40352 2.47502 2.72852 3.15002 2.72852 3.96565V4.8094C2.72852 5.42815 3.09414 5.9344 3.62852 6.1594L4.07852 15.4688C4.13477 16.6219 5.09102 17.5219 6.24414 17.5219H11.7004C12.8535 17.5219 13.8098 16.6219 13.866 15.4688L14.3441 6.13127C14.8785 5.90627 15.2441 5.3719 15.2441 4.78127V3.93752C15.2441 3.15002 14.5691 2.47502 13.7535 2.47502ZM7.67852 1.9969C7.67852 1.85627 7.79102 1.74377 7.93164 1.74377H10.0973C10.2379 1.74377 10.3504 1.85627 10.3504 1.9969V2.47502H7.70664V1.9969H7.67852Z"></path></svg>
+    </button>
+    {% endif %}
+</div>

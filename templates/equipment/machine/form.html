@@ -1,0 +1,44 @@
+{% extends "layouts/dashboard.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block title_page %}{{ entity }}{% endblock title_page %}
+
+{% block toolbar_title %}{{ entity }}{% endblock %}
+
+{% block content %}
+{% include "equipment/includes/base_form.html" with extra_template="equipment/machine/includes/formset.html" %}
+{% endblock content %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const rows = document.getElementById('formset-rows');
+        const emptyHint = document.getElementById('formset-empty');
+        const template = document.getElementById('empty-form-template');
+        const addButton = document.getElementById('add-component-row');
+        const totalForms = document.querySelector('input[name$="-TOTAL_FORMS"]');
+
+        if (!rows || !template || !addButton || !totalForms) return;
+
+        addButton.addEventListener('click', () => {
+            const index = parseInt(totalForms.value, 10);
+            const markup = template.innerHTML.replace(/__prefix__/g, index);
+            rows.insertAdjacentHTML('beforeend', markup);
+            totalForms.value = index + 1;
+            if (emptyHint) emptyHint.classList.add('hidden');
+        });
+
+        rows.addEventListener('click', (event) => {
+            const button = event.target.closest('.js-remove-row');
+            if (!button) return;
+            const row = button.closest('.formset-row');
+            const deleteInput = row.querySelector('input[type="checkbox"][name$="-DELETE"]');
+            if (deleteInput) {
+                deleteInput.checked = true;
+                row.classList.add('hidden');
+            }
+        });
+    });
+</script>
+{% endblock extra_js %}

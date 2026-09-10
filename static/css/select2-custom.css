@@ -1,0 +1,115 @@
+/* Custom Select2 (Django admin vendor) skin matching the TailAdmin/Tailwind form controls.
+   Selectors are prefixed with `body` to win over admin's `.select2-container .select2-selection--single`. */
+
+body .select2-container {
+    width: 100% !important;
+    min-width: 0;
+}
+
+body .select2-container--default .select2-selection--single {
+    display: flex;
+    align-items: center;
+    min-height: 3.125rem;
+    height: auto;
+    padding: 0.75rem 1.125rem;
+    border: 1px solid var(--color-stroke);
+    border-radius: 0.25rem;
+    background-color: var(--color-white);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+body .select2-container--default .select2-selection--single .select2-selection__rendered {
+    width: 100%;
+    padding: 0;
+    line-height: 1.25rem;
+    color: var(--color-body);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+body .select2-container--default .select2-selection--single .select2-selection__placeholder {
+    color: var(--color-bodydark2);
+}
+
+body .select2-container--default .select2-selection--single .select2-selection__arrow {
+    top: 0;
+    right: 0.75rem;
+    width: 1rem;
+    height: 100%;
+}
+
+body .select2-container--default .select2-selection--single .select2-selection__arrow b {
+    border-color: var(--color-bodydark2) transparent transparent transparent;
+}
+
+body .select2-container--default.select2-container--open .select2-selection--single .select2-selection__arrow b {
+    border-color: transparent transparent var(--color-bodydark2) transparent;
+}
+
+body .select2-container--default.select2-container--focus .select2-selection--single,
+body .select2-container--default.select2-container--open .select2-selection--single {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 4px rgba(70, 95, 255, 0.05);
+}
+
+body .select2-container--default .select2-dropdown {
+    border: 1px solid var(--color-stroke);
+    border-radius: 0.5rem;
+    background-color: var(--color-white);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+body .select2-container--default .select2-search--dropdown {
+    padding: 0.5rem;
+}
+
+body .select2-container--default .select2-search--dropdown .select2-search__field {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--color-stroke);
+    border-radius: 0.375rem;
+    color: var(--color-body);
+    outline: none;
+}
+
+body .select2-container--default .select2-results__option {
+    padding: 0.5rem 0.75rem;
+    color: var(--color-body);
+}
+
+body .select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+}
+
+body .select2-container--default .select2-results__option[aria-selected="true"] {
+    background-color: rgba(70, 95, 255, 0.1);
+    color: var(--color-primary);
+}
+
+/* Dark theme */
+.dark body .select2-container--default .select2-selection--single,
+.dark body .select2-container--default .select2-dropdown {
+    background-color: var(--color-meta-4);
+    border-color: var(--color-strokedark);
+}
+
+.dark body .select2-container--default .select2-selection--single .select2-selection__rendered,
+.dark body .select2-container--default .select2-results__option {
+    color: var(--color-bodydark1);
+}
+
+.dark body .select2-container--default .select2-selection--single .select2-selection__placeholder {
+    color: var(--color-bodydark2);
+}
+
+.dark body .select2-container--default .select2-search--dropdown .select2-search__field {
+    background-color: var(--color-boxdark);
+    border-color: var(--color-strokedark);
+    color: var(--color-white);
+}
+
+.dark body .select2-container--default .select2-results__option[aria-selected="true"] {
+    background-color: rgba(70, 95, 255, 0.2);
+}

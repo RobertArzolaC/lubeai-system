@@ -1,0 +1,133 @@
+{% extends "layouts/dashboard.html" %}
+{% load static %}
+{% load i18n %}
+{% load widget_tweaks %}
+{% load breadcrumb_tags %}
+
+{% block title_page %}{{ entity_plural }}{% endblock title_page %}
+
+{% block toolbar_title %}{{ entity_plural }}{% endblock %}
+
+{% block content %}
+<!-- Page Header & Actions -->
+<div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+        <h2 class="text-3xl font-bold tracking-tight text-black dark:text-white">
+            {% trans "Machine Management" %}
+        </h2>
+        <p class="mt-1 text-sm font-medium text-bodydark2">
+            {% trans "Track industrial equipment, its location and installed components." %}
+        </p>
+    </div>
+    {% if perms.equipment.add_machine %}
+    <div class="flex items-center gap-3">
+        <a href="{{ add_entity_url }}" class="inline-flex items-center justify-center gap-2 rounded-lg bg-primary py-3 px-7 text-center font-semibold text-white shadow-lg transition-all duration-300 hover:bg-opacity-90 hover:shadow-primary/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="h-5 w-5" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            {% trans "Create Machine" %}
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Search & Filter Card -->
+<div class="mb-8 rounded-2xl border border-stroke bg-white p-6 shadow-sm dark:border-strokedark dark:bg-boxdark">
+    <form method="get" role="search" class="grid grid-cols-1 gap-4 md:grid-cols-12 md:items-end">
+        <div class="md:col-span-4">
+            <label for="id_name_search" class="mb-2.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{{ filter.form.name_search.label }}</label>
+            {% trans "Name, serial or model" as search_placeholder %}
+            {% render_field filter.form.name_search class="w-full rounded-xl border border-stroke bg-whiten py-3 px-5 text-black transition-all duration-300 focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/5 focus:outline-none dark:border-strokedark dark:bg-boxdark-2 dark:text-white" placeholder=search_placeholder %}
+        </div>
+        <div class="md:col-span-3">
+            <label for="id_branch" class="mb-2.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{{ filter.form.branch.label }}</label>
+            {% render_field filter.form.branch class="w-full rounded-xl border border-stroke bg-whiten py-3 px-4 text-sm font-semibold text-black outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/5 dark:border-form-strokedark dark:bg-meta-4 dark:text-white" %}
+        </div>
+        <div class="md:col-span-2">
+            <label for="id_fleet" class="mb-2.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{{ filter.form.fleet.label }}</label>
+            {% render_field filter.form.fleet class="w-full rounded-xl border border-stroke bg-whiten py-3 px-4 text-sm font-semibold text-black outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/5 dark:border-form-strokedark dark:bg-meta-4 dark:text-white" %}
+        </div>
+        <div class="md:col-span-2">
+            <label for="id_is_active" class="mb-2.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{{ filter.form.is_active.label }}</label>
+            {% render_field filter.form.is_active class="w-full rounded-xl border border-stroke bg-whiten py-3 px-4 text-sm font-semibold text-black outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/5 dark:border-form-strokedark dark:bg-meta-4 dark:text-white" %}
+        </div>
+        <div class="flex items-center gap-3 md:col-span-1">
+            <button type="submit" class="inline-flex w-full items-center justify-center rounded-xl bg-primary py-3 px-4 text-sm font-bold text-white shadow-lg shadow-primary/20 transition-all duration-300 hover:bg-opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
+                {% trans "Apply" %}
+            </button>
+        </div>
+        <div class="md:col-span-12">
+            <a href="{% url 'apps.equipment:machine_list' %}" class="text-xs font-semibold text-primary hover:underline">{% trans "Clear filters" %}</a>
+        </div>
+    </form>
+</div>
+
+<!-- Table Container -->
+<div class="overflow-hidden rounded-2xl border border-stroke bg-white shadow-sm dark:border-strokedark dark:bg-boxdark">
+    <div class="grid grid-cols-12 border-b border-stroke bg-gray-2/50 py-5 px-6 dark:border-strokedark dark:bg-meta-4/30">
+        <div class="col-span-4 flex items-center">
+            <p class="text-xs font-bold uppercase tracking-widest text-black dark:text-white">{% trans "Machine" %}</p>
+        </div>
+        <div class="col-span-2 flex items-center">
+            <p class="text-xs font-bold uppercase tracking-widest text-black dark:text-white">{% trans "Branch" %}</p>
+        </div>
+        <div class="col-span-2 flex items-center">
+            <p class="text-xs font-bold uppercase tracking-widest text-black dark:text-white">{% trans "Fleet" %}</p>
+        </div>
+        <div class="col-span-2 flex items-center">
+            <p class="text-xs font-bold uppercase tracking-widest text-black dark:text-white">{% trans "Status" %}</p>
+        </div>
+        <div class="col-span-2 flex items-center justify-end">
+            <p class="text-xs font-bold uppercase tracking-widest text-black dark:text-white">{% trans "Management" %}</p>
+        </div>
+    </div>
+
+    <div class="flex flex-col">
+        {% for machine in machines %}
+        <div class="grid grid-cols-12 border-b border-stroke py-6 px-6 transition-all duration-200 last:border-b-0 hover:bg-gray-50 dark:border-strokedark dark:hover:bg-meta-4/20">
+            <div class="col-span-4 flex items-center">
+                <div>
+                    <p class="text-base font-bold text-black dark:text-white">{{ machine.name }}</p>
+                    <p class="text-xs font-medium text-bodydark2">{{ machine.serial_number }}</p>
+                </div>
+            </div>
+            <div class="col-span-2 flex items-center">
+                <p class="text-sm font-medium text-bodydark2">
+                    {% if machine.branch %}{{ machine.branch.name }}{% else %}—{% endif %}
+                </p>
+            </div>
+            <div class="col-span-2 flex items-center">
+                <p class="text-sm font-medium text-bodydark2">
+                    {% if machine.fleet %}{{ machine.fleet.name }}{% else %}—{% endif %}
+                </p>
+            </div>
+            <div class="col-span-2 flex items-center">
+                {% include "equipment/includes/status_badge.html" with is_active=machine.is_active %}
+            </div>
+            <div class="col-span-2 flex items-center justify-end">
+                {% url "apps.equipment:machine_detail" machine.pk as detail_url %}
+                {% url "apps.equipment:machine_update" machine.pk as update_url %}
+                {% url "apps.equipment:machine_delete" machine.pk as delete_url %}
+                {% include "equipment/includes/row_actions.html" with detail_url=detail_url update_url=update_url delete_url=delete_url view_perm="equipment.view_machine" change_perm="equipment.change_machine" delete_perm="equipment.delete_machine" %}
+            </div>
+        </div>
+        {% empty %}
+        {% trans "No machines found" as empty_title %}
+        {% trans "We couldn't find any machines matching your search. Try adjusting your criteria or create a new machine." as empty_message %}
+        {% include "equipment/includes/empty_state.html" with title=empty_title message=empty_message icon_path="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" icon_path2="M15 12a3 3 0 11-6 0 3 3 0 016 0z" %}
+        {% endfor %}
+    </div>
+
+    {% if is_paginated %}
+    <div class="bg-gray-2/20 dark:bg-meta-4/10">
+        {% include "includes/pagination.html" %}
+    </div>
+    {% endif %}
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+{% trans "Delete Machine" as confirm_title %}
+{% trans "Machine deleted successfully." as success_message %}
+{% include "equipment/includes/delete_script.html" with confirm_title=confirm_title success_message=success_message %}
+{% endblock extra_js %}

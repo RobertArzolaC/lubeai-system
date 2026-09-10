@@ -1,0 +1,11 @@
+{% load i18n %}
+
+{% if is_active %}
+<span class="inline-flex items-center gap-1.5 rounded-full border border-success/20 bg-success/10 py-1.5 px-4 text-xs font-bold text-success">
+    <span class="h-1.5 w-1.5 rounded-full bg-success" aria-hidden="true"></span>{% trans "Active" %}
+</span>
+{% else %}
+<span class="inline-flex items-center gap-1.5 rounded-full border border-danger/20 bg-danger/10 py-1.5 px-4 text-xs font-bold text-danger">
+    <span class="h-1.5 w-1.5 rounded-full bg-danger" aria-hidden="true"></span>{% trans "Inactive" %}
+</span>
+{% endif %}

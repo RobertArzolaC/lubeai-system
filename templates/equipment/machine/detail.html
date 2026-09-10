@@ -1,0 +1,108 @@
+{% extends "layouts/dashboard.html" %}
+{% load static %}
+{% load i18n %}
+{% load breadcrumb_tags %}
+
+{% block title_page %}{{ entity }}{% endblock title_page %}
+
+{% block toolbar_title %}{{ entity }}{% endblock %}
+
+{% block content %}
+<div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+        <h2 class="text-3xl font-bold tracking-tight text-black dark:text-white">{{ machine.name }}</h2>
+        <p class="mt-1 text-sm font-medium text-bodydark2">{{ machine.serial_number }}</p>
+    </div>
+    <div class="flex items-center gap-3">
+        <a href="{{ back_url }}" class="inline-flex items-center justify-center rounded-xl border border-stroke py-3 px-6 text-sm font-semibold text-black transition hover:bg-gray-50 dark:border-strokedark dark:text-white dark:hover:bg-white/5">
+            {% trans "Back" %}
+        </a>
+        {% if perms.equipment.change_machine %}
+        <a href="{{ edit_url }}" class="inline-flex items-center justify-center rounded-xl bg-primary py-3 px-6 text-sm font-bold text-white shadow-lg shadow-primary/20 transition-all duration-300 hover:bg-opacity-90">
+            {% trans "Edit Machine" %}
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+    <!-- Summary -->
+    <div class="rounded-2xl border border-stroke bg-white p-6 shadow-sm dark:border-strokedark dark:bg-boxdark">
+        <h3 class="mb-5 text-lg font-bold text-black dark:text-white">{% trans "Information" %}</h3>
+        <dl class="flex flex-col gap-4">
+            <div>
+                <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Name" %}</dt>
+                <dd class="mt-1 text-sm font-semibold text-black dark:text-white">{{ machine.name }}</dd>
+            </div>
+            <div>
+                <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Serial Number" %}</dt>
+                <dd class="mt-1 text-sm font-semibold text-black dark:text-white">{{ machine.serial_number }}</dd>
+            </div>
+            <div>
+                <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Model" %}</dt>
+                <dd class="mt-1 text-sm font-semibold text-black dark:text-white">{{ machine.model }}</dd>
+            </div>
+            <div>
+                <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Measurement Unit" %}</dt>
+                <dd class="mt-1 text-sm font-semibold text-black dark:text-white">{{ machine.get_measurement_unit_display }}</dd>
+            </div>
+            <div>
+                <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Status" %}</dt>
+                <dd class="mt-1">
+                    {% include "equipment/includes/status_badge.html" with is_active=machine.is_active %}
+                </dd>
+            </div>
+        </dl>
+    </div>
+
+    <div class="flex flex-col gap-6 lg:col-span-2">
+        <!-- Location -->
+        <div class="rounded-2xl border border-stroke bg-white p-6 shadow-sm dark:border-strokedark dark:bg-boxdark">
+            <h3 class="mb-5 text-lg font-bold text-black dark:text-white">{% trans "Location" %}</h3>
+            <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                    <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Branch" %}</dt>
+                    <dd class="mt-1 text-sm font-semibold text-black dark:text-white">
+                        {% if machine.branch %}
+                        <a href="{% url 'apps.equipment:branch_detail' machine.branch.pk %}" class="text-primary hover:underline">{{ machine.branch.name }}</a>
+                        {% else %}—{% endif %}
+                    </dd>
+                </div>
+                <div>
+                    <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Fleet" %}</dt>
+                    <dd class="mt-1 text-sm font-semibold text-black dark:text-white">
+                        {% if machine.fleet %}
+                        <a href="{% url 'apps.equipment:fleet_detail' machine.fleet.pk %}" class="text-primary hover:underline">{{ machine.fleet.name }}</a>
+                        {% else %}—{% endif %}
+                    </dd>
+                </div>
+            </dl>
+        </div>
+
+        <!-- Components -->
+        <div class="rounded-2xl border border-stroke bg-white shadow-sm dark:border-strokedark dark:bg-boxdark">
+            <div class="border-b border-stroke py-4 px-6 dark:border-strokedark">
+                <h3 class="text-lg font-bold text-black dark:text-white">{% trans "Components" %}</h3>
+            </div>
+            <div class="divide-y divide-stroke dark:divide-strokedark">
+                {% for component in components %}
+                <div class="flex items-center justify-between gap-4 px-6 py-4">
+                    <div>
+                        <p class="text-sm font-bold text-black dark:text-white">
+                            {% if component.type %}{{ component.type.name }}{% else %}{% trans "Unknown Type" %}{% endif %}
+                        </p>
+                    </div>
+                    {% if component.is_active %}
+                    <span class="text-xs font-bold text-success">{% trans "Active" %}</span>
+                    {% else %}
+                    <span class="text-xs font-bold text-danger">{% trans "Inactive" %}</span>
+                    {% endif %}
+                </div>
+                {% empty %}
+                <p class="px-6 py-8 text-center text-sm font-medium text-bodydark2">{% trans "No components installed in this machine." %}</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

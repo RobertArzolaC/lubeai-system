@@ -1,0 +1,24 @@
+{% load i18n %}
+
+<form method="post" novalidate>
+    {% csrf_token %}
+    <div class="rounded-2xl border border-stroke bg-white shadow-sm dark:border-strokedark dark:bg-boxdark">
+        <div class="border-b border-stroke py-4 px-7 dark:border-strokedark">
+            <h3 class="font-medium text-black dark:text-white">{{ entity }} {% trans "Details" %}</h3>
+        </div>
+        <div class="p-7">
+            {% include "equipment/includes/form_fields.html" %}
+
+            {% if extra_template %}{% include extra_template %}{% endif %}
+
+            <div class="mt-7.5 flex justify-end gap-4.5">
+                <a href="{{ back_url }}" class="flex justify-center rounded border border-stroke py-2 px-6 font-medium text-black hover:shadow-1 dark:border-strokedark dark:text-white">
+                    {% trans "Discard" %}
+                </a>
+                <button type="submit" class="flex justify-center rounded bg-primary py-2 px-6 font-medium text-white hover:bg-opacity-90">
+                    {% trans "Save Changes" %}
+                </button>
+            </div>
+        </div>
+    </div>
+</form>

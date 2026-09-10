@@ -1,0 +1,16 @@
+{% extends "layouts/dashboard.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block title_page %}{{ entity }}{% endblock title_page %}
+
+{% block toolbar_title %}{{ entity }}{% endblock %}
+
+{% block extra_css %}
+{{ form.media }}
+<link rel="stylesheet" href="{% static 'css/select2-custom.css' %}">
+{% endblock extra_css %}
+
+{% block content %}
+{% include "equipment/includes/base_form.html" %}
+{% endblock content %}

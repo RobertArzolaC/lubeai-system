@@ -8,15 +8,196 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 16:14-0500\n"
+"POT-Creation-Date: 2026-09-10 12:56-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: apps/alerts/apps.py:12 apps/alerts/models.py:106
+msgid "Alerts"
+msgstr ""
+
+#: apps/alerts/choices.py:10 apps/reports/choices.py:19
+msgid "Critical"
+msgstr ""
+
+#: apps/alerts/choices.py:11 apps/reports/choices.py:18
+msgid "Caution"
+msgstr ""
+
+#: apps/alerts/choices.py:12
+#, fuzzy
+#| msgid "Morning"
+msgid "Warning"
+msgstr "Mañana"
+
+#: apps/alerts/choices.py:18
+msgid "Open"
+msgstr ""
+
+#: apps/alerts/choices.py:19
+msgid "Acknowledged"
+msgstr ""
+
+#: apps/alerts/choices.py:20
+msgid "Resolved"
+msgstr ""
+
+#: apps/alerts/choices.py:21
+msgid "Dismissed"
+msgstr ""
+
+#: apps/alerts/choices.py:27
+msgid "Threshold"
+msgstr ""
+
+#: apps/alerts/choices.py:28
+msgid "Trend Rising"
+msgstr ""
+
+#: apps/alerts/choices.py:29
+msgid "Trend Drop"
+msgstr ""
+
+#: apps/alerts/choices.py:30
+msgid "Parameter Missing"
+msgstr ""
+
+#: apps/alerts/models.py:27 apps/equipment/models.py:91
+#: apps/equipment/models.py:134 apps/equipment/views.py:23
+#: apps/equipment/views.py:38 apps/equipment/views.py:57
+#: apps/equipment/views.py:87 apps/reports/filtersets.py:29
+#: apps/reports/filtersets.py:90 apps/reports/models.py:59
+#: templates/equipment/machine/list.html:69
+msgid "Machine"
+msgstr "Máquina"
+
+#: apps/alerts/models.py:32
+#, fuzzy
+#| msgid "Agency associated with this person"
+msgid "Machine associated with this alert"
+msgstr "Agencia asociada con esta persona"
+
+#: apps/alerts/models.py:36 apps/equipment/models.py:150
+#: apps/reports/filtersets.py:94 apps/reports/models.py:68
+#| msgid "Completed"
+msgid "Component"
+msgstr "Componente"
+
+#: apps/alerts/models.py:41
+#, fuzzy
+#| msgid "Agency associated with this person"
+msgid "Component associated with this alert"
+msgstr "Agencia asociada con esta persona"
+
+#: apps/alerts/models.py:45 apps/reports/models.py:219
+#: apps/reports/models.py:253 apps/reports/views.py:73 apps/reports/views.py:99
+#: apps/reports/views.py:126 apps/reports/views.py:154
+#: apps/reports/views.py:187
+msgid "Report"
+msgstr ""
+
+#: apps/alerts/models.py:50
+msgid "Source report of this alert"
+msgstr ""
+
+#: apps/alerts/models.py:53 apps/reports/models.py:581
+msgid "Parameter"
+msgstr ""
+
+#: apps/alerts/models.py:58 apps/reports/filtersets.py:134
+#: apps/reports/models.py:575
+#, fuzzy
+#| msgid "Account Category"
+msgid "Category"
+msgstr "Categoría de cuenta"
+
+#: apps/alerts/models.py:63
+#, fuzzy
+#| msgid "Security"
+msgid "Severity"
+msgstr "Seguridad"
+
+#: apps/alerts/models.py:69 apps/core/models.py:154
+#: apps/equipment/filtersets.py:17 apps/equipment/filtersets.py:40
+#: apps/equipment/filtersets.py:73 apps/equipment/filtersets.py:100
+#: apps/reports/filtersets.py:34 apps/reports/filtersets.py:105
+#: apps/reports/filtersets.py:139 apps/reports/models.py:136
+#: apps/users/filtersets.py:15 templates/equipment/branch/detail.html:38
+#: templates/equipment/branch/list.html:67
+#: templates/equipment/component_type/detail.html:42
+#: templates/equipment/component_type/list.html:67
+#: templates/equipment/fleet/detail.html:38
+#: templates/equipment/fleet/list.html:64
+#: templates/equipment/machine/detail.html:50
+#: templates/equipment/machine/list.html:78 templates/users/profile.html:55
+msgid "Status"
+msgstr "Estado"
+
+#: apps/alerts/models.py:75
+msgid "Value"
+msgstr ""
+
+#: apps/alerts/models.py:76 apps/reports/models.py:587
+msgid "Warning Limit"
+msgstr ""
+
+#: apps/alerts/models.py:77 apps/reports/models.py:591
+msgid "Critical Limit"
+msgstr ""
+
+#: apps/alerts/models.py:78 apps/reports/models.py:595
+msgid "Unit"
+msgstr ""
+
+#: apps/alerts/models.py:80
+#, fuzzy
+#| msgid "Type"
+msgid "Rule Type"
+msgstr "Tipo"
+
+#: apps/alerts/models.py:85
+msgid "Detected At"
+msgstr ""
+
+#: apps/alerts/models.py:86
+msgid "Acknowledged At"
+msgstr ""
+
+#: apps/alerts/models.py:89
+msgid "Acknowledged By"
+msgstr ""
+
+#: apps/alerts/models.py:95
+msgid "Resolved At"
+msgstr ""
+
+#: apps/alerts/models.py:96
+#, fuzzy
+#| msgid "Save Changes"
+msgid "Sent Channels"
+msgstr "Guardar Cambios"
+
+#: apps/alerts/models.py:98
+msgid "Dedup Key"
+msgstr ""
+
+#: apps/alerts/models.py:101
+msgid "Idempotency key"
+msgstr ""
+
+#: apps/alerts/models.py:105
+msgid "Alert"
+msgstr ""
+
+#: apps/alerts/models.py:109
+msgid "Can acknowledge alert"
+msgstr ""
 
 #: apps/authentication/forms.py:12 templates/users/account/form.html:72
 #: templates/users/settings.html:24
@@ -28,16 +209,17 @@ msgstr "Nombre"
 msgid "Last Name"
 msgstr "Apellido"
 
-#: apps/authentication/forms.py:29 apps/core/models.py:35
-#: apps/users/forms.py:79 templates/account/password_reset.html:47
+#: apps/authentication/forms.py:29 apps/core/models.py:31
+#: apps/users/forms.py:81 templates/account/password_reset.html:47
 msgid "Email"
 msgstr "Correo electrónico"
 
-#: apps/authentication/forms.py:36
+#: apps/authentication/forms.py:37
 msgid "The email address is not registered with us."
 msgstr "La dirección de correo electrónico no está registrada con nosotros."
 
-#: apps/core/choices.py:6 templates/users/profile.html:119
+#: apps/core/choices.py:6 apps/reports/choices.py:8
+#: templates/users/profile.html:119
 msgid "Pending"
 msgstr "Pendiente"
 
@@ -61,7 +243,7 @@ msgstr "Fallido"
 msgid "Canceled"
 msgstr "Cancelado"
 
-#: apps/core/choices.py:12
+#: apps/core/choices.py:12 apps/reports/choices.py:10
 msgid "Approved"
 msgstr "Aprobado"
 
@@ -141,105 +323,121 @@ msgstr "Femenino"
 msgid "Other"
 msgstr "Otro"
 
-#: apps/core/mixins/views.py:87
+#: apps/core/mixins/views.py:68
+#, fuzzy, python-format
+#| msgid "User status has been successfully updated"
+msgid "The %(entity_name)s was successfully deleted."
+msgstr "El estado del usuario se ha actualizado con éxito"
+
+#: apps/core/mixins/views.py:76
+#, fuzzy, python-format
+#| msgid "Page not found"
+msgid "%(entity_name)s not found."
+msgstr "Página no encontrada"
+
+#: apps/core/mixins/views.py:88
 msgid "You do not have permission to delete this account."
 msgstr "No tienes permiso para eliminar esta cuenta."
 
-#: apps/core/models.py:14
+#: apps/core/models.py:14 templates/equipment/branch/detail.html:56
 msgid "Address"
 msgstr "Dirección"
 
-#: apps/core/models.py:15
+#: apps/core/models.py:15 templates/equipment/branch/detail.html:60
 msgid "Zip code"
 msgstr "Código postal"
 
-#: apps/core/models.py:34
+#: apps/core/models.py:30
 msgid "Phone"
 msgstr "Teléfono"
 
-#: apps/core/models.py:62 apps/users/forms.py:26 apps/users/forms.py:77
+#: apps/core/models.py:58 apps/users/forms.py:28 apps/users/forms.py:79
 msgid "First name"
 msgstr "Nombre"
 
-#: apps/core/models.py:64
+#: apps/core/models.py:59
 msgid "Paternal last name"
 msgstr "Apellido paterno"
 
-#: apps/core/models.py:67
+#: apps/core/models.py:60
 msgid "Maternal last name"
 msgstr "Apellido materno"
 
-#: apps/core/models.py:70
+#: apps/core/models.py:62
 msgid "Document type"
 msgstr "Tipo de documento"
 
-#: apps/core/models.py:76
+#: apps/core/models.py:67
 msgid "Document number"
 msgstr "Número de documento"
 
-#: apps/core/models.py:79
+#: apps/core/models.py:69
 msgid "Gender"
 msgstr "Género"
 
-#: apps/core/models.py:84
+#: apps/core/models.py:74
 msgid "Birth date"
 msgstr "Fecha de nacimiento"
 
-#: apps/core/models.py:91 apps/users/models.py:38
+#: apps/core/models.py:81 apps/users/models.py:38
 #: templates/users/profile.html:41
 msgid "User"
 msgstr "Usuario"
 
-#: apps/core/models.py:92
+#: apps/core/models.py:82
 msgid "User account associated with this person"
 msgstr "Cuenta de usuario asociada con esta persona"
 
-#: apps/core/models.py:137
+#: apps/core/models.py:129 apps/equipment/models.py:12
+#: apps/equipment/models.py:68 templates/equipment/branch/detail.html:34
+#: templates/equipment/branch/list.html:61
+#: templates/equipment/component_type/detail.html:34
+#: templates/equipment/component_type/list.html:61
+#: templates/equipment/fleet/detail.html:34
+#: templates/equipment/fleet/list.html:61
+#: templates/equipment/machine/detail.html:34
 msgid "Name"
 msgstr "Nombre"
 
-#: apps/core/models.py:138
+#: apps/core/models.py:130 templates/equipment/branch/detail.html:44
+#: templates/equipment/component_type/detail.html:38
+#: templates/equipment/component_type/list.html:64
 msgid "Description"
 msgstr "Descripción"
 
-#: apps/core/models.py:149
+#: apps/core/models.py:141
 msgid "Is active"
 msgstr "Está activo"
 
-#: apps/core/models.py:151
+#: apps/core/models.py:143
 msgid "Designates whether this entry is active"
 msgstr "Designa si esta entrada está activa"
 
-#: apps/core/models.py:162 apps/users/filtersets.py:15
-#: templates/users/profile.html:55
-msgid "Status"
-msgstr "Estado"
-
-#: apps/core/models.py:164
+#: apps/core/models.py:156
 msgid "New status value."
 msgstr "Nuevo valor de estado."
 
-#: apps/core/models.py:167
+#: apps/core/models.py:159
 msgid "Previous Status"
 msgstr "Estado anterior"
 
-#: apps/core/models.py:170
+#: apps/core/models.py:162
 msgid "Previous status value."
 msgstr "Valor del estado anterior."
 
-#: apps/core/models.py:173
+#: apps/core/models.py:165
 msgid "Note"
 msgstr "Nota"
 
-#: apps/core/models.py:175
+#: apps/core/models.py:167
 msgid "Optional note about the status change."
 msgstr "Nota opcional sobre el cambio de estado."
 
-#: apps/core/models.py:180
+#: apps/core/models.py:172
 msgid "Status History"
 msgstr "Historial de estado"
 
-#: apps/core/models.py:181
+#: apps/core/models.py:173
 msgid "Status Histories"
 msgstr "Historiales de estado"
 
@@ -247,6 +445,1103 @@ msgstr "Historiales de estado"
 #: templates/includes/aside.html:44 templates/includes/aside.html:51
 msgid "Dashboard"
 msgstr "Tablero"
+
+#: apps/equipment/admin.py:41 apps/equipment/admin.py:116
+#: apps/equipment/admin.py:176 apps/equipment/admin.py:236
+#: apps/reports/admin.py:38 apps/reports/admin.py:673
+#| msgid "Contact Information"
+msgid "Basic Information"
+msgstr "Información básica"
+
+#: apps/equipment/admin.py:51 templates/equipment/branch/detail.html:53
+#: templates/equipment/branch/list.html:64
+#: templates/equipment/machine/detail.html:61
+#| msgid "Actions"
+msgid "Location"
+msgstr "Ubicación"
+
+#: apps/equipment/admin.py:64 apps/equipment/admin.py:127
+#: apps/equipment/admin.py:186 apps/equipment/admin.py:246
+#: apps/reports/admin.py:49 apps/reports/admin.py:699
+#| msgid "Account Information"
+msgid "Audit Information"
+msgstr "Información de auditoría"
+
+#: apps/equipment/apps.py:10
+#| msgid "Accounts Management"
+msgid "Equipment Management"
+msgstr "Gestión de equipos"
+
+#: apps/equipment/choices.py:6
+msgid "Kilómetros"
+msgstr "Kilómetros"
+
+#: apps/equipment/choices.py:7
+msgid "Horas"
+msgstr "Horas"
+
+#: apps/equipment/choices.py:8
+msgid "Ambos"
+msgstr "Ambos"
+
+#: apps/equipment/filtersets.py:13 apps/equipment/filtersets.py:36
+#: apps/equipment/filtersets.py:59 apps/equipment/filtersets.py:96
+#: apps/reports/filtersets.py:14 apps/reports/filtersets.py:128
+#: apps/users/filtersets.py:11
+msgid "Search"
+msgstr "Buscar"
+
+#: apps/equipment/filtersets.py:16 apps/equipment/filtersets.py:39
+#: apps/equipment/filtersets.py:72 apps/equipment/filtersets.py:99
+#: apps/reports/filtersets.py:138 apps/users/filtersets.py:14
+msgid "Is Active?"
+msgstr "¿Está activo?"
+
+#: apps/equipment/filtersets.py:19 apps/equipment/filtersets.py:42
+#: apps/equipment/filtersets.py:75 apps/equipment/filtersets.py:102
+#: apps/reports/filtersets.py:141 apps/users/filtersets.py:17
+#: templates/equipment/component_type/detail.html:63
+#: templates/equipment/includes/status_badge.html:5
+#: templates/equipment/machine/detail.html:96 templates/users/profile.html:50
+msgid "Active"
+msgstr "Activo"
+
+#: apps/equipment/filtersets.py:20 apps/equipment/filtersets.py:43
+#: apps/equipment/filtersets.py:76 apps/equipment/filtersets.py:103
+#: apps/reports/filtersets.py:142 apps/users/filtersets.py:18
+#: templates/equipment/component_type/detail.html:65
+#: templates/equipment/includes/status_badge.html:9
+#: templates/equipment/machine/detail.html:98 templates/users/profile.html:52
+msgid "Inactive"
+msgstr "Inactivo"
+
+#: apps/equipment/filtersets.py:62
+msgid "All Branches"
+msgstr "Todas las sucursales"
+
+#: apps/equipment/filtersets.py:63 apps/equipment/models.py:32
+#: apps/equipment/models.py:51 apps/equipment/views.py:132
+#: apps/equipment/views.py:150 apps/equipment/views.py:174
+#: apps/equipment/views.py:193 templates/equipment/machine/detail.html:64
+#: templates/equipment/machine/list.html:72
+msgid "Branch"
+msgstr "Sucursal"
+
+#: apps/equipment/filtersets.py:67
+msgid "All Fleets"
+msgstr "Todas las flotas"
+
+#: apps/equipment/filtersets.py:68 apps/equipment/models.py:15
+#: apps/equipment/models.py:60 apps/equipment/views.py:218
+#: apps/equipment/views.py:236 apps/equipment/views.py:260
+#: apps/equipment/views.py:279 templates/equipment/machine/detail.html:72
+#: templates/equipment/machine/list.html:75
+msgid "Fleet"
+msgstr "Flota"
+
+#: apps/equipment/forms.py:51
+#| msgid "Delete Account"
+msgid "Select country"
+msgstr "Seleccionar país"
+
+#: apps/equipment/forms.py:59
+msgid "Select region"
+msgstr "Seleccionar región"
+
+#: apps/equipment/forms.py:67
+msgid "Select subregion"
+msgstr "Seleccionar subregión"
+
+#: apps/equipment/forms.py:75
+msgid "Select city"
+msgstr "Seleccionar ciudad"
+
+#: apps/equipment/forms.py:81 templates/equipment/branch/detail.html:72
+msgid "Subregion"
+msgstr "Subregión"
+
+#: apps/equipment/forms.py:139
+msgid "Select Component Type"
+msgstr "Seleccionar tipo de componente"
+
+#: apps/equipment/models.py:12
+#| msgid "First name"
+msgid "Fleet name"
+msgstr "Nombre de la flota"
+
+#: apps/equipment/models.py:16 apps/equipment/views.py:219
+#: templates/dashboard/index.html:129 templates/includes/aside.html:106
+#: templates/includes/aside.html:110
+msgid "Fleets"
+msgstr "Flotas"
+
+#: apps/equipment/models.py:33 apps/equipment/views.py:133
+#: templates/dashboard/index.html:119 templates/includes/aside.html:94
+#: templates/includes/aside.html:99
+msgid "Branches"
+msgstr "Sucursales"
+
+#: apps/equipment/models.py:56
+msgid "Branch/location where this machine is placed"
+msgstr "Sucursal/ubicación donde se encuentra esta máquina"
+
+#: apps/equipment/models.py:65
+msgid "Optional fleet grouping for this machine"
+msgstr "Agrupación de flota opcional para esta máquina"
+
+#: apps/equipment/models.py:70
+msgid "Machine name or identifier"
+msgstr "Nombre o identificador de la máquina"
+
+#: apps/equipment/models.py:73 templates/equipment/machine/detail.html:38
+msgid "Serial Number"
+msgstr "Número de serie"
+
+#: apps/equipment/models.py:75
+msgid "Unique serial number of the machine"
+msgstr "Número de serie único de la máquina"
+
+#: apps/equipment/models.py:78 templates/equipment/machine/detail.html:42
+msgid "Model"
+msgstr "Modelo"
+
+#: apps/equipment/models.py:80
+msgid "Machine model or type designation"
+msgstr "Modelo o designación de tipo de la máquina"
+
+#: apps/equipment/models.py:83 templates/equipment/machine/detail.html:46
+msgid "Measurement Unit"
+msgstr "Unidad de medida"
+
+#: apps/equipment/models.py:87
+msgid "Unit of measurement for machine usage"
+msgstr "Unidad de medida para el uso de la máquina"
+
+#: apps/equipment/models.py:92 apps/equipment/views.py:24
+#: templates/dashboard/index.html:109 templates/equipment/branch/detail.html:84
+#: templates/equipment/fleet/detail.html:53 templates/includes/aside.html:82
+#: templates/includes/aside.html:87
+msgid "Machines"
+msgstr "Máquinas"
+
+#: apps/equipment/models.py:120 apps/equipment/views.py:304
+#: apps/equipment/views.py:322 apps/equipment/views.py:346
+#: apps/equipment/views.py:365 apps/reports/models.py:565
+#: templates/equipment/machine/includes/formset_row.html:7
+#| msgid "Document type"
+msgid "Component Type"
+msgstr "Tipo de componente"
+
+#: apps/equipment/models.py:121 apps/equipment/views.py:305
+#: templates/dashboard/index.html:139 templates/includes/aside.html:117
+#: templates/includes/aside.html:122
+#| msgid "Document type"
+msgid "Component Types"
+msgstr "Tipos de componente"
+
+#: apps/equipment/models.py:137
+msgid "Machine this component belongs to"
+msgstr "Máquina a la que pertenece este componente"
+
+#: apps/equipment/models.py:141 templates/users/profile.html:65
+msgid "Type"
+msgstr "Tipo"
+
+#: apps/equipment/models.py:146
+msgid "Type/category of this component"
+msgstr "Tipo/categoría de este componente"
+
+#: apps/equipment/models.py:151 templates/equipment/machine/detail.html:85
+#: templates/equipment/machine/includes/formset.html:5
+#| msgid "Completed"
+msgid "Components"
+msgstr "Componentes"
+
+#: apps/equipment/views.py:52
+#| msgid "Account created successfully"
+msgid "Machine created successfully"
+msgstr "Máquina creada correctamente"
+
+#: apps/equipment/views.py:81
+#| msgid "Account updated successfully"
+msgid "Machine updated successfully"
+msgstr "Máquina actualizada correctamente"
+
+#: apps/equipment/views.py:168
+#| msgid "Account created successfully"
+msgid "Branch created successfully"
+msgstr "Sucursal creada correctamente"
+
+#: apps/equipment/views.py:186
+#| msgid "Account updated successfully"
+msgid "Branch updated successfully"
+msgstr "Sucursal actualizada correctamente"
+
+#: apps/equipment/views.py:254
+#| msgid "Account created successfully"
+msgid "Fleet created successfully"
+msgstr "Flota creada correctamente"
+
+#: apps/equipment/views.py:272
+#| msgid "Settings updated successfully"
+msgid "Fleet updated successfully"
+msgstr "Flota actualizada correctamente"
+
+#: apps/equipment/views.py:340
+#| msgid "Account created successfully"
+msgid "Component type created successfully"
+msgstr "Tipo de componente creado correctamente"
+
+#: apps/equipment/views.py:358
+#| msgid "Account updated successfully"
+msgid "Component type updated successfully"
+msgstr "Tipo de componente actualizado correctamente"
+
+#: apps/reports/admin.py:685
+msgid "Threshold Limits"
+msgstr ""
+
+#: apps/reports/admin.py:693
+msgid ""
+"Warning and critical limits for this parameter. Set 'Is Inverse Logic' to "
+"True for additives (where low values are critical)."
+msgstr ""
+
+#: apps/reports/apps.py:10
+#, fuzzy
+#| msgid "Accounts Management"
+msgid "Reports Management"
+msgstr "Gestión de cuentas"
+
+#: apps/reports/choices.py:9
+msgid "Reviewed"
+msgstr ""
+
+#: apps/reports/choices.py:11
+#, fuzzy
+#| msgid "Restricted"
+msgid "Rejected"
+msgstr "Restringido"
+
+#: apps/reports/choices.py:17
+msgid "Normal"
+msgstr ""
+
+#: apps/reports/choices.py:25
+#, fuzzy
+#| msgid "Clear all"
+msgid "Wear Metals"
+msgstr "Limpiar todo"
+
+#: apps/reports/choices.py:26
+#, fuzzy
+#| msgid "Contact Information"
+msgid "Contamination"
+msgstr "Información de contacto"
+
+#: apps/reports/choices.py:27
+msgid "Oil Health"
+msgstr ""
+
+#: apps/reports/choices.py:28
+#, fuzzy
+#| msgid "Active"
+msgid "Additives"
+msgstr "Activo"
+
+#: apps/reports/choices.py:29
+msgid "Particle Analysis"
+msgstr ""
+
+#: apps/reports/choices.py:30
+msgid "FTIR Analysis"
+msgstr ""
+
+#: apps/reports/choices.py:37 apps/reports/models.py:454
+msgid "Iron (Fe)"
+msgstr ""
+
+#: apps/reports/choices.py:38 apps/reports/models.py:457
+msgid "Copper (Cu)"
+msgstr ""
+
+#: apps/reports/choices.py:39 apps/reports/models.py:459
+msgid "Aluminum (Al)"
+msgstr ""
+
+#: apps/reports/choices.py:40 apps/reports/models.py:455
+msgid "Chromium (Cr)"
+msgstr ""
+
+#: apps/reports/choices.py:41 apps/reports/models.py:456
+msgid "Lead (Pb)"
+msgstr ""
+
+#: apps/reports/choices.py:42 apps/reports/models.py:458
+msgid "Tin (Sn)"
+msgstr ""
+
+#: apps/reports/choices.py:43 apps/reports/models.py:460
+msgid "Nickel (Ni)"
+msgstr ""
+
+#: apps/reports/choices.py:44 apps/reports/models.py:461
+msgid "Silver (Ag)"
+msgstr ""
+
+#: apps/reports/choices.py:46 apps/reports/models.py:466
+msgid "Silicon (Si)"
+msgstr ""
+
+#: apps/reports/choices.py:47 apps/reports/models.py:468
+msgid "Sodium (Na)"
+msgstr ""
+
+#: apps/reports/choices.py:48 apps/reports/models.py:472
+msgid "Potassium (K)"
+msgstr ""
+
+#: apps/reports/choices.py:49 apps/reports/models.py:467
+msgid "Boron (B)"
+msgstr ""
+
+#: apps/reports/choices.py:51
+msgid "Viscosity @ 40C"
+msgstr ""
+
+#: apps/reports/choices.py:52
+msgid "Viscosity @ 100C"
+msgstr ""
+
+#: apps/reports/choices.py:53
+msgid "TBN (Total Base Number)"
+msgstr ""
+
+#: apps/reports/choices.py:54
+msgid "TAN (Total Acid Number)"
+msgstr ""
+
+#: apps/reports/choices.py:56
+#, fuzzy
+#| msgid "Organization"
+msgid "Oxidation"
+msgstr "Organización"
+
+#: apps/reports/choices.py:57
+#, fuzzy
+#| msgid "Administration"
+msgid "Nitration"
+msgstr "Administración"
+
+#: apps/reports/choices.py:58
+msgid "Sulfation"
+msgstr ""
+
+#: apps/reports/choices.py:59
+msgid "Glycol"
+msgstr ""
+
+#: apps/reports/choices.py:60
+msgid "Fuel Dilution"
+msgstr ""
+
+#: apps/reports/choices.py:62 apps/reports/models.py:402
+msgid "PQ Index"
+msgstr ""
+
+#: apps/reports/choices.py:64 apps/reports/models.py:502
+msgid "Zinc (Zn)"
+msgstr ""
+
+#: apps/reports/choices.py:65 apps/reports/models.py:500
+msgid "Phosphorus (P)"
+msgstr ""
+
+#: apps/reports/choices.py:66 apps/reports/models.py:470
+msgid "Magnesium (Mg)"
+msgstr ""
+
+#: apps/reports/choices.py:67 apps/reports/models.py:503
+msgid "Calcium (Ca)"
+msgstr ""
+
+#: apps/reports/choices.py:68 apps/reports/models.py:492
+msgid "Molybdenum (Mo)"
+msgstr ""
+
+#: apps/reports/choices.py:69 apps/reports/models.py:504
+msgid "Barium (Ba)"
+msgstr ""
+
+#: apps/reports/choices.py:70 apps/reports/models.py:505
+msgid "Cadmium (Cd)"
+msgstr ""
+
+#: apps/reports/choices.py:71 apps/reports/models.py:494
+msgid "Titanium (Ti)"
+msgstr ""
+
+#: apps/reports/choices.py:72 apps/reports/models.py:495
+msgid "Vanadium (V)"
+msgstr ""
+
+#: apps/reports/choices.py:73 apps/reports/models.py:497
+msgid "Manganese (Mn)"
+msgstr ""
+
+#: apps/reports/choices.py:79
+msgid "Intertek"
+msgstr ""
+
+#: apps/reports/choices.py:80
+#, fuzzy
+#| msgid "March"
+msgid "MarcoLab"
+msgstr "Marzo"
+
+#: apps/reports/filtersets.py:18 apps/reports/filtersets.py:85
+msgid "All Laboratories"
+msgstr ""
+
+#: apps/reports/filtersets.py:19 apps/reports/filtersets.py:86
+#: apps/reports/forms.py:108 apps/reports/models.py:27
+#: apps/reports/models.py:50
+msgid "Laboratory"
+msgstr ""
+
+#: apps/reports/filtersets.py:23 apps/reports/filtersets.py:80
+#, fuzzy
+#| msgid "Organization"
+msgid "All Organizations"
+msgstr "Organización"
+
+#: apps/reports/filtersets.py:24 apps/reports/filtersets.py:81
+#: templates/users/settings.html:77
+msgid "Organization"
+msgstr "Organización"
+
+#: apps/reports/filtersets.py:28
+msgid "All Machines"
+msgstr ""
+
+#: apps/reports/filtersets.py:33 apps/reports/filtersets.py:104
+#, fuzzy
+#| msgid "Status"
+msgid "All Statuses"
+msgstr "Estado"
+
+#: apps/reports/filtersets.py:39 apps/reports/filtersets.py:98
+msgid "All Conditions"
+msgstr ""
+
+#: apps/reports/filtersets.py:40 apps/reports/filtersets.py:99
+#: apps/reports/models.py:143
+msgid "Condition"
+msgstr ""
+
+#: apps/reports/filtersets.py:71
+msgid "Start Date"
+msgstr ""
+
+#: apps/reports/filtersets.py:76
+msgid "End Date"
+msgstr ""
+
+#: apps/reports/filtersets.py:133
+#, fuzzy
+#| msgid "Account Category"
+msgid "All Categories"
+msgstr "Categoría de cuenta"
+
+#: apps/reports/forms.py:99
+#, fuzzy
+#| msgid "An account with this email already exists"
+msgid "A report with this lab number already exists."
+msgstr "Ya existe una cuenta con este correo electrónico."
+
+#: apps/reports/forms.py:110
+msgid ""
+"Select the laboratory that generated the Excel file, or leave empty for auto-"
+"detection."
+msgstr ""
+
+#: apps/reports/forms.py:118
+#, fuzzy
+#| msgid "Excel"
+msgid "Excel File"
+msgstr "Excel"
+
+#: apps/reports/forms.py:120
+msgid "Upload an Excel file (.xlsx) with report data. Maximum size: 10MB"
+msgstr ""
+
+#: apps/reports/forms.py:134
+msgid "Auto-detect"
+msgstr ""
+
+#: apps/reports/forms.py:145
+msgid "Only Excel files (.xlsx, .xls) are allowed."
+msgstr ""
+
+#: apps/reports/forms.py:149
+msgid "File size cannot exceed 10MB."
+msgstr ""
+
+#: apps/reports/forms.py:206
+msgid ""
+"For inverse logic, warning limit should be greater than or equal to critical "
+"limit."
+msgstr ""
+
+#: apps/reports/forms.py:215
+msgid "Warning limit should be less than or equal to critical limit."
+msgstr ""
+
+#: apps/reports/models.py:20
+msgid "Code"
+msgstr ""
+
+#: apps/reports/models.py:23
+msgid "Unique laboratory identification code"
+msgstr ""
+
+#: apps/reports/models.py:28
+msgid "Laboratories"
+msgstr ""
+
+#: apps/reports/models.py:55
+msgid "Laboratory that performed the analysis"
+msgstr ""
+
+#: apps/reports/models.py:64
+#, fuzzy
+#| msgid "User account associated with this person"
+msgid "Machine/Equipment associated with this report"
+msgstr "Cuenta de usuario asociada con esta persona"
+
+#: apps/reports/models.py:73
+#, fuzzy
+#| msgid "Agency associated with this person"
+msgid "Component associated with this report"
+msgstr "Agencia asociada con esta persona"
+
+#: apps/reports/models.py:76
+msgid "Lab Number"
+msgstr ""
+
+#: apps/reports/models.py:79
+msgid "Laboratory identification number (No. Lab)"
+msgstr ""
+
+#: apps/reports/models.py:82
+msgid "Lubricant"
+msgstr ""
+
+#: apps/reports/models.py:85
+msgid "Lubricant type/brand used"
+msgstr ""
+
+#: apps/reports/models.py:88
+msgid "Lubricant Hours"
+msgstr ""
+
+#: apps/reports/models.py:91
+msgid "Hours of lubricant usage"
+msgstr ""
+
+#: apps/reports/models.py:94
+msgid "Lubricant Kilometers"
+msgstr ""
+
+#: apps/reports/models.py:97
+msgid "Kilometers of lubricant usage"
+msgstr ""
+
+#: apps/reports/models.py:100
+msgid "Machine Hours"
+msgstr ""
+
+#: apps/reports/models.py:103
+msgid "Total operating hours of the machine"
+msgstr ""
+
+#: apps/reports/models.py:106
+msgid "Machine Kilometers"
+msgstr ""
+
+#: apps/reports/models.py:109
+msgid "Total kilometers traveled by the machine"
+msgstr ""
+
+#: apps/reports/models.py:112
+msgid "Serial Number Code"
+msgstr ""
+
+#: apps/reports/models.py:115
+msgid "Serial number code from the report (Cod./Num. De Serie)"
+msgstr ""
+
+#: apps/reports/models.py:118
+#, fuzzy
+#| msgid "Completed"
+msgid "Sample Date"
+msgstr "Completado"
+
+#: apps/reports/models.py:121
+msgid "Date when the sample was taken (Fecha Muestra)"
+msgstr ""
+
+#: apps/reports/models.py:124
+msgid "PER Number"
+msgstr ""
+
+#: apps/reports/models.py:127
+msgid "PER identification number (No. PER)"
+msgstr ""
+
+#: apps/reports/models.py:130
+msgid "Reception Date"
+msgstr ""
+
+#: apps/reports/models.py:133
+msgid "Date when the sample was received (Fecha de Recepción)"
+msgstr ""
+
+#: apps/reports/models.py:140
+#, fuzzy
+#| msgid "Current Status"
+msgid "Current status of the report"
+msgstr "Estado actual"
+
+#: apps/reports/models.py:147
+msgid "Equipment condition assessment"
+msgstr ""
+
+#: apps/reports/models.py:150
+#, fuzzy
+#| msgid "Note"
+msgid "Notes"
+msgstr "Nota"
+
+#: apps/reports/models.py:152
+msgid "Additional notes or observations"
+msgstr ""
+
+#: apps/reports/models.py:155
+msgid "Report Date"
+msgstr ""
+
+#: apps/reports/models.py:158
+msgid "Date when the report was generated (Fecha de Reporte)"
+msgstr ""
+
+#: apps/reports/models.py:161
+#, fuzzy
+#| msgid "Save Changes"
+msgid "Filter Change"
+msgstr "Guardar Cambios"
+
+#: apps/reports/models.py:164
+msgid "Filter change indicator (Cambio de Filtro)"
+msgstr ""
+
+#: apps/reports/models.py:167
+#, fuzzy
+#| msgid "Save Changes"
+msgid "Oil Change"
+msgstr "Guardar Cambios"
+
+#: apps/reports/models.py:170
+msgid "Oil change indicator (Cambio de Aceite)"
+msgstr ""
+
+#: apps/reports/models.py:173
+#, fuzzy
+#| msgid "Other"
+msgid "Others"
+msgstr "Otro"
+
+#: apps/reports/models.py:175
+msgid "Other observations or notes (Otros)"
+msgstr ""
+
+#: apps/reports/models.py:178
+msgid "Recommendations"
+msgstr ""
+
+#: apps/reports/models.py:180
+msgid "Laboratory-specific recommendations (Recomendaciones)"
+msgstr ""
+
+#: apps/reports/models.py:183
+msgid "Component Hour Meter"
+msgstr ""
+
+#: apps/reports/models.py:186
+msgid ""
+"Hours on component since installation (Horometro Instalacion Componente)"
+msgstr ""
+
+#: apps/reports/models.py:189
+msgid "Previous Hour Meter"
+msgstr ""
+
+#: apps/reports/models.py:192
+msgid "Machine hour meter from the previous sample (Horometro previo)"
+msgstr ""
+
+#: apps/reports/models.py:195
+msgid "Sampling Type"
+msgstr ""
+
+#: apps/reports/models.py:198
+msgid "Type of sample collection (INSP/PORT)"
+msgstr ""
+
+#: apps/reports/models.py:201
+msgid "PM Position"
+msgstr ""
+
+#: apps/reports/models.py:204
+msgid "Position relative to preventive maintenance (PRE-PM/POST-PM/INSP)"
+msgstr ""
+
+#: apps/reports/models.py:207
+msgid "Action Required"
+msgstr ""
+
+#: apps/reports/models.py:209
+msgid "Specific action recommended by the laboratory (Accion a tomar)"
+msgstr ""
+
+#: apps/reports/models.py:212
+msgid "Turnaround Days"
+msgstr ""
+
+#: apps/reports/models.py:215
+msgid "Laboratory turnaround time in days (TR dias)"
+msgstr ""
+
+#: apps/reports/models.py:220 apps/reports/views.py:74
+#: apps/reports/views.py:188
+msgid "Reports"
+msgstr ""
+
+#: apps/reports/models.py:256
+msgid "Associated inspection report"
+msgstr ""
+
+#: apps/reports/models.py:263
+msgid "Water Crackle Test"
+msgstr ""
+
+#: apps/reports/models.py:266
+msgid "ITS 009/18 - Qualitative water test (NEGATIVO/POSITIVO)"
+msgstr ""
+
+#: apps/reports/models.py:269
+msgid "Water by Distillation (%)"
+msgstr ""
+
+#: apps/reports/models.py:274
+msgid "ASTM D 95-13"
+msgstr ""
+
+#: apps/reports/models.py:281
+msgid "Viscosity @ 40°C (cSt)"
+msgstr ""
+
+#: apps/reports/models.py:286 apps/reports/models.py:294
+msgid "ASTM D 7279-20"
+msgstr ""
+
+#: apps/reports/models.py:289
+msgid "Viscosity @ 100°C (cSt)"
+msgstr ""
+
+#: apps/reports/models.py:301
+msgid "Viscosity Index (VI)"
+msgstr ""
+
+#: apps/reports/models.py:304
+msgid "Calculated viscosity index; indicates VI-improver degradation"
+msgstr ""
+
+#: apps/reports/models.py:311
+msgid "Refrigerant (%)"
+msgstr ""
+
+#: apps/reports/models.py:316
+msgid "Refrigerant contamination percentage (distinct from glycol FTIR)"
+msgstr ""
+
+#: apps/reports/models.py:323
+msgid "Compatibility"
+msgstr ""
+
+#: apps/reports/models.py:326
+msgid "ILT-096 - Compatibility test result"
+msgstr ""
+
+#: apps/reports/models.py:329
+msgid "TBN (mgKOH/g)"
+msgstr ""
+
+#: apps/reports/models.py:334
+msgid "ASTM D 2896-21 - Total Base Number"
+msgstr ""
+
+#: apps/reports/models.py:337
+msgid "TAN (mgKOH/g)"
+msgstr ""
+
+#: apps/reports/models.py:342
+msgid "ASTM D 664-24 - Total Acid Number"
+msgstr ""
+
+#: apps/reports/models.py:349
+msgid "Oxidation (Abs/cm)"
+msgstr ""
+
+#: apps/reports/models.py:356
+msgid "Soot (%)"
+msgstr ""
+
+#: apps/reports/models.py:363
+msgid "Nitration (Abs/cm)"
+msgstr ""
+
+#: apps/reports/models.py:370
+msgid "Sulfation (Abs/cm)"
+msgstr ""
+
+#: apps/reports/models.py:377
+msgid "Glycol (%)"
+msgstr ""
+
+#: apps/reports/models.py:384
+msgid "Fuel Dilution (%)"
+msgstr ""
+
+#: apps/reports/models.py:391
+msgid "Water FTIR (%)"
+msgstr ""
+
+#: apps/reports/models.py:405
+msgid "ITS 044/15 - Ferrous particle index"
+msgstr ""
+
+#: apps/reports/models.py:408
+msgid "Particle Count ISO"
+msgstr ""
+
+#: apps/reports/models.py:411
+msgid "ISO 4406:2021 (e.g., 20/18/15)"
+msgstr ""
+
+#: apps/reports/models.py:415
+msgid "Particles < 4 µm (c/mL)"
+msgstr ""
+
+#: apps/reports/models.py:418
+msgid "ISO 4406 - Particle count for size < 4 µm"
+msgstr ""
+
+#: apps/reports/models.py:421
+msgid "Particles < 6 µm (c/mL)"
+msgstr ""
+
+#: apps/reports/models.py:424
+msgid "ISO 4406 - Particle count for size < 6 µm"
+msgstr ""
+
+#: apps/reports/models.py:427
+msgid "Particles < 14 µm (c/mL)"
+msgstr ""
+
+#: apps/reports/models.py:430
+msgid "ISO 4406 - Particle count for size < 14 µm"
+msgstr ""
+
+#: apps/reports/models.py:433
+msgid "Particles < 21 µm (c/mL)"
+msgstr ""
+
+#: apps/reports/models.py:436
+msgid "ISO 4406 - Particle count for size < 21 µm"
+msgstr ""
+
+#: apps/reports/models.py:439
+msgid "Particles < 38 µm (c/mL)"
+msgstr ""
+
+#: apps/reports/models.py:442
+msgid "ISO 4406 - Particle count for size < 38 µm"
+msgstr ""
+
+#: apps/reports/models.py:445
+msgid "Particles < 70 µm (c/mL)"
+msgstr ""
+
+#: apps/reports/models.py:448
+msgid "ISO 4406 - Particle count for size < 70 µm"
+msgstr ""
+
+#: apps/reports/models.py:476
+msgid "Dispersancy"
+msgstr ""
+
+#: apps/reports/models.py:479
+msgid "Oil dispersancy rating (BUE/REG/MALA)"
+msgstr ""
+
+#: apps/reports/models.py:482
+msgid "Spot Test"
+msgstr ""
+
+#: apps/reports/models.py:485
+msgid "Qualitative spot test for contamination"
+msgstr ""
+
+#: apps/reports/models.py:511
+msgid "Visual Appearance"
+msgstr ""
+
+#: apps/reports/models.py:517
+msgid "Lab Analysis"
+msgstr ""
+
+#: apps/reports/models.py:518
+msgid "Lab Analyses"
+msgstr ""
+
+#: apps/reports/models.py:571
+msgid "If null, applies as global default for all component types"
+msgstr ""
+
+#: apps/reports/models.py:578
+msgid "Category this threshold belongs to"
+msgstr ""
+
+#: apps/reports/models.py:584
+msgid "Parameter for this threshold"
+msgstr ""
+
+#: apps/reports/models.py:588
+msgid "Warning threshold value"
+msgstr ""
+
+#: apps/reports/models.py:592
+msgid "Critical threshold value"
+msgstr ""
+
+#: apps/reports/models.py:598
+msgid "Measurement unit (ppm, cSt, etc.)"
+msgstr ""
+
+#: apps/reports/models.py:601
+msgid "Is Inverse Logic"
+msgstr ""
+
+#: apps/reports/models.py:604
+msgid ""
+"If True, values below limits are problematic (e.g., additives). If False, "
+"values above limits are problematic (e.g., wear metals)."
+msgstr ""
+
+#: apps/reports/models.py:609
+#, fuzzy
+#| msgid "Description"
+msgid "Wear Source Description"
+msgstr "Descripción"
+
+#: apps/reports/models.py:611
+msgid "Description of the wear source for this parameter"
+msgstr ""
+
+#: apps/reports/models.py:615 apps/reports/views.py:594
+#: apps/reports/views.py:621 apps/reports/views.py:650
+#: apps/reports/views.py:692
+msgid "Analysis Threshold"
+msgstr ""
+
+#: apps/reports/models.py:616 apps/reports/views.py:595
+msgid "Analysis Thresholds"
+msgstr ""
+
+#: apps/reports/models.py:627
+msgid "Global"
+msgstr ""
+
+#: apps/reports/services/report_export.py:281
+msgid "REPORTE DE INSPECCIONES"
+msgstr ""
+
+#: apps/reports/services/report_export.py:289
+msgid "Todos"
+msgstr ""
+
+#: apps/reports/services/report_export.py:292
+#, fuzzy
+#| msgid "Organization"
+msgid "Organización"
+msgstr "Organización"
+
+#: apps/reports/services/report_export.py:292
+msgid "Exportado"
+msgstr ""
+
+#: apps/reports/views.py:121
+#, fuzzy
+#| msgid "Account created successfully"
+msgid "Report created successfully"
+msgstr "Cuenta creada con éxito"
+
+#: apps/reports/views.py:128
+#, fuzzy
+#| msgid "Create Account"
+msgid "Create Report"
+msgstr "Crear Cuenta"
+
+#: apps/reports/views.py:149
+#, fuzzy
+#| msgid "Account updated successfully"
+msgid "Report updated successfully"
+msgstr "Cuenta actualizada con éxito"
+
+#: apps/reports/views.py:156
+#, fuzzy
+#| msgid "Edit your photo"
+msgid "Edit Report"
+msgstr "Edita tu foto"
+
+#: apps/reports/views.py:222
+#, python-format
+msgid "Error processing file: %(error)s"
+msgstr ""
+
+#: apps/reports/views.py:231
+#, fuzzy, python-format
+#| msgid "Successfully verified account."
+msgid "Successfully created %(count)d reports"
+msgstr "Cuenta verificada con éxito."
+
+#: apps/reports/views.py:238
+#, python-format
+msgid "Skipped %(count)d duplicate reports (lab numbers already exist)"
+msgstr ""
+
+#: apps/reports/views.py:639
+#, fuzzy
+#| msgid "Account created successfully"
+msgid "Analysis threshold created successfully"
+msgstr "Cuenta creada con éxito"
+
+#: apps/reports/views.py:680
+#, fuzzy
+#| msgid "Account updated successfully"
+msgid "Analysis threshold updated successfully"
+msgstr "Cuenta actualizada con éxito"
 
 #: apps/users/api.py:19
 msgid "User not found"
@@ -272,27 +1567,11 @@ msgstr "No se encontró la dirección de correo electrónico"
 msgid "Verification email has been successfully sent"
 msgstr "El correo electrónico de verificación se ha enviado con éxito"
 
-#: apps/users/filtersets.py:10
-msgid "Search"
-msgstr "Buscar"
-
-#: apps/users/filtersets.py:14
-msgid "Is Active?"
-msgstr "¿Está activo?"
-
-#: apps/users/filtersets.py:17 templates/users/profile.html:50
-msgid "Active"
-msgstr "Activo"
-
-#: apps/users/filtersets.py:18 templates/users/profile.html:52
-msgid "Inactive"
-msgstr "Inactivo"
-
-#: apps/users/forms.py:27 apps/users/forms.py:78
+#: apps/users/forms.py:29 apps/users/forms.py:80
 msgid "Last name"
 msgstr "Apellido"
 
-#: apps/users/forms.py:49
+#: apps/users/forms.py:51
 msgid "An account with this email already exists"
 msgstr "Ya existe una cuenta con este correo electrónico."
 
@@ -308,7 +1587,12 @@ msgstr "El superusuario debe tener is_staff=True."
 msgid "Superuser must have is_superuser=True."
 msgstr "El superusuario debe tener is_superuser=True."
 
-#: apps/users/models.py:13
+#: apps/users/mixins.py:28
+#, python-format
+msgid "Can %(action)s %(model_key)s"
+msgstr ""
+
+#: apps/users/models.py:15
 msgid "email address"
 msgstr "dirección de correo electrónico"
 
@@ -345,7 +1629,7 @@ msgstr "Cuenta creada con éxito"
 msgid "Account updated successfully"
 msgstr "Cuenta actualizada con éxito"
 
-#: config/settings/base.py:161
+#: config/settings/base.py:167
 msgid "Spanish"
 msgstr "Español"
 
@@ -484,7 +1768,9 @@ msgid "Toggle password visibility"
 msgstr "Alternar visibilidad de la contraseña"
 
 #: templates/account/password_change.html:119
-#: templates/account/password_reset.html:66 templates/users/settings.html:94
+#: templates/account/password_reset.html:66
+#: templates/equipment/includes/delete_script.html:13
+#: templates/users/account/list.html:281 templates/users/settings.html:94
 msgid "Cancel"
 msgstr "Cancelar"
 
@@ -671,11 +1957,37 @@ msgstr "Total de productos"
 msgid "Total Users"
 msgstr "Total de usuarios"
 
-#: templates/dashboard/index.html:103
+#: templates/dashboard/index.html:102 templates/includes/aside.html:76
+msgid "Equipment"
+msgstr "Equipos"
+
+#: templates/dashboard/index.html:110
+msgid "Equipment registry and components."
+msgstr "Registro de equipos y componentes."
+
+#: templates/dashboard/index.html:111 templates/dashboard/index.html:121
+#: templates/dashboard/index.html:131 templates/dashboard/index.html:141
+#| msgid "Management"
+msgid "Manage"
+msgstr "Gestionar"
+
+#: templates/dashboard/index.html:120
+msgid "Physical locations and addresses."
+msgstr "Ubicaciones físicas y direcciones."
+
+#: templates/dashboard/index.html:130
+msgid "Machine groupings for maintenance."
+msgstr "Agrupaciones de máquinas para mantenimiento."
+
+#: templates/dashboard/index.html:140
+msgid "Catalog of component categories."
+msgstr "Catálogo de categorías de componentes."
+
+#: templates/dashboard/index.html:152
 msgid "Welcome back,"
 msgstr "Bienvenido de nuevo,"
 
-#: templates/dashboard/index.html:105
+#: templates/dashboard/index.html:154
 msgid ""
 "Manage your laboratory processes, track samples and validate results from "
 "one central place."
@@ -683,13 +1995,359 @@ msgstr ""
 "Gestiona tus procesos de laboratorio, haz seguimiento de muestras y valida "
 "resultados desde un solo lugar central."
 
-#: templates/dashboard/index.html:110
+#: templates/dashboard/index.html:159
 msgid "Get Started"
 msgstr "Comenzar"
 
-#: templates/dashboard/index.html:114
+#: templates/dashboard/index.html:163
 msgid "View Profile"
 msgstr "Ver perfil"
+
+#: templates/equipment/branch/detail.html:14
+msgid "Branch details and machines at this location."
+msgstr "Detalles de la sucursal y máquinas en esta ubicación."
+
+#: templates/equipment/branch/detail.html:18
+#: templates/equipment/component_type/detail.html:18
+#: templates/equipment/fleet/detail.html:18
+#: templates/equipment/machine/detail.html:18
+msgid "Back"
+msgstr "Volver"
+
+#: templates/equipment/branch/detail.html:22
+msgid "Edit Branch"
+msgstr "Editar sucursal"
+
+#: templates/equipment/branch/detail.html:31
+#: templates/equipment/component_type/detail.html:31
+#: templates/equipment/fleet/detail.html:31
+#: templates/equipment/machine/detail.html:31
+#| msgid "Contact Information"
+msgid "Information"
+msgstr "Información"
+
+#: templates/equipment/branch/detail.html:64
+msgid "Country"
+msgstr "País"
+
+#: templates/equipment/branch/detail.html:68
+msgid "Region"
+msgstr "Región"
+
+#: templates/equipment/branch/detail.html:76
+msgid "City"
+msgstr "Ciudad"
+
+#: templates/equipment/branch/detail.html:98
+msgid "No machines assigned to this branch."
+msgstr "No hay máquinas asignadas a esta sucursal."
+
+#: templates/equipment/branch/list.html:16
+#| msgid "Management"
+msgid "Branch Management"
+msgstr "Gestión de sucursales"
+
+#: templates/equipment/branch/list.html:19
+msgid "Manage the physical locations where your machines operate."
+msgstr "Administra las ubicaciones físicas donde operan tus máquinas."
+
+#: templates/equipment/branch/list.html:28
+#| msgid "Create"
+msgid "Create Branch"
+msgstr "Crear sucursal"
+
+#: templates/equipment/branch/list.html:39
+#| msgid "Search by name, email or keyword..."
+msgid "Search branches by name or address..."
+msgstr "Buscar sucursales por nombre o dirección..."
+
+#: templates/equipment/branch/list.html:48
+#: templates/equipment/component_type/list.html:48
+#: templates/equipment/fleet/list.html:48
+#: templates/equipment/machine/list.html:56
+msgid "Apply"
+msgstr "Aplicar"
+
+#: templates/equipment/branch/list.html:51
+#: templates/equipment/component_type/list.html:51
+#: templates/equipment/fleet/list.html:51
+#| msgid "Clear all"
+msgid "Clear"
+msgstr "Limpiar"
+
+#: templates/equipment/branch/list.html:70
+#: templates/equipment/component_type/list.html:70
+#: templates/equipment/fleet/list.html:67
+#: templates/equipment/machine/list.html:81
+#: templates/users/account/list.html:116
+msgid "Management"
+msgstr "Gestión"
+
+#: templates/equipment/branch/list.html:96
+#| msgid "No accounts found"
+msgid "No branches found"
+msgstr "No se encontraron sucursales"
+
+#: templates/equipment/branch/list.html:97
+#| msgid ""
+#| "We couldn't find any accounts matching your current search or filters. "
+#| "Try adjusting your criteria or create a new account."
+msgid ""
+"We couldn't find any branches matching your search. Try adjusting your "
+"criteria or create a new branch."
+msgstr "No encontramos sucursales que coincidan con tu búsqueda. Ajusta los criterios o crea una nueva sucursal."
+
+#: templates/equipment/branch/list.html:111
+#| msgid "Delete"
+msgid "Delete Branch"
+msgstr "Eliminar sucursal"
+
+#: templates/equipment/branch/list.html:112
+#| msgid "Status updated successfully."
+msgid "Branch deleted successfully."
+msgstr "Sucursal eliminada correctamente."
+
+#: templates/equipment/component_type/detail.html:14
+msgid "Component type details and installed components."
+msgstr "Detalles del tipo de componente y componentes instalados."
+
+#: templates/equipment/component_type/detail.html:22
+msgid "Edit Component Type"
+msgstr "Editar tipo de componente"
+
+#: templates/equipment/component_type/detail.html:53
+msgid "Installed Components"
+msgstr "Componentes instalados"
+
+#: templates/equipment/component_type/detail.html:69
+msgid "No components use this type yet."
+msgstr "Ningún componente usa este tipo todavía."
+
+#: templates/equipment/component_type/list.html:16
+#| msgid "Accounts Management"
+msgid "Component Type Management"
+msgstr "Gestión de tipos de componente"
+
+#: templates/equipment/component_type/list.html:19
+msgid "Catalog the kinds of components that can be installed in machines."
+msgstr "Cataloga los tipos de componentes que se pueden instalar en las máquinas."
+
+#: templates/equipment/component_type/list.html:28
+msgid "Create Component Type"
+msgstr "Crear tipo de componente"
+
+#: templates/equipment/component_type/list.html:39
+msgid "Search component types..."
+msgstr "Buscar tipos de componente..."
+
+#: templates/equipment/component_type/list.html:94
+#| msgid "No accounts found"
+msgid "No component types found"
+msgstr "No se encontraron tipos de componente"
+
+#: templates/equipment/component_type/list.html:95
+#| msgid ""
+#| "We couldn't find any accounts matching your current search or filters. "
+#| "Try adjusting your criteria or create a new account."
+msgid ""
+"We couldn't find any component types matching your search. Try adjusting "
+"your criteria or create a new one."
+msgstr "No encontramos tipos de componente que coincidan con tu búsqueda. Ajusta los criterios o crea uno nuevo."
+
+#: templates/equipment/component_type/list.html:109
+msgid "Delete Component Type"
+msgstr "Eliminar tipo de componente"
+
+#: templates/equipment/component_type/list.html:110
+#| msgid "Account updated successfully"
+msgid "Component type deleted successfully."
+msgstr "Tipo de componente eliminado correctamente."
+
+#: templates/equipment/fleet/detail.html:14
+msgid "Fleet details and assigned machines."
+msgstr "Detalles de la flota y máquinas asignadas."
+
+#: templates/equipment/fleet/detail.html:22
+#| msgid "Edit Profile"
+msgid "Edit Fleet"
+msgstr "Editar flota"
+
+#: templates/equipment/fleet/detail.html:44
+#| msgid "Create"
+msgid "Created"
+msgstr "Creado"
+
+#: templates/equipment/fleet/detail.html:67
+msgid "No machines assigned to this fleet."
+msgstr "No hay máquinas asignadas a esta flota."
+
+#: templates/equipment/fleet/list.html:16
+#| msgid "Management"
+msgid "Fleet Management"
+msgstr "Gestión de flotas"
+
+#: templates/equipment/fleet/list.html:19
+msgid "Group machines into fleets to organize maintenance and monitoring."
+msgstr "Agrupa máquinas en flotas para organizar el mantenimiento y monitoreo."
+
+#: templates/equipment/fleet/list.html:28
+#| msgid "Create"
+msgid "Create Fleet"
+msgstr "Crear flota"
+
+#: templates/equipment/fleet/list.html:39
+msgid "Search fleets by name..."
+msgstr "Buscar flotas por nombre..."
+
+#: templates/equipment/fleet/list.html:88
+#| msgid "No medical tests found"
+msgid "No fleets found"
+msgstr "No se encontraron flotas"
+
+#: templates/equipment/fleet/list.html:89
+#| msgid ""
+#| "We couldn't find any accounts matching your current search or filters. "
+#| "Try adjusting your criteria or create a new account."
+msgid ""
+"We couldn't find any fleets matching your search. Try adjusting your "
+"criteria or create a new fleet."
+msgstr "No encontramos flotas que coincidan con tu búsqueda. Ajusta los criterios o crea una nueva flota."
+
+#: templates/equipment/fleet/list.html:103
+#| msgid "Delete"
+msgid "Delete Fleet"
+msgstr "Eliminar flota"
+
+#: templates/equipment/fleet/list.html:104
+#| msgid "Status updated successfully."
+msgid "Fleet deleted successfully."
+msgstr "Flota eliminada correctamente."
+
+#: templates/equipment/includes/base_form.html:7
+#: templates/users/account/form.html:65
+msgid "Details"
+msgstr "Detalles"
+
+#: templates/equipment/includes/base_form.html:16
+#: templates/users/account/form.html:192
+msgid "Discard"
+msgstr "Descartar"
+
+#: templates/equipment/includes/base_form.html:19
+#: templates/users/account/form.html:195 templates/users/settings.html:98
+msgid "Save Changes"
+msgstr "Guardar Cambios"
+
+#: templates/equipment/includes/delete_script.html:9
+#: templates/users/account/list.html:315
+msgid "This action is permanent and cannot be undone."
+msgstr "Esta acción es permanente y no se puede deshacer."
+
+#: templates/equipment/includes/delete_script.html:12
+#| msgid "Yes, delete it!"
+msgid "Yes, delete"
+msgstr "Sí, eliminar"
+
+#: templates/equipment/includes/delete_script.html:23
+#: templates/users/account/list.html:296
+msgid "Success"
+msgstr "Éxito"
+
+#: templates/equipment/includes/delete_script.html:29
+#: templates/includes/alerts.html:49 templates/users/account/list.html:302
+msgid "Error"
+msgstr "Error"
+
+#: templates/equipment/includes/delete_script.html:29
+#: templates/users/account/list.html:302
+msgid "There was a problem processing your request."
+msgstr "Hubo un problema al procesar tu solicitud."
+
+#: templates/equipment/includes/row_actions.html:5
+#: templates/users/account/form.html:125
+msgid "View"
+msgstr "Ver"
+
+#: templates/equipment/includes/row_actions.html:10
+msgid "Edit"
+msgstr "Editar"
+
+#: templates/equipment/includes/row_actions.html:15
+#: templates/users/account/form.html:134 templates/users/settings.html:122
+msgid "Delete"
+msgstr "Eliminar"
+
+#: templates/equipment/machine/detail.html:22
+msgid "Edit Machine"
+msgstr "Editar máquina"
+
+#: templates/equipment/machine/detail.html:92
+msgid "Unknown Type"
+msgstr "Tipo desconocido"
+
+#: templates/equipment/machine/detail.html:102
+msgid "No components installed in this machine."
+msgstr "No hay componentes instalados en esta máquina."
+
+#: templates/equipment/machine/includes/formset.html:10
+msgid "Add Component"
+msgstr "Agregar componente"
+
+#: templates/equipment/machine/includes/formset.html:29
+msgid "No components added yet."
+msgstr "Aún no se agregaron componentes."
+
+#: templates/equipment/machine/includes/formset_row.html:19
+#| msgid "Remove Permanent"
+msgid "Remove component"
+msgstr "Quitar componente"
+
+#: templates/equipment/machine/list.html:16
+#| msgid "Management"
+msgid "Machine Management"
+msgstr "Gestión de máquinas"
+
+#: templates/equipment/machine/list.html:19
+msgid "Track industrial equipment, its location and installed components."
+msgstr "Registra equipos industriales, su ubicación y componentes instalados."
+
+#: templates/equipment/machine/list.html:28
+#| msgid "Create Account"
+msgid "Create Machine"
+msgstr "Crear máquina"
+
+#: templates/equipment/machine/list.html:39
+msgid "Name, serial or model"
+msgstr "Nombre, serie o modelo"
+
+#: templates/equipment/machine/list.html:60
+#| msgid "Clear all"
+msgid "Clear filters"
+msgstr "Limpiar filtros"
+
+#: templates/equipment/machine/list.html:115
+#| msgid "No accounts found"
+msgid "No machines found"
+msgstr "No se encontraron máquinas"
+
+#: templates/equipment/machine/list.html:116
+#| msgid ""
+#| "We couldn't find any accounts matching your current search or filters. "
+#| "Try adjusting your criteria or create a new account."
+msgid ""
+"We couldn't find any machines matching your search. Try adjusting your "
+"criteria or create a new machine."
+msgstr "No encontramos máquinas que coincidan con tu búsqueda. Ajusta los criterios o crea una nueva máquina."
+
+#: templates/equipment/machine/list.html:130
+#| msgid "Delete Account"
+msgid "Delete Machine"
+msgstr "Eliminar máquina"
+
+#: templates/equipment/machine/list.html:131
+#| msgid "Status updated successfully."
+msgid "Machine deleted successfully."
+msgstr "Máquina eliminada correctamente."
 
 #: templates/errors/403.html:5
 msgid "Access Denied"
@@ -822,10 +2480,6 @@ msgstr "Permitidos: *.png, *.jpg, *.jpeg"
 msgid "Remove Photo"
 msgstr "Eliminar foto"
 
-#: templates/users/account/form.html:65
-msgid "Details"
-msgstr "Detalles"
-
 #: templates/users/account/form.html:113
 msgid "Permissions Management"
 msgstr "Gestión de Permisos"
@@ -834,10 +2488,6 @@ msgstr "Gestión de Permisos"
 msgid "Module"
 msgstr "Módulo"
 
-#: templates/users/account/form.html:125
-msgid "View"
-msgstr "Ver"
-
 #: templates/users/account/form.html:128
 msgid "Create"
 msgstr "Crear"
@@ -845,18 +2495,6 @@ msgstr "Crear"
 #: templates/users/account/form.html:131 templates/users/settings.html:123
 msgid "Update"
 msgstr "Actualizar"
-
-#: templates/users/account/form.html:134 templates/users/settings.html:122
-msgid "Delete"
-msgstr "Eliminar"
-
-#: templates/users/account/form.html:192
-msgid "Discard"
-msgstr "Descartar"
-
-#: templates/users/account/form.html:195 templates/users/settings.html:98
-msgid "Save Changes"
-msgstr "Guardar Cambios"
 
 #: templates/users/account/list.html:20
 msgid "Accounts Management"
@@ -874,99 +2512,99 @@ msgstr ""
 msgid "Create New Account"
 msgstr "Crear nueva cuenta"
 
-#: templates/users/account/list.html:57
+#: templates/users/account/list.html:48
+msgid "Search by name, email or keyword..."
+msgstr "Buscar por nombre, correo electrónico o palabra clave..."
+
+#: templates/users/account/list.html:58
 msgid "Refine Search"
 msgstr "Refinar búsqueda"
 
-#: templates/users/account/list.html:63
+#: templates/users/account/list.html:64
 msgid "Filters"
 msgstr "Filtros"
 
-#: templates/users/account/list.html:64
+#: templates/users/account/list.html:65
 msgid "Clear all"
 msgstr "Limpiar todo"
 
-#: templates/users/account/list.html:69
+#: templates/users/account/list.html:70
 msgid "Account Status"
 msgstr "Estado de la cuenta"
 
-#: templates/users/account/list.html:80
+#: templates/users/account/list.html:81
 msgid "Account Category"
 msgstr "Categoría de cuenta"
 
-#: templates/users/account/list.html:92
+#: templates/users/account/list.html:93
 msgid "Apply Filters"
 msgstr "Aplicar filtros"
 
-#: templates/users/account/list.html:106
+#: templates/users/account/list.html:107
 msgid "Identity"
 msgstr "Identidad"
 
-#: templates/users/account/list.html:109
+#: templates/users/account/list.html:110
 msgid "Current Status"
 msgstr "Estado actual"
 
-#: templates/users/account/list.html:112 templates/users/settings.html:154
+#: templates/users/account/list.html:113 templates/users/settings.html:154
 msgid "Security"
 msgstr "Seguridad"
 
-#: templates/users/account/list.html:115
-msgid "Management"
-msgstr "Gestión"
-
-#: templates/users/account/list.html:139
+#: templates/users/account/list.html:140
 msgid "ORGANIZATION"
 msgstr "ORGANIZACIÓN"
 
-#: templates/users/account/list.html:142
+#: templates/users/account/list.html:143
 msgid "SUBSIDIARY"
 msgstr "SUBSIDIARIA"
 
-#: templates/users/account/list.html:156
+#: templates/users/account/list.html:157
 msgid "Active Access"
 msgstr "Acceso activo"
 
-#: templates/users/account/list.html:162
+#: templates/users/account/list.html:163
 msgid "Restricted"
 msgstr "Restringido"
 
-#: templates/users/account/list.html:177
+#: templates/users/account/list.html:178
 msgid "Trusted Device"
 msgstr "Dispositivo de confianza"
 
-#: templates/users/account/list.html:178
+#: templates/users/account/list.html:179
 msgid "Verified Identity"
 msgstr "Identidad verificada"
 
-#: templates/users/account/list.html:189
+#: templates/users/account/list.html:190
 msgid "Pending Review"
 msgstr "Revisión pendiente"
 
-#: templates/users/account/list.html:190
+#: templates/users/account/list.html:191
 msgid "Needs Verification"
 msgstr "Requiere verificación"
 
-#: templates/users/account/list.html:200
+#: templates/users/account/list.html:201
 msgid "Update Profile"
 msgstr "Actualizar perfil"
 
-#: templates/users/account/list.html:205
+#: templates/users/account/list.html:206 templates/users/account/list.html:329
 msgid "Suspend Access"
 msgstr "Suspender acceso"
 
-#: templates/users/account/list.html:205
+#: templates/users/account/list.html:206 templates/users/account/list.html:329
 msgid "Restore Access"
 msgstr "Restaurar acceso"
 
-#: templates/users/account/list.html:214
+#: templates/users/account/list.html:215
 msgid "Remove Permanent"
 msgstr "Eliminar permanentemente"
 
-#: templates/users/account/list.html:228
+#: templates/users/account/list.html:229
 msgid "No accounts found"
 msgstr "No se encontraron cuentas"
 
-#: templates/users/account/list.html:230
+#: templates/users/account/list.html:231
 msgid ""
 "We couldn't find any accounts matching your current search or filters. Try "
 "adjusting your criteria or create a new account."
@@ -974,33 +2612,33 @@ msgstr ""
 "No pudimos encontrar cuentas que coincidan con tu búsqueda o filtros "
 "actuales. Intenta ajustar tus criterios o crea una nueva cuenta."
 
-#: templates/users/account/list.html:274
-msgid "Are you sure?"
-msgstr "¿Estás seguro?"
+#: templates/users/account/list.html:280
+msgid "Yes, proceed"
+msgstr "Sí, continuar"
 
-#: templates/users/account/list.html:287
-msgid "Success"
-msgstr "Éxito"
-
-#: templates/users/account/list.html:293
-msgid "Error"
-msgstr "Error"
-
-#: templates/users/account/list.html:293
-msgid "There was a problem processing your request."
-msgstr "Hubo un problema al procesar tu solicitud."
-
-#: templates/users/account/list.html:302
-msgid "The user has been verified."
-msgstr "El usuario ha sido verificado."
-
-#: templates/users/account/list.html:311
+#: templates/users/account/list.html:313
 msgid "The account has been deleted."
 msgstr "La cuenta ha sido eliminada."
 
-#: templates/users/account/list.html:320
+#: templates/users/account/list.html:314
+msgid "Delete Account"
+msgstr "Eliminar cuenta"
+
+#: templates/users/account/list.html:328
 msgid "Status updated successfully."
 msgstr "Estado actualizado con éxito."
+
+#: templates/users/account/list.html:331
+msgid ""
+"This user will no longer be able to log in. You can restore access at any "
+"time."
+msgstr ""
+"Este usuario ya no podrá iniciar sesión. Puede restaurar el acceso en "
+"cualquier momento."
+
+#: templates/users/account/list.html:332
+msgid "This user will regain access to the platform."
+msgstr "Este usuario recuperará el acceso a la plataforma."
 
 #: templates/users/profile.html:37
 msgid "Administrator"
@@ -1013,10 +2651,6 @@ msgstr "Miembro del personal"
 #: templates/users/profile.html:62
 msgid "Guest"
 msgstr "Invitado"
-
-#: templates/users/profile.html:65
-msgid "Type"
-msgstr "Tipo"
 
 #: templates/users/profile.html:71
 msgid "Joined"
@@ -1078,10 +2712,6 @@ msgstr "El correo electrónico no se puede cambiar"
 msgid "Type:"
 msgstr "Tipo:"
 
-#: templates/users/settings.html:77
-msgid "Organization"
-msgstr "Organización"
-
 #: templates/users/settings.html:79
 msgid "Individual"
 msgstr "Individual"
@@ -1110,6 +2740,12 @@ msgstr ""
 "Protege tu cuenta asegurándote de que tu contraseña sea segura y se "
 "actualice regularmente."
 
+#~ msgid "Are you sure?"
+#~ msgstr "¿Estás seguro?"
+
+#~ msgid "The user has been verified."
+#~ msgstr "El usuario ha sido verificado."
+
 #~ msgid "No file uploaded"
 #~ msgstr "No se ha subido ningún archivo"
 
@@ -1121,9 +2757,6 @@ msgstr ""
 
 #~ msgid "Agency"
 #~ msgstr "Agencia"
-
-#~ msgid "Agency associated with this person"
-#~ msgstr "Agencia asociada con esta persona"
 
 #~ msgid "Content type of the related object."
 #~ msgstr "Tipo de contenido del objeto relacionado."
@@ -1168,9 +2801,6 @@ msgstr ""
 #~ msgid "Is Child Account"
 #~ msgstr "Es Cuenta Infantil"
 
-#~ msgid "Actions"
-#~ msgstr "Acciones"
-
 #~ msgid "Yes"
 #~ msgstr "Sí"
 
@@ -1183,17 +2813,8 @@ msgstr ""
 #~ msgid "Activate"
 #~ msgstr "Activar"
 
-#~ msgid "Edit"
-#~ msgstr "Editar"
-
 #~ msgid "Verify"
 #~ msgstr "Verificar"
-
-#~ msgid "Yes, delete it!"
-#~ msgstr "¡Sí, elimínalo!"
-
-#~ msgid "Successfully verified account."
-#~ msgstr "Cuenta verificada con éxito."
 
 #~ msgid "There was a problem verifying the account."
 #~ msgstr "Hubo un problema al verificar la cuenta."
@@ -1256,9 +2877,6 @@ msgstr ""
 #~ msgid "View All"
 #~ msgstr "Ver Todos"
 
-#~ msgid "No medical tests found"
-#~ msgstr "No se encontraron pruebas médicas"
-
 #~ msgid "Order Results"
 #~ msgstr "Resultados de Órdenes"
 
@@ -1267,9 +2885,6 @@ msgstr ""
 
 #~ msgid "Most Used Panels"
 #~ msgstr "Paneles Más Usados"
-
-#~ msgid "Morning"
-#~ msgstr "Mañana"
 
 #~ msgid "Afternoon"
 #~ msgstr "Tarde"
@@ -1285,9 +2900,6 @@ msgstr ""
 
 #~ msgid "PDF"
 #~ msgstr "PDF"
-
-#~ msgid "Excel"
-#~ msgstr "Excel"
 
 #~ msgid "Many-to-Many Change"
 #~ msgstr "Muchos a muchos cambio"
@@ -1312,27 +2924,3 @@ msgstr ""
 
 #~ msgid "Reverse Many-to-Many Clear"
 #~ msgstr "Reverso muchos a muchos claro"
-
-#: templates/users/account/list.html
-msgid "Yes, proceed"
-msgstr "Sí, continuar"
-
-#: templates/users/account/list.html
-msgid "Delete Account"
-msgstr "Eliminar cuenta"
-
-#: templates/users/account/list.html
-msgid "This action is permanent and cannot be undone."
-msgstr "Esta acción es permanente y no se puede deshacer."
-
-#: templates/users/account/list.html
-msgid "This user will no longer be able to log in. You can restore access at any time."
-msgstr "Este usuario ya no podrá iniciar sesión. Puede restaurar el acceso en cualquier momento."
-
-#: templates/users/account/list.html
-msgid "This user will regain access to the platform."
-msgstr "Este usuario recuperará el acceso a la plataforma."
-
-#: templates/users/account/list.html
-msgid "Search by name, email or keyword..."
-msgstr "Buscar por nombre, correo electrónico o palabra clave..."

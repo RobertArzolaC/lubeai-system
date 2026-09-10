@@ -1,0 +1,36 @@
+{% load i18n %}
+{% load widget_tweaks %}
+
+{% if form.non_field_errors %}
+<div class="mb-6 rounded-lg border border-danger/20 bg-danger/10 p-4 text-sm font-medium text-danger" role="alert">
+    {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+</div>
+{% endif %}
+
+<div class="grid grid-cols-1 gap-5.5 sm:grid-cols-2">
+    {% for field in form %}
+    <div class="{% if field.field.widget.input_type == 'checkbox' %}sm:col-span-2{% endif %}">
+        {% if field.field.widget.input_type == 'checkbox' %}
+        <label for="{{ field.id_for_label }}" class="flex cursor-pointer items-center gap-3">
+            {% render_field field class="form-check-input h-5 w-5 rounded border-stroke text-primary focus:ring-primary" %}
+            <span class="text-sm font-medium text-black dark:text-white">{{ field.label }}</span>
+        </label>
+        {% else %}
+        <label for="{{ field.id_for_label }}" class="mb-3 block text-sm font-medium text-black dark:text-white">
+            {{ field.label }}{% if field.field.required %} <span class="text-danger" aria-hidden="true">*</span>{% endif %}
+        </label>
+        {% if field.help_text %}
+        <p class="mb-2 text-xs text-bodydark2">{{ field.help_text }}</p>
+        {% endif %}
+        {% if field.field.widget.is_select2 %}
+        {% render_field field class="select2-field" %}
+        {% else %}
+        {% render_field field class="w-full rounded border border-stroke bg-gray py-3 px-4.5 text-black transition focus:border-primary focus:ring-4 focus:ring-primary/5 focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary" %}
+        {% endif %}
+        {% endif %}
+        {% for error in field.errors %}
+        <p class="mt-1 text-xs text-danger" role="alert">{{ error }}</p>
+        {% endfor %}
+    </div>
+    {% endfor %}
+</div>

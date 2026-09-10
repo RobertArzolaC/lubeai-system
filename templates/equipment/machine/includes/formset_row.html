@@ -1,0 +1,23 @@
+{% load i18n %}
+{% load widget_tweaks %}
+
+<div class="formset-row grid grid-cols-1 gap-5.5 py-6 first:pt-0 sm:grid-cols-12">
+    {{ cform.id }}
+    <div class="sm:col-span-6">
+        <label for="{{ cform.type.id_for_label }}" class="mb-3 block text-sm font-medium text-black dark:text-white">{% trans "Component Type" %}</label>
+        {% render_field cform.type class="w-full rounded border border-stroke bg-gray py-3 px-4.5 text-black transition focus:border-primary focus:ring-4 focus:ring-primary/5 focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary" %}
+        {% for error in cform.type.errors %}<p class="mt-1 text-xs text-danger" role="alert">{{ error }}</p>{% endfor %}
+    </div>
+    <div class="flex items-end sm:col-span-4">
+        <label for="{{ cform.is_active.id_for_label }}" class="flex cursor-pointer items-center gap-3 pb-3">
+            {% render_field cform.is_active class="form-check-input h-5 w-5 rounded border-stroke text-primary focus:ring-primary" %}
+            <span class="text-sm font-medium text-black dark:text-white">{{ cform.is_active.label }}</span>
+        </label>
+    </div>
+    <div class="flex items-end justify-end sm:col-span-2">
+        <span class="hidden">{{ cform.DELETE }}</span>
+        <button type="button" class="js-remove-row mb-0.5 flex h-9 w-9 items-center justify-center rounded-lg border border-stroke bg-white text-bodydark2 transition-all duration-300 hover:border-danger hover:text-danger focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger/40 dark:border-strokedark dark:bg-boxdark" title="{% trans 'Remove component' %}" aria-label="{% trans 'Remove component' %}">
+            <svg class="h-4.5 w-4.5 fill-current" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M13.7535 2.47502H11.5879V1.9969C11.5879 1.15315 10.9129 0.478149 10.0691 0.478149H7.90352C7.05977 0.478149 6.38477 1.15315 6.38477 1.9969V2.47502H4.21914C3.40352 2.47502 2.72852 3.15002 2.72852 3.96565V4.8094C2.72852 5.42815 3.09414 5.9344 3.62852 6.1594L4.07852 15.4688C4.13477 16.6219 5.09102 17.5219 6.24414 17.5219H11.7004C12.8535 17.5219 13.8098 16.6219 13.866 15.4688L14.3441 6.13127C14.8785 5.90627 15.2441 5.3719 15.2441 4.78127V3.93752C15.2441 3.15002 14.5691 2.47502 13.7535 2.47502ZM7.67852 1.9969C7.67852 1.85627 7.79102 1.74377 7.93164 1.74377H10.0973C10.2379 1.74377 10.3504 1.85627 10.3504 1.9969V2.47502H7.70664V1.9969H7.67852Z"></path></svg>
+        </button>
+    </div>
+</div>

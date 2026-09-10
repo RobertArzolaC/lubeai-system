@@ -55,6 +55,7 @@ LOCAL_APPS = [
     "apps.authentication.apps.AuthenticationConfig",
     "apps.users.apps.UsersConfig",
     "apps.theme.apps.ThemeConfig",
+    "apps.equipment.apps.EquipmentConfig",
 ]
 
 TAILWIND_APP_NAME = "apps.theme"
