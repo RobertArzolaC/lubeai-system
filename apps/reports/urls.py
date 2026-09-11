@@ -85,4 +85,20 @@ urlpatterns = [
         views.AnalysisThresholdDeleteView.as_view(),
         name="analysisthreshold_delete",
     ),
+        # Component Analysis
+    path(
+        "analysis/",
+        views.ComponentAnalysisView.as_view(),
+        name="component_analysis",
+    ),
+    path(
+        "api/analysis/data/",
+        views.ComponentAnalysisDataAPIView.as_view(),
+        name="analysis_data_api",
+    ),
+    path(
+        "api/analysis/export-pdf/",
+        views.ChartExportPDFView.as_view(),
+        name="analysis_export_pdf",
+    ),
 ]

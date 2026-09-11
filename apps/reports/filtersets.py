@@ -4,6 +4,7 @@ import django_filters
 from django.db.models import Q, QuerySet
 from django.utils.translation import gettext_lazy as _
 
+from apps.core import widgets as core_widgets
 from apps.equipment import models as equipment_models
 from apps.reports import choices, models
 
@@ -198,3 +199,51 @@ class AnalysisThresholdFilter(django_filters.FilterSet):
             Filtered queryset
         """
         return queryset.filter(Q(parameter__icontains=value) | Q(unit__icontains=value))
+
+
+class ComponentAnalysisFilter(django_filters.FilterSet):
+    """Filter for component analysis."""
+
+    machine = django_filters.ModelChoiceFilter(
+        queryset=equipment_models.Machine.objects.filter(is_active=True),
+        empty_label=_("Select Machine"),
+        label=_("Machine"),
+        required=True,
+        widget=core_widgets.ThemeModelSelect2(
+            url="apps.equipment:autocomplete_machine",
+            attrs={
+                "data-placeholder": _("Select Machine"),
+                "data-allow-clear": "true",
+            },
+        ),
+    )
+    component = django_filters.ModelChoiceFilter(
+        queryset=equipment_models.Component.objects.filter(is_active=True),
+        empty_label=_("Select Component"),
+        label=_("Component"),
+        required=True,
+        widget=core_widgets.ThemeModelSelect2(
+            url="apps.equipment:autocomplete_component",
+            forward=["machine"],
+            attrs={
+                "data-placeholder": _("Select Component"),
+                "data-allow-clear": "true",
+            },
+        ),
+    )
+
+    class Meta:
+        model = models.Report
+        fields: ClassVar[list[str]] = ["machine", "component"]
+
+    def __init__(self, *args, **kwargs):
+        """Narrow the component choices to the selected machine, if any."""
+        super().__init__(*args, **kwargs)
+
+        if self.data.get("machine"):
+            machine_id = self.data.get("machine")
+            self.filters[
+                "component"
+            ].queryset = equipment_models.Component.objects.filter(
+                machine_id=machine_id, is_active=True
+            ).select_related("type")

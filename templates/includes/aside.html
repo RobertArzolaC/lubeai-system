@@ -4,23 +4,11 @@
 <aside id="sidebar"
        class="group absolute left-0 top-0 z-9999 flex h-screen w-72.5 flex-col overflow-y-hidden bg-white duration-300 ease-linear dark:bg-boxdark lg:static lg:translate-x-0 -translate-x-full border-r border-stroke dark:border-strokedark [.collapsed&]:w-20 transition-all">
     <!-- SIDEBAR HEADER -->
-    <div class="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5 transition-all group-[.collapsed]:justify-center group-[.collapsed]:px-0">
-        <a href="{% url 'apps.dashboard:index' %}" class="flex items-center gap-3">
-            <img src="{% if site.logo %}{{ site.logo.url }}{% else %}{% static 'assets/images/logos/logo.png' %}{% endif %}" alt="Logo" class="h-8 block group-[.collapsed]:hidden flex-shrink-0" />
-            <img src="{% static 'assets/images/logos/logo-short.png' %}" alt="Logo" class="h-8 hidden group-[.collapsed]:block flex-shrink-0" />
+    <div class="relative flex items-center justify-center gap-2 px-6 py-5.5 lg:py-6.5 transition-all group-[.collapsed]:px-0">
+        <a href="{% url 'apps.dashboard:index' %}" class="flex items-center justify-center gap-3">
+            <span class="block flex-shrink-0 text-2xl font-bold tracking-tight text-black group-[.collapsed]:hidden dark:text-white">LUBEAI</span>
+            <img src="{% static 'assets/images/logos/logo.png' %}" alt="LUBEAI" class="h-8 hidden group-[.collapsed]:block flex-shrink-0" />
         </a>
-
-        <div class="flex items-center gap-2 group-[.collapsed]:hidden">
-            <!-- Desktop Toggle -->
-            <button id="sidebar-toggle-aside" class="hidden lg:block text-gray-500 hover:text-primary transition-colors">
-                <i data-lucide="panel-left-close" class="h-5 w-5" stroke-width="1.8" aria-hidden="true"></i>
-            </button>
-
-            <!-- Mobile Close -->
-            <button id="sidebar-close" class="block lg:hidden text-gray-500 hover:text-primary">
-                <i data-lucide="x" class="h-5 w-5" stroke-width="1.8" aria-hidden="true"></i>
-            </button>
-        </div>
     </div>
     <!-- SIDEBAR HEADER -->
 
@@ -120,6 +108,17 @@
                         </a>
                     </li>
                     {% endif %}
+
+                    {% if perms.reports.view_component_analysis %}
+                    <li>
+                        <a class="flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-gray-600 dark:text-bodydark1 duration-300 ease-in-out hover:bg-gray-2 dark:hover:bg-meta-4 transition-all group-[.collapsed]:justify-center group-[.collapsed]:px-0 {% if "analysis" in request.path %}bg-gray-2 dark:bg-meta-4 !text-primary{% endif %}"
+                           href="{% url 'apps.reports:component_analysis' %}" title="{% trans 'Component Analysis' %}">
+                            <i data-lucide="sliders-horizontal" class="h-5 w-5 flex-shrink-0" stroke-width="1.8" aria-hidden="true"></i>
+                            <span class="group-[.collapsed]:hidden duration-300 ease-in-out overflow-hidden whitespace-nowrap">{% trans "Component Analysis" %}</span>
+                        </a>
+                    </li>
+                    {% endif %}
+
                     {% endif %}
 
                     {% if perms.alerts.view_alert %}
@@ -161,7 +160,7 @@
     <div class="p-6 border-t border-stroke dark:border-strokedark group-[.collapsed]:p-4 group-[.collapsed]:flex group-[.collapsed]:justify-center transition-all">
         <span class="text-xs font-medium text-gray-500 group-[.collapsed]:hidden"></span>
         <div class="hidden group-[.collapsed]:block">
-            <span class="text-[10px] font-bold text-gray-500">v1</span>
+            <span class="text-[10px] font-bold text-gray-500"></span>
         </div>
     </div>
 </aside>

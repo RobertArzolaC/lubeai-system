@@ -239,6 +239,9 @@ class Report(TimeStampedModel, core_models.BaseUserTracked, core_models.IsActive
             models.Index(fields=["status"]),
             models.Index(fields=["condition"]),
         ]
+        permissions = [
+            ("view_component_analysis", _("Can view component analysis")),
+        ]
 
     def __str__(self) -> str:
         """Return string representation of report."""

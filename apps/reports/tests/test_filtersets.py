@@ -3,6 +3,7 @@
 from datetime import date
 
 from django.test import TestCase
+from django.urls import reverse
 
 from apps.equipment import factories as equipment_factories
 from apps.reports import factories, filtersets, models
@@ -137,3 +138,34 @@ class ReportExportFilterTests(TestCase):
         """The export filter exposes a component relation filter."""
         self.assertIn("component", filtersets.ReportExportFilter.base_filters)
         equipment_factories.ComponentFactory()
+
+
+class ComponentAnalysisFilterTests(TestCase):
+    """Tests for :class:`ComponentAnalysisFilter`."""
+
+    def setUp(self) -> None:
+        self.machine = equipment_factories.MachineFactory()
+        self.other_machine = equipment_factories.MachineFactory()
+        self.component = equipment_factories.ComponentFactory(machine=self.machine)
+        self.other_component = equipment_factories.ComponentFactory(
+            machine=self.other_machine
+        )
+
+    def test_component_choices_scoped_to_machine(self) -> None:
+        """Selecting a machine narrows the component choices to its own."""
+        filterset = filtersets.ComponentAnalysisFilter(
+            {"machine": self.machine.pk},
+            queryset=models.Report.objects.all(),
+        )
+        choices = filterset.filters["component"].queryset
+        self.assertIn(self.component, choices)
+        self.assertNotIn(self.other_component, choices)
+
+    def test_component_field_uses_forwarding_autocomplete(self) -> None:
+        """The component widget forwards the machine to the autocomplete."""
+        filterset = filtersets.ComponentAnalysisFilter(
+            queryset=models.Report.objects.all()
+        )
+        widget = filterset.filters["component"].field.widget
+        self.assertEqual(widget.url, reverse("apps.equipment:autocomplete_component"))
+        self.assertEqual(widget.forward, ["machine"])

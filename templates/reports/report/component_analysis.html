@@ -1,0 +1,1741 @@
+{% extends 'layouts/dashboard.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title_page %}{% trans "Component Analysis" %}{% endblock %}
+{% block toolbar_title %}{% trans "Component Analysis" %}{% endblock %}
+
+{% block extra_css %}
+{{ filter.form.media }}
+<link rel="stylesheet" href="{% static 'css/select2-custom.css' %}">
+{% endblock extra_css %}
+
+{% block content %}
+<div id="component-analysis-root" class="flex flex-col gap-6">
+
+  <!-- Page Header -->
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <h1 class="text-2xl font-bold tracking-tight text-black dark:text-white">{% trans "Component Analysis" %}</h1>
+      <p class="mt-1 text-sm font-medium text-bodydark2">{% trans "Inspect oil analysis trends and condition for a machine component." %}</p>
+    </div>
+    <a href="{{ back_url }}" class="inline-flex items-center justify-center gap-2 rounded-xl border border-stroke px-5 py-3 text-sm font-semibold text-black transition hover:bg-gray-50 dark:border-strokedark dark:text-white dark:hover:bg-white/5">
+      <i data-lucide="arrow-left" class="h-4 w-4" stroke-width="1.8" aria-hidden="true"></i>
+      {% trans "Back to Dashboard" %}
+    </a>
+  </div>
+
+  <!-- Filters Card -->
+  <div class="rounded-2xl border border-stroke bg-white p-5 shadow-sm dark:border-strokedark dark:bg-boxdark">
+    <form id="analysis-filters-form" method="get" class="grid grid-cols-1 gap-4 md:grid-cols-12 md:items-end">
+      <div class="md:col-span-4">
+        <label for="{{ filter.form.machine.id_for_label }}" class="mb-2.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{{ filter.form.machine.label }}</label>
+        {{ filter.form.machine }}
+      </div>
+      <div class="md:col-span-4">
+        <label for="{{ filter.form.component.id_for_label }}" class="mb-2.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{{ filter.form.component.label }}</label>
+        {{ filter.form.component }}
+      </div>
+      <div class="flex flex-col gap-3 md:col-span-4 sm:flex-row">
+        <button type="button" id="apply-filters-btn" class="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-bold text-white shadow-lg shadow-primary/20 transition hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
+          <i data-lucide="search" class="h-4 w-4" stroke-width="1.8" aria-hidden="true"></i>
+          {% trans "Apply Filters" %}
+        </button>
+        <div id="export-pdf-wrapper" class="hidden flex-1">
+          <button type="button" id="export-pdf-btn" class="flex w-full items-center justify-center gap-2 rounded-xl bg-success px-5 py-3 text-sm font-bold text-white shadow-lg shadow-success/20 transition hover:bg-success/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-success/40">
+            <i data-lucide="download" class="h-4 w-4" stroke-width="1.8" aria-hidden="true"></i>
+            {% trans "Export PDF" %}
+          </button>
+        </div>
+        <button type="button" id="clear-filters-btn" class="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-stroke px-5 py-3 text-sm font-semibold text-black transition hover:bg-gray-50 dark:border-strokedark dark:text-white dark:hover:bg-white/5">
+          <i data-lucide="x" class="h-4 w-4" stroke-width="1.8" aria-hidden="true"></i>
+          {% trans "Clear" %}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Loading Indicator -->
+  <div id="loading-indicator" class="hidden rounded-2xl border border-stroke bg-white p-10 text-center shadow-sm dark:border-strokedark dark:bg-boxdark">
+    <svg class="mx-auto h-8 w-8 animate-spin text-primary" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 0 1 8-8v4a4 4 0 0 0-4 4H4z"></path>
+    </svg>
+    <p class="mt-3 text-sm font-medium text-bodydark2">{% trans "Loading analysis data..." %}</p>
+  </div>
+
+  <!-- No Data Message -->
+  <div id="no-data-message" class="flex items-start gap-4 rounded-2xl border border-primary/20 bg-primary/5 p-5">
+    <i data-lucide="info" class="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" stroke-width="1.8" aria-hidden="true"></i>
+    <div>
+      <h4 class="text-sm font-bold text-black dark:text-white">{% trans "Select a component" %}</h4>
+      <p class="mt-1 text-sm text-bodydark2">{% trans "Use the filters above to select a machine and component, then click 'Apply Filters' to view the analysis." %}</p>
+    </div>
+  </div>
+
+  <!-- Results Container -->
+  <div id="results-container" class="hidden space-y-6">
+
+    <!-- Component Summary -->
+    <div class="rounded-2xl border border-stroke bg-white p-5 shadow-sm dark:border-strokedark dark:bg-boxdark">
+      <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
+        <div class="flex items-center gap-4">
+          <span class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-meta-5/10 text-meta-5">
+            <i data-lucide="cog" class="h-6 w-6" stroke-width="1.8" aria-hidden="true"></i>
+          </span>
+          <div class="min-w-0">
+            <p class="text-xs font-semibold uppercase tracking-wide text-bodydark2">{% trans "Component Type" %}</p>
+            <p id="summary-component-type" class="truncate text-base font-bold text-black dark:text-white">-</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-4">
+          <span class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+            <i data-lucide="wrench" class="h-6 w-6" stroke-width="1.8" aria-hidden="true"></i>
+          </span>
+          <div class="min-w-0">
+            <p class="text-xs font-semibold uppercase tracking-wide text-bodydark2">{% trans "Machine" %}</p>
+            <p id="summary-machine-name" class="truncate text-base font-bold text-black dark:text-white">-</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-4">
+          <span class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-warning/10 text-warning">
+            <i data-lucide="calendar" class="h-6 w-6" stroke-width="1.8" aria-hidden="true"></i>
+          </span>
+          <div class="min-w-0">
+            <p class="text-xs font-semibold uppercase tracking-wide text-bodydark2">{% trans "Last Sample" %}</p>
+            <p id="summary-last-sample" class="truncate text-base font-bold text-black dark:text-white">-</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-4">
+          <span class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-success/10 text-success">
+            <i data-lucide="line-chart" class="h-6 w-6" stroke-width="1.8" aria-hidden="true"></i>
+          </span>
+          <div class="min-w-0">
+            <p class="text-xs font-semibold uppercase tracking-wide text-bodydark2">{% trans "Total Reports" %}</p>
+            <p id="summary-total-reports" class="truncate text-base font-bold text-black dark:text-white">-</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="overflow-x-auto border-b border-stroke dark:border-strokedark">
+      <div class="flex min-w-max gap-1" id="analysis-tabs" role="tablist">
+        <!-- Tabs are generated dynamically -->
+      </div>
+    </div>
+
+    <!-- Tab Content -->
+    <div id="analysis-tab-content">
+      <!-- Overview Tab -->
+      <div class="hidden space-y-6" id="tab-overview" role="tabpanel">
+        <!-- KPI Metrics -->
+        <div class="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-6" id="kpi-metrics-container">
+          <!-- KPIs are generated dynamically -->
+        </div>
+
+        <!-- Status Panel -->
+        <div id="status-panel" class="rounded-2xl border border-stroke bg-white shadow-sm dark:border-strokedark dark:bg-boxdark">
+          <div class="flex items-center gap-5 p-6">
+            <div id="status-icon-container" class="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl bg-success/10 text-success">
+              <i data-lucide="circle-check-big" class="h-7 w-7" stroke-width="1.8" aria-hidden="true"></i>
+            </div>
+            <div class="flex-1">
+              <h3 id="status-label" class="text-xl font-bold text-black dark:text-white">{% trans "Normal" %}</h3>
+              <p id="status-recommendation" class="mt-1 text-sm text-bodydark2">{% trans "Component in normal condition." %}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Radar + Wear Sources -->
+        <div class="grid grid-cols-1 gap-5 xl:grid-cols-2">
+          <div class="rounded-2xl border border-stroke bg-white p-5 shadow-sm dark:border-strokedark dark:bg-boxdark">
+            <div class="mb-4">
+              <h3 class="text-base font-bold text-black dark:text-white">{% trans "Wear Metals Profile" %}</h3>
+              <p class="mt-0.5 text-xs font-medium text-bodydark2">{% trans "Relative to critical limits" %}</p>
+            </div>
+            <div id="wear-radar-chart" style="min-height: 350px;"></div>
+          </div>
+          <div class="rounded-2xl border border-stroke bg-white p-5 shadow-sm dark:border-strokedark dark:bg-boxdark">
+            <div class="mb-4">
+              <h3 class="text-base font-bold text-black dark:text-white">{% trans "Wear Sources" %}</h3>
+              <p class="mt-0.5 text-xs font-medium text-bodydark2">{% trans "Possible origins of detected wear" %}</p>
+            </div>
+            <div id="wear-sources-container">
+              <!-- Wear sources are generated dynamically -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Wear Tab -->
+      <div class="hidden space-y-6" id="tab-wear" role="tabpanel">
+        <div class="rounded-2xl border border-stroke bg-white p-5 shadow-sm dark:border-strokedark dark:bg-boxdark">
+          <div class="mb-4">
+            <h3 class="text-base font-bold text-black dark:text-white">{% trans "Wear Trends" %}</h3>
+            <p class="mt-0.5 text-xs font-medium text-bodydark2">{% trans "Fe, Cu, Al over time" %}</p>
+          </div>
+          <div id="wear-trends-chart" style="min-height: 450px;"></div>
+        </div>
+
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3" id="wear-threshold-cards-container">
+          <!-- Cards are generated dynamically -->
+        </div>
+      </div>
+
+      <!-- Oil Health Tab -->
+      <div class="hidden space-y-6" id="tab-condition" role="tabpanel">
+        <div class="rounded-2xl border border-stroke bg-white p-5 shadow-sm dark:border-strokedark dark:bg-boxdark">
+          <div class="mb-4">
+            <h3 class="text-base font-bold text-black dark:text-white">{% trans "Oil Health" %}</h3>
+            <p id="oil-health-subtitle" class="mt-0.5 text-xs font-medium text-bodydark2">{% trans "Si, Na, K, Viscosity, Lubricant" %}</p>
+          </div>
+          <div id="oil-health-chart" style="min-height: 450px;"></div>
+        </div>
+
+        <div class="rounded-2xl border border-stroke bg-white p-5 shadow-sm dark:border-strokedark dark:bg-boxdark" id="contamination-section">
+          <div class="mb-4">
+            <h3 class="text-base font-bold text-black dark:text-white">{% trans "Contamination Alerts" %}</h3>
+            <p class="mt-0.5 text-xs font-medium text-bodydark2">{% trans "Si, Na, K" %}</p>
+          </div>
+          <div id="contamination-chart" style="min-height: 450px;"></div>
+        </div>
+      </div>
+
+      <!-- Trends Tab -->
+      <div class="hidden space-y-6" id="tab-trends" role="tabpanel">
+        <div class="rounded-2xl border border-stroke bg-white p-5 shadow-sm dark:border-strokedark dark:bg-boxdark" id="additives-section">
+          <div class="mb-4">
+            <h3 class="text-base font-bold text-black dark:text-white">{% trans "Additive Elements" %}</h3>
+            <p class="mt-0.5 text-xs font-medium text-bodydark2">{% trans "Zn, P, Mg, Ca levels" %}</p>
+          </div>
+          <div id="additives-chart" style="min-height: 450px;"></div>
+        </div>
+
+        <div class="rounded-2xl border border-stroke bg-white p-5 shadow-sm dark:border-strokedark dark:bg-boxdark">
+          <div class="mb-4">
+            <h3 class="text-base font-bold text-black dark:text-white">{% trans "Usage vs Wear Correlation" %}</h3>
+            <p class="mt-0.5 text-xs font-medium text-bodydark2">{% trans "Relationship between usage and wear" %}</p>
+          </div>
+          <div id="usage-correlation-chart" style="min-height: 450px;"></div>
+        </div>
+      </div>
+
+      <!-- Advanced Tab -->
+      <div class="hidden space-y-6" id="tab-advanced" role="tabpanel">
+        <div class="rounded-2xl border border-stroke bg-white p-5 shadow-sm dark:border-strokedark dark:bg-boxdark">
+          <div class="mb-4">
+            <h3 class="text-base font-bold text-black dark:text-white">{% trans "TBN / TAN Trend" %}</h3>
+            <p class="mt-0.5 text-xs font-medium text-bodydark2">{% trans "Base reserve (TBN) and acidity (TAN) over time" %}</p>
+          </div>
+          <div id="tbn-tan-chart" style="min-height: 400px;"></div>
+        </div>
+
+        <div class="rounded-2xl border border-stroke bg-white p-5 shadow-sm dark:border-strokedark dark:bg-boxdark">
+          <div class="mb-4">
+            <h3 class="text-base font-bold text-black dark:text-white">{% trans "FTIR Degradation Trends" %}</h3>
+            <p class="mt-0.5 text-xs font-medium text-bodydark2">{% trans "Oxidation, Nitration, Sulfation over time (Abs/cm)" %}</p>
+          </div>
+          <div id="ftir-trends-chart" style="min-height: 400px;"></div>
+        </div>
+
+        <div class="grid grid-cols-1 gap-5 xl:grid-cols-3">
+          <div class="rounded-2xl border border-stroke bg-white p-5 shadow-sm xl:col-span-2 dark:border-strokedark dark:bg-boxdark">
+            <div class="mb-4">
+              <h3 class="text-base font-bold text-black dark:text-white">{% trans "Particle Size Distribution" %}</h3>
+              <p class="mt-0.5 text-xs font-medium text-bodydark2">{% trans "ISO 4406 granulometric distribution (c/mL)" %}</p>
+            </div>
+            <div id="particle-distribution-chart" style="min-height: 400px;"></div>
+          </div>
+          <div class="rounded-2xl border border-stroke bg-white p-5 shadow-sm dark:border-strokedark dark:bg-boxdark">
+            <div class="mb-4">
+              <h3 class="text-base font-bold text-black dark:text-white">{% trans "PQ Index Trend" %}</h3>
+              <p class="mt-0.5 text-xs font-medium text-bodydark2">{% trans "Ferrous particle index over time" %}</p>
+            </div>
+            <div id="pq-index-chart" style="min-height: 400px;"></div>
+          </div>
+        </div>
+
+        <div class="rounded-2xl border border-stroke bg-white p-5 shadow-sm dark:border-strokedark dark:bg-boxdark">
+          <div class="mb-4">
+            <h3 class="text-base font-bold text-black dark:text-white">{% trans "Fuel Dilution Trend" %}</h3>
+            <p class="mt-0.5 text-xs font-medium text-bodydark2">{% trans "Fuel contamination percentage over time" %}</p>
+          </div>
+          <div id="fuel-dilution-chart" style="min-height: 350px;"></div>
+        </div>
+      </div>
+
+      <!-- Contamination Tab (kept for backward compatibility, hidden by default) -->
+      <div class="hidden space-y-6" id="tab-contamination" role="tabpanel"></div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/vendor/apexcharts/apexcharts.min.js' %}"></script>
+<script>
+  "use strict";
+
+  // Tenant palette (aligned with the TailAdmin theme tokens)
+  const P = {
+    primary: '#465fff',
+    success: '#12b76a',
+    warning: '#FFA70B',
+    danger: '#f04438',
+    info: '#259AE6',
+    muted: '#8A99AF',
+    secondary: '#8A99AF',
+    dark: '#1C2434',
+    uiSuccess: '#12b76a',
+  };
+
+  const ALL_TABS = ['overview', 'wear', 'condition', 'trends', 'advanced', 'contamination'];
+
+  // Global chart instances
+  let wearTrendsChart = null;
+  let contaminationChart = null;
+  let oilHealthChart = null;
+  let additivesChart = null;
+  let wearRadarChart = null;
+  let usageCorrelationChart = null;
+  // New advanced chart instances
+  let tbnTanChart = null;
+  let ftirTrendsChart = null;
+  let particleDistributionChart = null;
+  let pqIndexChart = null;
+  let fuelDilutionChart = null;
+
+  // Current component type key
+  let currentComponentTypeKey = '';
+
+  // Current wear sources data
+  let currentWearSources = {};
+
+  // Initialize on document ready
+  // Deep-link support: pre-load analysis when component id is passed via URL
+  const initialComponentId = {{ initial_component_id|default:"null" }};
+  const initialMachineId = {{ initial_machine_id|default:"null" }};
+
+  document.addEventListener('DOMContentLoaded', function() {
+    initializeEventListeners();
+    refreshIcons();
+
+    // Deep-link: the form is pre-selected server-side, just run the analysis
+    if (initialComponentId) {
+      applyFilters();
+    }
+  });
+
+  function initializeEventListeners() {
+    const applyBtn = document.getElementById('apply-filters-btn');
+    const clearBtn = document.getElementById('clear-filters-btn');
+    const exportPdfBtn = document.getElementById('export-pdf-btn');
+
+    if (applyBtn) {
+      applyBtn.addEventListener('click', function() {
+        applyFilters();
+      });
+    }
+
+    if (clearBtn) {
+      clearBtn.addEventListener('click', function() {
+        clearFilters();
+      });
+    }
+
+    if (exportPdfBtn) {
+      exportPdfBtn.addEventListener('click', function() {
+        exportChartsToPDF();
+      });
+    }
+  }
+
+  function refreshIcons() {
+    if (window.lucide && typeof window.lucide.createIcons === 'function') {
+      window.lucide.createIcons();
+    }
+  }
+
+  function showElement(el) {
+    if (el) el.classList.remove('hidden');
+  }
+
+  function hideElement(el) {
+    if (el) el.classList.add('hidden');
+  }
+
+  // Base ApexCharts options shared by every chart in the page.
+  function baseChartOptions() {
+    const dark = document.documentElement.classList.contains('dark');
+    return {
+      chart: {
+        fontFamily: 'Outfit, sans-serif',
+        foreColor: dark ? '#AEB7C0' : '#64748B',
+        toolbar: { show: false },
+        background: 'transparent',
+      },
+      theme: { mode: dark ? 'dark' : 'light' },
+      grid: { borderColor: dark ? '#2E3A47' : '#E2E8F0' },
+      dataLabels: { enabled: false },
+    };
+  }
+
+  function withBase(options) {
+    const base = baseChartOptions();
+    const chart = Object.assign({}, base.chart, options.chart || {});
+    const grid = Object.assign({}, base.grid, options.grid || {});
+    return Object.assign({}, base, options, { chart: chart, grid: grid, theme: base.theme });
+  }
+
+  async function applyFilters() {
+    const componentId = $('#{{ filter.form.component.id_for_label }}').val();
+
+    if (!componentId) {
+      showAlert('', '{% trans "Please select a machine and component" %}', 'warning');
+      return;
+    }
+
+    // Show loading, hide other sections
+    showElement(document.getElementById('loading-indicator'));
+    hideElement(document.getElementById('no-data-message'));
+    hideElement(document.getElementById('results-container'));
+
+    try {
+      const queryParams = `component=${componentId}`;
+
+      const response = await fetch(`{% url 'apps.reports:analysis_data_api' %}?${queryParams}`);
+      const data = await response.json();
+
+      if (response.ok) {
+        displayAnalysisData(data);
+      } else {
+        throw new Error(data.error || 'Failed to load analysis data');
+      }
+    } catch (error) {
+      console.error('Error loading analysis data:', error);
+      showAlert('', '{% trans "Error loading analysis data" %}', 'error');
+      showElement(document.getElementById('no-data-message'));
+    } finally {
+      hideElement(document.getElementById('loading-indicator'));
+    }
+  }
+
+  function displayAnalysisData(data) {
+    // Store component type key and wear sources
+    currentComponentTypeKey = data.summary.component_type_key || '';
+    currentWearSources = data.wear_sources || {};
+
+    // Update summary
+    document.getElementById('summary-component-type').textContent = data.summary.component_type || '-';
+    document.getElementById('summary-machine-name').textContent = data.summary.machine_name || '-';
+    document.getElementById('summary-last-sample').textContent = data.summary.latest_sample_date || '-';
+    document.getElementById('summary-total-reports').textContent = data.summary.total_reports || '0';
+
+    // Render tabs
+    renderTabs(data.available_tabs || []);
+
+    // Render KPIs
+    renderKPIMetrics(data.kpi_metrics || []);
+
+    // Render status panel
+    renderStatusPanel(data.status || {});
+
+    // Render wear sources
+    renderWearSourcesCards(data.wear_sources || {});
+
+    // Render wear threshold cards
+    renderWearThresholdCards(data.wear_trends?.thresholds || {}, data.wear_sources || {});
+
+    // Render charts
+    renderWearRadarChart(data.wear_radar);
+    renderWearTrendsChart(data.wear_trends);
+    renderContaminationChart(data.contamination);
+    renderOilHealthChart(data.oil_health);
+    renderAdditivesChart(data.additives);
+    renderUsageCorrelationChart(data.usage_correlation);
+    // Advanced charts
+    renderTbnTanChart(data.tbn_tan || null);
+    renderFtirTrendsChart(data.ftir_trends || null);
+    renderParticleDistributionChart(data.particle_distribution || null);
+    renderPqIndexChart(data.pq_index_trend || null);
+    renderFuelDilutionChart(data.fuel_dilution_trend || null);
+
+    // Show/hide sections based on component type
+    updateSectionVisibility();
+
+    // Show results and export button
+    showElement(document.getElementById('results-container'));
+    showElement(document.getElementById('export-pdf-wrapper'));
+
+    refreshIcons();
+  }
+
+  function renderTabs(tabs) {
+    const tabsContainer = document.getElementById('analysis-tabs');
+
+    // Default tabs if none provided
+    if (!tabs || tabs.length === 0) {
+      tabs = [
+        { id: 'overview', label: '{% trans "Overview" %}' },
+        { id: 'wear', label: '{% trans "Wear" %}' },
+        { id: 'condition', label: '{% trans "Condition" %}' },
+        { id: 'trends', label: '{% trans "Trends" %}' },
+        { id: 'advanced', label: '{% trans "Advanced" %}' }
+      ];
+    }
+
+    let tabsHtml = '';
+    tabs.forEach((tab, index) => {
+      const isActive = index === 0;
+      const activeClasses = isActive
+        ? 'border-primary text-primary'
+        : 'border-transparent text-bodydark2 hover:text-primary';
+      tabsHtml += `
+        <button type="button" role="tab"
+          class="tab-btn whitespace-nowrap border-b-2 px-4 py-3 text-sm font-semibold transition ${activeClasses}"
+          data-tab="${tab.id}" aria-selected="${isActive}">
+          ${tab.label}
+        </button>
+      `;
+    });
+
+    tabsContainer.innerHTML = tabsHtml;
+
+    // Hide panes that are not part of the available tabs
+    ALL_TABS.forEach(tabId => {
+      const tabPane = document.getElementById(`tab-${tabId}`);
+      if (tabPane) {
+        const isAvailable = tabs.some(t => t.id === tabId);
+        tabPane.classList.toggle('hidden', !isAvailable);
+      }
+    });
+
+    tabsContainer.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => activateTab(btn.dataset.tab));
+    });
+
+    // Activate first tab
+    if (tabs.length > 0) {
+      activateTab(tabs[0].id);
+    }
+  }
+
+  function activateTab(tabId) {
+    document.querySelectorAll('#analysis-tabs .tab-btn').forEach(btn => {
+      const active = btn.dataset.tab === tabId;
+      btn.classList.toggle('border-primary', active);
+      btn.classList.toggle('text-primary', active);
+      btn.classList.toggle('border-transparent', !active);
+      btn.classList.toggle('text-bodydark2', !active);
+      btn.setAttribute('aria-selected', String(active));
+    });
+
+    ALL_TABS.forEach(id => {
+      const pane = document.getElementById(`tab-${id}`);
+      if (pane) {
+        pane.classList.toggle('hidden', id !== tabId);
+      }
+    });
+
+    // Let ApexCharts recalculate the size of the newly visible charts
+    window.dispatchEvent(new Event('resize'));
+  }
+
+  function renderKPIMetrics(metrics) {
+    const container = document.getElementById('kpi-metrics-container');
+
+    if (!metrics || metrics.length === 0) {
+      container.innerHTML = '<p class="col-span-full text-sm text-bodydark2">{% trans "No KPI data available" %}</p>';
+      return;
+    }
+
+    let html = '';
+    metrics.forEach(kpi => {
+      const trendIcon = getTrendIcon(kpi.trend);
+      const percentageColor = getPercentageColor(kpi.trend);
+      const valueDisplay = kpi.value !== null ? `${kpi.value} ${kpi.unit}` : 'N/A';
+
+      html += `
+        <div class="rounded-2xl border border-gray-200 bg-white p-4 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark">
+          <span class="text-xs font-semibold uppercase tracking-wide text-gray-500">${kpi.label}</span>
+          <p class="mt-1 text-2xl font-bold text-black dark:text-white">${valueDisplay}</p>
+          <div class="mt-2 flex items-center gap-1 text-xs font-semibold" style="color: ${percentageColor};">
+            ${trendIcon}
+            <span>${kpi.trend.percentage}%</span>
+            <span class="text-bodydark2">{% trans "vs previous" %}</span>
+          </div>
+        </div>
+      `;
+    });
+
+    container.innerHTML = html;
+    refreshIcons();
+  }
+
+  function getPercentageColor(trend) {
+    if (trend.direction === 'up') {
+      return P.danger;
+    } else if (trend.direction === 'down') {
+      return P.uiSuccess;
+    }
+    return P.muted;
+  }
+
+  function getTrendIcon(trend) {
+    if (trend.direction === 'up') {
+      return '<i data-lucide="trending-up" class="h-4 w-4" stroke-width="2.2" aria-hidden="true"></i>';
+    } else if (trend.direction === 'down') {
+      return '<i data-lucide="trending-down" class="h-4 w-4" stroke-width="2.2" aria-hidden="true"></i>';
+    }
+    return '<i data-lucide="minus" class="h-4 w-4" stroke-width="2.2" aria-hidden="true"></i>';
+  }
+
+  function renderStatusPanel(status) {
+    const container = document.getElementById('status-icon-container');
+    const label = document.getElementById('status-label');
+    const recommendation = document.getElementById('status-recommendation');
+
+    const config = {
+      critical: { classes: 'bg-error/10 text-error', icon: 'circle-x', color: P.danger },
+      caution: { classes: 'bg-warning/10 text-warning', icon: 'triangle-alert', color: P.warning },
+      normal: { classes: 'bg-success/10 text-success', icon: 'circle-check-big', color: P.success },
+    };
+    const conf = config[status.status] || config.normal;
+
+    container.className = `flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl ${conf.classes}`;
+    container.innerHTML = `<i data-lucide="${conf.icon}" class="h-7 w-7" stroke-width="1.8" aria-hidden="true"></i>`;
+    label.textContent = status.label || '{% trans "Normal" %}';
+    label.style.color = status.color || conf.color;
+    recommendation.textContent = status.recommendation || '';
+    refreshIcons();
+  }
+
+  function renderWearSourcesCards(sources) {
+    const container = document.getElementById('wear-sources-container');
+
+    if (!sources || Object.keys(sources).length === 0) {
+      container.innerHTML = '<p class="text-sm text-bodydark2">{% trans "No wear source information available" %}</p>';
+      return;
+    }
+
+    const paramLabels = {
+      'iron_fe': '{% trans "Iron (Fe)" %}',
+      'copper_cu': '{% trans "Copper (Cu)" %}',
+      'aluminum_al': '{% trans "Aluminum (Al)" %}',
+      'silicon_si': '{% trans "Silicon (Si)" %}',
+      'potassium_k': '{% trans "Potassium (K)" %}',
+      'lead_pb': '{% trans "Lead (Pb)" %}',
+      'chromium_cr': '{% trans "Chromium (Cr)" %}'
+    };
+
+    let html = '<ul class="space-y-3">';
+    for (const [param, source] of Object.entries(sources)) {
+      const label = paramLabels[param] || param;
+      html += `
+        <li class="flex items-start gap-3">
+          <span class="mt-1.5 h-2 w-2 flex-shrink-0 rounded-full bg-primary"></span>
+          <p class="text-sm text-body">
+            <span class="font-semibold text-black dark:text-white">${label}:</span>
+            ${source}
+          </p>
+        </li>
+      `;
+    }
+    html += '</ul>';
+
+    container.innerHTML = html;
+  }
+
+  function renderWearThresholdCards(thresholds, wearSources) {
+    const container = document.getElementById('wear-threshold-cards-container');
+
+    if (!thresholds || Object.keys(thresholds).length === 0) {
+      container.innerHTML = '';
+      return;
+    }
+
+    const paramConfig = {
+      'iron_fe': {
+        label: '{% trans "Iron (Fe)" %}',
+        icon: 'wrench',
+        color: P.danger,
+        defaultSource: '{% trans "Indicates wear from cylinder liners, crankshaft, camshaft, and timing gears." %}'
+      },
+      'copper_cu': {
+        label: '{% trans "Copper (Cu)" %}',
+        icon: 'zap',
+        color: P.warning,
+        defaultSource: '{% trans "Comes from connecting rod/main bearings, bushings, and oil cooler." %}'
+      },
+      'aluminum_al': {
+        label: '{% trans "Aluminum (Al)" %}',
+        icon: 'box',
+        color: P.primary,
+        defaultSource: '{% trans "From pistons, connecting rod bearings, turbocharger, and oil pump." %}'
+      },
+      'silicon_si': {
+        label: '{% trans "Silicon (Si)" %}',
+        icon: 'wind',
+        color: P.info,
+        defaultSource: '{% trans "Indicates external contamination (dust/dirt). Check air filters and seals." %}'
+      },
+      'lead_pb': {
+        label: '{% trans "Lead (Pb)" %}',
+        icon: 'shield-check',
+        color: P.success,
+        defaultSource: '{% trans "From connecting rod and main bearings (alloy)." %}'
+      },
+      'chromium_cr': {
+        label: '{% trans "Chromium (Cr)" %}',
+        icon: 'layers',
+        color: P.dark,
+        defaultSource: '{% trans "From piston rings, valves, and crankshaft." %}'
+      }
+    };
+
+    // Wear metals to display
+    const wearMetals = ['iron_fe', 'copper_cu', 'aluminum_al'];
+
+    let html = '';
+    wearMetals.forEach(param => {
+      const threshold = thresholds[param];
+      const config = paramConfig[param];
+
+      if (!config) return;
+
+      const warning = threshold?.warning || 'N/A';
+      const critical = threshold?.critical || 'N/A';
+      const unit = threshold?.unit || 'ppm';
+      const source = wearSources[param] || config.defaultSource;
+
+      html += `
+        <div class="rounded-2xl border border-stroke bg-white p-5 shadow-sm dark:border-strokedark dark:bg-boxdark">
+          <div class="mb-3 flex items-center gap-3">
+            <span class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl" style="background-color: ${config.color}1a; color: ${config.color};">
+              <i data-lucide="${config.icon}" class="h-5 w-5" stroke-width="1.8" aria-hidden="true"></i>
+            </span>
+            <h4 class="text-base font-bold" style="color: ${config.color};">${config.label}</h4>
+          </div>
+          <p class="mb-4 min-h-[40px] text-xs text-bodydark2">${source}</p>
+          <div class="space-y-1 rounded-xl bg-whiten p-3 text-sm dark:bg-boxdark-2">
+            <p class="font-semibold text-warning">{% trans "Caution" %}: &gt; ${warning} ${unit}</p>
+            <p class="font-semibold text-error">{% trans "Critical" %}: &gt; ${critical} ${unit}</p>
+          </div>
+        </div>
+      `;
+    });
+
+    container.innerHTML = html;
+    refreshIcons();
+  }
+
+  function renderWearRadarChart(data) {
+    if (wearRadarChart) {
+      wearRadarChart.destroy();
+    }
+
+    if (!data || !data.labels || data.labels.length === 0) {
+      document.querySelector("#wear-radar-chart").innerHTML =
+        '<div class="flex h-full items-center justify-center py-10"><p class="text-sm text-bodydark2">{% trans "No data available" %}</p></div>';
+      return;
+    }
+
+    const options = {
+      series: data.series,
+      chart: {
+        type: 'radar',
+        height: 400,
+        toolbar: { show: false }
+      },
+      xaxis: {
+        categories: data.labels,
+        labels: {
+          style: {
+            fontSize: '12px',
+            fontWeight: 500
+          }
+        }
+      },
+      yaxis: {
+        min: 0,
+        max: 150,
+        tickAmount: 5
+      },
+      stroke: {
+        show: true,
+        width: 2
+      },
+      plotOptions: {
+        radar: {
+          polygons: {
+            strokeColors: ['#e8e8e8', '#e8e8e8', '#e8e8e8', '#e8e8e8', '#e8e8e8'],
+            connectorColors: '#e8e8e8',
+            fill: {
+              colors: ['#f8f8f8', '#fff']
+            }
+          }
+        }
+      },
+      colors: [P.primary],
+      markers: {
+        size: 4,
+        colors: [P.primary],
+        strokeColors: '#fff',
+        strokeWidth: 2
+      },
+      tooltip: {
+        y: {
+          formatter: function(val) {
+            return val.toFixed(1) + '% {% trans "of critical limit" %}';
+          }
+        }
+      }
+    };
+
+    wearRadarChart = new ApexCharts(document.querySelector("#wear-radar-chart"), withBase(options));
+    wearRadarChart.render();
+  }
+
+  function renderUsageCorrelationChart(data) {
+    if (usageCorrelationChart) {
+      usageCorrelationChart.destroy();
+    }
+
+    if (!data || !data.series || data.series.length === 0 || data.series[0].data.length === 0) {
+      document.querySelector("#usage-correlation-chart").innerHTML =
+        '<div class="flex h-full items-center justify-center py-10"><p class="text-sm text-bodydark2">{% trans "No correlation data available" %}</p></div>';
+      return;
+    }
+
+    const options = {
+      series: data.series,
+      chart: {
+        type: 'scatter',
+        height: 450,
+        toolbar: { show: true },
+        zoom: { enabled: true }
+      },
+      xaxis: {
+        title: { text: data.x_axis_label || '{% trans "Usage" %}' },
+        tickAmount: 10
+      },
+      yaxis: {
+        title: { text: data.y_axis_label || 'Fe (ppm)' }
+      },
+      markers: {
+        size: 8,
+        colors: [P.danger],
+        strokeColors: '#fff',
+        strokeWidth: 2
+      },
+      tooltip: {
+        custom: function({ seriesIndex, dataPointIndex, w }) {
+          const point = w.config.series[seriesIndex].data[dataPointIndex];
+          return `
+            <div class="p-2">
+              <strong>${point.date}</strong><br/>
+              ${data.x_axis_label}: ${point.x}<br/>
+              Fe: ${point.y} ppm
+            </div>
+          `;
+        }
+      },
+      grid: {
+        row: {
+          colors: ['transparent', 'transparent'],
+          opacity: 0.5
+        }
+      }
+    };
+
+    usageCorrelationChart = new ApexCharts(document.querySelector("#usage-correlation-chart"), withBase(options));
+    usageCorrelationChart.render();
+  }
+
+  function updateSectionVisibility() {
+    // Show/hide additives section based on component type
+    const additivesSection = document.getElementById('additives-section');
+    if (additivesSection) {
+      const showAdditives = ['MOTOR', ''].includes(currentComponentTypeKey);
+      additivesSection.classList.toggle('hidden', !showAdditives);
+    }
+  }
+
+  function renderWearTrendsChart(data) {
+    if (wearTrendsChart) {
+      wearTrendsChart.destroy();
+    }
+
+    const options = {
+      series: data.series,
+      chart: {
+        type: 'line',
+        height: 450,
+        toolbar: { show: true },
+        zoom: { enabled: true }
+      },
+      stroke: { curve: 'smooth', width: 3 },
+      xaxis: {
+        categories: data.dates,
+        title: { text: '{% trans "Sample Date" %}' }
+      },
+      yaxis: {
+        title: { text: '{% trans "Concentration (ppm)" %}' }
+      },
+      legend: { position: 'top' },
+      annotations: {
+        yaxis: [
+          {
+            y: data.thresholds.iron_fe?.critical,
+            borderColor: data.thresholds.iron_fe?.color || P.danger,
+            label: {
+              borderColor: data.thresholds.iron_fe?.color || P.danger,
+              style: { color: '#fff', background: data.thresholds.iron_fe?.color || P.danger },
+              text: 'Fe {% trans "Critical" %}: ' + (data.thresholds.iron_fe?.critical || 'N/A') + ' ppm'
+            }
+          },
+          {
+            y: data.thresholds.copper_cu?.critical,
+            borderColor: data.thresholds.copper_cu?.color || P.warning,
+            label: {
+              borderColor: data.thresholds.copper_cu?.color || P.warning,
+              style: { color: '#fff', background: data.thresholds.copper_cu?.color || P.warning },
+              text: 'Cu {% trans "Critical" %}: ' + (data.thresholds.copper_cu?.critical || 'N/A') + ' ppm'
+            }
+          },
+          {
+            y: data.thresholds.aluminum_al?.critical,
+            borderColor: data.thresholds.aluminum_al?.color || P.primary,
+            label: {
+              borderColor: data.thresholds.aluminum_al?.color || P.primary,
+              style: { color: '#fff', background: data.thresholds.aluminum_al?.color || P.primary },
+              text: 'Al {% trans "Critical" %}: ' + (data.thresholds.aluminum_al?.critical || 'N/A') + ' ppm'
+            }
+          }
+        ]
+      }
+    };
+
+    wearTrendsChart = new ApexCharts(document.querySelector("#wear-trends-chart"), withBase(options));
+    wearTrendsChart.render();
+  }
+
+  function renderContaminationChart(data) {
+    if (contaminationChart) {
+      contaminationChart.destroy();
+    }
+
+    const options = {
+      series: data.series,
+      chart: {
+        type: 'line',
+        height: 450,
+        toolbar: { show: true },
+        zoom: { enabled: true }
+      },
+      stroke: { curve: 'smooth', width: 3 },
+      xaxis: {
+        categories: data.dates,
+        title: { text: '{% trans "Sample Date" %}' }
+      },
+      yaxis: {
+        title: { text: '{% trans "Concentration (ppm)" %}' }
+      },
+      legend: { position: 'top' },
+      annotations: {
+        yaxis: [
+          {
+            y: data.thresholds.silicon_si?.critical,
+            borderColor: data.thresholds.silicon_si?.color || P.dark,
+            label: {
+              borderColor: data.thresholds.silicon_si?.color || P.dark,
+              style: { color: '#fff', background: data.thresholds.silicon_si?.color || P.dark },
+              text: 'Si {% trans "Critical" %}: ' + (data.thresholds.silicon_si?.critical || 'N/A') + ' ppm'
+            }
+          },
+          {
+            y: data.thresholds.sodium_na?.critical,
+            borderColor: data.thresholds.sodium_na?.color || P.primary,
+            label: {
+              borderColor: data.thresholds.sodium_na?.color || P.primary,
+              style: { color: '#fff', background: data.thresholds.sodium_na?.color || P.primary },
+              text: 'Na {% trans "Critical" %}: ' + (data.thresholds.sodium_na?.critical || 'N/A') + ' ppm'
+            }
+          },
+          {
+            y: data.thresholds.potassium_k?.warning,
+            borderColor: data.thresholds.potassium_k?.color || P.success,
+            strokeDashArray: 4,
+            label: {
+              borderColor: data.thresholds.potassium_k?.color || P.success,
+              style: { color: '#fff', background: data.thresholds.potassium_k?.color || P.success },
+              text: 'K {% trans "Warning" %}: ' + (data.thresholds.potassium_k?.warning || 'N/A') + ' ppm'
+            }
+          },
+          {
+            y: data.thresholds.potassium_k?.critical,
+            borderColor: data.thresholds.potassium_k?.color || P.success,
+            label: {
+              borderColor: data.thresholds.potassium_k?.color || P.success,
+              style: { color: '#fff', background: data.thresholds.potassium_k?.color || P.success },
+              text: 'K {% trans "Critical" %}: ' + (data.thresholds.potassium_k?.critical || 'N/A') + ' ppm'
+            }
+          }
+        ]
+      }
+    };
+
+    contaminationChart = new ApexCharts(document.querySelector("#contamination-chart"), withBase(options));
+    contaminationChart.render();
+  }
+
+  function renderOilHealthChart(data) {
+    if (oilHealthChart) {
+      oilHealthChart.destroy();
+    }
+
+    // Defensive check for required data
+    if (!data || !data.series || !data.dates) {
+      console.error('Invalid oil health data structure:', data);
+      document.querySelector("#oil-health-chart").innerHTML =
+        '<div class="rounded-xl bg-warning/10 p-4 text-sm font-semibold text-warning">{% trans "No data available" %}</div>';
+      return;
+    }
+
+    // Update subtitle with measurement unit
+    const subtitleEl = document.getElementById('oil-health-subtitle');
+    if (subtitleEl && data.unit_label) {
+      subtitleEl.textContent = `Si, Na, K, {% trans "Viscosity" %}, {% trans "Lubricant" %} (${data.unit_label})`;
+    }
+
+    // Separate series by type for mixed chart
+    const lineSeries = data.series.filter(s => s.type === 'line');
+    const columnSeries = data.series.filter(s => s.type === 'column');
+
+    // Calculate appropriate Y-axis range for lubricant data
+    const lubricantValues = columnSeries[0]?.data.filter(v => v !== null) || [];
+    const maxLubricant = lubricantValues.length > 0 ? Math.max(...lubricantValues) : 100;
+    const lubricantMax = Math.ceil(maxLubricant * 1.2 / 50) * 50; // Round up to nearest 50
+
+    // Prepare all series (bars first, then lines)
+    const allSeries = [...columnSeries, ...lineSeries];
+
+    const options = {
+      series: allSeries,
+      chart: {
+        type: 'line',
+        height: 450,
+        toolbar: {
+          show: true,
+          tools: {
+            download: true,
+            selection: true,
+            zoom: true,
+            zoomin: true,
+            zoomout: true,
+            pan: true,
+            reset: true
+          }
+        },
+        zoom: { enabled: true }
+      },
+      plotOptions: {
+        bar: {
+          columnWidth: '50%',
+          dataLabels: {
+            position: 'top',
+          }
+        }
+      },
+      dataLabels: {
+        enabled: true,
+        enabledOnSeries: [0], // Only enable for first series (bar chart)
+        formatter: function(val) {
+          return val !== null ? val.toFixed(0) : '';
+        },
+        offsetY: -20,
+        style: {
+          fontSize: '10px',
+          fontWeight: 'bold',
+          colors: [P.muted]
+        },
+        background: {
+          enabled: false
+        }
+      },
+      stroke: {
+        width: [0, 3, 3, 3, 3], // No stroke for bars, 3px for lines
+        curve: 'smooth'
+      },
+      xaxis: {
+        categories: data.dates,
+        title: {
+          text: '{% trans "Sample Date" %}',
+          style: {
+            fontSize: '12px',
+            fontWeight: 600
+          }
+        },
+        labels: {
+          rotate: -45,
+          rotateAlways: false,
+          hideOverlappingLabels: true
+        }
+      },
+      yaxis: [
+        {
+          // Y-axis for lubricant bars (left side)
+          seriesName: columnSeries[0]?.name,
+          title: {
+            text: data.unit_label || 'Lubricante',
+            style: {
+              fontSize: '12px',
+              fontWeight: 600,
+              color: P.secondary
+            }
+          },
+          min: 0,
+          max: lubricantMax,
+          tickAmount: 5,
+          labels: {
+            formatter: function(val) {
+              return val !== null ? val.toFixed(0) : '';
+            },
+            style: {
+              colors: [P.secondary]
+            }
+          }
+        },
+        {
+          // Y-axis for line charts (right side) - for metals (ppm) and viscosity (cSt)
+          opposite: true,
+          seriesName: lineSeries[0]?.name,
+          title: {
+            text: '{% trans "ppm / cSt" %}',
+            style: {
+              fontSize: '12px',
+              fontWeight: 600
+            }
+          },
+          min: 0,
+          labels: {
+            formatter: function(val) {
+              return val !== null ? val.toFixed(1) : '';
+            }
+          }
+        },
+        {
+          // Additional axes for other line series (hidden, use same scale)
+          show: false,
+          seriesName: lineSeries[1]?.name,
+          min: 0
+        },
+        {
+          show: false,
+          seriesName: lineSeries[2]?.name,
+          min: 0
+        },
+        {
+          show: false,
+          seriesName: lineSeries[3]?.name,
+          min: 0
+        }
+      ],
+      legend: {
+        position: 'top',
+        horizontalAlign: 'left',
+        fontSize: '12px',
+        fontWeight: 500,
+        markers: {
+          width: 10,
+          height: 10,
+          radius: 2
+        },
+        itemMargin: {
+          horizontal: 10,
+          vertical: 5
+        }
+      },
+      tooltip: {
+        shared: true,
+        intersect: false,
+        x: {
+          show: true,
+          format: 'dd MMM yyyy'
+        },
+        y: {
+          formatter: function(val, opts) {
+            if (val === null) return 'N/A';
+
+            const seriesIndex = opts.seriesIndex;
+            const seriesType = allSeries[seriesIndex].type;
+
+            if (seriesType === 'column') {
+              return val.toFixed(0) + ' ' + (data.unit_label || '');
+            } else {
+              return val.toFixed(2);
+            }
+          }
+        }
+      },
+      colors: allSeries.map(s => s.color),
+      annotations: {
+        yaxis: [
+          {
+            y: data.thresholds.silicon_si?.critical,
+            yAxisIndex: 1, // Apply to right Y-axis (line charts)
+            borderColor: data.thresholds.silicon_si?.color || P.dark,
+            label: {
+              borderColor: data.thresholds.silicon_si?.color || P.dark,
+              style: { color: '#fff', background: data.thresholds.silicon_si?.color || P.dark },
+              text: 'Si {% trans "Critical" %}: ' + (data.thresholds.silicon_si?.critical || 'N/A') + ' ppm'
+            }
+          },
+          {
+            y: data.thresholds.sodium_na?.critical,
+            yAxisIndex: 1,
+            borderColor: data.thresholds.sodium_na?.color || P.primary,
+            label: {
+              borderColor: data.thresholds.sodium_na?.color || P.primary,
+              style: { color: '#fff', background: data.thresholds.sodium_na?.color || P.primary },
+              text: 'Na {% trans "Critical" %}: ' + (data.thresholds.sodium_na?.critical || 'N/A') + ' ppm'
+            }
+          }
+        ]
+      },
+      grid: {
+        strokeDashArray: 4,
+        yaxis: {
+          lines: {
+            show: true
+          }
+        }
+      }
+    };
+
+    oilHealthChart = new ApexCharts(document.querySelector("#oil-health-chart"), withBase(options));
+    oilHealthChart.render();
+  }
+
+  function renderAdditivesChart(data) {
+    if (additivesChart) {
+      additivesChart.destroy();
+    }
+
+    const options = {
+      series: data.series,
+      chart: {
+        type: 'area',
+        height: 450,
+        toolbar: { show: true },
+        zoom: { enabled: true }
+      },
+      stroke: { curve: 'smooth', width: 3 },
+      xaxis: {
+        categories: data.dates,
+        title: { text: '{% trans "Sample Date" %}' }
+      },
+      yaxis: {
+        title: { text: '{% trans "Concentration (ppm)" %}' }
+      },
+      legend: { position: 'top' },
+      annotations: {
+        yaxis: [
+          {
+            y: data.thresholds.zinc_zn?.critical,
+            borderColor: data.thresholds.zinc_zn?.color || P.info,
+            label: {
+              borderColor: data.thresholds.zinc_zn?.color || P.info,
+              style: { color: '#fff', background: data.thresholds.zinc_zn?.color || P.info },
+              text: 'Zn {% trans "Critical" %}: ' + (data.thresholds.zinc_zn?.critical || 'N/A') + ' ppm'
+            }
+          },
+          {
+            y: data.thresholds.phosphorus_p?.critical,
+            borderColor: data.thresholds.phosphorus_p?.color || P.danger,
+            label: {
+              borderColor: data.thresholds.phosphorus_p?.color || P.danger,
+              style: { color: '#fff', background: data.thresholds.phosphorus_p?.color || P.danger },
+              text: 'P {% trans "Critical" %}: ' + (data.thresholds.phosphorus_p?.critical || 'N/A') + ' ppm'
+            }
+          },
+          {
+            y: data.thresholds.magnesium_mg?.critical,
+            borderColor: data.thresholds.magnesium_mg?.color || P.success,
+            label: {
+              borderColor: data.thresholds.magnesium_mg?.color || P.success,
+              style: { color: '#fff', background: data.thresholds.magnesium_mg?.color || P.success },
+              text: 'Mg {% trans "Critical" %}: ' + (data.thresholds.magnesium_mg?.critical || 'N/A') + ' ppm'
+            }
+          },
+          {
+            y: data.thresholds.calcium_ca?.critical,
+            borderColor: data.thresholds.calcium_ca?.color || P.warning,
+            label: {
+              borderColor: data.thresholds.calcium_ca?.color || P.warning,
+              style: { color: '#fff', background: data.thresholds.calcium_ca?.color || P.warning },
+              text: 'Ca {% trans "Critical" %}: ' + (data.thresholds.calcium_ca?.critical || 'N/A') + ' ppm'
+            }
+          }
+        ]
+      }
+    };
+
+    additivesChart = new ApexCharts(document.querySelector("#additives-chart"), withBase(options));
+    additivesChart.render();
+  }
+
+  function clearFilters() {
+    // Reset the autocomplete selects
+    $('#{{ filter.form.machine.id_for_label }}').val(null).trigger('change');
+    $('#{{ filter.form.component.id_for_label }}').val(null).trigger('change');
+
+    hideElement(document.getElementById('results-container'));
+    showElement(document.getElementById('no-data-message'));
+    hideElement(document.getElementById('export-pdf-wrapper'));
+
+    // Destroy charts
+    if (wearTrendsChart) wearTrendsChart.destroy();
+    if (contaminationChart) contaminationChart.destroy();
+    if (oilHealthChart) oilHealthChart.destroy();
+    if (additivesChart) additivesChart.destroy();
+    if (wearRadarChart) wearRadarChart.destroy();
+    if (usageCorrelationChart) usageCorrelationChart.destroy();
+    if (tbnTanChart) tbnTanChart.destroy();
+    if (ftirTrendsChart) ftirTrendsChart.destroy();
+    if (particleDistributionChart) particleDistributionChart.destroy();
+    if (pqIndexChart) pqIndexChart.destroy();
+    if (fuelDilutionChart) fuelDilutionChart.destroy();
+
+    // Reset component type
+    currentComponentTypeKey = '';
+  }
+
+  async function exportChartsToPDF() {
+    // Check if all charts are rendered
+    if (!wearRadarChart || !wearTrendsChart || !contaminationChart || !oilHealthChart || !additivesChart || !usageCorrelationChart) {
+      showAlert('', '{% trans "No charts available to export" %}', 'error');
+      return;
+    }
+
+    try {
+      // Disable button and show loading
+      const exportBtn = document.getElementById('export-pdf-btn');
+      exportBtn.disabled = true;
+      exportBtn.innerHTML = '<svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 0 1 8-8v4a4 4 0 0 0-4 4H4z"></path></svg>{% trans "Generating PDF..." %}';
+
+      // Temporarily show all hidden tab panes so charts render at full width
+      const tabPanes = document.querySelectorAll('#analysis-tab-content > [role="tabpanel"]');
+      const originallyHidden = [];
+      tabPanes.forEach(pane => {
+        originallyHidden.push({ pane: pane, hidden: pane.classList.contains('hidden') });
+        pane.classList.remove('hidden');
+        pane.style.position = 'absolute';
+        pane.style.left = '-9999px';
+        pane.style.width = '1200px';
+        pane.style.visibility = 'visible';
+      });
+
+      // Force chart resizes on all charts
+      const allCharts = [wearRadarChart, wearTrendsChart, contaminationChart, oilHealthChart, additivesChart, usageCorrelationChart];
+      for (const chart of allCharts) {
+        chart.updateOptions({ chart: { width: 1200 } }, false, false);
+      }
+
+      // Wait for charts to re-render
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      // Capture all charts as base64 images
+      const charts = [];
+
+      const wearRadarDataURI = await wearRadarChart.dataURI({ scale: 2 });
+      charts.push(wearRadarDataURI.imgURI);
+
+      const wearTrendsDataURI = await wearTrendsChart.dataURI({ scale: 2 });
+      charts.push(wearTrendsDataURI.imgURI);
+
+      const contaminationDataURI = await contaminationChart.dataURI({ scale: 2 });
+      charts.push(contaminationDataURI.imgURI);
+
+      const oilHealthDataURI = await oilHealthChart.dataURI({ scale: 2 });
+      charts.push(oilHealthDataURI.imgURI);
+
+      const additivesDataURI = await additivesChart.dataURI({ scale: 2 });
+      charts.push(additivesDataURI.imgURI);
+
+      const usageCorrelationDataURI = await usageCorrelationChart.dataURI({ scale: 2 });
+      charts.push(usageCorrelationDataURI.imgURI);
+
+      // Restore original tab pane states
+      tabPanes.forEach((pane, index) => {
+        pane.style.position = '';
+        pane.style.left = '';
+        pane.style.width = '';
+        pane.style.visibility = '';
+        pane.classList.toggle('hidden', originallyHidden[index].hidden);
+      });
+
+      // Restore chart widths to responsive
+      for (const chart of allCharts) {
+        chart.updateOptions({ chart: { width: '100%' } }, false, false);
+      }
+
+      // Collect summary data from DOM
+      const summary = {
+        component_type: document.getElementById('summary-component-type').textContent,
+        machine_name: document.getElementById('summary-machine-name').textContent,
+        latest_sample_date: document.getElementById('summary-last-sample').textContent,
+        total_reports: document.getElementById('summary-total-reports').textContent,
+        wear_sources: currentWearSources,
+      };
+
+      // Send to server
+      const response = await fetch('{% url "apps.reports:analysis_export_pdf" %}', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token }}',
+        },
+        body: JSON.stringify({
+          charts: charts,
+          summary: summary,
+        }),
+      });
+
+      if (response.ok) {
+        // Download the PDF
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+
+        // Extract filename from Content-Disposition header or use default
+        const contentDisposition = response.headers.get('Content-Disposition');
+        let filename = 'analisis_componente.pdf';
+        if (contentDisposition) {
+          const filenameMatch = contentDisposition.match(/filename="([^"]+)"/i);
+          if (filenameMatch) {
+            filename = filenameMatch[1];
+          }
+        }
+
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+
+        showAlert('', '{% trans "PDF exported successfully" %}', 'success');
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Export failed');
+      }
+    } catch (error) {
+      console.error('Error exporting PDF:', error);
+      showAlert('', '{% trans "Error exporting PDF" %}: ' + error.message, 'error');
+    } finally {
+      // Restore button
+      const exportBtn = document.getElementById('export-pdf-btn');
+      exportBtn.disabled = false;
+      exportBtn.innerHTML = '<i data-lucide="download" class="h-4 w-4" stroke-width="1.8" aria-hidden="true"></i>{% trans "Export PDF" %}';
+      refreshIcons();
+    }
+  }
+
+  // ============================================================
+  // ADVANCED CHART FUNCTIONS
+  // ============================================================
+
+  function renderTbnTanChart(data) {
+    if (tbnTanChart) {
+      tbnTanChart.destroy();
+      tbnTanChart = null;
+    }
+
+    const el = document.querySelector('#tbn-tan-chart');
+    if (!data || !data.dates || data.dates.length === 0) {
+      el.innerHTML = '<div class="flex h-full items-center justify-center py-10"><p class="text-sm text-bodydark2">{% trans "No TBN/TAN data available" %}</p></div>';
+      return;
+    }
+
+    const options = {
+      series: [
+        {
+          name: 'TBN',
+          type: 'line',
+          data: data.tbn || []
+        },
+        {
+          name: 'TAN',
+          type: 'line',
+          data: data.tan || []
+        }
+      ],
+      chart: {
+        type: 'line',
+        height: 380,
+        toolbar: { show: true },
+        zoom: { enabled: true }
+      },
+      colors: [P.primary, P.danger],
+      stroke: { curve: 'smooth', width: [3, 3] },
+      xaxis: {
+        categories: data.dates,
+        title: { text: '{% trans "Sample Date" %}' }
+      },
+      yaxis: [
+        {
+          title: { text: 'TBN (mgKOH/g)' },
+          min: 0,
+          labels: { formatter: val => val !== null ? val.toFixed(1) : '' }
+        },
+        {
+          opposite: true,
+          title: { text: 'TAN (mgKOH/g)' },
+          min: 0,
+          labels: { formatter: val => val !== null ? val.toFixed(2) : '' }
+        }
+      ],
+      legend: { position: 'top' },
+      tooltip: { shared: true, intersect: false },
+      grid: { strokeDashArray: 4 }
+    };
+
+    tbnTanChart = new ApexCharts(el, withBase(options));
+    tbnTanChart.render();
+  }
+
+  function renderFtirTrendsChart(data) {
+    if (ftirTrendsChart) {
+      ftirTrendsChart.destroy();
+      ftirTrendsChart = null;
+    }
+
+    const el = document.querySelector('#ftir-trends-chart');
+    if (!data || !data.dates || data.dates.length === 0) {
+      el.innerHTML = '<div class="flex h-full items-center justify-center py-10"><p class="text-sm text-bodydark2">{% trans "No FTIR trend data available" %}</p></div>';
+      return;
+    }
+
+    const options = {
+      series: [
+        { name: '{% trans "Oxidation" %}', data: data.oxidation || [] },
+        { name: '{% trans "Nitration" %}', data: data.nitration || [] },
+        { name: '{% trans "Sulfation" %}', data: data.sulfation || [] }
+      ],
+      chart: {
+        type: 'line',
+        height: 380,
+        toolbar: { show: true },
+        zoom: { enabled: true }
+      },
+      colors: [P.danger, P.warning, P.info],
+      stroke: { curve: 'smooth', width: 3 },
+      xaxis: {
+        categories: data.dates,
+        title: { text: '{% trans "Sample Date" %}' }
+      },
+      yaxis: {
+        title: { text: '{% trans "Abs/cm" %}' },
+        min: 0,
+        labels: { formatter: val => val !== null ? val.toFixed(3) : '' }
+      },
+      legend: { position: 'top' },
+      tooltip: { shared: true, intersect: false },
+      grid: { strokeDashArray: 4 }
+    };
+
+    ftirTrendsChart = new ApexCharts(el, withBase(options));
+    ftirTrendsChart.render();
+  }
+
+  function renderParticleDistributionChart(data) {
+    if (particleDistributionChart) {
+      particleDistributionChart.destroy();
+      particleDistributionChart = null;
+    }
+
+    const el = document.querySelector('#particle-distribution-chart');
+    if (!data || !data.dates || data.dates.length === 0) {
+      el.innerHTML = '<div class="flex h-full items-center justify-center py-10"><p class="text-sm text-bodydark2">{% trans "No particle distribution data available" %}</p></div>';
+      return;
+    }
+
+    const sizeLabels = ['< 4 µm', '< 6 µm', '< 14 µm', '< 21 µm', '< 38 µm', '< 70 µm'];
+    const sizeColors = [P.primary, P.success, P.warning, P.danger, P.info, P.dark];
+    const sizeKeys = ['particle_4um', 'particle_6um', 'particle_14um', 'particle_21um', 'particle_38um', 'particle_70um'];
+
+    const series = sizeLabels.map((label, i) => ({
+      name: label,
+      data: data[sizeKeys[i]] || []
+    }));
+
+    const options = {
+      series: series,
+      chart: {
+        type: 'bar',
+        stacked: true,
+        height: 380,
+        toolbar: { show: true }
+      },
+      colors: sizeColors,
+      plotOptions: {
+        bar: { horizontal: false, columnWidth: '60%' }
+      },
+      xaxis: {
+        categories: data.dates,
+        title: { text: '{% trans "Sample Date" %}' }
+      },
+      yaxis: {
+        title: { text: '{% trans "c/mL" %}' },
+        labels: { formatter: val => val !== null ? val.toLocaleString() : '' }
+      },
+      legend: { position: 'top' },
+      tooltip: { shared: true, intersect: false },
+      fill: { opacity: 1 }
+    };
+
+    particleDistributionChart = new ApexCharts(el, withBase(options));
+    particleDistributionChart.render();
+  }
+
+  function renderPqIndexChart(data) {
+    if (pqIndexChart) {
+      pqIndexChart.destroy();
+      pqIndexChart = null;
+    }
+
+    const el = document.querySelector('#pq-index-chart');
+    if (!data || !data.dates || data.dates.length === 0) {
+      el.innerHTML = '<div class="flex h-full items-center justify-center py-10"><p class="text-sm text-bodydark2">{% trans "No PQ Index data available" %}</p></div>';
+      return;
+    }
+
+    const annotations = [];
+    if (data.warning_limit) {
+      annotations.push({
+        y: data.warning_limit,
+        borderColor: P.warning,
+        strokeDashArray: 4,
+        label: {
+          borderColor: P.warning,
+          style: { color: '#000', background: P.warning },
+          text: '{% trans "Caution" %}: ' + data.warning_limit
+        }
+      });
+    }
+    if (data.critical_limit) {
+      annotations.push({
+        y: data.critical_limit,
+        borderColor: P.danger,
+        label: {
+          borderColor: P.danger,
+          style: { color: '#fff', background: P.danger },
+          text: '{% trans "Critical" %}: ' + data.critical_limit
+        }
+      });
+    }
+
+    const options = {
+      series: [{ name: 'PQ Index', data: data.values || [] }],
+      chart: {
+        type: 'line',
+        height: 380,
+        toolbar: { show: false }
+      },
+      colors: ['#ED7D31'],
+      stroke: { curve: 'smooth', width: 3 },
+      markers: { size: 5, colors: ['#ED7D31'], strokeColors: '#fff', strokeWidth: 2 },
+      xaxis: {
+        categories: data.dates,
+        labels: { rotate: -45 }
+      },
+      yaxis: {
+        title: { text: 'PQ Index' },
+        min: 0
+      },
+      annotations: { yaxis: annotations },
+      tooltip: { shared: true, intersect: false }
+    };
+
+    pqIndexChart = new ApexCharts(el, withBase(options));
+    pqIndexChart.render();
+  }
+
+  function renderFuelDilutionChart(data) {
+    if (fuelDilutionChart) {
+      fuelDilutionChart.destroy();
+      fuelDilutionChart = null;
+    }
+
+    const el = document.querySelector('#fuel-dilution-chart');
+    if (!data || !data.dates || data.dates.length === 0) {
+      el.innerHTML = '<div class="flex h-full items-center justify-center py-10"><p class="text-sm text-bodydark2">{% trans "No fuel dilution data available" %}</p></div>';
+      return;
+    }
+
+    const annotations = [];
+    if (data.warning_limit) {
+      annotations.push({
+        y: data.warning_limit,
+        borderColor: P.warning,
+        strokeDashArray: 4,
+        label: {
+          borderColor: P.warning,
+          style: { color: '#000', background: P.warning },
+          text: '{% trans "Caution" %}: ' + data.warning_limit + '%'
+        }
+      });
+    }
+    if (data.critical_limit) {
+      annotations.push({
+        y: data.critical_limit,
+        borderColor: P.danger,
+        label: {
+          borderColor: P.danger,
+          style: { color: '#fff', background: P.danger },
+          text: '{% trans "Critical" %}: ' + data.critical_limit + '%'
+        }
+      });
+    }
+
+    const options = {
+      series: [{ name: '{% trans "Fuel Dilution" %} (%)', data: data.values || [] }],
+      chart: {
+        type: 'bar',
+        height: 320,
+        toolbar: { show: true }
+      },
+      colors: [P.danger],
+      plotOptions: {
+        bar: { horizontal: false, columnWidth: '50%', borderRadius: 3 }
+      },
+      dataLabels: {
+        enabled: true,
+        formatter: val => val !== null ? val.toFixed(2) + '%' : '',
+        offsetY: -18,
+        style: { fontSize: '10px', colors: [P.muted] }
+      },
+      xaxis: {
+        categories: data.dates,
+        title: { text: '{% trans "Sample Date" %}' }
+      },
+      yaxis: {
+        title: { text: '{% trans "Fuel Dilution" %} (%)' },
+        min: 0,
+        labels: { formatter: val => val !== null ? val.toFixed(1) + '%' : '' }
+      },
+      annotations: { yaxis: annotations },
+      tooltip: {
+        y: { formatter: val => val !== null ? val.toFixed(2) + '%' : 'N/A' }
+      }
+    };
+
+    fuelDilutionChart = new ApexCharts(el, withBase(options));
+    fuelDilutionChart.render();
+  }
+
+</script>
+{% endblock %}

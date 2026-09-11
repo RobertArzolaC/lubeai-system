@@ -1,3 +1,4 @@
+import json
 from typing import Any
 
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
@@ -9,8 +10,8 @@ from django.views import View
 from django_filters.views import FilterView
 
 from apps.core import mixins as core_mixins
-from apps.reports import constants, filtersets, forms, models
-from apps.reports.services import ReportExportService
+from apps.equipment import models as equipment_models
+from apps.reports import constants, filtersets, forms, models, services
 
 EXCEL_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 
@@ -287,7 +288,9 @@ class ReportExportPreviewAPIView(ReportExportQueryMixin, View):
                 status=400,
             )
 
-        preview = ReportExportService.preview(queryset, limit=self.preview_limit)
+        preview = services.ReportExportService.preview(
+            queryset, limit=self.preview_limit
+        )
         return JsonResponse(
             {
                 "status": "success",
@@ -317,7 +320,7 @@ class ReportExportDownloadView(ReportExportQueryMixin, View):
                 status=400,
             )
 
-        buffer, filename = ReportExportService.export_to_response(queryset)
+        buffer, filename = services.ReportExportService.export_to_response(queryset)
         response = HttpResponse(buffer.getvalue(), content_type=EXCEL_CONTENT_TYPE)
         response["Content-Disposition"] = f'attachment; filename="{filename}"'
         return response
@@ -415,3 +418,110 @@ class AnalysisThresholdDeleteView(core_mixins.BaseDeleteView):
 
     model = models.AnalysisThreshold
     permission_required = "reports.delete_analysisthreshold"
+
+
+# ============================================================================
+# ANALYSIS THRESHOLD CRUD VIEWS
+# ============================================================================
+
+
+class ComponentAnalysisView(core_mixins.BaseTemplateView):
+    """View for component analysis page."""
+
+    permission_required = "reports.view_component_analysis"
+    template_name = "reports/report/component_analysis.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # Support deep-link: ?component=<id> auto-selects machine and component.
+        # Seed the filter with both values so the bound form renders them selected.
+        component_id = self.request.GET.get("component")
+        initial_component_id = None
+        initial_machine_id = None
+
+        data = self.request.GET.copy() if self.request.GET else None
+
+        if component_id:
+            component = (
+                equipment_models.Component.objects.select_related("machine", "type")
+                .filter(id=component_id, is_active=True)
+                .first()
+            )
+            if component:
+                initial_component_id = component.id
+                initial_machine_id = component.machine_id
+                if data is not None:
+                    data["machine"] = component.machine_id
+
+        # Initialize filter with the (possibly seeded) query data
+        filterset = filtersets.ComponentAnalysisFilter(data=data or None)
+
+        context.update(
+            {
+                "filter": filterset,
+                "entity": _("Component Analysis"),
+                "back_url": reverse_lazy("apps.dashboard:index"),
+                "initial_component_id": initial_component_id,
+                "initial_machine_id": initial_machine_id,
+            }
+        )
+
+        return context
+
+
+class ComponentAnalysisDataAPIView(core_mixins.BaseView):
+    """API endpoint for component analysis data."""
+
+    permission_required = "reports.view_component_analysis"
+
+    def get(self, request, *args, **kwargs):
+        """Return component analysis data as JSON."""
+        component_id = request.GET.get("component")
+
+        if not component_id:
+            return JsonResponse({"error": "Component ID is required"}, status=400)
+
+        try:
+            component = equipment_models.Component.objects.get(
+                id=component_id, is_active=True
+            )
+        except equipment_models.Component.DoesNotExist:
+            return JsonResponse({"error": "Component not found"}, status=404)
+
+        # Use service to get analysis data
+        try:
+            service = services.ComponentAnalysisService(component_id=component.id)
+            data = service.get_all_analysis_data()
+            return JsonResponse(data, safe=False)
+        except Exception as e:  # noqa: BLE001
+            return JsonResponse({"error": str(e)}, status=500)
+
+
+class ChartExportPDFView(core_mixins.BaseView):
+    """Export component analysis charts to PDF."""
+
+    permission_required = "reports.view_component_analysis"
+
+    def post(self, request, *args, **kwargs):
+        """Generate PDF with charts and summary data."""
+        try:
+            data = json.loads(request.body)
+            charts = data.get("charts", [])
+            summary = data.get("summary", {})
+
+            if not charts:
+                return JsonResponse({"error": "No charts data provided"}, status=400)
+
+            service = services.ChartExportPDFService(
+                charts=charts,
+                summary=summary,
+            )
+            return service.generate()
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
+        except ValueError as e:
+            return JsonResponse({"error": str(e)}, status=400)
+        except Exception as e:  # noqa: BLE001
+            return JsonResponse({"error": f"Error generating PDF: {e!s}"}, status=500)

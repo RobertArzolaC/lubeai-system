@@ -22,9 +22,6 @@
                 <p class="text-base font-medium text-gray-500 px-10">
                     {% trans "Create an account to start managing your laboratory processes and track your samples." %}
                 </p>
-                <div class="mt-10">
-                    <img src="{% static 'assets/images/logos/logo-short.png' %}" alt="Illustration" class="mx-auto opacity-20 grayscale h-32" />
-                </div>
             </div>
         </div>
 
@@ -38,7 +35,7 @@
 
                 <form method="POST" action="{% url "account_signup" %}">
                     {% csrf_token %}
-                    
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         <!-- First Name -->
                         <div>
@@ -118,7 +115,7 @@
 
                     <div class="mt-6 text-center">
                         <p class="font-medium text-gray-500">
-                            {% trans "Already have an account?" %} 
+                            {% trans "Already have an account?" %}
                             <a href="{% url 'account_login' %}" class="text-primary hover:underline font-bold">{% trans "Sign In" %}</a>
                         </p>
                     </div>

@@ -10,6 +10,7 @@ from django.db.models.functions import TruncMonth
 
 from apps.alerts import choices as alerts_choices
 from apps.alerts import models as alerts_models
+from apps.dashboard import cache as dashboard_cache
 from apps.dashboard import constants
 from apps.equipment import models as equipment_models
 from apps.reports import choices as report_choices
@@ -267,9 +268,22 @@ class DashboardService:
             for report in reports
         ]
 
+    def get_filters_key(self) -> str:
+        """Return a stable signature for the active filters."""
+        filters = self.filters
+        return (
+            f"{filters.year}:{filters.fleet_id}:"
+            f"{filters.machine_id}:{filters.component_type_id}"
+        )
+
     @staticmethod
     def get_filter_options() -> dict[str, Any]:
         """Return the available filter values."""
+        key = f"{dashboard_cache.CACHE_KEY_PREFIX}:options:{dashboard_cache.get_cache_version()}"
+        cached = dashboard_cache.safe_cache_get(key)
+        if cached is not None:
+            return cached
+
         years = (
             reports_models.Report.objects.filter(
                 is_active=True, sample_date__isnull=False
@@ -278,17 +292,30 @@ class DashboardService:
             .distinct()
             .order_by("sample_date__year")
         )
-        return {
+        options = {
             "years": [year for year in years if year is not None],
-            "fleets": equipment_models.Fleet.objects.filter(is_active=True),
-            "machines": equipment_models.Machine.objects.filter(is_active=True),
-            "component_types": equipment_models.ComponentType.objects.filter(
-                is_active=True
+            "fleets": list(equipment_models.Fleet.objects.filter(is_active=True)),
+            "machines": list(equipment_models.Machine.objects.filter(is_active=True)),
+            "component_types": list(
+                equipment_models.ComponentType.objects.filter(is_active=True)
             ),
         }
+        dashboard_cache.safe_cache_set(key, options, constants.DEFAULT_CACHE_TIMEOUT)
+        return options
 
     def build_context(self) -> dict[str, Any]:
-        """Build the full JSON-serialisable dashboard payload."""
+        """Build the full JSON-serialisable dashboard payload (cached)."""
+        key = dashboard_cache.build_payload_key(self.get_filters_key())
+        cached = dashboard_cache.safe_cache_get(key)
+        if cached is not None:
+            return cached
+
+        context = self._compute_context()
+        dashboard_cache.safe_cache_set(key, context, constants.DEFAULT_CACHE_TIMEOUT)
+        return context
+
+    def _compute_context(self) -> dict[str, Any]:
+        """Compute the dashboard payload from the database."""
         reports = self.get_reports()
         alerts = self.get_alerts()
         kpis = self.get_kpis(reports)

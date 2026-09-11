@@ -35,16 +35,9 @@ class DashboardTemplateContentTests(SimpleTestCase):
             self.assertNotIn(value, content)
 
     def test_tabs_are_present(self) -> None:
-        """All expected tabs are rendered (English msgids; translated at runtime)."""
+        """Only the summary and data table tabs are rendered."""
         content = self._read(TEMPLATE_DIR / "includes" / "tabs.html")
-        for label in (
-            "Summary",
-            "Trends",
-            "Wear",
-            "Contamination",
-            "Oil Health",
-            "Alerts",
-            "Data Table",
-            "References",
-        ):
+        for label in ("Summary", "Data Table"):
             self.assertIn(label, content)
+        for label in ("Trends", "Wear", "Contamination", "Oil Health", "References"):
+            self.assertNotIn(label, content)

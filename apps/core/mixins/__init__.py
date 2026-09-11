@@ -8,6 +8,7 @@ from apps.core.mixins.views import (
     BaseListView,
     BaseTemplateView,
     BaseUpdateView,
+    BaseView,
 )
 
 __all__ = [
@@ -18,6 +19,7 @@ __all__ = [
     "BaseListView",
     "BaseTemplateView",
     "BaseUpdateView",
+    "BaseView",
     "CacheMixin",
     "UserStampMixin",
 ]

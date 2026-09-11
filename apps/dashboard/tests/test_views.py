@@ -4,7 +4,9 @@ from datetime import date
 
 from django.conf import settings
 from django.core.cache import cache
+from django.db import connection
 from django.test import TestCase, override_settings
+from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 
 from apps.dashboard.services.dashboard_service import DashboardService
@@ -44,6 +46,7 @@ class DashboardViewTests(TestCase):
     """Tests for the dashboard page and data endpoint."""
 
     def setUp(self) -> None:
+        cache.clear()
         self.user = users_factories.UserFactory()
         self.machine = equipment_factories.MachineFactory(name="Buque Test")
         reports_factories.ReportFactory(
@@ -52,6 +55,9 @@ class DashboardViewTests(TestCase):
         reports_factories.ReportFactory(
             machine=self.machine, condition="CRITICAL", sample_date=date(2024, 4, 1)
         )
+
+    def tearDown(self) -> None:
+        cache.clear()
 
     def test_index_requires_login(self) -> None:
         """Anonymous users are redirected to login."""
@@ -118,6 +124,32 @@ class DashboardViewTests(TestCase):
         DashboardService()  # warm up any lazy imports
         with self.assertNumQueries(13):
             self.client.get(reverse("apps.dashboard:data"))
+
+    def _query_count(self, path: str, **params: object) -> int:
+        """Return the number of SQL queries executed for a request."""
+        with CaptureQueriesContext(connection) as ctx:
+            self.client.get(path, params)
+        return len(ctx.captured_queries)
+
+    def test_data_payload_is_cached_between_requests(self) -> None:
+        """A second identical request is served from the cache."""
+        self.client.force_login(self.user)
+        first = self._query_count(reverse("apps.dashboard:data"))
+        second = self._query_count(reverse("apps.dashboard:data"))
+        self.assertLess(second, first)
+
+    def test_cache_invalidated_when_report_saved(self) -> None:
+        """Saving a new report invalidates the cached payload."""
+        self.client.force_login(self.user)
+        first = self.client.get(reverse("apps.dashboard:data")).json()
+        self.assertEqual(first["kpis"]["total"], 2)
+
+        reports_factories.ReportFactory(
+            machine=self.machine, condition="NORMAL", sample_date=date(2024, 5, 1)
+        )
+
+        second = self.client.get(reverse("apps.dashboard:data")).json()
+        self.assertEqual(second["kpis"]["total"], 3)
 
 
 class DashboardRealTemplateSmokeTests(TestCase):

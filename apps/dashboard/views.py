@@ -8,16 +8,18 @@ from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.generic import TemplateView
 
-from apps.core.mixins import CacheMixin
-from apps.dashboard import constants, filtersets
+from apps.dashboard import filtersets
 from apps.dashboard.services import DashboardFilters, DashboardService
 
 
-class DashboardView(LoginRequiredMixin, CacheMixin, TemplateView):
-    """Render the oil analysis dashboard shell."""
+class DashboardView(LoginRequiredMixin, TemplateView):
+    """Render the oil analysis dashboard shell.
+
+    The heavy payload is cached at the service layer (keyed by filters); the
+    response itself is not cached so no per-user cache entries are created.
+    """
 
     template_name = "dashboard/index.html"
-    cache_timeout = constants.DEFAULT_CACHE_TIMEOUT
 
     def get_context_data(self, **kwargs: Any) -> dict:
         """Add the initial payload and the available filter options."""

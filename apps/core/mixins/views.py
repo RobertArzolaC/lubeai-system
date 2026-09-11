@@ -125,3 +125,7 @@ class BaseDeleteView(LoginRequiredMixin, PermissionRequiredMixin, View):
             },
             status=403,
         )
+
+
+class BaseView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    pass

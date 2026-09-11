@@ -58,6 +58,7 @@ LOCAL_APPS = [
     "apps.equipment.apps.EquipmentConfig",
     "apps.reports.apps.ReportsConfig",
     "apps.alerts.apps.AlertsConfig",
+    "apps.dashboard.apps.DashboardConfig",
 ]
 
 TAILWIND_APP_NAME = "apps.theme"
@@ -231,3 +232,24 @@ CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers.DatabaseScheduler"
 CELERY_BROKER_URL = config("REDIS_URL", default="redis://127.0.0.1:6379/")
 CELERY_RESULT_BACKEND = config("REDIS_URL", default="redis://127.0.0.1:6379/")
+
+# Cache settings
+#
+# Use a shared cache (Redis) when ``CACHE_URL`` is set so all workers share the
+# same entries. Fall back to a local-memory cache for host runs and tests.
+CACHE_URL = config("CACHE_URL", default="")
+
+if CACHE_URL:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": CACHE_URL,
+        }
+    }
+else:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "lubeai-default",
+        }
+    }

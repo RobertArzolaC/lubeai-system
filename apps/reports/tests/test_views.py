@@ -405,3 +405,81 @@ class ReportExportViewTests(TestCase):
         self.client.force_login(self.user)
         response = self.client.get(reverse("apps.reports:report_export_download"))
         self.assertEqual(response.status_code, 403)
+
+
+@override_settings(TEMPLATES=REPORTS_TEMPLATES)
+class ComponentAnalysisViewTests(TestCase):
+    """Tests for the component analysis page and its API endpoints."""
+
+    def setUp(self) -> None:
+        self.user = users_factories.UserFactory()
+        self.machine = equipment_factories.MachineFactory()
+        self.component = equipment_factories.ComponentFactory(machine=self.machine)
+
+    def test_page_renders_with_permission(self) -> None:
+        """The page renders and every URL tag resolves for authorized users."""
+        grant_permissions(self.user, "view_component_analysis")
+        self.client.force_login(self.user)
+        response = self.client.get(reverse("apps.reports:component_analysis"))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "reports/report/component_analysis.html")
+        self.assertContains(response, reverse("apps.reports:analysis_data_api"))
+        self.assertContains(response, reverse("apps.reports:analysis_export_pdf"))
+        self.assertContains(response, reverse("apps.equipment:autocomplete_component"))
+
+    def test_page_requires_permission(self) -> None:
+        """Users without the permission are forbidden."""
+        self.client.force_login(self.user)
+        response = self.client.get(reverse("apps.reports:component_analysis"))
+        self.assertEqual(response.status_code, 403)
+
+    def test_deep_link_seeds_filter(self) -> None:
+        """A ``?component`` deep-link preselects machine and component."""
+        grant_permissions(self.user, "view_component_analysis")
+        self.client.force_login(self.user)
+        response = self.client.get(
+            reverse("apps.reports:component_analysis"),
+            {"component": self.component.pk},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["initial_component_id"], self.component.pk)
+        self.assertEqual(response.context["initial_machine_id"], self.machine.pk)
+
+    def test_data_api_requires_component(self) -> None:
+        """The data API returns 400 when no component is provided."""
+        grant_permissions(self.user, "view_component_analysis")
+        self.client.force_login(self.user)
+        response = self.client.get(reverse("apps.reports:analysis_data_api"))
+        self.assertEqual(response.status_code, 400)
+
+    def test_data_api_missing_component_returns_404(self) -> None:
+        """The data API returns 404 for an unknown component."""
+        grant_permissions(self.user, "view_component_analysis")
+        self.client.force_login(self.user)
+        response = self.client.get(
+            reverse("apps.reports:analysis_data_api"), {"component": 999999}
+        )
+        self.assertEqual(response.status_code, 404)
+
+    def test_data_api_returns_analysis_payload(self) -> None:
+        """The data API returns the full analysis payload for a component."""
+        grant_permissions(self.user, "view_component_analysis")
+        self.client.force_login(self.user)
+        report = factories.ReportFactory(
+            component=self.component, machine=self.machine, condition="NORMAL"
+        )
+        factories.LabAnalysisFactory(report=report)
+
+        response = self.client.get(
+            reverse("apps.reports:analysis_data_api"),
+            {"component": self.component.pk},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertIn("summary", payload)
+        self.assertIn("available_tabs", payload)
+        self.assertEqual(payload["summary"]["component_id"], self.component.pk)
+        # Dynamic labels must be translated to the active language (es).
+        self.assertEqual(payload["available_tabs"][0]["label"], "Resumen")
+        self.assertEqual(payload["kpi_metrics"][0]["label"], "Hierro (Fe)")

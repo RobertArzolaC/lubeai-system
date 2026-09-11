@@ -1,16 +1,16 @@
 {% load i18n %}
 
-<nav>
+<nav aria-label="{% trans 'Breadcrumb' %}">
     <ol class="flex items-center gap-2">
         {% for crumb in breadcrumbs %}
             <li class="font-medium text-black dark:text-white">
                 {% if not forloop.last %}
                     <a class="flex items-center gap-2 text-primary" href="{{ crumb.url }}">
                         {{ crumb.title }}
-                        <span> / </span>
+                        <span aria-hidden="true">/</span>
                     </a>
                 {% else %}
-                    {{ crumb.title }}
+                    <span aria-current="page">{{ crumb.title }}</span>
                 {% endif %}
             </li>
         {% endfor %}

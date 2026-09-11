@@ -1,10 +1,21 @@
 from django.urls import path
 
-from apps.equipment import views
+from apps.equipment import autocomplete, views
 
 app_name = "apps.equipment"
 
 urlpatterns = [
+    # Autocomplete URLs
+    path(
+        "machines/autocomplete/",
+        autocomplete.MachineAutocomplete.as_view(),
+        name="autocomplete_machine",
+    ),
+    path(
+        "components/autocomplete/",
+        autocomplete.ComponentAutocomplete.as_view(),
+        name="autocomplete_component",
+    ),
     # Machine URLs
     path("machines/", views.MachineListView.as_view(), name="machine_list"),
     path(

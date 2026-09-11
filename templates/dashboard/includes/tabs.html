@@ -2,33 +2,13 @@
 <div class="rounded-2xl border border-gray-200 bg-white shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark">
     <div class="flex flex-wrap gap-1 border-b border-gray-200 px-2 pt-2 dark:border-gray-800">
         <button type="button" id="tab-btn-resumen" class="tab-btn rounded-t-lg px-4 py-2 text-sm font-medium" data-tab="resumen">{% trans "Summary" %}</button>
-        <button type="button" id="tab-btn-tendencias" class="tab-btn rounded-t-lg px-4 py-2 text-sm font-medium" data-tab="tendencias">{% trans "Trends" %}</button>
-        <button type="button" id="tab-btn-desgaste" class="tab-btn rounded-t-lg px-4 py-2 text-sm font-medium" data-tab="desgaste">{% trans "Wear" %}</button>
-        <button type="button" id="tab-btn-contaminacion" class="tab-btn rounded-t-lg px-4 py-2 text-sm font-medium" data-tab="contaminacion">{% trans "Contamination" %}</button>
-        <button type="button" id="tab-btn-estado" class="tab-btn rounded-t-lg px-4 py-2 text-sm font-medium" data-tab="estado">{% trans "Oil Health" %}</button>
-        {% if perms.alerts.view_alert %}
-        <a href="{% url 'apps.alerts:alert_list' %}" class="rounded-t-lg px-4 py-2 text-sm font-medium text-gray-500 hover:text-primary">{% trans "Alerts" %}</a>
-        {% endif %}
         <button type="button" id="tab-btn-datos" class="tab-btn rounded-t-lg px-4 py-2 text-sm font-medium" data-tab="datos">{% trans "Data Table" %}</button>
-        <button type="button" id="tab-btn-referencias" class="tab-btn rounded-t-lg px-4 py-2 text-sm font-medium" data-tab="referencias">{% trans "References" %}</button>
     </div>
 
     <div class="p-4">
         <div id="tab-panel-resumen" class="tab-panel flex flex-col gap-6">
             {% include "dashboard/includes/kpis.html" %}
             {% include "dashboard/includes/charts.html" %}
-        </div>
-        <div id="tab-panel-tendencias" class="tab-panel hidden">
-            <p class="text-sm text-gray-500">{% trans "Trend analysis will reuse the monthly series above." %}</p>
-        </div>
-        <div id="tab-panel-desgaste" class="tab-panel hidden">
-            <p class="text-sm text-gray-500">{% trans "Wear metal trends (Fe, Cu, Al, Cr, Pb)." %}</p>
-        </div>
-        <div id="tab-panel-contaminacion" class="tab-panel hidden">
-            <p class="text-sm text-gray-500">{% trans "Contaminants (Si, Na, K) and water/fuel ingress." %}</p>
-        </div>
-        <div id="tab-panel-estado" class="tab-panel hidden">
-            <p class="text-sm text-gray-500">{% trans "Viscosity, TBN/TAN and oxidation status." %}</p>
         </div>
         <div id="tab-panel-datos" class="tab-panel hidden">
             <h3 class="mb-3 text-base font-semibold text-black dark:text-white">{% trans "Recent Samples" %}</h3>
@@ -60,9 +40,6 @@
                     </tbody>
                 </table>
             </div>
-        </div>
-        <div id="tab-panel-referencias" class="tab-panel hidden">
-            <p class="text-sm text-gray-500">{% trans "ISO 4406 target" %}: &le; 22/20/17. {% trans "Codes above the limit are flagged in red." %}</p>
         </div>
     </div>
 </div>

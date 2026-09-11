@@ -22,9 +22,6 @@
                 <p class="text-base font-medium text-gray-500 px-10">
                     {% trans "Enter your details to access your dashboard and manage your applications." %}
                 </p>
-                <div class="mt-10">
-                    <img src="{% static 'assets/images/logos/logo-short.png' %}" alt="Illustration" class="mx-auto opacity-20 grayscale h-32" />
-                </div>
             </div>
         </div>
 
@@ -38,7 +35,7 @@
 
                 <form method="POST" action="{% url "account_login" %}">
                     {% csrf_token %}
-                    
+
                     <!-- Email/Username Input -->
                     <div class="mb-4">
                         <label class="mb-2.5 block font-medium text-black dark:text-white">
@@ -83,7 +80,7 @@
 
                     <div class="mt-6 text-center">
                         <p class="font-medium text-gray-500">
-                            {% trans "Don't have an account?" %} 
+                            {% trans "Don't have an account?" %}
                             <a href="{% url 'account_signup' %}" class="text-primary hover:underline font-bold">{% trans "Sign Up" %}</a>
                         </p>
                     </div>
