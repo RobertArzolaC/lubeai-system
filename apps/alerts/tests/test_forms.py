@@ -13,7 +13,6 @@ def alert_payload(alert, **overrides: object) -> dict:
         "machine": alert.machine_id,
         "component": alert.component_id,
         "report": alert.report_id,
-        "parameter": alert.parameter,
         "category": alert.category,
         "severity": alert.severity,
         "status": alert.status,
@@ -21,7 +20,6 @@ def alert_payload(alert, **overrides: object) -> dict:
         "warning_limit": alert.warning_limit,
         "critical_limit": alert.critical_limit,
         "unit": alert.unit,
-        "rule_type": alert.rule_type,
         "detected_at": alert.detected_at,
     }
     data.update(overrides)
@@ -38,7 +36,14 @@ class AlertFormTests(TestCase):
     def test_system_fields_are_not_editable(self) -> None:
         """System-managed fields are excluded from the form."""
         form = forms.AlertForm(instance=self.alert)
-        for field in ("dedup_key", "sent_channels", "created_by", "acknowledged_by"):
+        for field in (
+            "dedup_key",
+            "parameter",
+            "rule_type",
+            "sent_channels",
+            "created_by",
+            "acknowledged_by",
+        ):
             with self.subTest(field=field):
                 self.assertNotIn(field, form.fields)
 

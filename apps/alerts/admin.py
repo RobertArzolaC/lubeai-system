@@ -9,7 +9,7 @@ from apps.alerts import models
 class AlertAdmin(admin.ModelAdmin):
     """Admin configuration for the Alert model."""
 
-    list_display = ("parameter", "severity", "status", "machine", "detected_at")
-    list_filter = ("severity", "status", "rule_type")
-    search_fields = ("parameter", "machine__name")
+    list_display = ("category", "severity", "status", "machine", "detected_at")
+    list_filter = ("severity", "status")
+    search_fields = ("category", "machine__name")
     readonly_fields = ("dedup_key",)

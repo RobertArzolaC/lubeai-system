@@ -24,20 +24,10 @@ class AlertFilter(django_filters.FilterSet):
         empty_label=_("All Statuses"),
         label=_("Status"),
     )
-    rule_type = django_filters.ChoiceFilter(
-        choices=choices.AlertRuleType.choices,
-        empty_label=_("All Rules"),
-        label=_("Rule Type"),
-    )
     category = django_filters.ChoiceFilter(
         choices=report_choices.Category.choices,
         empty_label=_("All Categories"),
         label=_("Category"),
-    )
-    parameter = django_filters.ChoiceFilter(
-        choices=report_choices.Parameter.choices,
-        empty_label=_("All Parameters"),
-        label=_("Parameter"),
     )
     machine = django_filters.ModelChoiceFilter(
         queryset=equipment_models.Machine.objects.filter(is_active=True),
@@ -68,9 +58,7 @@ class AlertFilter(django_filters.FilterSet):
             "search",
             "severity",
             "status",
-            "rule_type",
             "category",
-            "parameter",
             "machine",
             "component",
             "detected_after",
@@ -78,10 +66,9 @@ class AlertFilter(django_filters.FilterSet):
         ]
 
     def filter_by_search(self, queryset: QuerySet, name: str, value: str) -> QuerySet:
-        """Filter alerts by dedup key, parameter, machine or component name."""
+        """Filter alerts by dedup key, machine or component name."""
         return queryset.filter(
             Q(dedup_key__icontains=value)
-            | Q(parameter__icontains=value)
             | Q(machine__name__icontains=value)
             | Q(component__type__name__icontains=value)
         )

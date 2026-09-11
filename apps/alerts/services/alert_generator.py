@@ -5,6 +5,7 @@ from typing import Any
 
 from django.utils import timezone
 
+from apps.alerts import choices
 from apps.alerts.models import Alert
 from apps.reports.models import AnalysisThreshold, LabAnalysis, Report
 
@@ -52,28 +53,43 @@ FALLBACK_THRESHOLDS: dict[str, tuple[float, float, str, bool]] = {
     "calcium_ca": (2000, 1500, "ppm", True),
 }
 
+# Ranking used to keep the most severe violation of a report.
+_SEVERITY_RANK: dict[str, int] = {
+    "WARNING": 0,
+    "CAUTION": 1,
+    "CRITICAL": 2,
+}
+
 
 class AlertGeneratorService:
-    """Generates threshold-based alerts for a report."""
+    """Generates a single threshold-based alert per report.
+
+    Each report produces at most one alert, whose severity is the worst
+    violation found across all monitored parameters. The alert's ``category``,
+    ``value`` and limit fields describe that worst parameter.
+    """
 
     def generate_for_report(self, report: Report) -> list[Alert]:
-        """Generate threshold alerts for a given report.
+        """Generate one threshold alert for a given report.
 
-        Iterates over every mapped parameter and creates an alert whenever the
-        measured value exceeds a warning/critical limit. Idempotent by
-        ``dedup_key``.
+        Iterates over every mapped parameter, keeps the most severe
+        violation and creates/updates a single alert for the report.
+        Idempotent by ``dedup_key``.
 
         Args:
             report: The report to evaluate.
 
         Returns:
-            A list of created/updated Alert instances.
+            A list with the created/updated Alert, or an empty list when no
+            parameter exceeds its warning limit.
         """
-        result: list[Alert] = []
         analysis = LabAnalysis.objects.filter(report=report).first()
         if analysis is None:
-            return result
+            return []
 
+        worst: (
+            tuple[int, str, str, float, AnalysisThreshold | dict[str, Any]] | None
+        ) = None
         for parameter, (field_name, category) in PARAMETER_FIELD_MAP.items():
             raw_value = getattr(analysis, field_name)
             if raw_value is None:
@@ -85,12 +101,15 @@ class AlertGeneratorService:
             severity = self._evaluate(value, threshold)
             if severity is None:
                 continue
-            result.append(
-                self._upsert_alert(
-                    report, parameter, category, severity, value, threshold
-                )
-            )
-        return result
+            rank = _SEVERITY_RANK[severity]
+            if worst is None or rank > worst[0]:
+                worst = (rank, category, severity, value, threshold)
+
+        if worst is None:
+            return []
+
+        _, category, severity, value, threshold = worst
+        return [self._upsert_alert(report, category, severity, value, threshold)]
 
     def _find_threshold(
         self, report: Report, parameter: str, category: str
@@ -193,26 +212,24 @@ class AlertGeneratorService:
     def _upsert_alert(
         self,
         report: Report,
-        parameter: str,
         category: str,
         severity: str,
         value: float,
         threshold: AnalysisThreshold | dict[str, Any],
     ) -> Alert:
-        """Create or re-open a threshold alert for a parameter.
+        """Create or re-open the report-level threshold alert.
 
         Args:
             report: The source report.
-            parameter: The parameter name.
-            category: The parameter category.
+            category: The category of the worst offending parameter.
             severity: The evaluated severity.
-            value: The measured value.
+            value: The measured value of the worst offending parameter.
             threshold: The resolved threshold (model or fallback dict).
 
         Returns:
             The Alert instance (created or updated).
         """
-        dedup_key = f"{report.id}:{parameter}:THRESHOLD"
+        dedup_key = f"{report.id}:THRESHOLD"
         unit = (
             getattr(threshold, "unit", None)
             if hasattr(threshold, "unit")
@@ -234,15 +251,13 @@ class AlertGeneratorService:
                 "machine": report.machine,
                 "component": report.component,
                 "report": report,
-                "parameter": parameter,
                 "category": category,
                 "severity": severity,
-                "status": "OPEN",
+                "status": choices.AlertStatus.OPEN,
                 "value": value,
                 "warning_limit": warning,
                 "critical_limit": critical,
                 "unit": unit,
-                "rule_type": "THRESHOLD",
                 "detected_at": self._detected_at(report),
             },
         )
@@ -250,12 +265,27 @@ class AlertGeneratorService:
             changed = (
                 alert.severity != severity
                 or alert.value != value
-                or alert.status == "RESOLVED"
+                or alert.category != category
+                or alert.status == choices.AlertStatus.RESOLVED
             )
             if changed:
                 alert.severity = severity
                 alert.value = value
-                if alert.status == "RESOLVED":
-                    alert.status = "OPEN"
-                alert.save(update_fields=["status", "severity", "value"])
+                alert.category = category
+                alert.warning_limit = warning
+                alert.critical_limit = critical
+                alert.unit = unit
+                if alert.status == choices.AlertStatus.RESOLVED:
+                    alert.status = choices.AlertStatus.OPEN
+                alert.save(
+                    update_fields=[
+                        "status",
+                        "severity",
+                        "value",
+                        "category",
+                        "warning_limit",
+                        "critical_limit",
+                        "unit",
+                    ]
+                )
         return alert

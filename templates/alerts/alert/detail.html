@@ -10,8 +10,8 @@
 {% block content %}
 <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
     <div>
-        <h2 class="text-3xl font-bold tracking-tight text-black dark:text-white">{{ alert.get_parameter_display }}</h2>
-        <p class="mt-1 text-sm font-medium text-bodydark2">{{ alert.get_category_display }}</p>
+        <h2 class="text-3xl font-bold tracking-tight text-black dark:text-white">{{ alert.get_category_display }}</h2>
+        <p class="mt-1 text-sm font-medium text-bodydark2">{% if alert.report %}{{ alert.report.lab_number }}{% else %}{% trans "Report-level alert" %}{% endif %}</p>
         <div class="mt-4 flex flex-wrap items-center gap-3">
             {% include "alerts/includes/severity_badge.html" with severity=alert.severity %}
             {% include "alerts/includes/status_badge.html" with status=alert.status %}
@@ -53,10 +53,6 @@
                         <a href="{% url 'apps.reports:report_detail' alert.report.pk %}" class="text-primary hover:underline">{{ alert.report.lab_number }}</a>
                         {% else %}—{% endif %}
                     </dd>
-                </div>
-                <div>
-                    <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Rule Type" %}</dt>
-                    <dd class="mt-1 text-sm font-semibold text-black dark:text-white">{{ alert.get_rule_type_display }}</dd>
                 </div>
                 <div>
                     <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Dedup Key" %}</dt>
@@ -104,19 +100,6 @@
                     <dd class="mt-1 text-sm font-semibold text-black dark:text-white">{{ alert.resolved_at|date:"d/m/Y H:i"|default:"—" }}</dd>
                 </div>
             </dl>
-        </div>
-
-        <div class="rounded-2xl border border-stroke bg-white p-6 shadow-sm dark:border-strokedark dark:bg-boxdark">
-            <h3 class="mb-5 text-lg font-bold text-black dark:text-white">{% trans "Notifications" %}</h3>
-            {% if alert.sent_channels %}
-            <div class="flex flex-wrap gap-2">
-                {% for channel in alert.sent_channels %}
-                <span class="inline-flex items-center rounded-full border border-stroke bg-gray-2 py-1.5 px-3.5 text-xs font-bold text-bodydark2 dark:border-strokedark dark:bg-meta-4">{{ channel }}</span>
-                {% endfor %}
-            </div>
-            {% else %}
-            <p class="text-sm font-medium text-bodydark2">{% trans "No notifications have been sent for this alert." %}</p>
-            {% endif %}
         </div>
     </div>
 </div>

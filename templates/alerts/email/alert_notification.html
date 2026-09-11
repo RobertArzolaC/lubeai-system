@@ -16,7 +16,7 @@
             <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
                 <thead>
                     <tr style="background: #f9fafb; text-align: left;">
-                        <th style="padding: 10px; border-bottom: 1px solid #e5e7eb;">{% trans "Parameter" %}</th>
+                        <th style="padding: 10px; border-bottom: 1px solid #e5e7eb;">{% trans "Category" %}</th>
                         <th style="padding: 10px; border-bottom: 1px solid #e5e7eb;">{% trans "Severity" %}</th>
                         <th style="padding: 10px; border-bottom: 1px solid #e5e7eb;">{% trans "Machine" %}</th>
                         <th style="padding: 10px; border-bottom: 1px solid #e5e7eb;">{% trans "Value" %}</th>
@@ -25,7 +25,7 @@
                 <tbody>
                     {% for alert in alerts %}
                     <tr>
-                        <td style="padding: 10px; border-bottom: 1px solid #f3f4f6;">{{ alert.get_parameter_display }}</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #f3f4f6;">{{ alert.get_category_display }}</td>
                         <td style="padding: 10px; border-bottom: 1px solid #f3f4f6;">{{ alert.get_severity_display }}</td>
                         <td style="padding: 10px; border-bottom: 1px solid #f3f4f6;">{% if alert.machine %}{{ alert.machine.name }}{% else %}—{% endif %}</td>
                         <td style="padding: 10px; border-bottom: 1px solid #f3f4f6;">{{ alert.value|default:"—" }} {{ alert.unit }}</td>

@@ -23,6 +23,12 @@ class AlertsTemplateRenderingTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "alerts/alert/list.html")
 
+    def test_list_template_drops_parameter_column(self) -> None:
+        """The list no longer renders the removed parameter concept."""
+        response = self.client.get(reverse("apps.alerts:alert_list"))
+        self.assertNotContains(response, "Parameter")
+        self.assertContains(response, self.alert.get_category_display())
+
     def test_list_avoids_n_plus_one_queries(self) -> None:
         """The list query count does not grow with the number of alerts."""
         with CaptureQueriesContext(connection) as few:

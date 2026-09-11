@@ -12,9 +12,9 @@ from apps.reports import models as report_models
 class AlertForm(forms.ModelForm):
     """Form for editing generated alerts.
 
-    System-managed fields (``dedup_key``, ``sent_channels`` and the lifecycle
-    timestamps) are excluded; the acknowledgement/resolution timestamps are
-    derived from the selected ``status`` by :class:`AlertService`.
+    System-managed fields (``dedup_key`` and the lifecycle timestamps) are
+    excluded; the acknowledgement/resolution timestamps are derived from the
+    selected ``status`` by :class:`AlertService`.
     """
 
     class Meta:
@@ -23,7 +23,6 @@ class AlertForm(forms.ModelForm):
             "machine",
             "component",
             "report",
-            "parameter",
             "category",
             "severity",
             "status",
@@ -31,14 +30,12 @@ class AlertForm(forms.ModelForm):
             "warning_limit",
             "critical_limit",
             "unit",
-            "rule_type",
             "detected_at",
         ]
         widgets: ClassVar[dict] = {
             "machine": forms.Select(attrs={"class": "form-select"}),
             "component": forms.Select(attrs={"class": "form-select"}),
             "report": forms.Select(attrs={"class": "form-select"}),
-            "parameter": forms.Select(attrs={"class": "form-select"}),
             "category": forms.Select(attrs={"class": "form-select"}),
             "severity": forms.Select(attrs={"class": "form-select"}),
             "status": forms.Select(attrs={"class": "form-select"}),
@@ -50,7 +47,6 @@ class AlertForm(forms.ModelForm):
                 attrs={"class": "form-control", "step": "0.01"}
             ),
             "unit": forms.TextInput(attrs={"class": "form-control"}),
-            "rule_type": forms.Select(attrs={"class": "form-select"}),
             "detected_at": forms.DateTimeInput(
                 attrs={"class": "form-control", "type": "datetime-local"}
             ),

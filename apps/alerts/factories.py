@@ -19,9 +19,6 @@ class AlertFactory(factory.django.DjangoModelFactory):
     report = factory.SubFactory(report_factories.ReportFactory)
     machine = factory.SubFactory(equipment_factories.MachineFactory)
     component = factory.SubFactory(equipment_factories.ComponentFactory)
-    parameter = factory.Iterator(
-        [choice[0] for choice in report_choices.Parameter.choices]
-    )
     category = factory.Iterator(
         [choice[0] for choice in report_choices.Category.choices]
     )
@@ -31,7 +28,6 @@ class AlertFactory(factory.django.DjangoModelFactory):
     warning_limit = 75.0
     critical_limit = 100.0
     unit = "ppm"
-    rule_type = "THRESHOLD"
     detected_at = factory.LazyFunction(timezone.now)
     dedup_key = factory.Sequence(lambda n: f"dedup-{n}")
     created_by = factory.SubFactory(user_factories.UserFactory)

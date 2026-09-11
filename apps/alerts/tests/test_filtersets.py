@@ -23,7 +23,6 @@ class AlertFilterTests(TestCase):
         self.alert = factories.AlertFactory(
             machine=machine,
             component=component,
-            parameter="iron_fe",
             category="wear_metals",
             severity="CRITICAL",
             status="OPEN",
@@ -31,7 +30,6 @@ class AlertFilterTests(TestCase):
             detected_at=aware(2024, 6, 15),
         )
         self.other = factories.AlertFactory(
-            parameter="copper_cu",
             category="contamination",
             severity="WARNING",
             status="RESOLVED",
@@ -55,9 +53,9 @@ class AlertFilterTests(TestCase):
         self.assertIn(self.other, queryset)
         self.assertNotIn(self.alert, queryset)
 
-    def test_filter_by_parameter(self) -> None:
-        """``parameter`` filters by analysis parameter."""
-        queryset = self.filter_qs(parameter="iron_fe")
+    def test_filter_by_category(self) -> None:
+        """``category`` filters by analysis category."""
+        queryset = self.filter_qs(category="wear_metals")
         self.assertIn(self.alert, queryset)
         self.assertNotIn(self.other, queryset)
 

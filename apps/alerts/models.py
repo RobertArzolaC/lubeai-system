@@ -17,8 +17,10 @@ from apps.reports.models import Report
 class Alert(TimeStampedModel, BaseUserTracked):
     """Alert model.
 
-    Represents a generated alert for a monitored parameter, derived
-    from an inspection report and tied to a machine/component.
+    Represents a generated alert at report/sample level, derived from an
+    inspection report and tied to a machine/component. The ``category``,
+    ``value`` and limit fields describe the most severe parameter detected
+    in the report.
     """
 
     machine = models.ForeignKey(
@@ -48,11 +50,6 @@ class Alert(TimeStampedModel, BaseUserTracked):
         related_name="alerts",
         help_text=_("Source report of this alert"),
     )
-    parameter = models.CharField(
-        _("Parameter"),
-        max_length=100,
-        choices=report_choices.Parameter.choices,
-    )
     category = models.CharField(
         _("Category"),
         max_length=50,
@@ -75,12 +72,6 @@ class Alert(TimeStampedModel, BaseUserTracked):
     warning_limit = models.FloatField(_("Warning Limit"), null=True, blank=True)
     critical_limit = models.FloatField(_("Critical Limit"), null=True, blank=True)
     unit = models.CharField(_("Unit"), max_length=20, blank=True, default="ppm")
-    rule_type = models.CharField(
-        _("Rule Type"),
-        max_length=30,
-        choices=choices.AlertRuleType.choices,
-        default=choices.AlertRuleType.THRESHOLD,
-    )
     detected_at = models.DateTimeField(_("Detected At"), null=True, blank=True)
     acknowledged_at = models.DateTimeField(_("Acknowledged At"), null=True, blank=True)
     acknowledged_by = models.ForeignKey(
@@ -92,7 +83,6 @@ class Alert(TimeStampedModel, BaseUserTracked):
         related_name="acknowledged_alerts",
     )
     resolved_at = models.DateTimeField(_("Resolved At"), null=True, blank=True)
-    sent_channels = models.JSONField(_("Sent Channels"), default=list, blank=True)
     dedup_key = models.CharField(
         _("Dedup Key"),
         max_length=200,
@@ -109,9 +99,9 @@ class Alert(TimeStampedModel, BaseUserTracked):
         ]
         indexes: ClassVar[list[models.Index]] = [
             models.Index(fields=["status", "severity", "detected_at"]),
-            models.Index(fields=["machine", "parameter", "detected_at"]),
+            models.Index(fields=["machine", "detected_at"]),
         ]
 
     def __str__(self) -> str:
         """Return string representation of the alert."""
-        return f"Alert {self.parameter} - {self.get_severity_display()}"
+        return f"Alert {self.get_category_display()} - {self.get_severity_display()}"

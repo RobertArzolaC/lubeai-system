@@ -19,12 +19,3 @@ class AlertStatus(models.TextChoices):
     ACKNOWLEDGED = "ACKNOWLEDGED", _("Acknowledged")
     RESOLVED = "RESOLVED", _("Resolved")
     DISMISSED = "DISMISSED", _("Dismissed")
-
-
-class AlertRuleType(models.TextChoices):
-    """Type of rule used to generate an alert."""
-
-    THRESHOLD = "THRESHOLD", _("Threshold")
-    TREND_RISING = "TREND_RISING", _("Trend Rising")
-    TREND_DROP = "TREND_DROP", _("Trend Drop")
-    PARAMETER_MISSING = "PARAMETER_MISSING", _("Parameter Missing")

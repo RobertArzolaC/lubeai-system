@@ -48,7 +48,7 @@
         <div class="grid grid-cols-1 gap-4 md:grid-cols-12 md:items-end">
             <div class="md:col-span-5">
                 <label for="id_search" class="mb-2.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{{ filter.form.search.label }}</label>
-                {% trans "Search by parameter, machine or key..." as search_placeholder %}
+                {% trans "Search by machine, component or key..." as search_placeholder %}
                 <div class="relative">
                     <span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-bodydark2">
                         <i data-lucide="search" class="h-4.5 w-4.5" stroke-width="1.8" aria-hidden="true"></i>
@@ -107,7 +107,7 @@
         {% endwith %}
 
         <div class="flex flex-wrap items-center justify-between gap-3">
-            <p class="text-xs font-medium text-bodydark2">{% trans "Search by parameter, machine or key, then refine with the advanced filters." %}</p>
+            <p class="text-xs font-medium text-bodydark2">{% trans "Search by machine, component or key, then refine with the advanced filters." %}</p>
             <a href="{% url 'apps.alerts:alert_list' %}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline">
                 <i data-lucide="x" class="h-3.5 w-3.5" stroke-width="1.8" aria-hidden="true"></i>
                 {% trans "Clear all filters" %}
@@ -123,7 +123,7 @@
             <p class="text-xs font-bold uppercase tracking-widest text-black dark:text-white">{% trans "Severity" %}</p>
         </div>
         <div class="col-span-3 flex items-center">
-            <p class="text-xs font-bold uppercase tracking-widest text-black dark:text-white">{% trans "Parameter" %}</p>
+            <p class="text-xs font-bold uppercase tracking-widest text-black dark:text-white">{% trans "Category" %}</p>
         </div>
         <div class="col-span-2 flex items-center">
             <p class="text-xs font-bold uppercase tracking-widest text-black dark:text-white">{% trans "Machine / Component" %}</p>
@@ -148,8 +148,8 @@
             </div>
             <div class="col-span-3 flex items-center">
                 <div>
-                    <p class="text-base font-bold text-black dark:text-white">{{ alert.get_parameter_display }}</p>
-                    <p class="text-xs font-medium text-bodydark2">{{ alert.get_category_display }}</p>
+                    <p class="text-base font-bold text-black dark:text-white">{{ alert.get_category_display }}</p>
+                    <p class="text-xs font-medium text-bodydark2">{% if alert.report %}{{ alert.report.lab_number }}{% else %}—{% endif %}</p>
                 </div>
             </div>
             <div class="col-span-2 flex min-w-0 items-center">

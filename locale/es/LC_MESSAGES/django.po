@@ -158,6 +158,10 @@ msgstr "Todas las categorías"
 msgid "Category"
 msgstr "Categoría"
 
+#: templates/alerts/alert/detail.html:14
+msgid "Report-level alert"
+msgstr "Alerta a nivel de informe"
+
 #: apps/alerts/filtersets.py:39
 msgid "All Parameters"
 msgstr "Todos los parámetros"
@@ -2266,8 +2270,8 @@ msgstr ""
 "laboratorio."
 
 #: templates/alerts/alert/list.html:51
-msgid "Search by parameter, machine or key..."
-msgstr "Buscar por parámetro, máquina o clave..."
+msgid "Search by machine, component or key..."
+msgstr "Buscar por máquina, componente o clave..."
 
 #: templates/alerts/alert/list.html:70 templates/equipment/branch/list.html:46
 #: templates/equipment/component_type/list.html:46
@@ -2285,9 +2289,9 @@ msgstr "Filtros avanzados"
 
 #: templates/alerts/alert/list.html:110
 msgid ""
-"Search by parameter, machine or key, then refine with the advanced filters."
+"Search by machine, component or key, then refine with the advanced filters."
 msgstr ""
-"Busca por parámetro, máquina o clave y luego refina con los filtros "
+"Busca por máquina, componente o clave y luego refina con los filtros "
 "avanzados."
 
 #: templates/alerts/alert/list.html:113 templates/reports/report/list.html:107
