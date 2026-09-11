@@ -1,0 +1,50 @@
+{% load i18n %}
+<div class="rounded-2xl border border-gray-200 bg-white p-4 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark">
+    <form id="dashboard-filters" class="flex flex-wrap items-end gap-3">
+        <label class="flex flex-col gap-1">
+            <span class="text-xs font-medium text-gray-500">{% trans "Year" %}</span>
+            <select name="year" class="rounded-lg border border-gray-200 bg-transparent px-3 py-2 text-sm dark:border-gray-700 dark:text-white">
+                <option value="">{% trans "All" %}</option>
+                {% for year in filter_options.years %}
+                <option value="{{ year }}">{{ year }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label class="flex flex-col gap-1">
+            <span class="text-xs font-medium text-gray-500">{% trans "Fleet" %}</span>
+            <select name="fleet" class="rounded-lg border border-gray-200 bg-transparent px-3 py-2 text-sm dark:border-gray-700 dark:text-white">
+                <option value="">{% trans "All" %}</option>
+                {% for fleet in filter_options.fleets %}
+                <option value="{{ fleet.pk }}">{{ fleet.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label class="flex flex-col gap-1">
+            <span class="text-xs font-medium text-gray-500">{% trans "Machine" %}</span>
+            <select name="machine" class="rounded-lg border border-gray-200 bg-transparent px-3 py-2 text-sm dark:border-gray-700 dark:text-white">
+                <option value="">{% trans "All" %}</option>
+                {% for machine in filter_options.machines %}
+                <option value="{{ machine.pk }}">{{ machine.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label class="flex flex-col gap-1">
+            <span class="text-xs font-medium text-gray-500">{% trans "Component" %}</span>
+            <select name="component_type" class="rounded-lg border border-gray-200 bg-transparent px-3 py-2 text-sm dark:border-gray-700 dark:text-white">
+                <option value="">{% trans "All" %}</option>
+                {% for component_type in filter_options.component_types %}
+                <option value="{{ component_type.pk }}">{{ component_type.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <button type="button" id="dashboard-reset" class="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-white dark:hover:bg-white/5">
+            {% trans "Reset" %}
+        </button>
+        <div class="ml-auto flex items-center gap-4 text-sm text-gray-500">
+            <span><span id="dashboard-total">{{ dashboard_data.total }}</span> {% trans "samples" %}</span>
+            <span id="dashboard-range" class="italic">
+                {% if dashboard_data.range.min %}{{ dashboard_data.range.min }} &rarr; {{ dashboard_data.range.max }}{% endif %}
+            </span>
+        </div>
+    </form>
+</div>

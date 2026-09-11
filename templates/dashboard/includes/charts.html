@@ -1,0 +1,23 @@
+{% load i18n %}
+<div class="grid grid-cols-1 gap-4 xl:grid-cols-3">
+    <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark">
+        <h3 class="mb-2 text-base font-semibold text-black dark:text-white">{% trans "Condition Distribution" %}</h3>
+        <div id="chart-condition" aria-label="{% trans 'Condition distribution' %}"></div>
+    </div>
+    <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-theme-lg xl:col-span-2 dark:border-gray-800 dark:bg-gray-dark">
+        <h3 class="mb-2 text-base font-semibold text-black dark:text-white">{% trans "Samples per Month" %}</h3>
+        <div id="chart-samples" aria-label="{% trans 'Samples per month' %}"></div>
+    </div>
+    <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark">
+        <h3 class="mb-2 text-base font-semibold text-black dark:text-white">{% trans "Alerts by Fleet" %}</h3>
+        <div id="chart-fleet" aria-label="{% trans 'Alerts by fleet' %}"></div>
+    </div>
+    <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark">
+        <h3 class="mb-2 text-base font-semibold text-black dark:text-white">{% trans "Alerts over Time" %}</h3>
+        <div id="chart-alerts-time" aria-label="{% trans 'Alerts over time' %}"></div>
+    </div>
+    <div class="rounded-2xl border border-gray-200 bg-white p-5 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark">
+        <h3 class="mb-2 text-base font-semibold text-black dark:text-white">{% trans "ISO 4406 Distribution" %}</h3>
+        <div id="chart-iso" aria-label="{% trans 'ISO 4406 distribution' %}"></div>
+    </div>
+</div>

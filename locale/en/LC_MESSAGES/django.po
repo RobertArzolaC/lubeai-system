@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-02 12:28-0500\n"
+"POT-Creation-Date: 2026-09-10 18:37-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,2014 +18,3050 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: apps/authentication/forms.py:10
+#: apps/alerts/apps.py:12 apps/alerts/models.py:105 apps/alerts/views.py:34
+#: templates/dashboard/includes/tabs.html:9 templates/includes/aside.html:128
+#: templates/includes/aside.html:133 templates/includes/aside.html:135
+msgid "Alerts"
+msgstr ""
+
+#: apps/alerts/choices.py:10 apps/reports/choices.py:19
+#: templates/alerts/alert/list.html:39
+#: templates/alerts/includes/severity_badge.html:5
+#: templates/reports/includes/condition_badge.html:13
+msgid "Critical"
+msgstr ""
+
+#: apps/alerts/choices.py:11 apps/reports/choices.py:18
+#: templates/alerts/includes/severity_badge.html:9
+#: templates/reports/includes/condition_badge.html:9
+msgid "Caution"
+msgstr ""
+
+#: apps/alerts/choices.py:12 templates/alerts/includes/severity_badge.html:13
+msgid "Warning"
+msgstr ""
+
+#: apps/alerts/choices.py:18 templates/alerts/alert/list.html:27
+#: templates/alerts/includes/status_badge.html:5
+msgid "Open"
+msgstr ""
+
+#: apps/alerts/choices.py:19 templates/alerts/alert/list.html:31
+#: templates/alerts/includes/status_badge.html:9
+msgid "Acknowledged"
+msgstr ""
+
+#: apps/alerts/choices.py:20 templates/alerts/alert/list.html:35
+#: templates/alerts/includes/status_badge.html:13
+msgid "Resolved"
+msgstr ""
+
+#: apps/alerts/choices.py:21 templates/alerts/includes/status_badge.html:17
+msgid "Dismissed"
+msgstr ""
+
+#: apps/alerts/choices.py:27
+msgid "Threshold"
+msgstr ""
+
+#: apps/alerts/choices.py:28
+msgid "Trend Rising"
+msgstr ""
+
+#: apps/alerts/choices.py:29
+msgid "Trend Drop"
+msgstr ""
+
+#: apps/alerts/choices.py:30
+msgid "Parameter Missing"
+msgstr ""
+
+#: apps/alerts/filtersets.py:16 apps/equipment/filtersets.py:13
+#: apps/equipment/filtersets.py:36 apps/equipment/filtersets.py:59
+#: apps/equipment/filtersets.py:96 apps/reports/filtersets.py:14
+#: apps/reports/filtersets.py:42 apps/reports/filtersets.py:164
+#: apps/users/filtersets.py:11
+msgid "Search"
+msgstr ""
+
+#: apps/alerts/filtersets.py:19
+msgid "All Severities"
+msgstr ""
+
+#: apps/alerts/filtersets.py:20 apps/alerts/models.py:62
+#: templates/alerts/alert/list.html:123
+#: templates/alerts/email/alert_notification.html:20
+msgid "Severity"
+msgstr ""
+
+#: apps/alerts/filtersets.py:24 apps/reports/filtersets.py:61
+#: apps/reports/filtersets.py:141
+msgid "All Statuses"
+msgstr ""
+
+#: apps/alerts/filtersets.py:25 apps/alerts/models.py:68
+#: apps/core/models.py:154 apps/equipment/filtersets.py:17
+#: apps/equipment/filtersets.py:40 apps/equipment/filtersets.py:73
+#: apps/equipment/filtersets.py:100 apps/reports/models.py:143
+#: apps/users/filtersets.py:15 templates/alerts/alert/list.html:135
+#: templates/equipment/branch/detail.html:38
+#: templates/equipment/branch/list.html:65
+#: templates/equipment/component_type/detail.html:42
+#: templates/equipment/component_type/list.html:65
+#: templates/equipment/fleet/detail.html:38
+#: templates/equipment/fleet/list.html:62
+#: templates/equipment/machine/detail.html:50
+#: templates/equipment/machine/list.html:76
+#: templates/reports/analysis_threshold/detail.html:45
+#: templates/reports/analysis_threshold/list.html:75
+#: templates/reports/laboratory/detail.html:42
+#: templates/reports/laboratory/list.html:68 templates/users/profile.html:55
+msgid "Status"
+msgstr ""
+
+#: apps/alerts/filtersets.py:29
+msgid "All Rules"
+msgstr ""
+
+#: apps/alerts/filtersets.py:30 apps/alerts/models.py:79
+#: templates/alerts/alert/detail.html:58
+msgid "Rule Type"
+msgstr ""
+
+#: apps/alerts/filtersets.py:34 apps/reports/filtersets.py:169
+msgid "All Categories"
+msgstr ""
+
+#: apps/alerts/filtersets.py:35 apps/alerts/models.py:57
+#: apps/reports/filtersets.py:170 apps/reports/models.py:578
+#: templates/reports/analysis_threshold/detail.html:37
+#: templates/reports/analysis_threshold/list.html:66
+msgid "Category"
+msgstr ""
+
+#: apps/alerts/filtersets.py:39
+msgid "All Parameters"
+msgstr ""
+
+#: apps/alerts/filtersets.py:40 apps/alerts/models.py:52
+#: apps/reports/models.py:584 templates/alerts/alert/list.html:126
+#: templates/alerts/email/alert_notification.html:19
+#: templates/reports/analysis_threshold/detail.html:33
+#: templates/reports/analysis_threshold/list.html:63
+msgid "Parameter"
+msgstr ""
+
+#: apps/alerts/filtersets.py:44 apps/reports/filtersets.py:51
+#: apps/reports/filtersets.py:125
+msgid "All Machines"
+msgstr ""
+
+#: apps/alerts/filtersets.py:45 apps/alerts/models.py:26
+#: apps/dashboard/filtersets.py:28 apps/equipment/models.py:91
+#: apps/equipment/models.py:134 apps/equipment/views.py:22
+#: apps/equipment/views.py:37 apps/equipment/views.py:56
+#: apps/equipment/views.py:86 apps/reports/filtersets.py:52
+#: apps/reports/filtersets.py:126 apps/reports/models.py:66
+#: templates/alerts/alert/detail.html:38
+#: templates/alerts/email/alert_notification.html:21
+#: templates/dashboard/includes/filters.html:23
+#: templates/dashboard/includes/tabs.html:38
+#: templates/equipment/machine/list.html:67
+#: templates/reports/report/detail.html:74
+msgid "Machine"
+msgstr ""
+
+#: apps/alerts/filtersets.py:49 apps/reports/filtersets.py:56
+#: apps/reports/filtersets.py:130
+msgid "All Components"
+msgstr ""
+
+#: apps/alerts/filtersets.py:50 apps/alerts/models.py:35
+#: apps/equipment/models.py:150 apps/reports/filtersets.py:57
+#: apps/reports/filtersets.py:131 apps/reports/models.py:75
+#: templates/alerts/alert/detail.html:46
+#: templates/dashboard/includes/filters.html:32
+#: templates/dashboard/includes/tabs.html:40
+#: templates/reports/report/detail.html:78
+msgid "Component"
+msgstr ""
+
+#: apps/alerts/filtersets.py:55
+msgid "Detected After"
+msgstr ""
+
+#: apps/alerts/filtersets.py:61
+msgid "Detected Before"
+msgstr ""
+
+#: apps/alerts/forms.py:100
+msgid "The critical limit must differ from the warning limit."
+msgstr ""
+
+#: apps/alerts/models.py:31
+msgid "Machine associated with this alert"
+msgstr ""
+
+#: apps/alerts/models.py:40
+msgid "Component associated with this alert"
+msgstr ""
+
+#: apps/alerts/models.py:44 apps/reports/models.py:230
+#: apps/reports/models.py:264 apps/reports/views.py:137
+#: apps/reports/views.py:162 apps/reports/views.py:184
+#: apps/reports/views.py:204 templates/reports/report/list.html:117
+msgid "Report"
+msgstr ""
+
+#: apps/alerts/models.py:49
+msgid "Source report of this alert"
+msgstr ""
+
+#: apps/alerts/models.py:74 templates/alerts/alert/list.html:132
+#: templates/alerts/email/alert_notification.html:22
+msgid "Value"
+msgstr ""
+
+#: apps/alerts/models.py:75 apps/reports/models.py:590
+#: templates/alerts/alert/detail.html:78
+#: templates/reports/analysis_threshold/detail.html:58
+msgid "Warning Limit"
+msgstr ""
+
+#: apps/alerts/models.py:76 apps/reports/models.py:594
+#: templates/alerts/alert/detail.html:82
+#: templates/reports/analysis_threshold/detail.html:62
+msgid "Critical Limit"
+msgstr ""
+
+#: apps/alerts/models.py:77 apps/reports/models.py:598
+#: templates/reports/analysis_threshold/detail.html:70
+#: templates/reports/analysis_threshold/list.html:72
+msgid "Unit"
+msgstr ""
+
+#: apps/alerts/models.py:84 templates/alerts/alert/detail.html:92
+msgid "Detected At"
+msgstr ""
+
+#: apps/alerts/models.py:85 templates/alerts/alert/detail.html:96
+msgid "Acknowledged At"
+msgstr ""
+
+#: apps/alerts/models.py:88
+msgid "Acknowledged By"
+msgstr ""
+
+#: apps/alerts/models.py:94 templates/alerts/alert/detail.html:103
+msgid "Resolved At"
+msgstr ""
+
+#: apps/alerts/models.py:95
+msgid "Sent Channels"
+msgstr ""
+
+#: apps/alerts/models.py:97 templates/alerts/alert/detail.html:62
+msgid "Dedup Key"
+msgstr ""
+
+#: apps/alerts/models.py:100
+msgid "Idempotency key"
+msgstr ""
+
+#: apps/alerts/models.py:104 apps/alerts/views.py:33 apps/alerts/views.py:69
+#: apps/alerts/views.py:97 templates/dashboard/includes/kpis.html:23
+msgid "Alert"
+msgstr ""
+
+#: apps/alerts/models.py:108
+msgid "Can acknowledge alert"
+msgstr ""
+
+#: apps/alerts/views.py:84
+msgid "Alert updated successfully"
+msgstr ""
+
+#: apps/authentication/forms.py:12 templates/users/account/form.html:68
+#: templates/users/settings.html:24
 msgid "First Name"
 msgstr ""
 
-#: apps/authentication/forms.py:15
+#: apps/authentication/forms.py:17 templates/users/account/form.html:80
+#: templates/users/settings.html:37
 msgid "Last Name"
 msgstr ""
 
-#: apps/core/choices.py:4 apps/core/choices.py:22
+#: apps/authentication/forms.py:29 apps/core/models.py:31
+#: apps/users/forms.py:81 templates/account/password_reset.html:47
+msgid "Email"
+msgstr ""
+
+#: apps/authentication/forms.py:37
+msgid "The email address is not registered with us."
+msgstr ""
+
+#: apps/core/choices.py:6 apps/reports/choices.py:8
+#: templates/reports/includes/report_status_badge.html:17
+#: templates/users/profile.html:114
 msgid "Pending"
 msgstr ""
 
-#: apps/core/choices.py:5 apps/core/choices.py:23
-msgid "Approved"
+#: apps/core/choices.py:7
+msgid "Validating"
 msgstr ""
 
-#: apps/core/choices.py:6 apps/core/choices.py:26
-msgid "Rejected"
+#: apps/core/choices.py:8
+msgid "Processing"
+msgstr ""
+
+#: apps/core/choices.py:9
+msgid "Completed"
 msgstr ""
 
 #: apps/core/choices.py:10
-msgid "Male"
+msgid "Failed"
 msgstr ""
 
 #: apps/core/choices.py:11
-msgid "Female"
+msgid "Canceled"
 msgstr ""
 
-#: apps/core/choices.py:12 apps/core/choices.py:35
-msgid "Other"
+#: apps/core/choices.py:12 apps/reports/choices.py:10
+#: templates/reports/includes/report_status_badge.html:5
+msgid "Approved"
 msgstr ""
 
 #: apps/core/choices.py:16
-msgid "Morning"
-msgstr ""
-
-#: apps/core/choices.py:17
-msgid "Afternoon"
-msgstr ""
-
-#: apps/core/choices.py:18
-msgid "Night"
-msgstr ""
-
-#: apps/core/choices.py:24
-msgid "Delivered"
-msgstr ""
-
-#: apps/core/choices.py:25
-msgid "Not delivered"
-msgstr ""
-
-#: apps/core/choices.py:30
-msgid "PDF"
-msgstr ""
-
-#: apps/core/choices.py:31
-msgid "Excel"
-msgstr ""
-
-#: apps/core/choices.py:32
-msgid "Word"
-msgstr ""
-
-#: apps/core/choices.py:33
-msgid "PowerPoint"
-msgstr ""
-
-#: apps/core/choices.py:34
-#: venv/lib/python3.9/site-packages/django/db/models/fields/files.py:393
-msgid "Image"
-msgstr ""
-
-#: apps/core/choices.py:39
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:25
 msgid "January"
 msgstr ""
 
-#: apps/core/choices.py:40
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:26
+#: apps/core/choices.py:17
 msgid "February"
 msgstr ""
 
-#: apps/core/choices.py:41
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:27
+#: apps/core/choices.py:18
 msgid "March"
 msgstr ""
 
-#: apps/core/choices.py:42
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:28
+#: apps/core/choices.py:19
 msgid "April"
 msgstr ""
 
-#: apps/core/choices.py:43
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:29
+#: apps/core/choices.py:20
 msgid "May"
 msgstr ""
 
-#: apps/core/choices.py:44
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:30
+#: apps/core/choices.py:21
 msgid "June"
 msgstr ""
 
-#: apps/core/choices.py:45
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:31
+#: apps/core/choices.py:22
 msgid "July"
 msgstr ""
 
-#: apps/core/choices.py:46
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:32
+#: apps/core/choices.py:23
 msgid "August"
 msgstr ""
 
-#: apps/core/choices.py:47
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:33
+#: apps/core/choices.py:24
 msgid "September"
 msgstr ""
 
-#: apps/core/choices.py:48
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:34
+#: apps/core/choices.py:25
 msgid "October"
 msgstr ""
 
-#: apps/core/choices.py:49
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:35
+#: apps/core/choices.py:26
 msgid "November"
 msgstr ""
 
-#: apps/core/choices.py:50
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:36
+#: apps/core/choices.py:27
 msgid "December"
 msgstr ""
 
-#: apps/templates/account/email_confirm.html:8
-#: apps/templates/account/email_confirm.html:20
+#: apps/core/choices.py:31
+msgid "National Identity Document"
+msgstr ""
+
+#: apps/core/choices.py:32
+msgid "Unique Taxpayer Registry"
+msgstr ""
+
+#: apps/core/choices.py:33
+msgid "Passport"
+msgstr ""
+
+#: apps/core/choices.py:34
+msgid "Foreigner ID"
+msgstr ""
+
+#: apps/core/choices.py:38
+msgid "Male"
+msgstr ""
+
+#: apps/core/choices.py:39
+msgid "Female"
+msgstr ""
+
+#: apps/core/choices.py:40
+msgid "Other"
+msgstr ""
+
+#: apps/core/mixins/views.py:104
+#, python-format
+msgid "The %(entity_name)s was successfully deleted."
+msgstr ""
+
+#: apps/core/mixins/views.py:112
+#, python-format
+msgid "%(entity_name)s not found."
+msgstr ""
+
+#: apps/core/mixins/views.py:124
+msgid "You do not have permission to delete this account."
+msgstr ""
+
+#: apps/core/models.py:14 templates/equipment/branch/detail.html:56
+msgid "Address"
+msgstr ""
+
+#: apps/core/models.py:15 templates/equipment/branch/detail.html:60
+msgid "Zip code"
+msgstr ""
+
+#: apps/core/models.py:30
+msgid "Phone"
+msgstr ""
+
+#: apps/core/models.py:58 apps/users/forms.py:28 apps/users/forms.py:79
+msgid "First name"
+msgstr ""
+
+#: apps/core/models.py:59
+msgid "Paternal last name"
+msgstr ""
+
+#: apps/core/models.py:60
+msgid "Maternal last name"
+msgstr ""
+
+#: apps/core/models.py:62
+msgid "Document type"
+msgstr ""
+
+#: apps/core/models.py:67
+msgid "Document number"
+msgstr ""
+
+#: apps/core/models.py:69
+msgid "Gender"
+msgstr ""
+
+#: apps/core/models.py:74
+msgid "Birth date"
+msgstr ""
+
+#: apps/core/models.py:81 apps/users/models.py:38
+#: templates/users/profile.html:41
+msgid "User"
+msgstr ""
+
+#: apps/core/models.py:82
+msgid "User account associated with this person"
+msgstr ""
+
+#: apps/core/models.py:129 apps/equipment/models.py:12
+#: apps/equipment/models.py:68 templates/equipment/branch/detail.html:34
+#: templates/equipment/branch/list.html:59
+#: templates/equipment/component_type/detail.html:34
+#: templates/equipment/component_type/list.html:59
+#: templates/equipment/fleet/detail.html:34
+#: templates/equipment/fleet/list.html:59
+#: templates/equipment/machine/detail.html:34
+#: templates/reports/laboratory/detail.html:34
+msgid "Name"
+msgstr ""
+
+#: apps/core/models.py:130 templates/equipment/branch/detail.html:44
+#: templates/equipment/component_type/detail.html:38
+#: templates/equipment/component_type/list.html:62
+#: templates/reports/laboratory/detail.html:48
+#: templates/reports/laboratory/list.html:62
+msgid "Description"
+msgstr ""
+
+#: apps/core/models.py:141
+msgid "Is active"
+msgstr ""
+
+#: apps/core/models.py:143
+msgid "Designates whether this entry is active"
+msgstr ""
+
+#: apps/core/models.py:156
+msgid "New status value."
+msgstr ""
+
+#: apps/core/models.py:159
+msgid "Previous Status"
+msgstr ""
+
+#: apps/core/models.py:162
+msgid "Previous status value."
+msgstr ""
+
+#: apps/core/models.py:165
+msgid "Note"
+msgstr ""
+
+#: apps/core/models.py:167
+msgid "Optional note about the status change."
+msgstr ""
+
+#: apps/core/models.py:172
+msgid "Status History"
+msgstr ""
+
+#: apps/core/models.py:173
+msgid "Status Histories"
+msgstr ""
+
+#: apps/core/templatetags/breadcrumb_tags.py:14
+#: templates/includes/aside.html:40 templates/includes/aside.html:42
+msgid "Dashboard"
+msgstr ""
+
+#: apps/dashboard/filtersets.py:18 templates/dashboard/includes/filters.html:5
+msgid "Year"
+msgstr ""
+
+#: apps/dashboard/filtersets.py:23 apps/equipment/filtersets.py:68
+#: apps/equipment/models.py:15 apps/equipment/models.py:60
+#: apps/equipment/views.py:215 apps/equipment/views.py:233
+#: apps/equipment/views.py:257 apps/equipment/views.py:276
+#: templates/dashboard/includes/filters.html:14
+#: templates/dashboard/includes/tabs.html:39
+#: templates/equipment/machine/detail.html:72
+#: templates/equipment/machine/list.html:73
+msgid "Fleet"
+msgstr ""
+
+#: apps/dashboard/filtersets.py:33 apps/equipment/models.py:120
+#: apps/equipment/views.py:300 apps/equipment/views.py:318
+#: apps/equipment/views.py:342 apps/equipment/views.py:361
+#: apps/reports/models.py:570
+#: templates/equipment/machine/includes/formset_row.html:7
+#: templates/reports/analysis_threshold/detail.html:41
+msgid "Component Type"
+msgstr ""
+
+#: apps/dashboard/views.py:41
+msgid "Invalid filters"
+msgstr ""
+
+#: apps/equipment/admin.py:41 apps/equipment/admin.py:116
+#: apps/equipment/admin.py:176 apps/equipment/admin.py:236
+#: apps/reports/admin.py:38 apps/reports/admin.py:654
+msgid "Basic Information"
+msgstr ""
+
+#: apps/equipment/admin.py:51 templates/equipment/branch/detail.html:53
+#: templates/equipment/branch/list.html:62
+#: templates/equipment/machine/detail.html:61
+msgid "Location"
+msgstr ""
+
+#: apps/equipment/admin.py:64 apps/equipment/admin.py:127
+#: apps/equipment/admin.py:186 apps/equipment/admin.py:246
+#: apps/reports/admin.py:49 apps/reports/admin.py:680
+msgid "Audit Information"
+msgstr ""
+
+#: apps/equipment/apps.py:10
+msgid "Equipment Management"
+msgstr ""
+
+#: apps/equipment/choices.py:6
+msgid "Kilómetros"
+msgstr ""
+
+#: apps/equipment/choices.py:7
+msgid "Horas"
+msgstr ""
+
+#: apps/equipment/choices.py:8
+msgid "Ambos"
+msgstr ""
+
+#: apps/equipment/filtersets.py:16 apps/equipment/filtersets.py:39
+#: apps/equipment/filtersets.py:72 apps/equipment/filtersets.py:99
+#: apps/users/filtersets.py:14
+msgid "Is Active?"
+msgstr ""
+
+#: apps/equipment/filtersets.py:19 apps/equipment/filtersets.py:42
+#: apps/equipment/filtersets.py:75 apps/equipment/filtersets.py:102
+#: apps/reports/filtersets.py:20 apps/reports/filtersets.py:76
+#: apps/reports/filtersets.py:177 apps/users/filtersets.py:17
+#: templates/equipment/component_type/detail.html:63
+#: templates/equipment/machine/detail.html:96
+#: templates/includes/status_badge.html:5 templates/users/profile.html:50
+msgid "Active"
+msgstr ""
+
+#: apps/equipment/filtersets.py:20 apps/equipment/filtersets.py:43
+#: apps/equipment/filtersets.py:76 apps/equipment/filtersets.py:103
+#: apps/reports/filtersets.py:21 apps/reports/filtersets.py:77
+#: apps/reports/filtersets.py:178 apps/users/filtersets.py:18
+#: templates/equipment/component_type/detail.html:65
+#: templates/equipment/machine/detail.html:98
+#: templates/includes/status_badge.html:9 templates/users/profile.html:52
+msgid "Inactive"
+msgstr ""
+
+#: apps/equipment/filtersets.py:62
+msgid "All Branches"
+msgstr ""
+
+#: apps/equipment/filtersets.py:63 apps/equipment/models.py:32
+#: apps/equipment/models.py:51 apps/equipment/views.py:130
+#: apps/equipment/views.py:148 apps/equipment/views.py:172
+#: apps/equipment/views.py:191 templates/equipment/machine/detail.html:64
+#: templates/equipment/machine/list.html:70
+msgid "Branch"
+msgstr ""
+
+#: apps/equipment/filtersets.py:67
+msgid "All Fleets"
+msgstr ""
+
+#: apps/equipment/forms.py:51
+msgid "Select country"
+msgstr ""
+
+#: apps/equipment/forms.py:59
+msgid "Select region"
+msgstr ""
+
+#: apps/equipment/forms.py:67
+msgid "Select subregion"
+msgstr ""
+
+#: apps/equipment/forms.py:75
+msgid "Select city"
+msgstr ""
+
+#: apps/equipment/forms.py:81 templates/equipment/branch/detail.html:72
+msgid "Subregion"
+msgstr ""
+
+#: apps/equipment/forms.py:139
+msgid "Select Component Type"
+msgstr ""
+
+#: apps/equipment/models.py:12
+msgid "Fleet name"
+msgstr ""
+
+#: apps/equipment/models.py:16 apps/equipment/views.py:216
+#: templates/includes/aside.html:73 templates/includes/aside.html:75
+msgid "Fleets"
+msgstr ""
+
+#: apps/equipment/models.py:33 apps/equipment/views.py:131
+#: templates/includes/aside.html:64 templates/includes/aside.html:66
+msgid "Branches"
+msgstr ""
+
+#: apps/equipment/models.py:56
+msgid "Branch/location where this machine is placed"
+msgstr ""
+
+#: apps/equipment/models.py:65
+msgid "Optional fleet grouping for this machine"
+msgstr ""
+
+#: apps/equipment/models.py:70
+msgid "Machine name or identifier"
+msgstr ""
+
+#: apps/equipment/models.py:73 templates/equipment/machine/detail.html:38
+msgid "Serial Number"
+msgstr ""
+
+#: apps/equipment/models.py:75
+msgid "Unique serial number of the machine"
+msgstr ""
+
+#: apps/equipment/models.py:78 templates/equipment/machine/detail.html:42
+msgid "Model"
+msgstr ""
+
+#: apps/equipment/models.py:80
+msgid "Machine model or type designation"
+msgstr ""
+
+#: apps/equipment/models.py:83 templates/equipment/machine/detail.html:46
+msgid "Measurement Unit"
+msgstr ""
+
+#: apps/equipment/models.py:87
+msgid "Unit of measurement for machine usage"
+msgstr ""
+
+#: apps/equipment/models.py:92 apps/equipment/views.py:23
+#: templates/equipment/branch/detail.html:84
+#: templates/equipment/fleet/detail.html:53 templates/includes/aside.html:55
+#: templates/includes/aside.html:57
+msgid "Machines"
+msgstr ""
+
+#: apps/equipment/models.py:121 apps/equipment/views.py:301
+#: templates/includes/aside.html:82 templates/includes/aside.html:84
+msgid "Component Types"
+msgstr ""
+
+#: apps/equipment/models.py:137
+msgid "Machine this component belongs to"
+msgstr ""
+
+#: apps/equipment/models.py:141 templates/users/profile.html:65
+msgid "Type"
+msgstr ""
+
+#: apps/equipment/models.py:146
+msgid "Type/category of this component"
+msgstr ""
+
+#: apps/equipment/models.py:151 templates/equipment/machine/detail.html:85
+#: templates/equipment/machine/includes/formset.html:5
+msgid "Components"
+msgstr ""
+
+#: apps/equipment/views.py:51
+msgid "Machine created successfully"
+msgstr ""
+
+#: apps/equipment/views.py:80
+msgid "Machine updated successfully"
+msgstr ""
+
+#: apps/equipment/views.py:166
+msgid "Branch created successfully"
+msgstr ""
+
+#: apps/equipment/views.py:184
+msgid "Branch updated successfully"
+msgstr ""
+
+#: apps/equipment/views.py:251
+msgid "Fleet created successfully"
+msgstr ""
+
+#: apps/equipment/views.py:269
+msgid "Fleet updated successfully"
+msgstr ""
+
+#: apps/equipment/views.py:336
+msgid "Component type created successfully"
+msgstr ""
+
+#: apps/equipment/views.py:354
+msgid "Component type updated successfully"
+msgstr ""
+
+#: apps/reports/admin.py:666
+msgid "Threshold Limits"
+msgstr ""
+
+#: apps/reports/admin.py:674
+msgid ""
+"Warning and critical limits for this parameter. Set 'Is Inverse Logic' to "
+"True for additives (where low values are critical)."
+msgstr ""
+
+#: apps/reports/apps.py:10
+msgid "Reports Management"
+msgstr ""
+
+#: apps/reports/choices.py:9
+#: templates/reports/includes/report_status_badge.html:9
+msgid "Reviewed"
+msgstr ""
+
+#: apps/reports/choices.py:11
+#: templates/reports/includes/report_status_badge.html:13
+msgid "Rejected"
+msgstr ""
+
+#: apps/reports/choices.py:17 templates/dashboard/includes/kpis.html:11
+#: templates/reports/includes/condition_badge.html:5
+msgid "Normal"
+msgstr ""
+
+#: apps/reports/choices.py:25
+msgid "Wear Metals"
+msgstr ""
+
+#: apps/reports/choices.py:26 templates/dashboard/includes/tabs.html:7
+msgid "Contamination"
+msgstr ""
+
+#: apps/reports/choices.py:27 templates/dashboard/includes/tabs.html:8
+msgid "Oil Health"
+msgstr ""
+
+#: apps/reports/choices.py:28
+msgid "Additives"
+msgstr ""
+
+#: apps/reports/choices.py:29
+msgid "Particle Analysis"
+msgstr ""
+
+#: apps/reports/choices.py:30
+msgid "FTIR Analysis"
+msgstr ""
+
+#: apps/reports/choices.py:37 apps/reports/models.py:465
+msgid "Iron (Fe)"
+msgstr ""
+
+#: apps/reports/choices.py:38 apps/reports/models.py:468
+msgid "Copper (Cu)"
+msgstr ""
+
+#: apps/reports/choices.py:39 apps/reports/models.py:470
+msgid "Aluminum (Al)"
+msgstr ""
+
+#: apps/reports/choices.py:40 apps/reports/models.py:466
+msgid "Chromium (Cr)"
+msgstr ""
+
+#: apps/reports/choices.py:41 apps/reports/models.py:467
+msgid "Lead (Pb)"
+msgstr ""
+
+#: apps/reports/choices.py:42 apps/reports/models.py:469
+msgid "Tin (Sn)"
+msgstr ""
+
+#: apps/reports/choices.py:43 apps/reports/models.py:471
+msgid "Nickel (Ni)"
+msgstr ""
+
+#: apps/reports/choices.py:44 apps/reports/models.py:472
+msgid "Silver (Ag)"
+msgstr ""
+
+#: apps/reports/choices.py:46 apps/reports/models.py:477
+msgid "Silicon (Si)"
+msgstr ""
+
+#: apps/reports/choices.py:47 apps/reports/models.py:479
+msgid "Sodium (Na)"
+msgstr ""
+
+#: apps/reports/choices.py:48 apps/reports/models.py:481
+msgid "Potassium (K)"
+msgstr ""
+
+#: apps/reports/choices.py:49 apps/reports/models.py:478
+msgid "Boron (B)"
+msgstr ""
+
+#: apps/reports/choices.py:51
+msgid "Viscosity @ 40C"
+msgstr ""
+
+#: apps/reports/choices.py:52
+msgid "Viscosity @ 100C"
+msgstr ""
+
+#: apps/reports/choices.py:53
+msgid "TBN (Total Base Number)"
+msgstr ""
+
+#: apps/reports/choices.py:54
+msgid "TAN (Total Acid Number)"
+msgstr ""
+
+#: apps/reports/choices.py:56
+msgid "Oxidation"
+msgstr ""
+
+#: apps/reports/choices.py:57
+msgid "Nitration"
+msgstr ""
+
+#: apps/reports/choices.py:58
+msgid "Sulfation"
+msgstr ""
+
+#: apps/reports/choices.py:59
+msgid "Glycol"
+msgstr ""
+
+#: apps/reports/choices.py:60
+msgid "Fuel Dilution"
+msgstr ""
+
+#: apps/reports/choices.py:62 apps/reports/models.py:413
+msgid "PQ Index"
+msgstr ""
+
+#: apps/reports/choices.py:64 apps/reports/models.py:505
+msgid "Zinc (Zn)"
+msgstr ""
+
+#: apps/reports/choices.py:65 apps/reports/models.py:504
+msgid "Phosphorus (P)"
+msgstr ""
+
+#: apps/reports/choices.py:66 apps/reports/models.py:480
+msgid "Magnesium (Mg)"
+msgstr ""
+
+#: apps/reports/choices.py:67 apps/reports/models.py:506
+msgid "Calcium (Ca)"
+msgstr ""
+
+#: apps/reports/choices.py:68 apps/reports/models.py:500
+msgid "Molybdenum (Mo)"
+msgstr ""
+
+#: apps/reports/choices.py:69 apps/reports/models.py:507
+msgid "Barium (Ba)"
+msgstr ""
+
+#: apps/reports/choices.py:70 apps/reports/models.py:508
+msgid "Cadmium (Cd)"
+msgstr ""
+
+#: apps/reports/choices.py:71 apps/reports/models.py:501
+msgid "Titanium (Ti)"
+msgstr ""
+
+#: apps/reports/choices.py:72 apps/reports/models.py:502
+msgid "Vanadium (V)"
+msgstr ""
+
+#: apps/reports/choices.py:73 apps/reports/models.py:503
+msgid "Manganese (Mn)"
+msgstr ""
+
+#: apps/reports/filtersets.py:17 apps/reports/filtersets.py:73
+#: apps/reports/filtersets.py:174
+msgid "All Records"
+msgstr ""
+
+#: apps/reports/filtersets.py:18 apps/reports/filtersets.py:74
+#: apps/reports/filtersets.py:175
+msgid "Record Status"
+msgstr ""
+
+#: apps/reports/filtersets.py:46 apps/reports/filtersets.py:120
+msgid "All Laboratories"
+msgstr ""
+
+#: apps/reports/filtersets.py:47 apps/reports/filtersets.py:121
+#: apps/reports/models.py:34 apps/reports/models.py:57 apps/reports/views.py:41
+#: apps/reports/views.py:59 apps/reports/views.py:83 apps/reports/views.py:102
+#: templates/reports/laboratory/list.html:59
+#: templates/reports/report/detail.html:53
+#: templates/reports/report/list.html:123
+msgid "Laboratory"
+msgstr ""
+
+#: apps/reports/filtersets.py:62 apps/reports/filtersets.py:142
+msgid "Report Status"
+msgstr ""
+
+#: apps/reports/filtersets.py:67 apps/reports/filtersets.py:135
+msgid "All Conditions"
+msgstr ""
+
+#: apps/reports/filtersets.py:68 apps/reports/filtersets.py:136
+#: apps/reports/models.py:150 templates/dashboard/includes/tabs.html:42
+#: templates/reports/report/list.html:129
+msgid "Condition"
+msgstr ""
+
+#: apps/reports/filtersets.py:111
+msgid "Start Date"
+msgstr ""
+
+#: apps/reports/filtersets.py:116
+msgid "End Date"
+msgstr ""
+
+#: apps/reports/forms.py:189
+msgid ""
+"For inverse logic, warning limit should be greater than or equal to critical "
+"limit."
+msgstr ""
+
+#: apps/reports/forms.py:198
+msgid "Warning limit should be less than or equal to critical limit."
+msgstr ""
+
+#: apps/reports/models.py:27 templates/reports/laboratory/detail.html:38
+msgid "Code"
+msgstr ""
+
+#: apps/reports/models.py:30
+msgid "Unique laboratory identification code"
+msgstr ""
+
+#: apps/reports/models.py:35 apps/reports/views.py:42
+#: templates/includes/aside.html:99 templates/includes/aside.html:101
+msgid "Laboratories"
+msgstr ""
+
+#: apps/reports/models.py:62
+msgid "Laboratory that performed the analysis"
+msgstr ""
+
+#: apps/reports/models.py:71
+msgid "Machine/Equipment associated with this report"
+msgstr ""
+
+#: apps/reports/models.py:80
+msgid "Component associated with this report"
+msgstr ""
+
+#: apps/reports/models.py:83 templates/reports/report/detail.html:41
+msgid "Lab Number"
+msgstr ""
+
+#: apps/reports/models.py:86
+msgid "Laboratory identification number (No. Lab)"
+msgstr ""
+
+#: apps/reports/models.py:89 templates/reports/report/detail.html:61
+msgid "Lubricant"
+msgstr ""
+
+#: apps/reports/models.py:92
+msgid "Lubricant type/brand used"
+msgstr ""
+
+#: apps/reports/models.py:95
+msgid "Lubricant Hours"
+msgstr ""
+
+#: apps/reports/models.py:98
+msgid "Hours of lubricant usage"
+msgstr ""
+
+#: apps/reports/models.py:101
+msgid "Lubricant Kilometers"
+msgstr ""
+
+#: apps/reports/models.py:104
+msgid "Kilometers of lubricant usage"
+msgstr ""
+
+#: apps/reports/models.py:107
+msgid "Machine Hours"
+msgstr ""
+
+#: apps/reports/models.py:110
+msgid "Total operating hours of the machine"
+msgstr ""
+
+#: apps/reports/models.py:113
+msgid "Machine Kilometers"
+msgstr ""
+
+#: apps/reports/models.py:116
+msgid "Total kilometers traveled by the machine"
+msgstr ""
+
+#: apps/reports/models.py:119 templates/reports/report/detail.html:49
+msgid "Serial Number Code"
+msgstr ""
+
+#: apps/reports/models.py:122
+msgid "Serial number code from the report (Cod./Num. De Serie)"
+msgstr ""
+
+#: apps/reports/models.py:125 templates/reports/report/detail.html:91
+#: templates/reports/report/list.html:126
+msgid "Sample Date"
+msgstr ""
+
+#: apps/reports/models.py:128
+msgid "Date when the sample was taken (Fecha Muestra)"
+msgstr ""
+
+#: apps/reports/models.py:131 templates/reports/report/detail.html:45
+msgid "PER Number"
+msgstr ""
+
+#: apps/reports/models.py:134
+msgid "PER identification number (No. PER)"
+msgstr ""
+
+#: apps/reports/models.py:137 templates/reports/report/detail.html:95
+msgid "Reception Date"
+msgstr ""
+
+#: apps/reports/models.py:140
+msgid "Date when the sample was received (Fecha de Recepción)"
+msgstr ""
+
+#: apps/reports/models.py:147
+msgid "Current status of the report"
+msgstr ""
+
+#: apps/reports/models.py:154
+msgid "Equipment condition assessment"
+msgstr ""
+
+#: apps/reports/models.py:157 templates/reports/report/detail.html:111
+msgid "Notes"
+msgstr ""
+
+#: apps/reports/models.py:159
+msgid "Additional notes or observations"
+msgstr ""
+
+#: apps/reports/models.py:162 templates/reports/report/detail.html:99
+msgid "Report Date"
+msgstr ""
+
+#: apps/reports/models.py:165
+msgid "Date when the report was generated (Fecha de Reporte)"
+msgstr ""
+
+#: apps/reports/models.py:168
+msgid "Filter Change"
+msgstr ""
+
+#: apps/reports/models.py:171
+msgid "Filter change indicator (Cambio de Filtro)"
+msgstr ""
+
+#: apps/reports/models.py:174
+msgid "Oil Change"
+msgstr ""
+
+#: apps/reports/models.py:177
+msgid "Oil change indicator (Cambio de Aceite)"
+msgstr ""
+
+#: apps/reports/models.py:180 templates/reports/report/detail.html:123
+msgid "Others"
+msgstr ""
+
+#: apps/reports/models.py:182
+msgid "Other observations or notes (Otros)"
+msgstr ""
+
+#: apps/reports/models.py:185 templates/reports/report/detail.html:115
+msgid "Recommendations"
+msgstr ""
+
+#: apps/reports/models.py:187
+msgid "Laboratory-specific recommendations (Recomendaciones)"
+msgstr ""
+
+#: apps/reports/models.py:190
+msgid "Component Hour Meter"
+msgstr ""
+
+#: apps/reports/models.py:194
+msgid ""
+"Hours on component since installation (Horometro Instalacion Componente)"
+msgstr ""
+
+#: apps/reports/models.py:198
+msgid "Previous Hour Meter"
+msgstr ""
+
+#: apps/reports/models.py:201
+msgid "Machine hour meter from the previous sample (Horometro previo)"
+msgstr ""
+
+#: apps/reports/models.py:204
+msgid "Sampling Type"
+msgstr ""
+
+#: apps/reports/models.py:207
+msgid "Type of sample collection (INSP/PORT)"
+msgstr ""
+
+#: apps/reports/models.py:210
+msgid "PM Position"
+msgstr ""
+
+#: apps/reports/models.py:214
+msgid "Position relative to preventive maintenance (PRE-PM/POST-PM/INSP)"
+msgstr ""
+
+#: apps/reports/models.py:218 templates/reports/report/detail.html:119
+msgid "Action Required"
+msgstr ""
+
+#: apps/reports/models.py:220
+msgid "Specific action recommended by the laboratory (Accion a tomar)"
+msgstr ""
+
+#: apps/reports/models.py:223
+msgid "Turnaround Days"
+msgstr ""
+
+#: apps/reports/models.py:226
+msgid "Laboratory turnaround time in days (TR dias)"
+msgstr ""
+
+#: apps/reports/models.py:231 apps/reports/views.py:138
+#: templates/includes/aside.html:93 templates/includes/aside.html:108
+#: templates/includes/aside.html:110 templates/reports/laboratory/list.html:65
+msgid "Reports"
+msgstr ""
+
+#: apps/reports/models.py:267
+msgid "Associated inspection report"
+msgstr ""
+
+#: apps/reports/models.py:274
+msgid "Water Crackle Test"
+msgstr ""
+
+#: apps/reports/models.py:277
+msgid "ITS 009/18 - Qualitative water test (NEGATIVO/POSITIVO)"
+msgstr ""
+
+#: apps/reports/models.py:280
+msgid "Water by Distillation (%)"
+msgstr ""
+
+#: apps/reports/models.py:285
+msgid "ASTM D 95-13"
+msgstr ""
+
+#: apps/reports/models.py:292
+msgid "Viscosity @ 40°C (cSt)"
+msgstr ""
+
+#: apps/reports/models.py:297 apps/reports/models.py:305
+msgid "ASTM D 7279-20"
+msgstr ""
+
+#: apps/reports/models.py:300
+msgid "Viscosity @ 100°C (cSt)"
+msgstr ""
+
+#: apps/reports/models.py:312
+msgid "Viscosity Index (VI)"
+msgstr ""
+
+#: apps/reports/models.py:315
+msgid "Calculated viscosity index; indicates VI-improver degradation"
+msgstr ""
+
+#: apps/reports/models.py:322
+msgid "Refrigerant (%)"
+msgstr ""
+
+#: apps/reports/models.py:327
+msgid "Refrigerant contamination percentage (distinct from glycol FTIR)"
+msgstr ""
+
+#: apps/reports/models.py:334
+msgid "Compatibility"
+msgstr ""
+
+#: apps/reports/models.py:337
+msgid "ILT-096 - Compatibility test result"
+msgstr ""
+
+#: apps/reports/models.py:340
+msgid "TBN (mgKOH/g)"
+msgstr ""
+
+#: apps/reports/models.py:345
+msgid "ASTM D 2896-21 - Total Base Number"
+msgstr ""
+
+#: apps/reports/models.py:348
+msgid "TAN (mgKOH/g)"
+msgstr ""
+
+#: apps/reports/models.py:353
+msgid "ASTM D 664-24 - Total Acid Number"
+msgstr ""
+
+#: apps/reports/models.py:360
+msgid "Oxidation (Abs/cm)"
+msgstr ""
+
+#: apps/reports/models.py:367
+msgid "Soot (%)"
+msgstr ""
+
+#: apps/reports/models.py:374
+msgid "Nitration (Abs/cm)"
+msgstr ""
+
+#: apps/reports/models.py:381
+msgid "Sulfation (Abs/cm)"
+msgstr ""
+
+#: apps/reports/models.py:388
+msgid "Glycol (%)"
+msgstr ""
+
+#: apps/reports/models.py:395
+msgid "Fuel Dilution (%)"
+msgstr ""
+
+#: apps/reports/models.py:402
+msgid "Water FTIR (%)"
+msgstr ""
+
+#: apps/reports/models.py:416
+msgid "ITS 044/15 - Ferrous particle index"
+msgstr ""
+
+#: apps/reports/models.py:419
+msgid "Particle Count ISO"
+msgstr ""
+
+#: apps/reports/models.py:422
+msgid "ISO 4406:2021 (e.g., 20/18/15)"
+msgstr ""
+
+#: apps/reports/models.py:426
+msgid "Particles < 4 µm (c/mL)"
+msgstr ""
+
+#: apps/reports/models.py:429
+msgid "ISO 4406 - Particle count for size < 4 µm"
+msgstr ""
+
+#: apps/reports/models.py:432
+msgid "Particles < 6 µm (c/mL)"
+msgstr ""
+
+#: apps/reports/models.py:435
+msgid "ISO 4406 - Particle count for size < 6 µm"
+msgstr ""
+
+#: apps/reports/models.py:438
+msgid "Particles < 14 µm (c/mL)"
+msgstr ""
+
+#: apps/reports/models.py:441
+msgid "ISO 4406 - Particle count for size < 14 µm"
+msgstr ""
+
+#: apps/reports/models.py:444
+msgid "Particles < 21 µm (c/mL)"
+msgstr ""
+
+#: apps/reports/models.py:447
+msgid "ISO 4406 - Particle count for size < 21 µm"
+msgstr ""
+
+#: apps/reports/models.py:450
+msgid "Particles < 38 µm (c/mL)"
+msgstr ""
+
+#: apps/reports/models.py:453
+msgid "ISO 4406 - Particle count for size < 38 µm"
+msgstr ""
+
+#: apps/reports/models.py:456
+msgid "Particles < 70 µm (c/mL)"
+msgstr ""
+
+#: apps/reports/models.py:459
+msgid "ISO 4406 - Particle count for size < 70 µm"
+msgstr ""
+
+#: apps/reports/models.py:485
+msgid "Dispersancy"
+msgstr ""
+
+#: apps/reports/models.py:488
+msgid "Oil dispersancy rating (BUE/REG/MALA)"
+msgstr ""
+
+#: apps/reports/models.py:491
+msgid "Spot Test"
+msgstr ""
+
+#: apps/reports/models.py:494
+msgid "Qualitative spot test for contamination"
+msgstr ""
+
+#: apps/reports/models.py:514 templates/reports/report/detail.html:178
+msgid "Visual Appearance"
+msgstr ""
+
+#: apps/reports/models.py:520
+msgid "Lab Analysis"
+msgstr ""
+
+#: apps/reports/models.py:521
+msgid "Lab Analyses"
+msgstr ""
+
+#: apps/reports/models.py:575
+msgid "If null, applies as global default for all component types"
+msgstr ""
+
+#: apps/reports/models.py:581
+msgid "Category this threshold belongs to"
+msgstr ""
+
+#: apps/reports/models.py:587
+msgid "Parameter for this threshold"
+msgstr ""
+
+#: apps/reports/models.py:591
+msgid "Warning threshold value"
+msgstr ""
+
+#: apps/reports/models.py:595
+msgid "Critical threshold value"
+msgstr ""
+
+#: apps/reports/models.py:601
+msgid "Measurement unit (ppm, cSt, etc.)"
+msgstr ""
+
+#: apps/reports/models.py:604
+msgid "Is Inverse Logic"
+msgstr ""
+
+#: apps/reports/models.py:607
+msgid ""
+"If True, values below limits are problematic (e.g., additives). If False, "
+"values above limits are problematic (e.g., wear metals)."
+msgstr ""
+
+#: apps/reports/models.py:612
+#: templates/reports/analysis_threshold/detail.html:77
+msgid "Wear Source Description"
+msgstr ""
+
+#: apps/reports/models.py:614
+msgid "Description of the wear source for this parameter"
+msgstr ""
+
+#: apps/reports/models.py:618 apps/reports/views.py:347
+#: apps/reports/views.py:367 apps/reports/views.py:389
+#: apps/reports/views.py:408
+msgid "Analysis Threshold"
+msgstr ""
+
+#: apps/reports/models.py:619 apps/reports/views.py:348
+msgid "Analysis Thresholds"
+msgstr ""
+
+#: apps/reports/models.py:630
+#: templates/reports/analysis_threshold/detail.html:42
+#: templates/reports/analysis_threshold/list.html:88
+msgid "Global"
+msgstr ""
+
+#: apps/reports/services/report_export.py:270
+msgid "REPORTE DE INSPECCIONES"
+msgstr ""
+
+#: apps/reports/views.py:77
+msgid "Laboratory created successfully"
+msgstr ""
+
+#: apps/reports/views.py:95
+msgid "Laboratory updated successfully"
+msgstr ""
+
+#: apps/reports/views.py:178
+msgid "Report created successfully"
+msgstr ""
+
+#: apps/reports/views.py:186 templates/reports/report/list.html:32
+msgid "Create Report"
+msgstr ""
+
+#: apps/reports/views.py:197
+msgid "Report updated successfully"
+msgstr ""
+
+#: apps/reports/views.py:206 templates/reports/report/detail.html:29
+msgid "Edit Report"
+msgstr ""
+
+#: apps/reports/views.py:259
+msgid "Report Export"
+msgstr ""
+
+#: apps/reports/views.py:282 apps/reports/views.py:312
+#, python-format
+msgid ""
+"The result exceeds the maximum of %(max)s records. Please refine your "
+"filters."
+msgstr ""
+
+#: apps/reports/views.py:383
+msgid "Analysis threshold created successfully"
+msgstr ""
+
+#: apps/reports/views.py:401
+msgid "Analysis threshold updated successfully"
+msgstr ""
+
+#: apps/users/api.py:19
+msgid "User not found"
+msgstr ""
+
+#: apps/users/api.py:28
+msgid "Invalid action"
+msgstr ""
+
+#: apps/users/api.py:35
+msgid "User status has been successfully updated"
+msgstr ""
+
+#: apps/users/api.py:46
+msgid "User ID is required"
+msgstr ""
+
+#: apps/users/api.py:52
+msgid "Email address not found"
+msgstr ""
+
+#: apps/users/api.py:62
+msgid "Verification email has been successfully sent"
+msgstr ""
+
+#: apps/users/forms.py:29 apps/users/forms.py:80
+msgid "Last name"
+msgstr ""
+
+#: apps/users/forms.py:51
+msgid "An account with this email already exists"
+msgstr ""
+
+#: apps/users/managers.py:16
+msgid "The Email must be set"
+msgstr ""
+
+#: apps/users/managers.py:32
+msgid "Superuser must have is_staff=True."
+msgstr ""
+
+#: apps/users/managers.py:34
+msgid "Superuser must have is_superuser=True."
+msgstr ""
+
+#: apps/users/mixins.py:28
+#, python-format
+msgid "Can %(action)s %(model_key)s"
+msgstr ""
+
+#: apps/users/models.py:15
+msgid "email address"
+msgstr ""
+
+#: apps/users/models.py:44 apps/users/views.py:91 apps/users/views.py:117
+#: apps/users/views.py:138 templates/users/profile.html:60
+msgid "Account"
+msgstr ""
+
+#: apps/users/models.py:45 apps/users/views.py:92
+#: templates/includes/aside.html:148 templates/includes/aside.html:150
+#: templates/includes/navbar.html:76 templates/users/account/form.html:6
+#: templates/users/account/form.html:138 templates/users/account/list.html:8
+#: templates/users/account/list.html:12 templates/users/profile.html:155
+msgid "Accounts"
+msgstr ""
+
+#: apps/users/views.py:21 templates/users/profile.html:6
+msgid "Profile"
+msgstr ""
+
+#: apps/users/views.py:29
+msgid "Settings updated successfully"
+msgstr ""
+
+#: apps/users/views.py:36 templates/users/settings.html:5
+msgid "Settings"
+msgstr ""
+
+#: apps/users/views.py:103
+msgid "Account created successfully"
+msgstr ""
+
+#: apps/users/views.py:128
+msgid "Account updated successfully"
+msgstr ""
+
+#: config/settings/base.py:169
+msgid "Spanish"
+msgstr ""
+
+#: config/settings/tools/django_constance.py:16
+msgid "Company logo"
+msgstr ""
+
+#: config/settings/tools/django_constance.py:17
+msgid "Test json field"
+msgstr ""
+
+#: config/settings/tools/django_constance.py:18
+msgid "Enable sending emails."
+msgstr ""
+
+#: config/settings/tools/django_constance.py:19
+msgid "Enable email verification."
+msgstr ""
+
+#: templates/account/account_inactive.html:6
+#: templates/account/account_inactive.html:18
+msgid "Account Inactive"
+msgstr ""
+
+#: templates/account/account_inactive.html:20
+msgid ""
+"Your account is currently deactivated. Please contact support to reactivate "
+"your account."
+msgstr ""
+
+#: templates/account/account_inactive.html:25 templates/account/login.html:7
+#: templates/account/login.html:36 templates/account/login.html:80
+#: templates/account/password_reset_from_key_done.html:25
+#: templates/account/signup.html:122
+msgid "Sign In"
+msgstr ""
+
+#: templates/account/email_confirm.html:8
+#: templates/account/email_confirm.html:20
 msgid "Confirm Email Address"
 msgstr ""
 
-#: apps/templates/account/email_confirm.html:23
+#: templates/account/email_confirm.html:27
 #, python-format
 msgid ""
 "\n"
-"                            Please confirm that <a href=\"mailto:"
-"%(email)s\">%(email)s</a> is an email address for user %(user_display)s.\n"
+"                            Please confirm that <span class=\"font-"
+"bold\">%(email)s</span> is an email address for user <span class=\"font-"
+"bold\">%(user_display)s</span>.\n"
 "                        "
 msgstr ""
 
-#: apps/templates/account/email_confirm.html:35
+#: templates/account/email_confirm.html:36
+msgid "Next steps:"
+msgstr ""
+
+#: templates/account/email_confirm.html:38
+#: templates/account/password_reset_done.html:47
+#: templates/account/verification_sent.html:26
+msgid "Return to login"
+msgstr ""
+
+#: templates/account/email_confirm.html:39
+msgid "Use Forgot Password if needed"
+msgstr ""
+
+#: templates/account/email_confirm.html:49
 msgid "Confirm"
 msgstr ""
 
-#: apps/templates/account/email_confirm.html:42
+#: templates/account/email_confirm.html:55
 #, python-format
 msgid ""
 "Unable to confirm %(email)s because it is already confirmed by a different "
 "account."
 msgstr ""
 
-#: apps/templates/account/email_confirm.html:48
-#, python-format
+#: templates/account/email_confirm.html:60
+msgid "This email confirmation link expired or is invalid."
+msgstr ""
+
+#: templates/account/email_confirm.html:63
+msgid "Issue a new email confirmation request"
+msgstr ""
+
+#: templates/account/login.html:20
+msgid "Sign in to your account"
+msgstr ""
+
+#: templates/account/login.html:23
 msgid ""
-"This email confirmation link expired or is invalid. Please <a "
-"href=\"%(email_url)s\">issue a new email confirmation request</a>."
+"Enter your details to access your dashboard and manage your applications."
 msgstr ""
 
-#: apps/templates/account/login.html:7
-msgid "Sign In"
+#: templates/account/login.html:34
+msgid "Welcome back"
 msgstr ""
 
-#: apps/templates/account/password_reset.html:6
-#: apps/templates/account/password_reset_done.html:8
-#: apps/templates/account/password_reset_done.html:18
-msgid "Password Reset"
+#: templates/account/login.html:62 templates/account/password_reset.html:34
+msgid "Forgot Password?"
 msgstr ""
 
-#: apps/templates/account/password_reset_from_key.html:7
-#: apps/templates/account/password_reset_from_key.html:88
-#: apps/templates/account/password_reset_from_key_done.html:7
+#: templates/account/login.html:86
+msgid "Don't have an account?"
+msgstr ""
+
+#: templates/account/login.html:87
+msgid "Sign Up"
+msgstr ""
+
+#: templates/account/password_change.html:5
+#: templates/account/password_change.html:6
+#: templates/account/password_change.html:14
+#: templates/account/password_reset_from_key.html:6
+#: templates/account/password_reset_from_key.html:58
+#: templates/account/password_reset_from_key_done.html:6
+#: templates/users/settings.html:148
 msgid "Change Password"
 msgstr ""
 
-#: apps/templates/account/password_reset_from_key.html:28
-#, python-format
-msgid ""
-"The password reset link was invalid, possibly because it has already been "
-"used.  Please request a <a href=\"%(passwd_reset_url)s\">new password reset</"
-"a>."
-msgstr ""
-
-#: apps/templates/account/signup.html:7
-msgid "Signup"
-msgstr ""
-
-#: apps/templates/account/verification_sent.html:7
-msgid "Verify Your Email Address"
-msgstr ""
-
-#: apps/templates/includes/navbar.html:31
-msgid "Notifications"
-msgstr ""
-
-#: apps/templates/includes/sidebar.html:20
-#: config/settings/tools/django_constance.py:29
-msgid "Human Resources"
-msgstr ""
-
-#: apps/templates/includes/sidebar.html:28
-#: apps/templates/includes/sidebar.html:94
-msgid "Start"
-msgstr ""
-
-#: apps/templates/includes/sidebar.html:31
-msgid "Áreas"
-msgstr ""
-
-#: apps/templates/includes/sidebar.html:34
-msgid "Positions"
-msgstr ""
-
-#: apps/templates/includes/sidebar.html:37
-msgid "Collaborators"
-msgstr ""
-
-#: apps/templates/includes/sidebar.html:40
-msgid "Attendances"
-msgstr ""
-
-#: apps/templates/includes/sidebar.html:43
-msgid "Shifts"
-msgstr ""
-
-#: apps/templates/includes/sidebar.html:46
-#: apps/templates/includes/sidebar.html:118
-msgid "Publications"
-msgstr ""
-
-#: apps/templates/includes/sidebar.html:49
-#: apps/templates/includes/sidebar.html:97
-msgid "Vacations"
-msgstr ""
-
-#: apps/templates/includes/sidebar.html:52
-#: apps/templates/includes/sidebar.html:112
-msgid "Overtimes"
-msgstr ""
-
-#: apps/templates/includes/sidebar.html:55
-#: apps/templates/includes/sidebar.html:109
-msgid "Permissions"
-msgstr ""
-
-#: apps/templates/includes/sidebar.html:58
-#: apps/templates/includes/sidebar.html:106
-msgid "Loans"
-msgstr ""
-
-#: apps/templates/includes/sidebar.html:61
-#: apps/templates/includes/sidebar.html:103
-msgid "Salary Advances"
-msgstr ""
-
-#: apps/templates/includes/sidebar.html:64
-#: apps/templates/includes/sidebar.html:115
-msgid "Documents"
-msgstr ""
-
-#: apps/templates/includes/sidebar.html:67
-msgid "Parameters"
-msgstr ""
-
-#: apps/templates/includes/sidebar.html:70
-msgid "Stats"
-msgstr ""
-
-#: apps/templates/includes/sidebar.html:100
-msgid "Payrolls"
-msgstr ""
-
-#: config/settings/base.py:136
-msgid "English"
-msgstr ""
-
-#: config/settings/base.py:137
-msgid "Spanish"
-msgstr ""
-
-#: config/settings/tools/django_constance.py:15
-msgid "Company logo"
-msgstr ""
-
-#: config/settings/tools/django_constance.py:16
-msgid "Test json field"
-msgstr ""
-
-#: config/settings/tools/django_constance.py:17
-msgid "Interest rate for collaborator loans."
-msgstr ""
-
-#: config/settings/tools/django_constance.py:18
-msgid "Working days by month."
-msgstr ""
-
-#: config/settings/tools/django_constance.py:23
-msgid "General Options"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/IPython/core/tests/test_completer.py:420
-msgid "open('foo"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/IPython/core/tests/test_completer.py:424
-msgid "open(\"foo"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/IPython/core/tests/test_completer.py:428
-#, python-format
-msgid "%ls foo"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/IPython/core/tests/test_completer.py:563
-msgid "a[0]."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/IPython/core/tests/test_completer.py:570
-msgid "a[0].r"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/IPython/core/tests/test_completer.py:578
-msgid "a[0].from_"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/IPython/core/tests/test_completer.py:585
-msgid "assert str.star"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/IPython/core/tests/test_completer.py:592
-msgid "d['a b'].str"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/IPython/core/tests/test_completer.py:1552
-#: venv/lib/python3.9/site-packages/IPython/core/tests/test_completer.py:1574
-#: venv/lib/python3.9/site-packages/IPython/core/tests/test_completer.py:1577
-msgid "do not suppress"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/IPython/core/tests/test_completer.py:1553
-#: venv/lib/python3.9/site-packages/IPython/core/tests/test_completer.py:1565
-#: venv/lib/python3.9/site-packages/IPython/core/tests/test_completer.py:1568
-#: venv/lib/python3.9/site-packages/IPython/core/tests/test_completer.py:1571
-msgid "suppress all"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/IPython/core/tests/test_completer.py:1554
-msgid "suppress all but a"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/IPython/core/tests/test_completer.py:1555
-msgid "suppress all but c"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/IPython/core/tests/test_completer.py:1603
-#: venv/lib/python3.9/site-packages/IPython/core/tests/test_completer.py:1606
-msgid "---"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/IPython/core/tests/test_completer.py:1609
-msgid "--"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/_termui_impl.py:518
-#, python-brace-format
-msgid "{editor}: Editing failed"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/_termui_impl.py:522
-#, python-brace-format
-msgid "{editor}: Editing failed: {e}"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/core.py:1120
-msgid "Aborted!"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/core.py:1309
-#: venv/lib/python3.9/site-packages/click/decorators.py:559
-msgid "Show this message and exit."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/core.py:1340
-#: venv/lib/python3.9/site-packages/click/core.py:1370
-#, python-brace-format
-msgid "(Deprecated) {text}"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/core.py:1387
-msgid "Options"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/core.py:1413
-#, python-brace-format
-msgid "Got unexpected extra argument ({args})"
-msgid_plural "Got unexpected extra arguments ({args})"
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.9/site-packages/click/core.py:1429
-msgid "DeprecationWarning: The command {name!r} is deprecated."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/core.py:1636
-msgid "Commands"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/core.py:1668
-msgid "Missing command."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/core.py:1746
-msgid "No such command {name!r}."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/core.py:2310
-msgid "Value must be an iterable."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/core.py:2331
-#, python-brace-format
-msgid "Takes {nargs} values but 1 was given."
-msgid_plural "Takes {nargs} values but {len} were given."
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.9/site-packages/click/core.py:2778
-#, python-brace-format
-msgid "env var: {var}"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/core.py:2808
-msgid "(dynamic)"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/core.py:2821
-#, python-brace-format
-msgid "default: {default}"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/core.py:2834
-msgid "required"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/decorators.py:465
-#, python-format
-msgid "%(prog)s, version %(version)s"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/decorators.py:528
-msgid "Show the version and exit."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/exceptions.py:44
-#: venv/lib/python3.9/site-packages/click/exceptions.py:80
-#, python-brace-format
-msgid "Error: {message}"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/exceptions.py:72
-#, python-brace-format
-msgid "Try '{command} {option}' for help."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/exceptions.py:121
-#, python-brace-format
-msgid "Invalid value: {message}"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/exceptions.py:123
-#, python-brace-format
-msgid "Invalid value for {param_hint}: {message}"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/exceptions.py:179
-msgid "Missing argument"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/exceptions.py:181
-msgid "Missing option"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/exceptions.py:183
-msgid "Missing parameter"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/exceptions.py:185
-#, python-brace-format
-msgid "Missing {param_type}"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/exceptions.py:192
-#, python-brace-format
-msgid "Missing parameter: {param_name}"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/exceptions.py:212
-#, python-brace-format
-msgid "No such option: {name}"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/exceptions.py:224
-#, python-brace-format
-msgid "Did you mean {possibility}?"
-msgid_plural "(Possible options: {possibilities})"
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.9/site-packages/click/exceptions.py:262
-msgid "unknown error"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/exceptions.py:269
-msgid "Could not open file {filename!r}: {message}"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/parser.py:231
-msgid "Argument {name!r} takes {nargs} values."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/parser.py:413
-msgid "Option {name!r} does not take a value."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/parser.py:474
-msgid "Option {name!r} requires an argument."
-msgid_plural "Option {name!r} requires {nargs} arguments."
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.9/site-packages/click/shell_completion.py:319
-msgid "Shell completion is not supported for Bash versions older than 4.4."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/shell_completion.py:326
-msgid "Couldn't detect Bash version, shell completion is not supported."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/termui.py:158
-msgid "Repeat for confirmation"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/termui.py:174
-msgid "Error: The value you entered was invalid."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/termui.py:176
-#, python-brace-format
-msgid "Error: {e.message}"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/termui.py:187
-msgid "Error: The two entered values do not match."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/termui.py:243
-msgid "Error: invalid input"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/termui.py:773
-msgid "Press any key to continue..."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/types.py:266
-#, python-brace-format
-msgid ""
-"Choose from:\n"
-"\t{choices}"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/types.py:298
-msgid "{value!r} is not {choice}."
-msgid_plural "{value!r} is not one of {choices}."
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.9/site-packages/click/types.py:392
-msgid "{value!r} does not match the format {format}."
-msgid_plural "{value!r} does not match the formats {formats}."
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.9/site-packages/click/types.py:414
-msgid "{value!r} is not a valid {number_type}."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/types.py:470
-#, python-brace-format
-msgid "{value} is not in the range {range}."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/types.py:611
-msgid "{value!r} is not a valid boolean."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/types.py:635
-msgid "{value!r} is not a valid UUID."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/types.py:822
-msgid "file"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/types.py:824
-msgid "directory"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/types.py:826
-msgid "path"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/types.py:877
-msgid "{name} {filename!r} does not exist."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/types.py:886
-msgid "{name} {filename!r} is a file."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/types.py:894
-#, python-brace-format
-msgid "{name} '{filename}' is a directory."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/types.py:903
-msgid "{name} {filename!r} is not readable."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/types.py:912
-msgid "{name} {filename!r} is not writable."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/types.py:921
-msgid "{name} {filename!r} is not executable."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/click/types.py:988
-#, python-brace-format
-msgid "{len_type} values are required, but {len_value} was given."
-msgid_plural "{len_type} values are required, but {len_value} were given."
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.9/site-packages/django/contrib/messages/apps.py:15
-msgid "Messages"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/contrib/sitemaps/apps.py:8
-msgid "Site Maps"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/contrib/staticfiles/apps.py:9
-msgid "Static Files"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/contrib/syndication/apps.py:7
-msgid "Syndication"
-msgstr ""
-
-#. Translators: String used to replace omitted page numbers in elided page
-#. range generated by paginators, e.g. [1, 2, '…', 5, 6, 7, '…', 9, 10].
-#: venv/lib/python3.9/site-packages/django/core/paginator.py:30
-msgid "…"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/core/paginator.py:50
-msgid "That page number is not an integer"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/core/paginator.py:52
-msgid "That page number is less than 1"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/core/paginator.py:54
-msgid "That page contains no results"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/core/validators.py:22
-msgid "Enter a valid value."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/core/validators.py:104
-#: venv/lib/python3.9/site-packages/django/forms/fields.py:752
-msgid "Enter a valid URL."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/core/validators.py:165
-msgid "Enter a valid integer."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/core/validators.py:176
-msgid "Enter a valid email address."
-msgstr ""
-
-#. Translators: "letters" means latin letters: a-z and A-Z.
-#: venv/lib/python3.9/site-packages/django/core/validators.py:259
-msgid ""
-"Enter a valid “slug” consisting of letters, numbers, underscores or hyphens."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/core/validators.py:267
-msgid ""
-"Enter a valid “slug” consisting of Unicode letters, numbers, underscores, or "
-"hyphens."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/core/validators.py:279
-#: venv/lib/python3.9/site-packages/django/core/validators.py:287
-#: venv/lib/python3.9/site-packages/django/core/validators.py:316
-msgid "Enter a valid IPv4 address."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/core/validators.py:296
-#: venv/lib/python3.9/site-packages/django/core/validators.py:317
-msgid "Enter a valid IPv6 address."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/core/validators.py:308
-#: venv/lib/python3.9/site-packages/django/core/validators.py:315
-msgid "Enter a valid IPv4 or IPv6 address."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/core/validators.py:351
-msgid "Enter only digits separated by commas."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/core/validators.py:357
-#, python-format
-msgid "Ensure this value is %(limit_value)s (it is %(show_value)s)."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/core/validators.py:392
-#, python-format
-msgid "Ensure this value is less than or equal to %(limit_value)s."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/core/validators.py:401
-#, python-format
-msgid "Ensure this value is greater than or equal to %(limit_value)s."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/core/validators.py:410
-#, python-format
-msgid "Ensure this value is a multiple of step size %(limit_value)s."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/core/validators.py:420
-#, python-format
-msgid ""
-"Ensure this value has at least %(limit_value)d character (it has "
-"%(show_value)d)."
-msgid_plural ""
-"Ensure this value has at least %(limit_value)d characters (it has "
-"%(show_value)d)."
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.9/site-packages/django/core/validators.py:438
-#, python-format
-msgid ""
-"Ensure this value has at most %(limit_value)d character (it has "
-"%(show_value)d)."
-msgid_plural ""
-"Ensure this value has at most %(limit_value)d characters (it has "
-"%(show_value)d)."
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.9/site-packages/django/core/validators.py:461
-#: venv/lib/python3.9/site-packages/django/forms/fields.py:347
-#: venv/lib/python3.9/site-packages/django/forms/fields.py:386
-msgid "Enter a number."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/core/validators.py:463
-#, python-format
-msgid "Ensure that there are no more than %(max)s digit in total."
-msgid_plural "Ensure that there are no more than %(max)s digits in total."
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.9/site-packages/django/core/validators.py:468
-#, python-format
-msgid "Ensure that there are no more than %(max)s decimal place."
-msgid_plural "Ensure that there are no more than %(max)s decimal places."
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.9/site-packages/django/core/validators.py:473
-#, python-format
-msgid ""
-"Ensure that there are no more than %(max)s digit before the decimal point."
-msgid_plural ""
-"Ensure that there are no more than %(max)s digits before the decimal point."
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.9/site-packages/django/core/validators.py:544
-#, python-format
-msgid ""
-"File extension “%(extension)s” is not allowed. Allowed extensions are: "
-"%(allowed_extensions)s."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/core/validators.py:605
-msgid "Null characters are not allowed."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/base.py:1423
-#: venv/lib/python3.9/site-packages/django/forms/models.py:893
-msgid "and"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/base.py:1425
-#, python-format
-msgid "%(model_name)s with this %(field_labels)s already exists."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/constraints.py:17
-#, python-format
-msgid "Constraint “%(name)s” is violated."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:128
-#, python-format
-msgid "Value %(value)r is not a valid choice."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:129
-msgid "This field cannot be null."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:130
-msgid "This field cannot be blank."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:131
-#, python-format
-msgid "%(model_name)s with this %(field_label)s already exists."
-msgstr ""
-
-#. Translators: The 'lookup_type' is one of 'date', 'year' or
-#. 'month'. Eg: "Title must be unique for pub_date year"
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:135
-#, python-format
-msgid ""
-"%(field_label)s must be unique for %(date_field_label)s %(lookup_type)s."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:173
-#, python-format
-msgid "Field of type: %(field_type)s"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:1094
-#, python-format
-msgid "“%(value)s” value must be either True or False."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:1095
-#, python-format
-msgid "“%(value)s” value must be either True, False, or None."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:1097
-msgid "Boolean (Either True or False)"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:1147
-#, python-format
-msgid "String (up to %(max_length)s)"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:1149
-msgid "String (unlimited)"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:1253
-msgid "Comma-separated integers"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:1354
-#, python-format
-msgid ""
-"“%(value)s” value has an invalid date format. It must be in YYYY-MM-DD "
-"format."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:1358
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:1493
-#, python-format
-msgid ""
-"“%(value)s” value has the correct format (YYYY-MM-DD) but it is an invalid "
-"date."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:1362
-msgid "Date (without time)"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:1489
-#, python-format
-msgid ""
-"“%(value)s” value has an invalid format. It must be in YYYY-MM-DD HH:MM[:ss[."
-"uuuuuu]][TZ] format."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:1497
-#, python-format
-msgid ""
-"“%(value)s” value has the correct format (YYYY-MM-DD HH:MM[:ss[.uuuuuu]]"
-"[TZ]) but it is an invalid date/time."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:1502
-msgid "Date (with time)"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:1626
-#, python-format
-msgid "“%(value)s” value must be a decimal number."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:1628
-msgid "Decimal number"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:1789
-#, python-format
-msgid ""
-"“%(value)s” value has an invalid format. It must be in [DD] [[HH:]MM:]ss[."
-"uuuuuu] format."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:1793
-msgid "Duration"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:1845
-msgid "Email address"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:1870
-msgid "File path"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:1948
-#, python-format
-msgid "“%(value)s” value must be a float."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:1950
-msgid "Floating point number"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:1990
-#, python-format
-msgid "“%(value)s” value must be an integer."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:1992
-msgid "Integer"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:2088
-msgid "Big (8 byte) integer"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:2105
-msgid "Small integer"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:2113
-msgid "IPv4 address"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:2144
-msgid "IP address"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:2237
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:2238
-#, python-format
-msgid "“%(value)s” value must be either None, True or False."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:2240
-msgid "Boolean (Either True, False or None)"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:2291
-msgid "Positive big integer"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:2306
-msgid "Positive integer"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:2321
-msgid "Positive small integer"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:2337
-#, python-format
-msgid "Slug (up to %(max_length)s)"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:2373
-msgid "Text"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:2448
-#, python-format
-msgid ""
-"“%(value)s” value has an invalid format. It must be in HH:MM[:ss[.uuuuuu]] "
-"format."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:2452
-#, python-format
-msgid ""
-"“%(value)s” value has the correct format (HH:MM[:ss[.uuuuuu]]) but it is an "
-"invalid time."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:2456
-msgid "Time"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:2564
-#: venv/lib/python3.9/site-packages/easyaudit/models.py:87
-msgid "URL"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:2588
-msgid "Raw binary data"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:2653
-#, python-format
-msgid "“%(value)s” is not a valid UUID."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/__init__.py:2655
-msgid "Universally unique identifier"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/files.py:232
-msgid "File"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/json.py:26
-msgid "A JSON object"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/json.py:28
-msgid "Value must be valid JSON."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/related.py:919
-#, python-format
-msgid "%(model)s instance with %(field)s %(value)r does not exist."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/related.py:921
-msgid "Foreign Key (type determined by related field)"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/related.py:1212
-msgid "One-to-one relationship"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/related.py:1269
-#, python-format
-msgid "%(from)s-%(to)s relationship"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/related.py:1271
-#, python-format
-msgid "%(from)s-%(to)s relationships"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/db/models/fields/related.py:1319
-msgid "Many-to-many relationship"
-msgstr ""
-
-#. Translators: If found as last label character, these punctuation
-#. characters will prevent the default label_suffix to be appended to the label
-#: venv/lib/python3.9/site-packages/django/forms/boundfield.py:184
-msgid ":?.!"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/forms/fields.py:91
-msgid "This field is required."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/forms/fields.py:298
-msgid "Enter a whole number."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/forms/fields.py:467
-#: venv/lib/python3.9/site-packages/django/forms/fields.py:1241
-msgid "Enter a valid date."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/forms/fields.py:490
-#: venv/lib/python3.9/site-packages/django/forms/fields.py:1242
-msgid "Enter a valid time."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/forms/fields.py:517
-msgid "Enter a valid date/time."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/forms/fields.py:551
-msgid "Enter a valid duration."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/forms/fields.py:552
-#, python-brace-format
-msgid "The number of days must be between {min_days} and {max_days}."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/forms/fields.py:621
-msgid "No file was submitted. Check the encoding type on the form."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/forms/fields.py:622
-msgid "No file was submitted."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/forms/fields.py:623
-msgid "The submitted file is empty."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/forms/fields.py:625
-#, python-format
-msgid "Ensure this filename has at most %(max)d character (it has %(length)d)."
-msgid_plural ""
-"Ensure this filename has at most %(max)d characters (it has %(length)d)."
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.9/site-packages/django/forms/fields.py:630
-msgid "Please either submit a file or check the clear checkbox, not both."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/forms/fields.py:694
-msgid ""
-"Upload a valid image. The file you uploaded was either not an image or a "
-"corrupted image."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/forms/fields.py:857
-#: venv/lib/python3.9/site-packages/django/forms/fields.py:949
-#: venv/lib/python3.9/site-packages/django/forms/models.py:1566
-#, python-format
-msgid "Select a valid choice. %(value)s is not one of the available choices."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/forms/fields.py:951
-#: venv/lib/python3.9/site-packages/django/forms/fields.py:1070
-#: venv/lib/python3.9/site-packages/django/forms/models.py:1564
-msgid "Enter a list of values."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/forms/fields.py:1071
-msgid "Enter a complete value."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/forms/fields.py:1310
-msgid "Enter a valid UUID."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/forms/fields.py:1340
-msgid "Enter a valid JSON."
-msgstr ""
-
-#. Translators: This is the default suffix added to form field labels
-#: venv/lib/python3.9/site-packages/django/forms/forms.py:98
-msgid ":"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/forms/forms.py:244
-#: venv/lib/python3.9/site-packages/django/forms/forms.py:328
-#, python-format
-msgid "(Hidden field %(name)s) %(error)s"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/forms/formsets.py:63
-#, python-format
-msgid ""
-"ManagementForm data is missing or has been tampered with. Missing fields: "
-"%(field_names)s. You may need to file a bug report if the issue persists."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/forms/formsets.py:67
-#, python-format
-msgid "Please submit at most %(num)d form."
-msgid_plural "Please submit at most %(num)d forms."
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.9/site-packages/django/forms/formsets.py:72
-#, python-format
-msgid "Please submit at least %(num)d form."
-msgid_plural "Please submit at least %(num)d forms."
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.9/site-packages/django/forms/formsets.py:484
-#: venv/lib/python3.9/site-packages/django/forms/formsets.py:491
-msgid "Order"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/forms/formsets.py:499
-#: venv/lib/python3.9/site-packages/easyaudit/models.py:23
-msgid "Delete"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/forms/models.py:886
-#, python-format
-msgid "Please correct the duplicate data for %(field)s."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/forms/models.py:891
-#, python-format
-msgid "Please correct the duplicate data for %(field)s, which must be unique."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/forms/models.py:898
-#, python-format
-msgid ""
-"Please correct the duplicate data for %(field_name)s which must be unique "
-"for the %(lookup)s in %(date_field)s."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/forms/models.py:907
-msgid "Please correct the duplicate values below."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/forms/models.py:1338
-msgid "The inline value did not match the parent instance."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/forms/models.py:1429
-msgid "Select a valid choice. That choice is not one of the available choices."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/forms/models.py:1568
-#, python-format
-msgid "“%(pk)s” is not a valid value."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/forms/utils.py:226
-#, python-format
-msgid ""
-"%(datetime)s couldn’t be interpreted in time zone %(current_timezone)s; it "
-"may be ambiguous or it may not exist."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/forms/widgets.py:463
-msgid "Clear"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/forms/widgets.py:464
-msgid "Currently"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/forms/widgets.py:465
-msgid "Change"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/forms/widgets.py:794
-msgid "Unknown"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/forms/widgets.py:795
-msgid "Yes"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/forms/widgets.py:796
-msgid "No"
-msgstr ""
-
-#. Translators: Please do not add spaces around commas.
-#: venv/lib/python3.9/site-packages/django/template/defaultfilters.py:874
-msgid "yes,no,maybe"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/template/defaultfilters.py:904
-#: venv/lib/python3.9/site-packages/django/template/defaultfilters.py:921
-#, python-format
-msgid "%(size)d byte"
-msgid_plural "%(size)d bytes"
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.9/site-packages/django/template/defaultfilters.py:923
-#, python-format
-msgid "%s KB"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/template/defaultfilters.py:925
-#, python-format
-msgid "%s MB"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/template/defaultfilters.py:927
-#, python-format
-msgid "%s GB"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/template/defaultfilters.py:929
-#, python-format
-msgid "%s TB"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/template/defaultfilters.py:931
-#, python-format
-msgid "%s PB"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dateformat.py:73
-msgid "p.m."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dateformat.py:74
-msgid "a.m."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dateformat.py:79
-msgid "PM"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dateformat.py:80
-msgid "AM"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dateformat.py:152
-msgid "midnight"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dateformat.py:154
-msgid "noon"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:7
-msgid "Monday"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:8
-msgid "Tuesday"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:9
-msgid "Wednesday"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:10
-msgid "Thursday"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:11
-msgid "Friday"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:12
-msgid "Saturday"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:13
-msgid "Sunday"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:16
-msgid "Mon"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:17
-msgid "Tue"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:18
-msgid "Wed"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:19
-msgid "Thu"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:20
-msgid "Fri"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:21
-msgid "Sat"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:22
-msgid "Sun"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:39
-msgid "jan"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:40
-msgid "feb"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:41
-msgid "mar"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:42
-msgid "apr"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:43
-msgid "may"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:44
-msgid "jun"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:45
-msgid "jul"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:46
-msgid "aug"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:47
-msgid "sep"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:48
-msgid "oct"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:49
-msgid "nov"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:50
-msgid "dec"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:53
-msgctxt "abbrev. month"
-msgid "Jan."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:54
-msgctxt "abbrev. month"
-msgid "Feb."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:55
-msgctxt "abbrev. month"
-msgid "March"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:56
-msgctxt "abbrev. month"
-msgid "April"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:57
-msgctxt "abbrev. month"
-msgid "May"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:58
-msgctxt "abbrev. month"
-msgid "June"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:59
-msgctxt "abbrev. month"
-msgid "July"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:60
-msgctxt "abbrev. month"
-msgid "Aug."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:61
-msgctxt "abbrev. month"
-msgid "Sept."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:62
-msgctxt "abbrev. month"
-msgid "Oct."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:63
-msgctxt "abbrev. month"
-msgid "Nov."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:64
-msgctxt "abbrev. month"
-msgid "Dec."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:67
-msgctxt "alt. month"
-msgid "January"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:68
-msgctxt "alt. month"
-msgid "February"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:69
-msgctxt "alt. month"
-msgid "March"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:70
-msgctxt "alt. month"
-msgid "April"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:71
-msgctxt "alt. month"
-msgid "May"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:72
-msgctxt "alt. month"
-msgid "June"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:73
-msgctxt "alt. month"
-msgid "July"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:74
-msgctxt "alt. month"
-msgid "August"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:75
-msgctxt "alt. month"
-msgid "September"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:76
-msgctxt "alt. month"
-msgid "October"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:77
-msgctxt "alt. month"
-msgid "November"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/dates.py:78
-msgctxt "alt. month"
-msgid "December"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/ipv6.py:8
-msgid "This is not a valid IPv6 address."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/text.py:137
-#, python-format
-msgctxt "String to return when truncating text"
-msgid "%(truncated_text)s…"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/text.py:322
-msgid "or"
-msgstr ""
-
-#. Translators: This string is used as a separator between list elements
-#: venv/lib/python3.9/site-packages/django/utils/text.py:341
-#: venv/lib/python3.9/site-packages/django/utils/timesince.py:135
-msgid ", "
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/utils/timesince.py:8
-#, python-format
-msgid "%(num)d year"
-msgid_plural "%(num)d years"
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.9/site-packages/django/utils/timesince.py:9
-#, python-format
-msgid "%(num)d month"
-msgid_plural "%(num)d months"
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.9/site-packages/django/utils/timesince.py:10
-#, python-format
-msgid "%(num)d week"
-msgid_plural "%(num)d weeks"
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.9/site-packages/django/utils/timesince.py:11
-#, python-format
-msgid "%(num)d day"
-msgid_plural "%(num)d days"
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.9/site-packages/django/utils/timesince.py:12
-#, python-format
-msgid "%(num)d hour"
-msgid_plural "%(num)d hours"
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.9/site-packages/django/utils/timesince.py:13
-#, python-format
-msgid "%(num)d minute"
-msgid_plural "%(num)d minutes"
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.9/site-packages/django/views/csrf.py:111
-msgid "Forbidden"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/views/csrf.py:112
-msgid "CSRF verification failed. Request aborted."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/views/csrf.py:116
-msgid ""
-"You are seeing this message because this HTTPS site requires a “Referer "
-"header” to be sent by your web browser, but none was sent. This header is "
-"required for security reasons, to ensure that your browser is not being "
-"hijacked by third parties."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/views/csrf.py:122
-msgid ""
-"If you have configured your browser to disable “Referer” headers, please re-"
-"enable them, at least for this site, or for HTTPS connections, or for “same-"
-"origin” requests."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/views/csrf.py:127
-msgid ""
-"If you are using the <meta name=\"referrer\" content=\"no-referrer\"> tag or "
-"including the “Referrer-Policy: no-referrer” header, please remove them. The "
-"CSRF protection requires the “Referer” header to do strict referer checking. "
-"If you’re concerned about privacy, use alternatives like <a "
-"rel=\"noreferrer\" …> for links to third-party sites."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/views/csrf.py:136
-msgid ""
-"You are seeing this message because this site requires a CSRF cookie when "
-"submitting forms. This cookie is required for security reasons, to ensure "
-"that your browser is not being hijacked by third parties."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/views/csrf.py:142
-msgid ""
-"If you have configured your browser to disable cookies, please re-enable "
-"them, at least for this site, or for “same-origin” requests."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/views/csrf.py:148
-msgid "More information is available with DEBUG=True."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/views/generic/dates.py:44
-msgid "No year specified"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/views/generic/dates.py:64
-#: venv/lib/python3.9/site-packages/django/views/generic/dates.py:115
-#: venv/lib/python3.9/site-packages/django/views/generic/dates.py:214
-msgid "Date out of range"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/views/generic/dates.py:94
-msgid "No month specified"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/views/generic/dates.py:147
-msgid "No day specified"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/views/generic/dates.py:194
-msgid "No week specified"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/views/generic/dates.py:349
-#: venv/lib/python3.9/site-packages/django/views/generic/dates.py:380
-#, python-format
-msgid "No %(verbose_name_plural)s available"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/views/generic/dates.py:652
-#, python-format
-msgid ""
-"Future %(verbose_name_plural)s not available because %(class_name)s."
-"allow_future is False."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/views/generic/dates.py:692
-#, python-format
-msgid "Invalid date string “%(datestr)s” given format “%(format)s”"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/views/generic/detail.py:56
-#, python-format
-msgid "No %(verbose_name)s found matching the query"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/views/generic/list.py:70
-msgid "Page is not “last”, nor can it be converted to an int."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/views/generic/list.py:77
-#, python-format
-msgid "Invalid page (%(page_number)s): %(message)s"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/views/generic/list.py:169
-#, python-format
-msgid "Empty list and “%(class_name)s.allow_empty” is False."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/views/static.py:38
-msgid "Directory indexes are not allowed here."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/views/static.py:40
-#, python-format
-msgid "“%(path)s” does not exist"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/views/static.py:79
-#, python-format
-msgid "Index of %(directory)s"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/views/templates/default_urlconf.html:7
-#: venv/lib/python3.9/site-packages/django/views/templates/default_urlconf.html:220
-msgid "The install worked successfully! Congratulations!"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/views/templates/default_urlconf.html:206
-#, python-format
-msgid ""
-"View <a href=\"https://docs.djangoproject.com/en/%(version)s/releases/\" "
-"target=\"_blank\" rel=\"noopener\">release notes</a> for Django %(version)s"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/views/templates/default_urlconf.html:221
-#, python-format
-msgid ""
-"You are seeing this page because <a href=\"https://docs.djangoproject.com/en/"
-"%(version)s/ref/settings/#debug\" target=\"_blank\" "
-"rel=\"noopener\">DEBUG=True</a> is in your settings file and you have not "
-"configured any URLs."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/views/templates/default_urlconf.html:229
-msgid "Django Documentation"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/views/templates/default_urlconf.html:230
-msgid "Topics, references, &amp; how-to’s"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/views/templates/default_urlconf.html:238
-msgid "Tutorial: A Polling App"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/views/templates/default_urlconf.html:239
-msgid "Get started with Django"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/views/templates/default_urlconf.html:247
-msgid "Django Community"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django/views/templates/default_urlconf.html:248
-msgid "Connect, get help, or contribute"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django_ckeditor_5/views.py:77
-msgid "Page not found."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/django_ckeditor_5/widgets.py:43
-msgid "Check the correct settings.CKEDITOR_5_CONFIGS "
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/admin_helpers.py:122
-#, python-format
-msgid "Successfully removed %d rows"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/admin_helpers.py:124
-msgid "ERROR"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/admin_helpers.py:126
-msgid "Action cancelled by user"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/admin_helpers.py:130
-#, python-format
-msgid "Purge all %s ... are you sure?"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/crudhistory_admin_mixin.py:43
-msgid "CRUD history"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/models.py:21
-msgid "Create"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/models.py:22
-msgid "Update"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/models.py:24
-msgid "Many-to-Many Change"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/models.py:25
-msgid "Reverse Many-to-Many Change"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/models.py:26
-msgid "Many-to-Many Add"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/models.py:27
-msgid "Reverse Many-to-Many Add"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/models.py:28
-msgid "Many-to-Many Remove"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/models.py:29
-msgid "Reverse Many-to-Many Remove"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/models.py:30
-msgid "Many-to-Many Clear"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/models.py:31
-msgid "Reverse Many-to-Many Clear"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/models.py:34
-#: venv/lib/python3.9/site-packages/easyaudit/models.py:72
-msgid "Event type"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/models.py:35
-msgid "Object ID"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/models.py:36
-msgid "Content type"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/models.py:37
-msgid "Object representation"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/models.py:38
-msgid "Object JSON representation"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/models.py:39
-msgid "Changed fields"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/models.py:42
-#: venv/lib/python3.9/site-packages/easyaudit/models.py:76
-#: venv/lib/python3.9/site-packages/easyaudit/models.py:92
-msgid "User"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/models.py:44
-msgid "String version of the user pk"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/models.py:44
-msgid "User PK as string"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/models.py:45
-#: venv/lib/python3.9/site-packages/easyaudit/models.py:78
-#: venv/lib/python3.9/site-packages/easyaudit/models.py:94
-msgid "Date time"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/models.py:57
-msgid "CRUD event"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/models.py:58
-msgid "CRUD events"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/models.py:68
-msgid "Login"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/models.py:69
-msgid "Logout"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/models.py:70
-msgid "Failed login"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/models.py:73
-msgid "Username"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/models.py:77
-#: venv/lib/python3.9/site-packages/easyaudit/models.py:93
-msgid "Remote IP"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/models.py:81
-msgid "login event"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/models.py:82
-msgid "login events"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/models.py:88
-msgid "Method"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/models.py:89
-msgid "Query string"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/models.py:97
-msgid "request event"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/models.py:98
-msgid "request events"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/templates/admin/easyaudit/change_list.html:10
-#, python-format
-msgid "Purge %(name)s"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/templates/admin/easyaudit/purge_confirmation.html:7
-msgid "Home"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/templates/admin/easyaudit/purge_confirmation.html:10
-msgid "Purge"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/templates/admin/easyaudit/purge_confirmation.html:19
-msgid "Please confirm deletion"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/templates/admin/easyaudit/purge_confirmation.html:20
-msgid ""
-"This operation is destructive, cannot be undone and may require some minutes."
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/templates/admin/easyaudit/purge_confirmation.html:21
-msgid "Are you sure you want to permanently remove all objects ?"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/templates/admin/easyaudit/purge_confirmation.html:25
-msgid "Yes, I\\"
-msgstr ""
-
-#: venv/lib/python3.9/site-packages/easyaudit/templates/admin/easyaudit/purge_confirmation.html:26
+#: templates/account/password_change.html:37
+#: templates/account/password_change.html:58
+#: templates/account/password_change.html:105
+msgid "Toggle password visibility"
+msgstr ""
+
+#: templates/account/password_change.html:119
+#: templates/account/password_reset.html:66
+#: templates/includes/delete_script.html:13
+#: templates/users/account/list.html:269 templates/users/settings.html:84
 msgid "Cancel"
 msgstr ""
 
-#: venv/lib/python3.9/site-packages/isort/main.py:158
-msgid "show this help message and exit"
+#: templates/account/password_change.html:122
+msgid "Update Password"
+msgstr ""
+
+#: templates/account/password_change.html:145
+#: templates/account/password_change.html:146
+msgid "Weak"
+msgstr ""
+
+#: templates/account/password_change.html:147
+msgid "Fair"
+msgstr ""
+
+#: templates/account/password_change.html:148
+msgid "Good"
+msgstr ""
+
+#: templates/account/password_change.html:149
+msgid "Strong"
+msgstr ""
+
+#: templates/account/password_change.html:200
+msgid "Passwords match"
+msgstr ""
+
+#: templates/account/password_change.html:201
+msgid "Passwords do not match"
+msgstr ""
+
+#: templates/account/password_reset.html:6
+#: templates/account/password_reset_done.html:5
+msgid "Password Reset"
+msgstr ""
+
+#: templates/account/password_reset.html:18
+msgid "Reset your password"
+msgstr ""
+
+#: templates/account/password_reset.html:21
+msgid ""
+"Enter your email address and we'll send you instructions to reset your "
+"password."
+msgstr ""
+
+#: templates/account/password_reset.html:32
+#: templates/account/password_reset_done.html:31
+msgid "Password Recovery"
+msgstr ""
+
+#: templates/account/password_reset.html:60
+msgid "Submit"
+msgstr ""
+
+#: templates/account/password_reset_done.html:17
+msgid "Check your email"
+msgstr ""
+
+#: templates/account/password_reset_done.html:20
+msgid "We've sent you the instructions to reset your password."
+msgstr ""
+
+#: templates/account/password_reset_done.html:33
+msgid "Password Reset Sent"
+msgstr ""
+
+#: templates/account/password_reset_done.html:41
+msgid ""
+"We have sent you an email. If you have not received it please check your "
+"spam folder."
+msgstr ""
+
+#: templates/account/password_reset_done.html:42
+msgid "Otherwise contact us if you do not receive it in a few minutes."
+msgstr ""
+
+#: templates/account/password_reset_from_key.html:18
+msgid "Setup New Password"
+msgstr ""
+
+#: templates/account/password_reset_from_key.html:23
+#, python-format
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used. Please request a <a href=\"%(passwd_reset_url)s\" "
+"class=\"underline\">new password reset</a>."
+msgstr ""
+
+#: templates/account/password_reset_from_key.html:41
+msgid "New Password"
+msgstr ""
+
+#: templates/account/password_reset_from_key.html:45
+msgid "Use 8 or more characters with a mix of letters, numbers & symbols."
+msgstr ""
+
+#: templates/account/password_reset_from_key.html:51
+msgid "Confirm Password"
+msgstr ""
+
+#: templates/account/password_reset_from_key_done.html:18
+msgid "Password Changed"
+msgstr ""
+
+#: templates/account/password_reset_from_key_done.html:20
+msgid ""
+"Your password has been successfully changed. You can now sign in to your "
+"account."
+msgstr ""
+
+#: templates/account/signup.html:7
+msgid "Signup"
+msgstr ""
+
+#: templates/account/signup.html:20
+msgid "Join our platform"
+msgstr ""
+
+#: templates/account/signup.html:23
+msgid ""
+"Create an account to start managing your laboratory processes and track your "
+"samples."
+msgstr ""
+
+#: templates/account/signup.html:34
+msgid "Get started"
+msgstr ""
+
+#: templates/account/signup.html:36 templates/account/signup.html:115
+msgid "Create Account"
+msgstr ""
+
+#: templates/account/signup.html:121
+msgid "Already have an account?"
+msgstr ""
+
+#: templates/account/verification_sent.html:6
+msgid "Verify Your Email Address"
+msgstr ""
+
+#: templates/account/verification_sent.html:18
+msgid "Verify Your Email"
+msgstr ""
+
+#: templates/account/verification_sent.html:20
+msgid "We have sent a verification email to your address."
+msgstr ""
+
+#: templates/account/verification_sent.html:21
+msgid "Please follow the link in that email to complete your registration."
+msgstr ""
+
+#: templates/alerts/alert/detail.html:22
+#: templates/equipment/branch/detail.html:18
+#: templates/equipment/component_type/detail.html:18
+#: templates/equipment/fleet/detail.html:18
+#: templates/equipment/machine/detail.html:18
+#: templates/reports/analysis_threshold/detail.html:18
+#: templates/reports/laboratory/detail.html:18
+#: templates/reports/report/detail.html:25
+#: templates/reports/report/export.html:23
+msgid "Back"
+msgstr ""
+
+#: templates/alerts/alert/detail.html:26
+msgid "Edit Alert"
+msgstr ""
+
+#: templates/alerts/alert/detail.html:35
+#: templates/equipment/branch/detail.html:31
+#: templates/equipment/component_type/detail.html:31
+#: templates/equipment/fleet/detail.html:31
+#: templates/equipment/machine/detail.html:31
+#: templates/reports/analysis_threshold/detail.html:30
+#: templates/reports/laboratory/detail.html:31
+msgid "Information"
+msgstr ""
+
+#: templates/alerts/alert/detail.html:50
+msgid "Source Report"
+msgstr ""
+
+#: templates/alerts/alert/detail.html:71
+msgid "Reading and Limits"
+msgstr ""
+
+#: templates/alerts/alert/detail.html:74
+msgid "Measured Value"
+msgstr ""
+
+#: templates/alerts/alert/detail.html:89
+msgid "Lifecycle"
+msgstr ""
+
+#: templates/alerts/alert/detail.html:110
+msgid "Notifications"
+msgstr ""
+
+#: templates/alerts/alert/detail.html:118
+msgid "No notifications have been sent for this alert."
+msgstr ""
+
+#: templates/alerts/alert/list.html:16
+msgid "Alerts Center"
+msgstr ""
+
+#: templates/alerts/alert/list.html:19
+msgid "Monitor and manage the alerts generated from laboratory reports."
+msgstr ""
+
+#: templates/alerts/alert/list.html:51
+msgid "Search by parameter, machine or key..."
+msgstr ""
+
+#: templates/alerts/alert/list.html:70 templates/equipment/branch/list.html:46
+#: templates/equipment/component_type/list.html:46
+#: templates/equipment/fleet/list.html:46
+#: templates/equipment/machine/list.html:54
+#: templates/reports/analysis_threshold/list.html:50
+#: templates/reports/laboratory/list.html:46
+#: templates/reports/report/list.html:64
+msgid "Apply"
+msgstr ""
+
+#: templates/alerts/alert/list.html:81 templates/reports/report/list.html:75
+msgid "Advanced filters"
+msgstr ""
+
+#: templates/alerts/alert/list.html:110
+msgid ""
+"Search by parameter, machine or key, then refine with the advanced filters."
+msgstr ""
+
+#: templates/alerts/alert/list.html:113 templates/reports/report/list.html:107
+msgid "Clear all filters"
+msgstr ""
+
+#: templates/alerts/alert/list.html:129 templates/reports/report/list.html:120
+msgid "Machine / Component"
+msgstr ""
+
+#: templates/alerts/alert/list.html:138 templates/equipment/branch/list.html:68
+#: templates/equipment/component_type/list.html:68
+#: templates/equipment/fleet/list.html:65
+#: templates/equipment/machine/list.html:79
+#: templates/reports/analysis_threshold/list.html:78
+#: templates/reports/laboratory/list.html:71
+#: templates/reports/report/list.html:132 templates/users/account/list.html:110
+msgid "Management"
+msgstr ""
+
+#: templates/alerts/alert/list.html:178
+msgid "No alerts found"
+msgstr ""
+
+#: templates/alerts/alert/list.html:179
+msgid ""
+"We couldn't find any alerts matching your search. Try adjusting your "
+"criteria."
+msgstr ""
+
+#: templates/alerts/alert/list.html:193
+msgid "Delete Alert"
+msgstr ""
+
+#: templates/alerts/alert/list.html:194
+msgid "Alert deleted successfully."
+msgstr ""
+
+#: templates/alerts/email/alert_notification.html:5
+msgid "Alert notification"
+msgstr ""
+
+#: templates/alerts/email/alert_notification.html:10
+msgid "Condition alerts detected"
+msgstr ""
+
+#: templates/alerts/email/alert_notification.html:14
+msgid "The following alerts were generated from laboratory reports:"
+msgstr ""
+
+#: templates/dashboard/includes/charts.html:4
+msgid "Condition Distribution"
+msgstr ""
+
+#: templates/dashboard/includes/charts.html:5
+msgid "Condition distribution"
+msgstr ""
+
+#: templates/dashboard/includes/charts.html:8
+msgid "Samples per Month"
+msgstr ""
+
+#: templates/dashboard/includes/charts.html:9
+msgid "Samples per month"
+msgstr ""
+
+#: templates/dashboard/includes/charts.html:12
+msgid "Alerts by Fleet"
+msgstr ""
+
+#: templates/dashboard/includes/charts.html:13
+msgid "Alerts by fleet"
+msgstr ""
+
+#: templates/dashboard/includes/charts.html:16
+msgid "Alerts over Time"
+msgstr ""
+
+#: templates/dashboard/includes/charts.html:17
+msgid "Alerts over time"
+msgstr ""
+
+#: templates/dashboard/includes/charts.html:20
+msgid "ISO 4406 Distribution"
+msgstr ""
+
+#: templates/dashboard/includes/charts.html:21
+msgid "ISO 4406 distribution"
+msgstr ""
+
+#: templates/dashboard/includes/filters.html:7
+#: templates/dashboard/includes/filters.html:16
+#: templates/dashboard/includes/filters.html:25
+#: templates/dashboard/includes/filters.html:34
+msgid "All"
+msgstr ""
+
+#: templates/dashboard/includes/filters.html:41
+msgid "Reset"
+msgstr ""
+
+#: templates/dashboard/includes/filters.html:44
+#: templates/dashboard/includes/kpis.html:13
+msgid "samples"
+msgstr ""
+
+#: templates/dashboard/includes/kpis.html:5
+msgid "Total Samples"
+msgstr ""
+
+#: templates/dashboard/includes/kpis.html:7
+#: templates/reports/report/export.html:164
+msgid "records"
+msgstr ""
+
+#: templates/dashboard/includes/kpis.html:17
+msgid "Precaution"
+msgstr ""
+
+#: templates/dashboard/includes/kpis.html:19
+msgid "monitor"
+msgstr ""
+
+#: templates/dashboard/includes/kpis.html:25
+msgid "action required"
+msgstr ""
+
+#: templates/dashboard/includes/kpis.html:29
+msgid "Non-Conformance Rate"
+msgstr ""
+
+#: templates/dashboard/includes/kpis.html:31
+msgid "alert + precaution"
+msgstr ""
+
+#: templates/dashboard/includes/tabs.html:4
+msgid "Summary"
+msgstr ""
+
+#: templates/dashboard/includes/tabs.html:5
+msgid "Trends"
+msgstr ""
+
+#: templates/dashboard/includes/tabs.html:6
+msgid "Wear"
+msgstr ""
+
+#: templates/dashboard/includes/tabs.html:10
+msgid "Data Table"
+msgstr ""
+
+#: templates/dashboard/includes/tabs.html:11
+msgid "References"
+msgstr ""
+
+#: templates/dashboard/includes/tabs.html:20
+msgid "Trend analysis will reuse the monthly series above."
+msgstr ""
+
+#: templates/dashboard/includes/tabs.html:23
+msgid "Wear metal trends (Fe, Cu, Al, Cr, Pb)."
+msgstr ""
+
+#: templates/dashboard/includes/tabs.html:26
+msgid "Contaminants (Si, Na, K) and water/fuel ingress."
+msgstr ""
+
+#: templates/dashboard/includes/tabs.html:29
+msgid "Viscosity, TBN/TAN and oxidation status."
+msgstr ""
+
+#: templates/dashboard/includes/tabs.html:32
+msgid "Recent Samples"
+msgstr ""
+
+#: templates/dashboard/includes/tabs.html:37
+msgid "Lab No."
+msgstr ""
+
+#: templates/dashboard/includes/tabs.html:41
+msgid "Date"
+msgstr ""
+
+#: templates/dashboard/includes/tabs.html:56
+msgid "No samples found."
+msgstr ""
+
+#: templates/dashboard/includes/tabs.html:63
+msgid "ISO 4406 target"
+msgstr ""
+
+#: templates/dashboard/includes/tabs.html:63
+msgid "Codes above the limit are flagged in red."
+msgstr ""
+
+#: templates/dashboard/index.html:5 templates/dashboard/index.html:6
+msgid "Oil Analysis"
+msgstr ""
+
+#: templates/equipment/branch/detail.html:14
+msgid "Branch details and machines at this location."
+msgstr ""
+
+#: templates/equipment/branch/detail.html:22
+msgid "Edit Branch"
+msgstr ""
+
+#: templates/equipment/branch/detail.html:64
+msgid "Country"
+msgstr ""
+
+#: templates/equipment/branch/detail.html:68
+msgid "Region"
+msgstr ""
+
+#: templates/equipment/branch/detail.html:76
+msgid "City"
+msgstr ""
+
+#: templates/equipment/branch/detail.html:98
+msgid "No machines assigned to this branch."
+msgstr ""
+
+#: templates/equipment/branch/list.html:16
+msgid "Branch Management"
+msgstr ""
+
+#: templates/equipment/branch/list.html:19
+msgid "Manage the physical locations where your machines operate."
+msgstr ""
+
+#: templates/equipment/branch/list.html:26
+msgid "Create Branch"
+msgstr ""
+
+#: templates/equipment/branch/list.html:37
+msgid "Search branches by name or address..."
+msgstr ""
+
+#: templates/equipment/branch/list.html:49
+#: templates/equipment/component_type/list.html:49
+#: templates/equipment/fleet/list.html:49
+msgid "Clear"
+msgstr ""
+
+#: templates/equipment/branch/list.html:94
+msgid "No branches found"
+msgstr ""
+
+#: templates/equipment/branch/list.html:95
+msgid ""
+"We couldn't find any branches matching your search. Try adjusting your "
+"criteria or create a new branch."
+msgstr ""
+
+#: templates/equipment/branch/list.html:109
+msgid "Delete Branch"
+msgstr ""
+
+#: templates/equipment/branch/list.html:110
+msgid "Branch deleted successfully."
+msgstr ""
+
+#: templates/equipment/component_type/detail.html:14
+msgid "Component type details and installed components."
+msgstr ""
+
+#: templates/equipment/component_type/detail.html:22
+msgid "Edit Component Type"
+msgstr ""
+
+#: templates/equipment/component_type/detail.html:53
+msgid "Installed Components"
+msgstr ""
+
+#: templates/equipment/component_type/detail.html:69
+msgid "No components use this type yet."
+msgstr ""
+
+#: templates/equipment/component_type/list.html:16
+msgid "Component Type Management"
+msgstr ""
+
+#: templates/equipment/component_type/list.html:19
+msgid "Catalog the kinds of components that can be installed in machines."
+msgstr ""
+
+#: templates/equipment/component_type/list.html:26
+msgid "Create Component Type"
+msgstr ""
+
+#: templates/equipment/component_type/list.html:37
+msgid "Search component types..."
+msgstr ""
+
+#: templates/equipment/component_type/list.html:92
+msgid "No component types found"
+msgstr ""
+
+#: templates/equipment/component_type/list.html:93
+msgid ""
+"We couldn't find any component types matching your search. Try adjusting "
+"your criteria or create a new one."
+msgstr ""
+
+#: templates/equipment/component_type/list.html:107
+msgid "Delete Component Type"
+msgstr ""
+
+#: templates/equipment/component_type/list.html:108
+msgid "Component type deleted successfully."
+msgstr ""
+
+#: templates/equipment/fleet/detail.html:14
+msgid "Fleet details and assigned machines."
+msgstr ""
+
+#: templates/equipment/fleet/detail.html:22
+msgid "Edit Fleet"
+msgstr ""
+
+#: templates/equipment/fleet/detail.html:44
+msgid "Created"
+msgstr ""
+
+#: templates/equipment/fleet/detail.html:67
+msgid "No machines assigned to this fleet."
+msgstr ""
+
+#: templates/equipment/fleet/list.html:16
+msgid "Fleet Management"
+msgstr ""
+
+#: templates/equipment/fleet/list.html:19
+msgid "Group machines into fleets to organize maintenance and monitoring."
+msgstr ""
+
+#: templates/equipment/fleet/list.html:26
+msgid "Create Fleet"
+msgstr ""
+
+#: templates/equipment/fleet/list.html:37
+msgid "Search fleets by name..."
+msgstr ""
+
+#: templates/equipment/fleet/list.html:86
+msgid "No fleets found"
+msgstr ""
+
+#: templates/equipment/fleet/list.html:87
+msgid ""
+"We couldn't find any fleets matching your search. Try adjusting your "
+"criteria or create a new fleet."
+msgstr ""
+
+#: templates/equipment/fleet/list.html:101
+msgid "Delete Fleet"
+msgstr ""
+
+#: templates/equipment/fleet/list.html:102
+msgid "Fleet deleted successfully."
+msgstr ""
+
+#: templates/equipment/machine/detail.html:22
+msgid "Edit Machine"
+msgstr ""
+
+#: templates/equipment/machine/detail.html:92
+msgid "Unknown Type"
+msgstr ""
+
+#: templates/equipment/machine/detail.html:102
+msgid "No components installed in this machine."
+msgstr ""
+
+#: templates/equipment/machine/includes/formset.html:8
+msgid "Add Component"
+msgstr ""
+
+#: templates/equipment/machine/includes/formset.html:27
+msgid "No components added yet."
+msgstr ""
+
+#: templates/equipment/machine/includes/formset_row.html:19
+msgid "Remove component"
+msgstr ""
+
+#: templates/equipment/machine/list.html:16
+msgid "Machine Management"
+msgstr ""
+
+#: templates/equipment/machine/list.html:19
+msgid "Track industrial equipment, its location and installed components."
+msgstr ""
+
+#: templates/equipment/machine/list.html:26
+msgid "Create Machine"
+msgstr ""
+
+#: templates/equipment/machine/list.html:37
+msgid "Name, serial or model"
+msgstr ""
+
+#: templates/equipment/machine/list.html:58
+#: templates/reports/analysis_threshold/list.html:54
+#: templates/reports/laboratory/list.html:50
+msgid "Clear filters"
+msgstr ""
+
+#: templates/equipment/machine/list.html:113
+msgid "No machines found"
+msgstr ""
+
+#: templates/equipment/machine/list.html:114
+msgid ""
+"We couldn't find any machines matching your search. Try adjusting your "
+"criteria or create a new machine."
+msgstr ""
+
+#: templates/equipment/machine/list.html:128
+msgid "Delete Machine"
+msgstr ""
+
+#: templates/equipment/machine/list.html:129
+msgid "Machine deleted successfully."
+msgstr ""
+
+#: templates/errors/403.html:5
+msgid "Access Denied"
+msgstr ""
+
+#: templates/errors/403.html:11
+msgid "Forbidden"
+msgstr ""
+
+#: templates/errors/403.html:12
+msgid "You don't have permission to access this resource."
+msgstr ""
+
+#: templates/errors/403.html:16 templates/errors/404.html:16
+#: templates/errors/500.html:16
+msgid "Go back home"
+msgstr ""
+
+#: templates/errors/404.html:5
+msgid "Page not found"
+msgstr ""
+
+#: templates/errors/404.html:11
+msgid "Seems there is nothing here"
+msgstr ""
+
+#: templates/errors/404.html:12
+msgid "The page you are looking for doesn't exist or has been moved."
+msgstr ""
+
+#: templates/errors/500.html:5
+msgid "Server Error"
+msgstr ""
+
+#: templates/errors/500.html:11
+msgid "Internal Server Error"
+msgstr ""
+
+#: templates/errors/500.html:12
+msgid "Something went wrong on our end. We're working on fixing it."
+msgstr ""
+
+#: templates/includes/alerts.html:49 templates/includes/delete_script.html:29
+#: templates/users/account/list.html:290
+msgid "Error"
+msgstr ""
+
+#: templates/includes/aside.html:33
+msgid "Main Menu"
+msgstr ""
+
+#: templates/includes/aside.html:49 templates/reports/report/detail.html:71
+msgid "Equipment"
+msgstr ""
+
+#: templates/includes/aside.html:117 templates/includes/aside.html:119
+msgid "Thresholds"
+msgstr ""
+
+#: templates/includes/aside.html:143
+msgid "Administration"
+msgstr ""
+
+#: templates/includes/base_form.html:7 templates/users/account/form.html:61
+msgid "Details"
+msgstr ""
+
+#: templates/includes/base_form.html:16 templates/users/account/form.html:188
+msgid "Discard"
+msgstr ""
+
+#: templates/includes/base_form.html:19 templates/users/account/form.html:191
+#: templates/users/settings.html:88
+msgid "Save Changes"
+msgstr ""
+
+#: templates/includes/delete_script.html:9
+#: templates/users/account/list.html:303
+msgid "This action is permanent and cannot be undone."
+msgstr ""
+
+#: templates/includes/delete_script.html:12
+msgid "Yes, delete"
+msgstr ""
+
+#: templates/includes/delete_script.html:23
+#: templates/users/account/list.html:284
+msgid "Success"
+msgstr ""
+
+#: templates/includes/delete_script.html:29
+#: templates/reports/report/export.html:172
+#: templates/users/account/list.html:290
+msgid "There was a problem processing your request."
+msgstr ""
+
+#: templates/includes/footer.html:7
+msgid "Collection Instructions"
+msgstr ""
+
+#: templates/includes/footer.html:10
+msgid "FAQS"
+msgstr ""
+
+#: templates/includes/footer.html:13
+msgid "Terms of service"
+msgstr ""
+
+#: templates/includes/navbar.html:69
+msgid "My Profile"
+msgstr ""
+
+#: templates/includes/navbar.html:83 templates/users/settings.html:6
+msgid "Account Settings"
+msgstr ""
+
+#: templates/includes/navbar.html:89
+msgid "Sign Out"
+msgstr ""
+
+#: templates/includes/pagination.html:8
+#, python-format
+msgid ""
+"\n"
+"                Showing %(start)s to %(end)s of %(total)s entries\n"
+"            "
+msgstr ""
+
+#: templates/includes/pagination.html:14
+msgid "Show"
+msgstr ""
+
+#: templates/includes/pagination.html:32
+#, python-format
+msgid ""
+"\n"
+"                Page %(current)s of %(total)s\n"
+"            "
+msgstr ""
+
+#: templates/includes/pagination.html:40
+msgid "Previous"
+msgstr ""
+
+#: templates/includes/pagination.html:64
+msgid "Next"
+msgstr ""
+
+#: templates/includes/row_actions.html:5 templates/users/account/form.html:121
+msgid "View"
+msgstr ""
+
+#: templates/includes/row_actions.html:10
+msgid "Edit"
+msgstr ""
+
+#: templates/includes/row_actions.html:15 templates/users/account/form.html:130
+#: templates/users/settings.html:112
+msgid "Delete"
+msgstr ""
+
+#: templates/reports/analysis_threshold/detail.html:22
+msgid "Edit Threshold"
+msgstr ""
+
+#: templates/reports/analysis_threshold/detail.html:55
+msgid "Limits"
+msgstr ""
+
+#: templates/reports/analysis_threshold/detail.html:66
+msgid "Inverse Logic"
+msgstr ""
+
+#: templates/reports/analysis_threshold/detail.html:67
+msgid "Yes"
+msgstr ""
+
+#: templates/reports/analysis_threshold/detail.html:67
+msgid "No"
+msgstr ""
+
+#: templates/reports/analysis_threshold/list.html:16
+msgid "Analysis Threshold Management"
+msgstr ""
+
+#: templates/reports/analysis_threshold/list.html:19
+msgid ""
+"Configure the warning and critical limits used to assess oil analysis "
+"results."
+msgstr ""
+
+#: templates/reports/analysis_threshold/list.html:26
+msgid "Create Threshold"
+msgstr ""
+
+#: templates/reports/analysis_threshold/list.html:37
+msgid "Search by parameter or unit..."
+msgstr ""
+
+#: templates/reports/analysis_threshold/list.html:69
+msgid "Warning / Critical"
+msgstr ""
+
+#: templates/reports/analysis_threshold/list.html:111
+msgid "No thresholds found"
+msgstr ""
+
+#: templates/reports/analysis_threshold/list.html:112
+msgid ""
+"We couldn't find any thresholds matching your search. Try adjusting your "
+"criteria or create a new threshold."
+msgstr ""
+
+#: templates/reports/analysis_threshold/list.html:126
+msgid "Delete Threshold"
+msgstr ""
+
+#: templates/reports/analysis_threshold/list.html:127
+msgid "Analysis threshold deleted successfully."
+msgstr ""
+
+#: templates/reports/laboratory/detail.html:22
+msgid "Edit Laboratory"
+msgstr ""
+
+#: templates/reports/laboratory/detail.html:58
+msgid "Recent Reports"
+msgstr ""
+
+#: templates/reports/laboratory/detail.html:73
+msgid "No reports registered for this laboratory."
+msgstr ""
+
+#: templates/reports/laboratory/list.html:16
+msgid "Laboratory Management"
+msgstr ""
+
+#: templates/reports/laboratory/list.html:19
+msgid "Manage the laboratories that perform oil analysis and issue reports."
+msgstr ""
+
+#: templates/reports/laboratory/list.html:26
+msgid "Create Laboratory"
+msgstr ""
+
+#: templates/reports/laboratory/list.html:37
+msgid "Search laboratories by name, code or description..."
+msgstr ""
+
+#: templates/reports/laboratory/list.html:101
+msgid "No laboratories found"
+msgstr ""
+
+#: templates/reports/laboratory/list.html:102
+msgid ""
+"We couldn't find any laboratories matching your search. Try adjusting your "
+"criteria or create a new laboratory."
+msgstr ""
+
+#: templates/reports/laboratory/list.html:116
+msgid "Delete Laboratory"
+msgstr ""
+
+#: templates/reports/laboratory/list.html:117
+msgid "Laboratory deleted successfully."
+msgstr ""
+
+#: templates/reports/report/detail.html:38
+msgid "Identification"
+msgstr ""
+
+#: templates/reports/report/detail.html:82
+msgid "Machine Hours / Kms"
+msgstr ""
+
+#: templates/reports/report/detail.html:88
+msgid "Dates"
+msgstr ""
+
+#: templates/reports/report/detail.html:108
+msgid "Notes & Recommendations"
+msgstr ""
+
+#: templates/reports/report/detail.html:134
+msgid "Laboratory Analysis"
+msgstr ""
+
+#: templates/reports/report/detail.html:140
+msgid "Total Wear Metals"
+msgstr ""
+
+#: templates/reports/report/detail.html:144
+msgid "Total Contaminants"
+msgstr ""
+
+#: templates/reports/report/detail.html:148
+msgid "Additive Health"
+msgstr ""
+
+#: templates/reports/report/detail.html:156
+msgid "Viscosity @ 40°C / 100°C"
+msgstr ""
+
+#: templates/reports/report/detail.html:160
+msgid "TBN / TAN"
+msgstr ""
+
+#: templates/reports/report/detail.html:164
+msgid "Water (Crackle / FTIR)"
+msgstr ""
+
+#: templates/reports/report/detail.html:170
+msgid "Oxidation / Nitration / Sulfation"
+msgstr ""
+
+#: templates/reports/report/detail.html:174
+msgid "PQ Index / ISO Count"
+msgstr ""
+
+#: templates/reports/report/detail.html:184
+msgid "No laboratory analysis has been registered for this report."
+msgstr ""
+
+#: templates/reports/report/export.html:16
+msgid "Export Reports"
+msgstr ""
+
+#: templates/reports/report/export.html:19
+msgid "Filter the inspection reports and download them as an Excel workbook."
+msgstr ""
+
+#: templates/reports/report/export.html:60
+#: templates/reports/report/export.html:77
+msgid "Preview"
+msgstr ""
+
+#: templates/reports/report/export.html:63
+msgid "Download Excel"
+msgstr ""
+
+#: templates/reports/report/export.html:68
+#, python-format
+msgid "A maximum of %(max_records)s records can be exported in a single file."
+msgstr ""
+
+#: templates/reports/report/export.html:81
+msgid ""
+"Apply your filters and press Preview to see the first rows of the export."
+msgstr ""
+
+#: templates/reports/report/export.html:151
+msgid "Loading preview..."
+msgstr ""
+
+#: templates/reports/report/export.html:166
+msgid "No reports match the selected filters."
+msgstr ""
+
+#: templates/reports/report/list.html:16
+msgid "Report Management"
+msgstr ""
+
+#: templates/reports/report/list.html:19
+msgid "Review oil analysis reports, condition assessments and recommendations."
+msgstr ""
+
+#: templates/reports/report/list.html:26
+msgid "Export"
+msgstr ""
+
+#: templates/reports/report/list.html:45
+msgid "Lab, PER, serial or machine"
+msgstr ""
+
+#: templates/reports/report/list.html:104
+msgid ""
+"Search by lab, PER, serial or machine, then refine with the advanced filters."
+msgstr ""
+
+#: templates/reports/report/list.html:168
+msgid "No reports found"
+msgstr ""
+
+#: templates/reports/report/list.html:169
+msgid ""
+"We couldn't find any reports matching your search. Try adjusting your "
+"criteria or create a new report."
+msgstr ""
+
+#: templates/reports/report/list.html:183
+msgid "Delete Report"
+msgstr ""
+
+#: templates/reports/report/list.html:184
+msgid "Report deleted successfully."
+msgstr ""
+
+#: templates/users/account/form.html:19
+msgid "Avatar"
+msgstr ""
+
+#: templates/users/account/form.html:40 templates/users/settings.html:126
+msgid "Click to upload"
+msgstr ""
+
+#: templates/users/account/form.html:41 templates/users/settings.html:127
+msgid "or drag and drop"
+msgstr ""
+
+#: templates/users/account/form.html:43
+msgid "Allowed: *.png, *.jpg, *.jpeg"
+msgstr ""
+
+#: templates/users/account/form.html:49
+msgid "Remove Photo"
+msgstr ""
+
+#: templates/users/account/form.html:109
+msgid "Permissions Management"
+msgstr ""
+
+#: templates/users/account/form.html:118 templates/users/profile.html:145
+msgid "Module"
+msgstr ""
+
+#: templates/users/account/form.html:124
+msgid "Create"
+msgstr ""
+
+#: templates/users/account/form.html:127 templates/users/settings.html:113
+msgid "Update"
+msgstr ""
+
+#: templates/users/account/list.html:20
+msgid "Accounts Management"
+msgstr ""
+
+#: templates/users/account/list.html:23
+msgid ""
+"Efficiently manage user access, verification status, and organizational "
+"roles."
+msgstr ""
+
+#: templates/users/account/list.html:30
+msgid "Create New Account"
+msgstr ""
+
+#: templates/users/account/list.html:44
+msgid "Search by name, email or keyword..."
+msgstr ""
+
+#: templates/users/account/list.html:52
+msgid "Refine Search"
+msgstr ""
+
+#: templates/users/account/list.html:58
+msgid "Filters"
+msgstr ""
+
+#: templates/users/account/list.html:59
+msgid "Clear all"
+msgstr ""
+
+#: templates/users/account/list.html:64
+msgid "Account Status"
+msgstr ""
+
+#: templates/users/account/list.html:75
+msgid "Account Category"
+msgstr ""
+
+#: templates/users/account/list.html:87
+msgid "Apply Filters"
+msgstr ""
+
+#: templates/users/account/list.html:101
+msgid "Identity"
+msgstr ""
+
+#: templates/users/account/list.html:104
+msgid "Current Status"
+msgstr ""
+
+#: templates/users/account/list.html:107 templates/users/settings.html:140
+msgid "Security"
+msgstr ""
+
+#: templates/users/account/list.html:134
+msgid "ORGANIZATION"
+msgstr ""
+
+#: templates/users/account/list.html:137
+msgid "SUBSIDIARY"
+msgstr ""
+
+#: templates/users/account/list.html:151
+msgid "Active Access"
+msgstr ""
+
+#: templates/users/account/list.html:157
+msgid "Restricted"
+msgstr ""
+
+#: templates/users/account/list.html:170
+msgid "Trusted Device"
+msgstr ""
+
+#: templates/users/account/list.html:171
+msgid "Verified Identity"
+msgstr ""
+
+#: templates/users/account/list.html:180
+msgid "Pending Review"
+msgstr ""
+
+#: templates/users/account/list.html:181
+msgid "Needs Verification"
+msgstr ""
+
+#: templates/users/account/list.html:191
+msgid "Update Profile"
+msgstr ""
+
+#: templates/users/account/list.html:196 templates/users/account/list.html:317
+msgid "Suspend Access"
+msgstr ""
+
+#: templates/users/account/list.html:196 templates/users/account/list.html:317
+msgid "Restore Access"
+msgstr ""
+
+#: templates/users/account/list.html:205
+msgid "Remove Permanent"
+msgstr ""
+
+#: templates/users/account/list.html:217
+msgid "No accounts found"
+msgstr ""
+
+#: templates/users/account/list.html:219
+msgid ""
+"We couldn't find any accounts matching your current search or filters. Try "
+"adjusting your criteria or create a new account."
+msgstr ""
+
+#: templates/users/account/list.html:268
+msgid "Yes, proceed"
+msgstr ""
+
+#: templates/users/account/list.html:301
+msgid "The account has been deleted."
+msgstr ""
+
+#: templates/users/account/list.html:302
+msgid "Delete Account"
+msgstr ""
+
+#: templates/users/account/list.html:316
+msgid "Status updated successfully."
+msgstr ""
+
+#: templates/users/account/list.html:319
+msgid ""
+"This user will no longer be able to log in. You can restore access at any "
+"time."
+msgstr ""
+
+#: templates/users/account/list.html:320
+msgid "This user will regain access to the platform."
+msgstr ""
+
+#: templates/users/profile.html:37
+msgid "Administrator"
+msgstr ""
+
+#: templates/users/profile.html:39
+msgid "Staff Member"
+msgstr ""
+
+#: templates/users/profile.html:62
+msgid "Guest"
+msgstr ""
+
+#: templates/users/profile.html:71
+msgid "Joined"
+msgstr ""
+
+#: templates/users/profile.html:77
+msgid "Contact Information"
+msgstr ""
+
+#: templates/users/profile.html:89
+msgid "Edit Profile"
+msgstr ""
+
+#: templates/users/profile.html:103 templates/users/settings.html:61
+msgid "Account Information"
+msgstr ""
+
+#: templates/users/profile.html:109
+msgid "Verification"
+msgstr ""
+
+#: templates/users/profile.html:112
+msgid "Verified"
+msgstr ""
+
+#: templates/users/profile.html:120
+msgid "Parent Account"
+msgstr ""
+
+#: templates/users/profile.html:125
+msgid "Full Name"
+msgstr ""
+
+#: templates/users/profile.html:137
+msgid "System Permissions"
+msgstr ""
+
+#: templates/users/profile.html:174
+msgid "Enabled"
+msgstr ""
+
+#: templates/users/profile.html:175
+msgid "Disabled"
+msgstr ""
+
+#: templates/users/settings.html:17
+msgid "Personal Information"
+msgstr ""
+
+#: templates/users/settings.html:46
+msgid "Email Address"
+msgstr ""
+
+#: templates/users/settings.html:55
+msgid "Email cannot be changed"
+msgstr ""
+
+#: templates/users/settings.html:65
+msgid "Type:"
+msgstr ""
+
+#: templates/users/settings.html:67
+msgid "Organization"
+msgstr ""
+
+#: templates/users/settings.html:69
+msgid "Individual"
+msgstr ""
+
+#: templates/users/settings.html:74
+msgid "Parent:"
+msgstr ""
+
+#: templates/users/settings.html:89
+msgid "Saving..."
+msgstr ""
+
+#: templates/users/settings.html:101
+msgid "Your Photo"
+msgstr ""
+
+#: templates/users/settings.html:110
+msgid "Edit your photo"
+msgstr ""
+
+#: templates/users/settings.html:145
+msgid ""
+"Protect your account by ensuring your password is strong and updated "
+"regularly."
 msgstr ""
