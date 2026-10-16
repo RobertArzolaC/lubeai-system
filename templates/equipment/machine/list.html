@@ -37,15 +37,17 @@
             {% trans "Name, serial or model" as search_placeholder %}
             {% render_field filter.form.name_search class="w-full rounded-xl border border-stroke bg-whiten py-3 px-5 text-black transition-all duration-300 focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/5 focus:outline-none dark:border-strokedark dark:bg-boxdark-2 dark:text-white" placeholder=search_placeholder %}
         </div>
-        <div class="md:col-span-3">
+        <div class="md:col-span-{% if config.ENABLE_FLEET %}3{% else %}4{% endif %}">
             <label for="id_branch" class="mb-2.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{{ filter.form.branch.label }}</label>
             {% render_field filter.form.branch class="w-full rounded-xl border border-stroke bg-whiten py-3 px-4 text-sm font-semibold text-black outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/5 dark:border-form-strokedark dark:bg-meta-4 dark:text-white" %}
         </div>
+        {% if config.ENABLE_FLEET %}
         <div class="md:col-span-2">
             <label for="id_fleet" class="mb-2.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{{ filter.form.fleet.label }}</label>
             {% render_field filter.form.fleet class="w-full rounded-xl border border-stroke bg-whiten py-3 px-4 text-sm font-semibold text-black outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/5 dark:border-form-strokedark dark:bg-meta-4 dark:text-white" %}
         </div>
-        <div class="md:col-span-2">
+        {% endif %}
+        <div class="md:col-span-{% if config.ENABLE_FLEET %}2{% else %}3{% endif %}">
             <label for="id_is_active" class="mb-2.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{{ filter.form.is_active.label }}</label>
             {% render_field filter.form.is_active class="w-full rounded-xl border border-stroke bg-whiten py-3 px-4 text-sm font-semibold text-black outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/5 dark:border-form-strokedark dark:bg-meta-4 dark:text-white" %}
         </div>
@@ -66,13 +68,15 @@
         <div class="col-span-4 flex items-center">
             <p class="text-xs font-bold uppercase tracking-widest text-black dark:text-white">{% trans "Machine" %}</p>
         </div>
-        <div class="col-span-2 flex items-center">
+        <div class="col-span-{% if config.ENABLE_FLEET %}2{% else %}3{% endif %} flex items-center">
             <p class="text-xs font-bold uppercase tracking-widest text-black dark:text-white">{% trans "Branch" %}</p>
         </div>
+        {% if config.ENABLE_FLEET %}
         <div class="col-span-2 flex items-center">
             <p class="text-xs font-bold uppercase tracking-widest text-black dark:text-white">{% trans "Fleet" %}</p>
         </div>
-        <div class="col-span-2 flex items-center">
+        {% endif %}
+        <div class="col-span-{% if config.ENABLE_FLEET %}2{% else %}3{% endif %} flex items-center">
             <p class="text-xs font-bold uppercase tracking-widest text-black dark:text-white">{% trans "Status" %}</p>
         </div>
         <div class="col-span-2 flex items-center justify-end">
@@ -89,17 +93,19 @@
                     <p class="text-xs font-medium text-bodydark2">{{ machine.serial_number }}</p>
                 </div>
             </div>
-            <div class="col-span-2 flex items-center">
+            <div class="col-span-{% if config.ENABLE_FLEET %}2{% else %}3{% endif %} flex items-center">
                 <p class="text-sm font-medium text-bodydark2">
                     {% if machine.branch %}{{ machine.branch.name }}{% else %}—{% endif %}
                 </p>
             </div>
+            {% if config.ENABLE_FLEET %}
             <div class="col-span-2 flex items-center">
                 <p class="text-sm font-medium text-bodydark2">
                     {% if machine.fleet %}{{ machine.fleet.name }}{% else %}—{% endif %}
                 </p>
             </div>
-            <div class="col-span-2 flex items-center">
+            {% endif %}
+            <div class="col-span-{% if config.ENABLE_FLEET %}2{% else %}3{% endif %} flex items-center">
                 {% include "includes/status_badge.html" with is_active=machine.is_active %}
             </div>
             <div class="col-span-2 flex items-center justify-end">

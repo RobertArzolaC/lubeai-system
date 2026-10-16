@@ -1,5 +1,6 @@
 """Rendering tests for the real equipment and dashboard templates."""
 
+from constance.test import override_config
 from django.contrib.auth.models import Permission
 from django.core.cache import cache
 from django.test import TestCase
@@ -109,6 +110,19 @@ class EquipmentTemplateRenderingTests(TestCase):
         self.assertContains(response, 'data-theme="default"')
         self.assertNotContains(response, "bootstrap5")
         self.assertNotContains(response, "form-select")
+
+    @override_config(ENABLE_FLEET=False)
+    def test_machine_list_hides_fleet_when_flag_disabled(self) -> None:
+        """The machine list hides the fleet filter and column when off."""
+        response = self.client.get(reverse("apps.equipment:machine_list"))
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, 'name="fleet"')
+
+    @override_config(ENABLE_FLEET=True)
+    def test_machine_list_shows_fleet_when_flag_enabled(self) -> None:
+        """The machine list shows the fleet filter when on."""
+        response = self.client.get(reverse("apps.equipment:machine_list"))
+        self.assertContains(response, 'name="fleet"')
 
 
 class DashboardModuleAccessTests(TestCase):

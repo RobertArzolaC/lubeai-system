@@ -1,3 +1,4 @@
+from constance import config
 from django.db.models import QuerySet
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
@@ -14,8 +15,11 @@ class MachineListView(core_mixins.BaseListView):
     context_object_name = "machines"
 
     def get_queryset(self) -> QuerySet:
-        """Return machines with related branch and fleet to avoid N+1 queries."""
-        return models.Machine.objects.select_related("branch", "fleet")
+        """Return machines with related objects to avoid N+1 queries."""
+        related = ["branch"]
+        if config.ENABLE_FLEET:
+            related.append("fleet")
+        return models.Machine.objects.select_related(*related)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

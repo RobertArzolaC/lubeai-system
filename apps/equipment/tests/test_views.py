@@ -1,5 +1,6 @@
 """Tests for the ``apps.equipment.views`` module."""
 
+from constance.test import override_config
 from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.test import TestCase, override_settings
@@ -594,11 +595,19 @@ class MachineAndBranchViewTests(TestCase):
 class EquipmentQueryOptimizationTests(TestCase):
     """The list views select related objects to avoid N+1 queries."""
 
+    @override_config(ENABLE_FLEET=True)
     def test_machine_list_selects_related(self) -> None:
-        """The machine list prefetches branch and fleet."""
+        """The machine list prefetches branch and fleet when the flag is on."""
         select_related = views.MachineListView().get_queryset().query.select_related
         self.assertIn("branch", select_related)
         self.assertIn("fleet", select_related)
+
+    @override_config(ENABLE_FLEET=False)
+    def test_machine_list_skips_fleet_join_when_flag_disabled(self) -> None:
+        """The machine list avoids the fleet join when the flag is off."""
+        select_related = views.MachineListView().get_queryset().query.select_related
+        self.assertIn("branch", select_related)
+        self.assertNotIn("fleet", select_related)
 
     def test_branch_list_selects_related(self) -> None:
         """The branch list prefetches its location relations."""
