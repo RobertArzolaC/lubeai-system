@@ -2,6 +2,24 @@ from django.conf import settings
 from django.db import migrations, models
 
 
+class SetLockTimeout(migrations.RunSQL):
+    """Set a statement lock timeout only on PostgreSQL.
+
+    ``SET LOCAL lock_timeout`` is PostgreSQL-specific; running it against other
+    backends (e.g. SQLite used by the test runner) raises a syntax error.
+    """
+
+    def database_forwards(self, app_label, schema_editor, from_state, to_state) -> None:
+        """Apply the statement only when the active backend is PostgreSQL."""
+        if schema_editor.connection.vendor == "postgresql":
+            super().database_forwards(app_label, schema_editor, from_state, to_state)
+
+    def database_backwards(self, app_label, schema_editor, from_state, to_state) -> None:
+        """Reverse the statement only when the active backend is PostgreSQL."""
+        if schema_editor.connection.vendor == "postgresql":
+            super().database_backwards(app_label, schema_editor, from_state, to_state)
+
+
 class Migration(migrations.Migration):
     dependencies = [
         ("alerts", "0002_data_consolidate_alerts_per_report"),
@@ -11,7 +29,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunSQL(
+        SetLockTimeout(
             "SET LOCAL lock_timeout = '2s'",
             reverse_sql=migrations.RunSQL.noop,
         ),
