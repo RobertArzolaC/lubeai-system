@@ -155,8 +155,9 @@ class DashboardModuleAccessTests(TestCase):
     def setUp(self) -> None:
         cache.clear()
 
+    @override_config(ENABLE_FLEET=True)
     def test_dashboard_shows_equipment_links_for_authorized_user(self) -> None:
-        """A superuser sees every equipment module link."""
+        """A superuser sees every equipment module link when the flag is on."""
         user = UserFactory(is_staff=True, is_superuser=True)
         self.client.force_login(user)
         response = self.client.get(reverse("apps.dashboard:index"))
@@ -165,6 +166,23 @@ class DashboardModuleAccessTests(TestCase):
         self.assertContains(response, reverse("apps.equipment:branch_list"))
         self.assertContains(response, reverse("apps.equipment:fleet_list"))
         self.assertContains(response, reverse("apps.equipment:component_type_list"))
+
+    @override_config(ENABLE_FLEET=False)
+    def test_dashboard_hides_fleet_link_when_flag_disabled(self) -> None:
+        """A superuser does not see the fleet link while the flag is off."""
+        user = UserFactory(is_staff=True, is_superuser=True)
+        self.client.force_login(user)
+        response = self.client.get(reverse("apps.dashboard:index"))
+        self.assertNotContains(response, reverse("apps.equipment:fleet_list"))
+
+    @override_config(ENABLE_FLEET=False)
+    def test_equipment_header_hidden_for_view_only_fleet_user(self) -> None:
+        """A view_fleet-only user sees no orphan equipment header when off."""
+        user = UserFactory()
+        grant_permissions(user, "view_fleet")
+        self.client.force_login(user)
+        response = self.client.get(reverse("apps.dashboard:index"))
+        self.assertNotContains(response, "Equipos")
 
     def test_dashboard_hides_equipment_links_without_permission(self) -> None:
         """A user without permissions does not see the equipment module links."""
