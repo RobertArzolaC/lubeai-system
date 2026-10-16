@@ -31,6 +31,10 @@ class AlertsTemplateRenderingTests(TestCase):
 
     def test_list_avoids_n_plus_one_queries(self) -> None:
         """The list query count does not grow with the number of alerts."""
+        # Warm up one-time writes (constance persists defaults on first read,
+        # and the current site is resolved once) so the comparison measures the
+        # list query itself rather than first-request setup.
+        self.client.get(reverse("apps.alerts:alert_list"))
         with CaptureQueriesContext(connection) as few:
             self.client.get(reverse("apps.alerts:alert_list"))
         factories.AlertFactory.create_batch(5)

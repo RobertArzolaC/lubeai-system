@@ -14,7 +14,9 @@ class SetLockTimeout(migrations.RunSQL):
         if schema_editor.connection.vendor == "postgresql":
             super().database_forwards(app_label, schema_editor, from_state, to_state)
 
-    def database_backwards(self, app_label, schema_editor, from_state, to_state) -> None:
+    def database_backwards(
+        self, app_label, schema_editor, from_state, to_state
+    ) -> None:
         """Reverse the statement only when the active backend is PostgreSQL."""
         if schema_editor.connection.vendor == "postgresql":
             super().database_backwards(app_label, schema_editor, from_state, to_state)

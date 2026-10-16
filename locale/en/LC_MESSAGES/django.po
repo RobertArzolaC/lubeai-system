@@ -1623,6 +1623,10 @@ msgstr ""
 msgid "Enable email verification."
 msgstr ""
 
+#: config/settings/tools/django_constance.py:20
+msgid "Enable fleet management"
+msgstr ""
+
 #: templates/account/account_inactive.html:6
 #: templates/account/account_inactive.html:18
 msgid "Account Inactive"

@@ -16,7 +16,7 @@ class MachineListView(core_mixins.BaseListView):
 
     def get_queryset(self) -> QuerySet:
         """Return machines with related objects to avoid N+1 queries."""
-        related = ["branch"]
+        related: list[str] = ["branch"]
         if config.ENABLE_FLEET:
             related.append("fleet")
         return models.Machine.objects.select_related(*related)

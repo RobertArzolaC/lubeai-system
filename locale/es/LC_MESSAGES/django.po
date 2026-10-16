@@ -1921,6 +1921,10 @@ msgstr "Habilitar el envío de correos electrónicos."
 msgid "Enable email verification."
 msgstr "Habilitar la verificación de correo electrónico."
 
+#: config/settings/tools/django_constance.py:20
+msgid "Enable fleet management"
+msgstr "Habilitar gestión de flotas"
+
 #: templates/account/account_inactive.html:6
 #: templates/account/account_inactive.html:18
 msgid "Account Inactive"
