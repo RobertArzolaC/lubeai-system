@@ -90,7 +90,7 @@
                         <p class="text-sm font-bold text-black dark:text-white">{{ machine.name }}</p>
                         <p class="text-xs font-medium text-bodydark2">{{ machine.serial_number }}</p>
                     </div>
-                    {% if machine.fleet %}
+                    {% if config.ENABLE_FLEET and machine.fleet %}
                     <span class="text-xs font-semibold text-bodydark2">{{ machine.fleet.name }}</span>
                     {% endif %}
                 </div>

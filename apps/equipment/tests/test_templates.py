@@ -124,6 +124,30 @@ class EquipmentTemplateRenderingTests(TestCase):
         response = self.client.get(reverse("apps.equipment:machine_list"))
         self.assertContains(response, 'name="fleet"')
 
+    @override_config(ENABLE_FLEET=False)
+    def test_machine_detail_hides_fleet_when_flag_disabled(self) -> None:
+        """The machine detail hides the fleet link when off."""
+        fleet = FleetFactory()
+        machine = MachineFactory(fleet=fleet)
+        response = self.client.get(
+            reverse("apps.equipment:machine_detail", kwargs={"pk": machine.pk})
+        )
+        self.assertNotContains(
+            response, reverse("apps.equipment:fleet_detail", kwargs={"pk": fleet.pk})
+        )
+
+    @override_config(ENABLE_FLEET=True)
+    def test_machine_detail_shows_fleet_when_flag_enabled(self) -> None:
+        """The machine detail shows the fleet link when on."""
+        fleet = FleetFactory()
+        machine = MachineFactory(fleet=fleet)
+        response = self.client.get(
+            reverse("apps.equipment:machine_detail", kwargs={"pk": machine.pk})
+        )
+        self.assertContains(
+            response, reverse("apps.equipment:fleet_detail", kwargs={"pk": fleet.pk})
+        )
+
 
 class DashboardModuleAccessTests(TestCase):
     """Permission-gated equipment links inside the dashboard."""

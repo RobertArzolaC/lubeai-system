@@ -59,7 +59,7 @@
         <!-- Location -->
         <div class="rounded-2xl border border-stroke bg-white p-6 shadow-sm dark:border-strokedark dark:bg-boxdark">
             <h3 class="mb-5 text-lg font-bold text-black dark:text-white">{% trans "Location" %}</h3>
-            <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <dl class="grid grid-cols-1 gap-4 {% if config.ENABLE_FLEET %}sm:grid-cols-2{% endif %}">
                 <div>
                     <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Branch" %}</dt>
                     <dd class="mt-1 text-sm font-semibold text-black dark:text-white">
@@ -68,6 +68,7 @@
                         {% else %}—{% endif %}
                     </dd>
                 </div>
+                {% if config.ENABLE_FLEET %}
                 <div>
                     <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Fleet" %}</dt>
                     <dd class="mt-1 text-sm font-semibold text-black dark:text-white">
@@ -76,6 +77,7 @@
                         {% else %}—{% endif %}
                     </dd>
                 </div>
+                {% endif %}
             </dl>
         </div>
 
