@@ -10,6 +10,7 @@
                 {% endfor %}
             </select>
         </label>
+        {% if config.ENABLE_FLEET %}
         <label class="flex flex-col gap-1">
             <span class="text-xs font-medium text-gray-500">{% trans "Fleet" %}</span>
             <select name="fleet" class="rounded-lg border border-gray-200 bg-transparent px-3 py-2 text-sm dark:border-gray-700 dark:text-white">
@@ -19,6 +20,7 @@
                 {% endfor %}
             </select>
         </label>
+        {% endif %}
         <label class="flex flex-col gap-1">
             <span class="text-xs font-medium text-gray-500">{% trans "Machine" %}</span>
             <select name="machine" class="rounded-lg border border-gray-200 bg-transparent px-3 py-2 text-sm dark:border-gray-700 dark:text-white">

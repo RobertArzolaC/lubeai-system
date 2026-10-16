@@ -9,6 +9,7 @@
 <div
     id="dashboard-root"
     data-data-url="{% url 'apps.dashboard:data' %}"
+    data-fleet-enabled="{% if config.ENABLE_FLEET %}true{% else %}false{% endif %}"
     class="flex flex-col gap-6"
 >
     {% include "dashboard/includes/filters.html" %}

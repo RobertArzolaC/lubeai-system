@@ -10,6 +10,7 @@
     var dataElement = document.getElementById("dashboard-data");
     var currentData = dataElement ? JSON.parse(dataElement.textContent) : {};
     var charts = {};
+    var fleetEnabled = root.getAttribute("data-fleet-enabled") === "true";
 
     var COLORS = { NORMAL: "#12b76a", CAUTION: "#FFA70B", CRITICAL: "#f04438" };
     var CONDITIONS = ["NORMAL", "CAUTION", "CRITICAL"];
@@ -197,15 +198,16 @@
             var row = document.createElement("tr");
             row.className = "border-t border-gray-100 dark:border-gray-800";
             row.setAttribute("data-condition", report.condition || "");
-            row.setAttribute("data-fleet", report.fleet || "");
-            [
+            if (fleetEnabled) {
+                row.setAttribute("data-fleet", report.fleet || "");
+            }
+            var values = [
                 report.lab_number,
-                report.machine,
-                report.fleet,
-                report.component,
-                report.sample_date,
-                report.condition_display
-            ].forEach(function (value) {
+                report.machine
+            ];
+            if (fleetEnabled) values.push(report.fleet);
+            values.push(report.component, report.sample_date, report.condition_display);
+            values.forEach(function (value) {
                 var cell = document.createElement("td");
                 cell.className = "px-3 py-2";
                 cell.textContent = value == null ? "" : value;
@@ -218,7 +220,7 @@
         if (reports.length > 0) emptyRow.classList.add("hidden");
         var emptyCell = document.createElement("td");
         emptyCell.className = "px-3 py-6 text-center text-gray-500";
-        emptyCell.colSpan = 6;
+        emptyCell.colSpan = fleetEnabled ? 6 : 5;
         emptyCell.textContent = EMPTY_MESSAGE;
         emptyRow.appendChild(emptyCell);
         body.appendChild(emptyRow);
@@ -243,11 +245,11 @@
         criteria = criteria || {};
         var matches = 0;
         Array.prototype.forEach.call(
-            body.querySelectorAll("tr[data-condition][data-fleet]"),
+            body.querySelectorAll("tr[data-condition]"),
             function (row) {
                 var conditionOk = !criteria.condition
                     || row.getAttribute("data-condition") === criteria.condition;
-                var fleetOk = !criteria.fleet
+                var fleetOk = !fleetEnabled || !criteria.fleet
                     || row.getAttribute("data-fleet") === criteria.fleet;
                 var visible = conditionOk && fleetOk;
                 row.classList.toggle("hidden", !visible);

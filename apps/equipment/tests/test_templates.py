@@ -196,6 +196,31 @@ class DashboardModuleAccessTests(TestCase):
         self.assertNotContains(response, reverse("apps.equipment:component_type_list"))
 
 
+class DashboardFleetFlagTests(TestCase):
+    """The dashboard fleet filter and chart are gated by the feature flag."""
+
+    def setUp(self) -> None:
+        cache.clear()
+        self.user = UserFactory(is_staff=True, is_superuser=True)
+        self.client.force_login(self.user)
+
+    @override_config(ENABLE_FLEET=False)
+    def test_dashboard_hides_fleet_widgets_when_flag_disabled(self) -> None:
+        """Fleet filter and chart are absent and the JS flag is false."""
+        response = self.client.get(reverse("apps.dashboard:index"))
+        self.assertContains(response, 'data-fleet-enabled="false"')
+        self.assertNotContains(response, "chart-fleet")
+        self.assertNotContains(response, 'name="fleet"')
+
+    @override_config(ENABLE_FLEET=True)
+    def test_dashboard_shows_fleet_widgets_when_flag_enabled(self) -> None:
+        """Fleet filter and chart are present and the JS flag is true."""
+        response = self.client.get(reverse("apps.dashboard:index"))
+        self.assertContains(response, 'data-fleet-enabled="true"')
+        self.assertContains(response, "chart-fleet")
+        self.assertContains(response, 'name="fleet"')
+
+
 class EquipmentRowPermissionGatingTests(TestCase):
     """Action buttons in list rows are gated by Django permissions."""
 
