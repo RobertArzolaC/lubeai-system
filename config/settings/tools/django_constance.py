@@ -17,6 +17,7 @@ CONSTANCE_CONFIG = {
     "JSON_FIELD_EXAMPLE": ({"name": "test"}, _("Test json field"), "json_field"),
     "ENABLE_SEND_EMAIL": (True, _("Enable sending emails.")),
     "ENABLE_VERIFICATION_EMAIL": (True, _("Enable email verification.")),
+    "ENABLE_FLEET": (False, _("Enable fleet management")),
 }
 
 CONSTANCE_CONFIG_FIELDSETS = {
@@ -26,6 +27,7 @@ CONSTANCE_CONFIG_FIELDSETS = {
             "JSON_FIELD_EXAMPLE",
             "ENABLE_SEND_EMAIL",
             "ENABLE_VERIFICATION_EMAIL",
+            "ENABLE_FLEET",
         ),
         "collapse": False,
     },
