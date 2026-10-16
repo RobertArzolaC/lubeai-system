@@ -1,5 +1,6 @@
 from typing import ClassVar
 
+from constance import config
 from django import forms
 from django.forms import inlineformset_factory
 from django.utils.translation import gettext_lazy as _
@@ -101,6 +102,17 @@ class MachineForm(forms.ModelForm):
             "model": forms.TextInput(attrs={"class": "form-control"}),
             "is_active": forms.CheckboxInput(attrs={"class": "form-check-input"}),
         }
+
+    def __init__(self, *args, **kwargs) -> None:
+        """Hide the fleet field when the fleet feature flag is disabled.
+
+        Args:
+            *args: Positional arguments forwarded to ``ModelForm``.
+            **kwargs: Keyword arguments forwarded to ``ModelForm``.
+        """
+        super().__init__(*args, **kwargs)
+        if not config.ENABLE_FLEET:
+            self.fields.pop("fleet", None)
 
 
 class ComponentTypeForm(forms.ModelForm):

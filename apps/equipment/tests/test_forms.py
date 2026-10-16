@@ -1,8 +1,10 @@
 """Tests for the ``apps.equipment.forms`` module."""
 
+from constance.test import override_config
 from django.test import TestCase
 
 from apps.equipment import forms
+from apps.equipment.factories import FleetFactory, MachineFactory
 
 
 class FleetFormTests(TestCase):
@@ -52,6 +54,37 @@ class MachineFormTests(TestCase):
             set(form.errors),
             {"name", "serial_number", "model"},
         )
+
+    @override_config(ENABLE_FLEET=False)
+    def test_fleet_field_hidden_when_flag_disabled(self) -> None:
+        """The fleet field is removed from the form when the flag is off."""
+        form = forms.MachineForm()
+        self.assertNotIn("fleet", form.fields)
+
+    @override_config(ENABLE_FLEET=True)
+    def test_fleet_field_present_when_flag_enabled(self) -> None:
+        """The fleet field is available when the flag is on."""
+        form = forms.MachineForm()
+        self.assertIn("fleet", form.fields)
+
+    @override_config(ENABLE_FLEET=False)
+    def test_saving_without_fleet_keeps_existing_value(self) -> None:
+        """Saving a machine with the flag off must not clear its fleet."""
+        fleet = FleetFactory()
+        machine = MachineFactory(fleet=fleet)
+        form = forms.MachineForm(
+            data={
+                "name": machine.name,
+                "serial_number": machine.serial_number,
+                "model": machine.model,
+                "is_active": True,
+            },
+            instance=machine,
+        )
+        self.assertTrue(form.is_valid())
+        form.save()
+        machine.refresh_from_db()
+        self.assertEqual(machine.fleet, fleet)
 
 
 class ComponentTypeFormTests(TestCase):
