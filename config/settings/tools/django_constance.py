@@ -18,6 +18,7 @@ CONSTANCE_CONFIG = {
     "ENABLE_SEND_EMAIL": (True, _("Enable sending emails.")),
     "ENABLE_VERIFICATION_EMAIL": (True, _("Enable email verification.")),
     "ENABLE_FLEET": (False, _("Enable fleet management")),
+    "ENABLE_LABS": (False, _("Enable laboratory management")),
 }
 
 CONSTANCE_CONFIG_FIELDSETS = {
@@ -28,6 +29,7 @@ CONSTANCE_CONFIG_FIELDSETS = {
             "ENABLE_SEND_EMAIL",
             "ENABLE_VERIFICATION_EMAIL",
             "ENABLE_FLEET",
+            "ENABLE_LABS",
         ),
         "collapse": False,
     },
