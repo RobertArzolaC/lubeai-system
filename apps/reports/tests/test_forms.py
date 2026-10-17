@@ -1,5 +1,6 @@
 """Tests for the ``apps.reports.forms`` module."""
 
+from constance.test import override_config
 from django.test import TestCase
 
 from apps.equipment import factories as equipment_factories
@@ -82,6 +83,35 @@ class ReportFormTests(TestCase):
         inactive_machine = equipment_factories.MachineFactory(is_active=False)
         form = forms.ReportForm()
         self.assertNotIn(inactive_machine, form.fields["machine"].queryset)
+
+    @override_config(ENABLE_LABS=False)
+    def test_laboratory_field_hidden_when_flag_disabled(self) -> None:
+        """The laboratory field is removed from the form when the flag is off."""
+        form = forms.ReportForm()
+        self.assertNotIn("laboratory", form.fields)
+
+    @override_config(ENABLE_LABS=True)
+    def test_laboratory_field_present_when_flag_enabled(self) -> None:
+        """The laboratory field is available when the flag is on."""
+        form = forms.ReportForm()
+        self.assertIn("laboratory", form.fields)
+
+    @override_config(ENABLE_LABS=False)
+    def test_saving_without_laboratory_keeps_existing_value(self) -> None:
+        """Saving a report with the flag off must not clear its laboratory."""
+        report = factories.ReportFactory(laboratory=self.laboratory)
+        payload = self.report_payload()
+        payload.pop("laboratory")
+        payload.update(
+            lab_number=report.lab_number,
+            machine=report.machine_id,
+            component=report.component_id,
+        )
+        form = forms.ReportForm(data=payload, instance=report)
+        self.assertTrue(form.is_valid(), form.errors)
+        form.save()
+        report.refresh_from_db()
+        self.assertEqual(report.laboratory, self.laboratory)
 
 
 class AnalysisThresholdFormTests(TestCase):

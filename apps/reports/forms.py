@@ -1,5 +1,6 @@
 from typing import ClassVar
 
+from constance import config
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
@@ -110,9 +111,13 @@ class ReportForm(forms.ModelForm):
         self.fields["lab_number"].required = True
         self.fields["sample_date"].required = True
 
-        self.fields["laboratory"].queryset = models.Laboratory.objects.filter(
-            is_active=True
-        )
+        if config.ENABLE_LABS:
+            self.fields["laboratory"].queryset = models.Laboratory.objects.filter(
+                is_active=True
+            )
+        else:
+            self.fields.pop("laboratory", None)
+
         self.fields["machine"].queryset = equipment_models.Machine.objects.filter(
             is_active=True
         )
