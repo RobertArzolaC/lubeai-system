@@ -9,13 +9,21 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from allauth.account.models import EmailAddress
+from constance import config
 from django.contrib.auth.models import Group, Permission
+from django.core.exceptions import ValidationError
+from django.db import transaction
+from django.utils.crypto import get_random_string
 from django.utils.text import slugify
+from django.utils.translation import gettext_lazy as _
 
 from apps.users import models
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
+
+    from django.http import HttpRequest
 
     from apps.organizations import models as organization_models
     from apps.users.models import User
@@ -159,3 +167,111 @@ class RoleService:
             group.delete()
         else:
             role.delete()
+
+
+class UserService:
+    """Create and update users together with their account and roles."""
+
+    def create_user(
+        self,
+        *,
+        actor: User | None,
+        email: str,
+        first_name: str,
+        last_name: str,
+        organization: organization_models.Organization | None,
+        roles: Iterable[models.Role] = (),
+        is_active: bool = True,
+        request: HttpRequest | None = None,
+    ) -> User:
+        """Create a user, its account, its email address and assign roles.
+
+        Args:
+            actor: The user performing the action (reserved for auditing).
+            email: The new user's email (login).
+            first_name: The new user's first name.
+            last_name: The new user's last name.
+            organization: The organization the user belongs to.
+            roles: Roles to assign to the user.
+            is_active: Whether the user can log in.
+            request: Optional request used to send the confirmation email.
+
+        Returns:
+            The created :class:`~apps.users.models.User`.
+
+        Raises:
+            ValidationError: If a user with the same email already exists.
+        """
+        if models.User.objects.filter(email__iexact=email).exists():
+            raise ValidationError(
+                _("A user with this email already exists."), code="duplicate"
+            )
+
+        with transaction.atomic():
+            user = models.User.objects.create_user(
+                email=email, password=get_random_string(32)
+            )
+            user.first_name = first_name
+            user.last_name = last_name
+            user.organization = organization
+            user.is_active = is_active
+            user.save()
+
+            models.Account.objects.get_or_create(user=user)
+            email_address, _created = EmailAddress.objects.get_or_create(
+                user=user,
+                email=user.email,
+                defaults={"primary": True, "verified": False},
+            )
+            if (
+                request is not None
+                and getattr(config, "ENABLE_SEND_EMAIL", False)
+                and not email_address.verified
+            ):
+                email_address.send_confirmation(request, signup=True)
+
+            self.set_roles(user, roles)
+        return user
+
+    def update_user(
+        self,
+        user: User,
+        *,
+        first_name: str,
+        last_name: str,
+        organization: organization_models.Organization | None,
+        roles: Iterable[models.Role] = (),
+        is_active: bool = True,
+    ) -> User:
+        """Update a user's data, organization, status and roles.
+
+        Args:
+            user: The user to update.
+            first_name: The new first name.
+            last_name: The new last name.
+            organization: The new organization.
+            roles: The full role assignment for the user.
+            is_active: Whether the user can log in.
+
+        Returns:
+            The updated user.
+        """
+        with transaction.atomic():
+            user.first_name = first_name
+            user.last_name = last_name
+            user.organization = organization
+            user.is_active = is_active
+            user.save()
+            self.set_roles(user, roles)
+        return user
+
+    def set_roles(self, user: User, roles: Iterable[models.Role]) -> None:
+        """Replace the user's role-backed groups, preserving other groups.
+
+        Args:
+            user: The user whose roles are updated.
+            roles: The full set of roles to assign.
+        """
+        managed_groups = Group.objects.filter(role__isnull=False)
+        user.groups.remove(*managed_groups)
+        user.groups.add(*[role.group for role in roles])
