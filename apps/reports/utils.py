@@ -1,8 +1,7 @@
-from typing import Optional
 
 from apps.reports import choices
 
-# Default color mapping for parameters (used when no tenant palette is provided)
+# Default color mapping for parameters (used when no organization palette is provided)
 _DEFAULT_PARAMETER_COLORS: dict[str, str] = {
     choices.Parameter.IRON_FE: "#F1416C",  # Red
     choices.Parameter.COPPER_CU: "#FFC700",  # Yellow
@@ -17,7 +16,7 @@ _DEFAULT_PARAMETER_COLORS: dict[str, str] = {
     choices.Parameter.CALCIUM_CA: "#FFC700",  # Yellow
 }
 
-# Maps parameter constants to palette color keys for tenant-aware resolution
+# Maps parameter constants to palette color keys for organization-aware resolution
 _PARAMETER_PALETTE_MAP: dict[str, str] = {
     choices.Parameter.IRON_FE: "chart_danger",
     choices.Parameter.COPPER_CU: "chart_warning",
@@ -35,27 +34,28 @@ _PARAMETER_PALETTE_MAP: dict[str, str] = {
 DEFAULT_PARAMETER_COLOR = "#6C757D"
 
 
-def get_parameter_color(parameter: str, tenant: Optional[object] = None) -> str:
+def get_parameter_color(parameter: str, organization: object | None = None) -> str:
     """
     Get the color associated with a specific parameter.
 
-    When a ``tenant`` is provided, colors are resolved from the tenant's
-    palette via :class:`ColorPaletteService`. Otherwise, hardcoded defaults
-    are used.
+    When an ``organization`` is provided, colors are resolved from the
+    organization's branded palette via
+    :class:`apps.organizations.services.ColorPaletteService`. Otherwise,
+    hardcoded defaults are used.
 
     Args:
         parameter: The parameter key (e.g., 'iron_fe', 'silicon_si').
-        tenant: Optional Client instance for tenant-aware color resolution.
+        organization: Optional Organization instance for branded colors.
 
     Returns:
         Hex color code for the parameter, or default gray if not found.
     """
-    if tenant is not None:
-        from apps.core.services.color_palette_service import ColorPaletteService
+    if organization is not None:
+        from apps.organizations.services import ColorPaletteService
 
         palette_key = _PARAMETER_PALETTE_MAP.get(parameter)
         if palette_key:
-            palette = ColorPaletteService.get_palette(tenant)
+            palette = ColorPaletteService.get_palette(organization)
             return palette.get(palette_key, DEFAULT_PARAMETER_COLOR)
 
     return _DEFAULT_PARAMETER_COLORS.get(parameter, DEFAULT_PARAMETER_COLOR)

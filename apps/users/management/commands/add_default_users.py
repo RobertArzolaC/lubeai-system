@@ -97,12 +97,16 @@ class Command(BaseCommand):
     def assign_staff_permissions(self, user):
         result_permissions = Permission.objects.filter(
             codename__in=[
-                "add_orderresult",
-                "change_orderresult",
-                "view_orderresult",
-                "add_medicaltestresult",
-                "change_medicaltestresult",
-                "view_medicaltestresult",
+                "view_report",
+                "add_report",
+                "change_report",
+                "view_analysisthreshold",
+                "view_component_analysis",
+                "view_alert",
+                "change_alert",
+                "view_machine",
+                "view_branch",
+                "view_componenttype",
             ]
         )
         user.user_permissions.add(*result_permissions)

@@ -19,7 +19,7 @@ class AlertListView(core_mixins.BaseListView):
 
     def get_queryset(self) -> QuerySet:
         """Return alerts with related objects to avoid N+1 queries."""
-        return models.Alert.objects.select_related(
+        return super().get_queryset().select_related(
             "machine",
             "component",
             "component__type",
@@ -33,7 +33,7 @@ class AlertListView(core_mixins.BaseListView):
         context["entity"] = _("Alert")
         context["entity_plural"] = _("Alerts")
         context["back_url"] = reverse_lazy("apps.dashboard:index")
-        context["status_counts"] = models.Alert.objects.aggregate(
+        context["status_counts"] = self.get_queryset().aggregate(
             total=Count("id"),
             open=Count("id", filter=Q(status=choices.AlertStatus.OPEN)),
             acknowledged=Count("id", filter=Q(status=choices.AlertStatus.ACKNOWLEDGED)),
@@ -53,7 +53,7 @@ class AlertDetailView(core_mixins.BaseDetailView):
 
     def get_queryset(self) -> QuerySet:
         """Optimize the query with the related objects used by the template."""
-        return models.Alert.objects.select_related(
+        return super().get_queryset().select_related(
             "machine",
             "component",
             "component__type",

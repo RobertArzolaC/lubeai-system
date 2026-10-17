@@ -30,13 +30,20 @@ class DashboardFilters:
 class DashboardService:
     """Aggregate oil analysis data for the dashboard."""
 
-    def __init__(self, filters: DashboardFilters | None = None) -> None:
-        """Store the dashboard filters."""
+    def __init__(
+        self,
+        filters: DashboardFilters | None = None,
+        organization_ids: set[int] | None = None,
+    ) -> None:
+        """Store the dashboard filters and the visible organization ids."""
         self.filters = filters or DashboardFilters()
+        self.organization_ids = organization_ids
 
     def get_reports(self) -> QuerySet:
         """Return the active reports filtered by the current filters."""
         queryset = reports_models.Report.objects.filter(is_active=True)
+        if self.organization_ids is not None:
+            queryset = queryset.filter(organization_id__in=self.organization_ids)
         if self.filters.year is not None:
             queryset = queryset.filter(sample_date__year=self.filters.year)
         if self.filters.fleet_id is not None:
@@ -52,6 +59,8 @@ class DashboardService:
     def get_alerts(self) -> QuerySet:
         """Return the alerts filtered by the current filters."""
         queryset = alerts_models.Alert.objects.all()
+        if self.organization_ids is not None:
+            queryset = queryset.filter(organization_id__in=self.organization_ids)
         if self.filters.year is not None:
             queryset = queryset.filter(detected_at__year=self.filters.year)
         if self.filters.fleet_id is not None:
@@ -269,33 +278,53 @@ class DashboardService:
         ]
 
     def get_filters_key(self) -> str:
-        """Return a stable signature for the active filters."""
+        """Return a stable signature for the active filters and scope."""
         filters = self.filters
+        org_part = (
+            "all"
+            if self.organization_ids is None
+            else ",".join(str(i) for i in sorted(self.organization_ids))
+        )
         return (
             f"{filters.year}:{filters.fleet_id}:"
-            f"{filters.machine_id}:{filters.component_type_id}"
+            f"{filters.machine_id}:{filters.component_type_id}:{org_part}"
         )
 
     @staticmethod
-    def get_filter_options() -> dict[str, Any]:
-        """Return the available filter values."""
-        key = f"{dashboard_cache.CACHE_KEY_PREFIX}:options:{dashboard_cache.get_cache_version()}"
+    def get_filter_options(organization_ids: set[int] | None = None) -> dict[str, Any]:
+        """Return the available filter values, scoped to the organizations."""
+        org_part = (
+            "all"
+            if organization_ids is None
+            else ",".join(str(i) for i in sorted(organization_ids))
+        )
+        key = (
+            f"{dashboard_cache.CACHE_KEY_PREFIX}:options:"
+            f"{dashboard_cache.get_cache_version()}:{org_part}"
+        )
         cached = dashboard_cache.safe_cache_get(key)
         if cached is not None:
             return cached
 
+        years_qs = reports_models.Report.objects.filter(
+            is_active=True, sample_date__isnull=False
+        )
+        fleets_qs = equipment_models.Fleet.objects.filter(is_active=True)
+        machines_qs = equipment_models.Machine.objects.filter(is_active=True)
+        if organization_ids is not None:
+            years_qs = years_qs.filter(organization_id__in=organization_ids)
+            fleets_qs = fleets_qs.filter(organization_id__in=organization_ids)
+            machines_qs = machines_qs.filter(organization_id__in=organization_ids)
+
         years = (
-            reports_models.Report.objects.filter(
-                is_active=True, sample_date__isnull=False
-            )
-            .values_list("sample_date__year", flat=True)
+            years_qs.values_list("sample_date__year", flat=True)
             .distinct()
             .order_by("sample_date__year")
         )
         options = {
             "years": [year for year in years if year is not None],
-            "fleets": list(equipment_models.Fleet.objects.filter(is_active=True)),
-            "machines": list(equipment_models.Machine.objects.filter(is_active=True)),
+            "fleets": list(fleets_qs),
+            "machines": list(machines_qs),
             "component_types": list(
                 equipment_models.ComponentType.objects.filter(is_active=True)
             ),

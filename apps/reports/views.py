@@ -11,6 +11,7 @@ from django_filters.views import FilterView
 
 from apps.core import mixins as core_mixins
 from apps.equipment import models as equipment_models
+from apps.organizations import scoping
 from apps.reports import constants, filtersets, forms, models, services
 
 EXCEL_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -32,9 +33,12 @@ class LaboratoryListView(core_mixins.BaseListView):
 
     def get_queryset(self) -> QuerySet:
         """Return laboratories annotated with their active report count."""
-        return models.Laboratory.objects.annotate(
-            reports_count=Count("reports", filter=Q(reports__is_active=True))
-        ).order_by("name")
+        return (
+            super()
+            .get_queryset()
+            .annotate(reports_count=Count("reports", filter=Q(reports__is_active=True)))
+            .order_by("name")
+        )
 
     def get_context_data(self, **kwargs: Any) -> dict:
         """Add entity names and navigation URLs."""
@@ -128,7 +132,7 @@ class ReportListView(core_mixins.BaseListView):
 
     def get_queryset(self) -> QuerySet:
         """Return reports with related objects to avoid N+1 queries."""
-        return models.Report.objects.select_related(
+        return super().get_queryset().select_related(
             "laboratory", "machine", "component"
         )
 
@@ -153,7 +157,7 @@ class ReportDetailView(core_mixins.BaseDetailView):
 
     def get_queryset(self) -> QuerySet:
         """Optimize query with select_related for related objects."""
-        return models.Report.objects.select_related(
+        return super().get_queryset().select_related(
             "laboratory", "machine", "component", "component__type", "analysis"
         )
 
@@ -227,13 +231,16 @@ class ReportExportQueryMixin(LoginRequiredMixin, PermissionRequiredMixin):
 
     def get_filtered_queryset(self) -> QuerySet:
         """Return the report queryset filtered by request GET parameters."""
-        queryset = models.Report.objects.select_related(
-            "laboratory",
-            "machine",
-            "machine__branch",
-            "component",
-            "component__type",
-            "analysis",
+        queryset = scoping.scope_queryset(
+            models.Report.objects.select_related(
+                "laboratory",
+                "machine",
+                "machine__branch",
+                "component",
+                "component__type",
+                "analysis",
+            ),
+            self.request.user,
         )
         self.filterset = filtersets.ReportExportFilter(
             self.request.GET, queryset=queryset
@@ -250,8 +257,11 @@ class ReportExportPageView(LoginRequiredMixin, PermissionRequiredMixin, FilterVi
 
     def get_queryset(self) -> QuerySet:
         """Return reports with related objects for the preview form."""
-        return models.Report.objects.select_related(
-            "laboratory", "machine", "component"
+        return scoping.scope_queryset(
+            models.Report.objects.select_related(
+                "laboratory", "machine", "component"
+            ),
+            self.request.user,
         )
 
     def get_context_data(self, **kwargs: Any) -> dict:
@@ -342,7 +352,7 @@ class AnalysisThresholdListView(core_mixins.BaseListView):
 
     def get_queryset(self) -> QuerySet:
         """Return thresholds with the related component type preloaded."""
-        return models.AnalysisThreshold.objects.select_related("component_type")
+        return super().get_queryset().select_related("component_type")
 
     def get_context_data(self, **kwargs: Any) -> dict:
         """Add entity names and navigation URLs."""
@@ -443,11 +453,13 @@ class ComponentAnalysisView(core_mixins.BaseTemplateView):
         data = self.request.GET.copy() if self.request.GET else None
 
         if component_id:
-            component = (
-                equipment_models.Component.objects.select_related("machine", "type")
-                .filter(id=component_id, is_active=True)
-                .first()
-            )
+            component = scoping.scope_queryset(
+                equipment_models.Component.objects.select_related("machine", "type").filter(
+                    id=component_id, is_active=True
+                ),
+                self.request.user,
+                field="machine__organization",
+            ).first()
             if component:
                 initial_component_id = component.id
                 initial_machine_id = component.machine_id
@@ -483,9 +495,11 @@ class ComponentAnalysisDataAPIView(core_mixins.BaseView):
             return JsonResponse({"error": "Component ID is required"}, status=400)
 
         try:
-            component = equipment_models.Component.objects.get(
-                id=component_id, is_active=True
-            )
+            component = scoping.scope_queryset(
+                equipment_models.Component.objects.all(),
+                request.user,
+                field="machine__organization",
+            ).get(id=component_id, is_active=True)
         except equipment_models.Component.DoesNotExist:
             return JsonResponse({"error": "Component not found"}, status=404)
 
@@ -516,6 +530,11 @@ class ChartExportPDFView(core_mixins.BaseView):
             service = services.ChartExportPDFService(
                 charts=charts,
                 summary=summary,
+                organization_name=(
+                    self.request.organization.name
+                    if getattr(self.request, "organization", None)
+                    else None
+                ),
             )
             return service.generate()
 

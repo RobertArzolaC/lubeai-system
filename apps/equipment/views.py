@@ -19,7 +19,7 @@ class MachineListView(core_mixins.BaseListView):
         related: list[str] = ["branch"]
         if config.ENABLE_FLEET:
             related.append("fleet")
-        return models.Machine.objects.select_related(*related)
+        return super().get_queryset().select_related(*related)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -124,7 +124,7 @@ class BranchListView(core_mixins.BaseListView):
 
     def get_queryset(self) -> QuerySet:
         """Return branches with location relations to avoid N+1 queries."""
-        return models.Branch.objects.select_related(
+        return super().get_queryset().select_related(
             "country", "region", "subregion", "city"
         )
 

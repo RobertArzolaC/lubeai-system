@@ -7,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 
 from apps.alerts import choices, models
 from apps.equipment import models as equipment_models
+from apps.organizations import scoping
 from apps.reports import choices as report_choices
 
 
@@ -64,6 +65,17 @@ class AlertFilter(django_filters.FilterSet):
             "detected_after",
             "detected_before",
         ]
+
+    def __init__(self, *args, **kwargs):
+        """Scope machine/component choices to the user's organizations."""
+        super().__init__(*args, **kwargs)
+        scoping.scope_choices(
+            self,
+            {
+                "machine": equipment_models.Machine.objects.filter(is_active=True),
+                "component": equipment_models.Component.objects.filter(is_active=True),
+            },
+        )
 
     def filter_by_search(self, queryset: QuerySet, name: str, value: str) -> QuerySet:
         """Filter alerts by dedup key, machine or component name."""

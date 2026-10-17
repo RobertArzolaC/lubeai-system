@@ -32,7 +32,7 @@ class AlertNotificationService:
     def get_alerts(self) -> QuerySet:
         """Return the alerts for the configured IDs with related objects."""
         return models.Alert.objects.filter(id__in=self.alert_ids).select_related(
-            "machine", "component", "report"
+            "machine", "component", "report", "organization"
         )
 
     def send(self) -> dict[str, Any]:
@@ -84,8 +84,14 @@ class AlertNotificationService:
         )
         text_content = strip_tags(html_content)
 
+        first_alert = alerts.first()
+        brand = (
+            first_alert.organization.name
+            if first_alert and first_alert.organization
+            else "MARCO"
+        )
         email_message = EmailMultiAlternatives(
-            subject="[LubeAI] Alerta: condición detectada",
+            subject=f"[{brand}] Alerta: condición detectada",
             body=text_content,
             to=[account.user.email],
         )

@@ -251,6 +251,7 @@ class AlertGeneratorService:
                 "machine": report.machine,
                 "component": report.component,
                 "report": report,
+                "organization": report.organization,
                 "category": category,
                 "severity": severity,
                 "status": choices.AlertStatus.OPEN,

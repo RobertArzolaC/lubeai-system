@@ -7,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 
 from apps.core import widgets as core_widgets
 from apps.equipment import models as equipment_models
+from apps.organizations import scoping
 from apps.reports import choices, models
 
 
@@ -97,6 +98,13 @@ class ReportFilter(django_filters.FilterSet):
         super().__init__(*args, **kwargs)
         if not config.ENABLE_LABS:
             self.filters.pop("laboratory", None)
+        scoping.scope_choices(
+            self,
+            {
+                "machine": equipment_models.Machine.objects.filter(is_active=True),
+                "component": equipment_models.Component.objects.filter(is_active=True),
+            },
+        )
 
     def filter_by_lab_number(
         self, queryset: QuerySet, name: str, value: str
@@ -168,6 +176,13 @@ class ReportExportFilter(django_filters.FilterSet):
         super().__init__(*args, **kwargs)
         if not config.ENABLE_LABS:
             self.filters.pop("laboratory", None)
+        scoping.scope_choices(
+            self,
+            {
+                "machine": equipment_models.Machine.objects.filter(is_active=True),
+                "component": equipment_models.Component.objects.filter(is_active=True),
+            },
+        )
 
 
 class AnalysisThresholdFilter(django_filters.FilterSet):
@@ -252,6 +267,16 @@ class ComponentAnalysisFilter(django_filters.FilterSet):
     def __init__(self, *args, **kwargs):
         """Narrow the component choices to the selected machine, if any."""
         super().__init__(*args, **kwargs)
+
+        scoping.scope_choices(
+            self,
+            {
+                "machine": equipment_models.Machine.objects.filter(is_active=True),
+                "component": equipment_models.Component.objects.filter(
+                    is_active=True
+                ).select_related("type"),
+            },
+        )
 
         if self.data.get("machine"):
             machine_id = self.data.get("machine")

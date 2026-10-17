@@ -10,6 +10,7 @@ from django.views.generic import TemplateView
 
 from apps.dashboard import filtersets
 from apps.dashboard.services import DashboardFilters, DashboardService
+from apps.organizations import scoping
 
 
 class DashboardView(LoginRequiredMixin, TemplateView):
@@ -24,9 +25,10 @@ class DashboardView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs: Any) -> dict:
         """Add the initial payload and the available filter options."""
         context = super().get_context_data(**kwargs)
-        service = DashboardService()
+        organization_ids = scoping.user_visible_organization_ids(self.request.user)
+        service = DashboardService(organization_ids=organization_ids)
         context["dashboard_data"] = service.build_context()
-        context["filter_options"] = service.get_filter_options()
+        context["filter_options"] = service.get_filter_options(organization_ids)
         return context
 
 
@@ -50,4 +52,9 @@ class DashboardDataView(LoginRequiredMixin, View):
                 cleaned["component_type"].pk if cleaned.get("component_type") else None
             ),
         )
-        return JsonResponse(DashboardService(filters).build_context())
+        organization_ids = scoping.user_visible_organization_ids(request.user)
+        return JsonResponse(
+            DashboardService(
+                filters, organization_ids=organization_ids
+            ).build_context()
+        )

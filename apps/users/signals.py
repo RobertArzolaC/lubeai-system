@@ -22,11 +22,6 @@ def create_user_account(sender, instance, created, **kwargs):
             )
 
 
-########################################
-# Migrated from customers app
-########################################
-
-
 @receiver(post_delete, sender=models.Account)
 def remove_account_user(sender, instance, **kwargs):
     user = instance.user

@@ -5,6 +5,7 @@ from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
 from apps.equipment import models
+from apps.organizations import scoping
 
 
 class FleetFilter(django_filters.FilterSet):
@@ -80,6 +81,17 @@ class MachineFilter(django_filters.FilterSet):
     class Meta:
         model = models.Machine
         fields: ClassVar[list[str]] = ["name_search", "branch", "fleet", "is_active"]
+
+    def __init__(self, *args, **kwargs):
+        """Scope branch/fleet choices to the user's organizations."""
+        super().__init__(*args, **kwargs)
+        scoping.scope_choices(
+            self,
+            {
+                "branch": models.Branch.objects.filter(is_active=True),
+                "fleet": models.Fleet.objects.filter(is_active=True),
+            },
+        )
 
     def filter_by_name(self, queryset, name, value):
         """Filter machines by name, serial number or model."""

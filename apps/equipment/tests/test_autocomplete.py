@@ -6,6 +6,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from apps.equipment import factories
+from apps.users import factories as user_factories
 
 
 def forward_payload(**values: object) -> str:
@@ -20,6 +21,7 @@ class MachineAutocompleteTests(TestCase):
         self.machine = factories.MachineFactory(name="Alpha Vessel")
         self.other = factories.MachineFactory(name="Beta Vessel")
         self.url = reverse("apps.equipment:autocomplete_machine")
+        self.client.force_login(user_factories.UserFactory())
 
     def test_lists_active_machines(self) -> None:
         """Both active machines are returned."""
@@ -51,6 +53,7 @@ class ComponentAutocompleteTests(TestCase):
         self.component = factories.ComponentFactory(machine=self.machine)
         self.other_component = factories.ComponentFactory(machine=self.other_machine)
         self.url = reverse("apps.equipment:autocomplete_component")
+        self.client.force_login(user_factories.UserFactory())
 
     def test_returns_only_components_of_machine(self) -> None:
         """Only components of the forwarded machine are returned."""

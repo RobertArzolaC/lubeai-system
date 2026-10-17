@@ -4,6 +4,7 @@ from dal import autocomplete
 from django.db.models import Q, QuerySet
 
 from apps.equipment import models
+from apps.organizations import scoping
 
 
 class MachineAutocomplete(autocomplete.Select2QuerySetView):
@@ -11,7 +12,9 @@ class MachineAutocomplete(autocomplete.Select2QuerySetView):
 
     def get_queryset(self) -> QuerySet:
         """Return active machines filtered by the requested term."""
-        queryset = models.Machine.objects.filter(is_active=True)
+        queryset = scoping.scope_queryset(
+            models.Machine.objects.filter(is_active=True), self.request.user
+        )
         if self.q:
             queryset = queryset.filter(
                 Q(name__icontains=self.q) | Q(serial_number__icontains=self.q)
@@ -24,8 +27,12 @@ class ComponentAutocomplete(autocomplete.Select2QuerySetView):
 
     def get_queryset(self) -> QuerySet:
         """Return active components of the forwarded machine, filtered by term."""
-        queryset = models.Component.objects.filter(is_active=True).select_related(
-            "type", "machine"
+        queryset = scoping.scope_queryset(
+            models.Component.objects.filter(is_active=True).select_related(
+                "type", "machine"
+            ),
+            self.request.user,
+            field="machine__organization",
         )
 
         machine = self.forwarded.get("machine")

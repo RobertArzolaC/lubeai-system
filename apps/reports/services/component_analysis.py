@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from apps.equipment import models as equipment_models
 from apps.reports import constants, models, utils
@@ -52,11 +52,16 @@ class ComponentAnalysisService:
             component_id: ID of the component to analyze
         """
         self.component_id = component_id
-        self.component: Optional[equipment_models.Component] = None
+        self.component: equipment_models.Component | None = None
         self.reports_qs = None
-        self._thresholds_cache: Dict[str, Any] = {}
+        self._thresholds_cache: dict[str, Any] = {}
         self._component_type_key: str = ""
         self._load_component()
+        self.organization = (
+            self.component.machine.organization
+            if self.component and self.component.machine
+            else None
+        )
         self._load_thresholds()
 
     def _get_component_type_key(self) -> str:
@@ -159,7 +164,7 @@ class ComponentAnalysisService:
             logger.error(f"Error loading thresholds from database: {e}")
             self._thresholds_cache = self.THRESHOLDS
 
-    def _get_thresholds(self, category: str) -> Dict[str, Any]:
+    def _get_thresholds(self, category: str) -> dict[str, Any]:
         """
         Get thresholds for a specific category with colors included.
 
@@ -175,7 +180,7 @@ class ComponentAnalysisService:
         for param_key, threshold_data in thresholds.items():
             enriched_thresholds[param_key] = {
                 **threshold_data,
-                "color": utils.get_parameter_color(param_key),
+                "color": utils.get_parameter_color(param_key, self.organization),
             }
 
         return enriched_thresholds
@@ -202,7 +207,7 @@ class ComponentAnalysisService:
             logger.error(f"Component {self.component_id} not found or inactive")
             raise ValueError(f"Component {self.component_id} not found")
 
-    def get_component_summary(self) -> Dict[str, Any]:
+    def get_component_summary(self) -> dict[str, Any]:
         """
         Get summary information about the component.
 
@@ -258,7 +263,7 @@ class ComponentAnalysisService:
         return "hours"
 
     def _calculate_parameter_status(
-        self, value: Optional[float], param_key: str, category: str
+        self, value: float | None, param_key: str, category: str
     ) -> str:
         """
         Calculate the status (normal/caution/critical) for a parameter value.
@@ -304,7 +309,7 @@ class ComponentAnalysisService:
             else:
                 return "normal"
 
-    def calculate_overall_status(self) -> Dict[str, Any]:
+    def calculate_overall_status(self) -> dict[str, Any]:
         """
         Calculate the overall status of the component based on latest analysis.
 
@@ -349,7 +354,7 @@ class ComponentAnalysisService:
             "recommendation": recommendation,
         }
 
-    def _calculate_trend(self, values: List[Optional[float]]) -> Dict[str, Any]:
+    def _calculate_trend(self, values: list[float | None]) -> dict[str, Any]:
         """
         Calculate the trend direction for a series of values.
 
@@ -389,7 +394,7 @@ class ComponentAnalysisService:
             "percentage": round(abs(percentage), 1),
         }
 
-    def get_kpi_metrics(self) -> List[Dict[str, Any]]:
+    def get_kpi_metrics(self) -> list[dict[str, Any]]:
         """
         Get KPI metrics for the overview tab.
 
@@ -467,8 +472,8 @@ class ComponentAnalysisService:
             return "oil_health"
 
     def _extract_parameter_data(
-        self, reports: List, params: List[str]
-    ) -> Dict[str, List[Optional[float]]]:
+        self, reports: list, params: list[str]
+    ) -> dict[str, list[float | None]]:
         """
         Extract parameter values from reports.
 
@@ -479,7 +484,7 @@ class ComponentAnalysisService:
         Returns:
             Dictionary mapping parameter keys to lists of values
         """
-        data: Dict[str, List[Optional[float]]] = {p: [] for p in params}
+        data: dict[str, list[float | None]] = {p: [] for p in params}
 
         for report in reports:
             if not hasattr(report, "analysis"):
@@ -492,7 +497,7 @@ class ComponentAnalysisService:
 
         return data
 
-    def get_wear_metals_radar(self) -> Dict[str, Any]:
+    def get_wear_metals_radar(self) -> dict[str, Any]:
         """
         Get wear metals data for radar chart.
 
@@ -543,7 +548,7 @@ class ComponentAnalysisService:
             },
         }
 
-    def get_usage_correlation(self) -> Dict[str, Any]:
+    def get_usage_correlation(self) -> dict[str, Any]:
         """
         Get usage vs wear correlation data.
 
@@ -592,7 +597,7 @@ class ComponentAnalysisService:
             "measurement_unit": measurement_unit,
         }
 
-    def get_wear_sources(self) -> Dict[str, str]:
+    def get_wear_sources(self) -> dict[str, str]:
         """
         Get wear source descriptions for the component type.
 
@@ -622,7 +627,7 @@ class ComponentAnalysisService:
 
         return wear_sources
 
-    def get_available_tabs(self) -> List[Dict[str, str]]:
+    def get_available_tabs(self) -> list[dict[str, str]]:
         """
         Get available tabs for this component type.
 
@@ -634,7 +639,7 @@ class ComponentAnalysisService:
         )
         return constants.get_tabs_for_component_type(component_type_name)
 
-    def get_wear_trends(self) -> Dict[str, Any]:
+    def get_wear_trends(self) -> dict[str, Any]:
         """
         Get wear metal trends data (Fe, Cu, Al).
 
@@ -675,23 +680,23 @@ class ComponentAnalysisService:
                 {
                     "name": "Hierro (Fe)",
                     "data": data_series["iron_fe"],
-                    "color": utils.get_parameter_color("iron_fe"),
+                    "color": utils.get_parameter_color("iron_fe", self.organization),
                 },
                 {
                     "name": "Cobre (Cu)",
                     "data": data_series["copper_cu"],
-                    "color": utils.get_parameter_color("copper_cu"),
+                    "color": utils.get_parameter_color("copper_cu", self.organization),
                 },
                 {
                     "name": "Aluminio (Al)",
                     "data": data_series["aluminum_al"],
-                    "color": utils.get_parameter_color("aluminum_al"),
+                    "color": utils.get_parameter_color("aluminum_al", self.organization),
                 },
             ],
             "thresholds": self._get_thresholds("wear_metals"),
         }
 
-    def get_contamination_alerts(self) -> Dict[str, Any]:
+    def get_contamination_alerts(self) -> dict[str, Any]:
         """
         Get contamination data (Si, Na, K).
 
@@ -734,23 +739,23 @@ class ComponentAnalysisService:
                 {
                     "name": "Silicio (Si) - Polvo",
                     "data": data_series["silicon_si"],
-                    "color": utils.get_parameter_color("silicon_si"),
+                    "color": utils.get_parameter_color("silicon_si", self.organization),
                 },
                 {
                     "name": "Sodio (Na) - Refrigerante",
                     "data": data_series["sodium_na"],
-                    "color": utils.get_parameter_color("sodium_na"),
+                    "color": utils.get_parameter_color("sodium_na", self.organization),
                 },
                 {
                     "name": "Potasio (K)",
                     "data": data_series["potassium_k"],
-                    "color": utils.get_parameter_color("potassium_k"),
+                    "color": utils.get_parameter_color("potassium_k", self.organization),
                 },
             ],
             "thresholds": self._get_thresholds("contamination"),
         }
 
-    def get_oil_health(self) -> Dict[str, Any]:
+    def get_oil_health(self) -> dict[str, Any]:
         """
         Get oil health indicators (Si, Na, K, viscosity) with lubricant usage.
 
@@ -826,32 +831,32 @@ class ComponentAnalysisService:
                 {
                     "name": "Silicio (Si) - ppm",
                     "data": data_series["silicon_si"],
-                    "color": utils.get_parameter_color("silicon_si"),
+                    "color": utils.get_parameter_color("silicon_si", self.organization),
                     "type": "line",
                 },
                 {
                     "name": "Sodio (Na) - ppm",
                     "data": data_series["sodium_na"],
-                    "color": utils.get_parameter_color("sodium_na"),
+                    "color": utils.get_parameter_color("sodium_na", self.organization),
                     "type": "line",
                 },
                 {
                     "name": "Potasio (K) - ppm",
                     "data": data_series["potassium_k"],
-                    "color": utils.get_parameter_color("potassium_k"),
+                    "color": utils.get_parameter_color("potassium_k", self.organization),
                     "type": "line",
                 },
                 {
                     "name": "Viscosidad @ 100°C (cSt)",
                     "data": data_series["viscosity_100c"],
-                    "color": utils.get_parameter_color("viscosity_100c"),
+                    "color": utils.get_parameter_color("viscosity_100c", self.organization),
                     "type": "line",
                 },
             ],
             "thresholds": self._get_thresholds("oil_health"),
         }
 
-    def get_additives_trend(self) -> Dict[str, Any]:
+    def get_additives_trend(self) -> dict[str, Any]:
         """
         Get additive elements trend (Zn, P, Mg, Ca).
 
@@ -898,28 +903,28 @@ class ComponentAnalysisService:
                 {
                     "name": "Zinc (Zn)",
                     "data": data_series["zinc_zn"],
-                    "color": utils.get_parameter_color("zinc_zn"),
+                    "color": utils.get_parameter_color("zinc_zn", self.organization),
                 },
                 {
                     "name": "Fósforo (P)",
                     "data": data_series["phosphorus_p"],
-                    "color": utils.get_parameter_color("phosphorus_p"),
+                    "color": utils.get_parameter_color("phosphorus_p", self.organization),
                 },
                 {
                     "name": "Magnesio (Mg)",
                     "data": data_series["magnesium_mg"],
-                    "color": utils.get_parameter_color("magnesium_mg"),
+                    "color": utils.get_parameter_color("magnesium_mg", self.organization),
                 },
                 {
                     "name": "Calcio (Ca)",
                     "data": data_series["calcium_ca"],
-                    "color": utils.get_parameter_color("calcium_ca"),
+                    "color": utils.get_parameter_color("calcium_ca", self.organization),
                 },
             ],
             "thresholds": self._get_thresholds("additives"),
         }
 
-    def _find_threshold_for_parameter(self, param_key: str) -> Dict[str, Any]:
+    def _find_threshold_for_parameter(self, param_key: str) -> dict[str, Any]:
         """
         Search for a parameter's threshold across all cached categories.
 
@@ -934,7 +939,7 @@ class ComponentAnalysisService:
                 return cat_thresholds[param_key]
         return {}
 
-    def get_tbn_tan_trend(self) -> Dict[str, Any]:
+    def get_tbn_tan_trend(self) -> dict[str, Any]:
         """
         Get TBN and TAN trend data for the advanced tab.
 
@@ -944,8 +949,8 @@ class ComponentAnalysisService:
         reports = self.reports_qs.filter(analysis__isnull=False)
 
         dates = []
-        tbn_values: List[Optional[float]] = []
-        tan_values: List[Optional[float]] = []
+        tbn_values: list[float | None] = []
+        tan_values: list[float | None] = []
 
         for report in reports:
             if hasattr(report, "analysis"):
@@ -964,7 +969,7 @@ class ComponentAnalysisService:
             "tan": tan_values,
         }
 
-    def get_ftir_trends(self) -> Dict[str, Any]:
+    def get_ftir_trends(self) -> dict[str, Any]:
         """
         Get FTIR analysis trends (oxidation, nitration, sulfation) for the advanced tab.
 
@@ -974,9 +979,9 @@ class ComponentAnalysisService:
         reports = self.reports_qs.filter(analysis__isnull=False)
 
         dates = []
-        oxidation_values: List[Optional[float]] = []
-        nitration_values: List[Optional[float]] = []
-        sulfation_values: List[Optional[float]] = []
+        oxidation_values: list[float | None] = []
+        nitration_values: list[float | None] = []
+        sulfation_values: list[float | None] = []
 
         for report in reports:
             if hasattr(report, "analysis"):
@@ -1005,7 +1010,7 @@ class ComponentAnalysisService:
             "sulfation": sulfation_values,
         }
 
-    def get_particle_distribution(self) -> Dict[str, Any]:
+    def get_particle_distribution(self) -> dict[str, Any]:
         """
         Get particle size distribution trends for the advanced tab.
 
@@ -1023,7 +1028,7 @@ class ComponentAnalysisService:
             "particle_38um",
             "particle_70um",
         ]
-        data_series: Dict[str, List[Optional[float]]] = {
+        data_series: dict[str, list[float | None]] = {
             field: [] for field in particle_fields
         }
 
@@ -1042,7 +1047,7 @@ class ComponentAnalysisService:
             **data_series,
         }
 
-    def get_pq_index_trend(self) -> Dict[str, Any]:
+    def get_pq_index_trend(self) -> dict[str, Any]:
         """
         Get PQ Index trend data with threshold limits for the advanced tab.
 
@@ -1052,7 +1057,7 @@ class ComponentAnalysisService:
         reports = self.reports_qs.filter(analysis__isnull=False)
 
         dates = []
-        values: List[Optional[float]] = []
+        values: list[float | None] = []
 
         for report in reports:
             if hasattr(report, "analysis"):
@@ -1077,7 +1082,7 @@ class ComponentAnalysisService:
             else None,
         }
 
-    def get_fuel_dilution_trend(self) -> Dict[str, Any]:
+    def get_fuel_dilution_trend(self) -> dict[str, Any]:
         """
         Get fuel dilution trend data with threshold limits for the advanced tab.
 
@@ -1087,7 +1092,7 @@ class ComponentAnalysisService:
         reports = self.reports_qs.filter(analysis__isnull=False)
 
         dates = []
-        values: List[Optional[float]] = []
+        values: list[float | None] = []
 
         for report in reports:
             if hasattr(report, "analysis"):
@@ -1114,7 +1119,7 @@ class ComponentAnalysisService:
             else None,
         }
 
-    def get_single_parameter_trend(self, parameter_name: str) -> Dict[str, Any]:
+    def get_single_parameter_trend(self, parameter_name: str) -> dict[str, Any]:
         """
         Get time-series trend data for a single parameter.
 
@@ -1137,7 +1142,7 @@ class ComponentAnalysisService:
         trend = self._calculate_trend(values)
 
         # Current value: last non-None value
-        current_value: Optional[float] = None
+        current_value: float | None = None
         for v in reversed(values):
             if v is not None:
                 current_value = v
@@ -1167,7 +1172,7 @@ class ComponentAnalysisService:
             "total_data_points": len([v for v in values if v is not None]),
         }
 
-    def get_all_analysis_data(self) -> Dict[str, Any]:
+    def get_all_analysis_data(self) -> dict[str, Any]:
         """
         Get complete analysis data including summary and all charts.
 
