@@ -8,7 +8,7 @@ from apps.alerts import choices, filtersets, forms, models
 from apps.core import mixins as core_mixins
 
 
-class AlertListView(core_mixins.BaseListView):
+class AlertListView(core_mixins.ClientAttributionMixin, core_mixins.BaseListView):
     """List view for the Alert model."""
 
     model = models.Alert

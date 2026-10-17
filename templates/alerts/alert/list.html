@@ -46,7 +46,7 @@
     <form method="get" role="search" class="flex flex-col gap-5">
         <!-- Primary filters -->
         <div class="grid grid-cols-1 gap-4 md:grid-cols-12 md:items-end">
-            <div class="md:col-span-5">
+            <div class="md:col-span-{% if show_organization %}4{% else %}5{% endif %}">
                 <label for="id_search" class="mb-2.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{{ filter.form.search.label }}</label>
                 {% trans "Search by machine, component or key..." as search_placeholder %}
                 <div class="relative">
@@ -56,7 +56,13 @@
                     {% render_field filter.form.search class="w-full rounded-xl border border-stroke bg-whiten py-3 pl-11 pr-5 text-black transition-all duration-300 focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/5 focus:outline-none dark:border-strokedark dark:bg-boxdark-2 dark:text-white" placeholder=search_placeholder %}
                 </div>
             </div>
-            <div class="md:col-span-3">
+            {% if show_organization %}
+            <div class="md:col-span-2">
+                <label for="id_organization" class="mb-2.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{{ filter.form.organization.label }}</label>
+                {% render_field filter.form.organization class="w-full rounded-xl border border-stroke bg-whiten py-3 px-4 text-sm font-semibold text-black outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/5 dark:border-form-strokedark dark:bg-meta-4 dark:text-white" %}
+            </div>
+            {% endif %}
+            <div class="md:col-span-{% if show_organization %}2{% else %}3{% endif %}">
                 <label for="id_status" class="mb-2.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{{ filter.form.status.label }}</label>
                 {% render_field filter.form.status class="w-full rounded-xl border border-stroke bg-whiten py-3 px-4 text-sm font-semibold text-black outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/5 dark:border-form-strokedark dark:bg-meta-4 dark:text-white" %}
             </div>
@@ -122,7 +128,12 @@
         <div class="col-span-2 flex items-center">
             <p class="text-xs font-bold uppercase tracking-widest text-black dark:text-white">{% trans "Severity" %}</p>
         </div>
-        <div class="col-span-3 flex items-center">
+        {% if show_organization %}
+        <div class="col-span-2 flex items-center">
+            <p class="text-xs font-bold uppercase tracking-widest text-black dark:text-white">{% trans "Client" %}</p>
+        </div>
+        {% endif %}
+        <div class="col-span-{% if show_organization %}2{% else %}3{% endif %} flex items-center">
             <p class="text-xs font-bold uppercase tracking-widest text-black dark:text-white">{% trans "Category" %}</p>
         </div>
         <div class="col-span-2 flex items-center">
@@ -131,7 +142,7 @@
         <div class="col-span-1 flex items-center">
             <p class="text-xs font-bold uppercase tracking-widest text-black dark:text-white">{% trans "Value" %}</p>
         </div>
-        <div class="col-span-2 flex items-center">
+        <div class="col-span-{% if show_organization %}1{% else %}2{% endif %} flex items-center">
             <p class="text-xs font-bold uppercase tracking-widest text-black dark:text-white">{% trans "Status" %}</p>
         </div>
         <div class="col-span-2 flex items-center justify-end">
@@ -146,7 +157,14 @@
             <div class="col-span-2 flex items-center">
                 {% include "alerts/includes/severity_badge.html" with severity=alert.severity %}
             </div>
-            <div class="col-span-3 flex items-center">
+            {% if show_organization %}
+            <div class="col-span-2 flex items-center">
+                {% if alert.organization %}
+                <span class="inline-flex items-center rounded-md border border-blue-500/20 bg-blue-500/10 px-2 py-0.5 text-[10px] font-bold text-blue-500">{{ alert.organization.name }}</span>
+                {% else %}—{% endif %}
+            </div>
+            {% endif %}
+            <div class="col-span-{% if show_organization %}2{% else %}3{% endif %} flex items-center">
                 <div>
                     <p class="text-base font-bold text-black dark:text-white">{{ alert.get_category_display }}</p>
                     <p class="text-xs font-medium text-bodydark2">{% if alert.report %}{{ alert.report.lab_number }}{% else %}—{% endif %}</p>
@@ -164,7 +182,7 @@
                     <p class="truncate text-xs font-medium text-bodydark2">{{ alert.warning_limit|default:"—" }} / {{ alert.critical_limit|default:"—" }}</p>
                 </div>
             </div>
-            <div class="col-span-2 flex items-center">
+            <div class="col-span-{% if show_organization %}1{% else %}2{% endif %} flex items-center">
                 {% include "alerts/includes/status_badge.html" with status=alert.status %}
             </div>
             <div class="col-span-2 flex items-center justify-end">

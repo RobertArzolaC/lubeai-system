@@ -7,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 
 from apps.alerts import choices, models
 from apps.equipment import models as equipment_models
+from apps.organizations import models as organization_models
 from apps.organizations import scoping
 from apps.reports import choices as report_choices
 
@@ -15,6 +16,11 @@ class AlertFilter(django_filters.FilterSet):
     """FilterSet for the Alert model."""
 
     search = django_filters.CharFilter(method="filter_by_search", label=_("Search"))
+    organization = django_filters.ModelChoiceFilter(
+        queryset=organization_models.Organization.objects.all(),
+        empty_label=_("All Clients"),
+        label=_("Client"),
+    )
     severity = django_filters.ChoiceFilter(
         choices=choices.AlertSeverity.choices,
         empty_label=_("All Severities"),
@@ -57,6 +63,7 @@ class AlertFilter(django_filters.FilterSet):
         model = models.Alert
         fields: ClassVar[list[str]] = [
             "search",
+            "organization",
             "severity",
             "status",
             "category",
@@ -67,7 +74,7 @@ class AlertFilter(django_filters.FilterSet):
         ]
 
     def __init__(self, *args, **kwargs):
-        """Scope machine/component choices to the user's organizations."""
+        """Scope machine/component/organization choices to the user's orgs."""
         super().__init__(*args, **kwargs)
         scoping.scope_choices(
             self,
@@ -76,6 +83,7 @@ class AlertFilter(django_filters.FilterSet):
                 "component": equipment_models.Component.objects.filter(is_active=True),
             },
         )
+        scoping.scope_organization_filter(self)
 
     def filter_by_search(self, queryset: QuerySet, name: str, value: str) -> QuerySet:
         """Filter alerts by dedup key, machine or component name."""
