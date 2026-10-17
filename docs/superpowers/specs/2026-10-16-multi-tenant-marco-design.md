@@ -171,3 +171,13 @@ Metodos: `is_tenant`, `tenant` (raiz), `ancestors`, `descendants(include_self)`,
 - Se aplica en: listado/detalle/CRUD de tipos, `ComponentForm.type`,
   `AnalysisThresholdForm.component_type`, `DashboardFilter` y el autocompletado
   de maquinas/componentes.
+
+## 15. Adenda: notificaciones de alerta scopeadas
+
+- `AlertNotificationService` deja de enviar a todas las cuentas activas.
+- Los destinatarios son las cuentas activas cuyo usuario tenga
+  `alerts.view_alert` y cuya organizacion pueda **ver** la alerta: la
+  organizacion dueña de la alerta **o uno de sus ancestros** (los usuarios de
+  un ancestro ven su subarbol). Nunca otra rama ni otro tenant.
+- Se envia un correo por destinatario con **solo** las alertas que puede ver.
+- Las alertas sin organizacion no generan correo.

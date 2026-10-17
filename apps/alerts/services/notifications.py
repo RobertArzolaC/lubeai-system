@@ -15,6 +15,8 @@ from django.utils.html import strip_tags
 from django.utils.translation import gettext_lazy as _
 
 from apps.alerts import models
+from apps.organizations import models as organization_models
+from apps.organizations import scoping
 from apps.users import models as user_models
 
 logger = logging.getLogger(__name__)
@@ -51,7 +53,13 @@ class AlertNotificationService:
         return {"email": result}
 
     def _send_email(self) -> dict[str, Any]:
-        """Notify recipients by email, respecting ``ENABLE_SEND_EMAIL``."""
+        """Notify recipients by email, respecting ``ENABLE_SEND_EMAIL``.
+
+        Recipients are the active accounts whose user has ``alerts.view_alert``
+        and whose organization can see the alert (the alert's organization or
+        one of its ancestors). This keeps notifications inside the owning
+        tenant; users of other tenants are never notified.
+        """
         if not config.ENABLE_SEND_EMAIL:
             logger.info("Email sending is disabled via ENABLE_SEND_EMAIL")
             return {"sent": 0, "errors": []}
@@ -60,22 +68,64 @@ class AlertNotificationService:
         if not alerts.exists():
             return {"sent": 0, "errors": []}
 
+        alert_organization_ids = {
+            organization_id
+            for organization_id in alerts.values_list("organization_id", flat=True)
+            if organization_id is not None
+        }
+        if not alert_organization_ids:
+            return {"sent": 0, "errors": []}
+
         recipients = user_models.Account.objects.filter(
             user__is_active=True,
             is_removed=False,
-        ).select_related("user")
+            user__organization_id__in=self._recipient_organization_ids(
+                alert_organization_ids
+            ),
+        ).select_related("user", "user__organization")
 
         sent = 0
         errors: list[dict[str, Any]] = []
         for account in recipients:
+            user = account.user
+            if not user.has_perm("alerts.view_alert"):
+                continue
+
+            visible_ids = scoping.user_visible_organization_ids(user)
+            account_alerts = (
+                alerts
+                if visible_ids is None
+                else alerts.filter(organization_id__in=visible_ids)
+            )
+            if not account_alerts.exists():
+                continue
+
             try:
-                self._dispatch_email(alerts, account)
+                self._dispatch_email(account_alerts, account)
                 sent += 1
             except Exception as exc:
-                logger.exception("Email alert error for %s", account.user.email)
-                errors.append({"email": account.user.email, "error": str(exc)})
+                logger.exception("Email alert error for %s", user.email)
+                errors.append({"email": user.email, "error": str(exc)})
 
         return {"sent": sent, "errors": errors}
+
+    @staticmethod
+    def _recipient_organization_ids(alert_organization_ids: set[int]) -> set[int]:
+        """Return the organizations that may receive these alerts.
+
+        For every alert organization, that organization plus its ancestors
+        (the users who can see it). Never leaves the owning tenant.
+        """
+        organizations = organization_models.Organization.objects.filter(
+            id__in=alert_organization_ids
+        )
+        recipient_ids: set[int] = set()
+        for organization in organizations:
+            recipient_ids.add(organization.id)
+            recipient_ids.update(
+                ancestor.id for ancestor in organization.ancestors()
+            )
+        return recipient_ids
 
     @staticmethod
     def _dispatch_email(alerts: QuerySet, account: user_models.Account) -> None:
