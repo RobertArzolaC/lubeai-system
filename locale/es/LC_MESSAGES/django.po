@@ -806,10 +806,8 @@ msgid "Unit of measurement for machine usage"
 msgstr "Unidad de medida para el uso de la máquina"
 
 #: apps/equipment/models.py:155
-#, fuzzy
-#| msgid "Tenant/client organization that owns this report"
 msgid "Organization that owns this component type"
-msgstr "Organización (tenant/cliente) propietaria de este informe"
+msgstr "Organización propietaria de este tipo de componente"
 
 #: apps/equipment/models.py:179
 msgid "Machine this component belongs to"
@@ -861,28 +859,20 @@ msgid "Component type updated successfully"
 msgstr "Tipo de componente actualizado correctamente"
 
 #: apps/organizations/admin.py:21
-#, fuzzy
-#| msgid "Contamination"
 msgid "Contact"
-msgstr "Contaminación"
+msgstr "Contacto"
 
 #: apps/organizations/admin.py:23
-#, fuzzy
-#| msgid "Pending"
 msgid "Branding"
-msgstr "Pendiente"
+msgstr "Marca"
 
 #: apps/organizations/admin.py:37 apps/organizations/models.py:78
-#, fuzzy
-#| msgid "Compatibility"
 msgid "Capabilities"
-msgstr "Compatibilidad"
+msgstr "Capacidades"
 
 #: apps/organizations/apps.py:10
-#, fuzzy
-#| msgid "Permissions Management"
 msgid "Organizations Management"
-msgstr "Gestión de Permisos"
+msgstr "Gestión de organizaciones"
 
 #: apps/organizations/choices.py:8
 msgid "Platform"
@@ -924,10 +914,8 @@ msgid "Optional business code"
 msgstr "Código de negocio opcional"
 
 #: apps/organizations/models.py:50
-#, fuzzy
-#| msgid "Organization"
 msgid "Parent organization"
-msgstr "Organización"
+msgstr "Organización padre"
 
 #: apps/organizations/models.py:55
 msgid "Empty for a root tenant"
@@ -954,16 +942,12 @@ msgid "Chart primary"
 msgstr "Gráfico: primario"
 
 #: apps/organizations/models.py:71
-#, fuzzy
-#| msgid "Success"
 msgid "Chart success"
-msgstr "Éxito"
+msgstr "Gráfico: éxito"
 
 #: apps/organizations/models.py:72
-#, fuzzy
-#| msgid "Warning"
 msgid "Chart warning"
-msgstr "Advertencia"
+msgstr "Gráfico: advertencia"
 
 #: apps/organizations/models.py:73
 msgid "Chart danger"
@@ -983,10 +967,8 @@ msgstr ""
 "Sobrescrituras por organización de las capacidades por defecto del tipo"
 
 #: apps/organizations/models.py:86
-#, fuzzy
-#| msgid "Organization"
 msgid "Organizations"
-msgstr "Organización"
+msgstr "Organizaciones"
 
 #: apps/reports/admin.py:666
 msgid "Threshold Limits"
@@ -1340,16 +1322,12 @@ msgid "End Date"
 msgstr "Fecha de fin"
 
 #: apps/reports/filtersets.py:237 apps/reports/filtersets.py:243
-#, fuzzy
-#| msgid "Delete Machine"
 msgid "Select Machine"
-msgstr "Eliminar máquina"
+msgstr "Seleccionar equipo"
 
 #: apps/reports/filtersets.py:250 apps/reports/filtersets.py:257
-#, fuzzy
-#| msgid "Select Component Type"
 msgid "Select Component"
-msgstr "Seleccionar tipo de componente"
+msgstr "Seleccionar componente"
 
 #: apps/reports/forms.py:201
 msgid ""
