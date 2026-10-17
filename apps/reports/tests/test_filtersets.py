@@ -2,6 +2,7 @@
 
 from datetime import date
 
+from constance.test import override_config
 from django.test import TestCase
 from django.urls import reverse
 
@@ -86,6 +87,19 @@ class ReportFilterTests(TestCase):
         self.assertIn(self.report, filterset.qs)
         self.assertNotIn(self.other, filterset.qs)
 
+    @override_config(ENABLE_LABS=False)
+    def test_laboratory_filter_hidden_when_flag_disabled(self) -> None:
+        """The laboratory filter is removed from the report filter when off."""
+        filterset = filtersets.ReportFilter(queryset=models.Report.objects.all())
+        self.assertNotIn("laboratory", filterset.filters)
+        self.assertNotIn("laboratory", filterset.form.fields)
+
+    @override_config(ENABLE_LABS=True)
+    def test_laboratory_filter_present_when_flag_enabled(self) -> None:
+        """The laboratory filter is available when the flag is on."""
+        filterset = filtersets.ReportFilter(queryset=models.Report.objects.all())
+        self.assertIn("laboratory", filterset.filters)
+
 
 class AnalysisThresholdFilterTests(TestCase):
     """Tests for :class:`AnalysisThresholdFilter`."""
@@ -138,6 +152,12 @@ class ReportExportFilterTests(TestCase):
         """The export filter exposes a component relation filter."""
         self.assertIn("component", filtersets.ReportExportFilter.base_filters)
         equipment_factories.ComponentFactory()
+
+    @override_config(ENABLE_LABS=False)
+    def test_export_laboratory_filter_hidden_when_flag_disabled(self) -> None:
+        """The export laboratory filter is removed when off."""
+        filterset = filtersets.ReportExportFilter(queryset=models.Report.objects.all())
+        self.assertNotIn("laboratory", filterset.filters)
 
 
 class ComponentAnalysisFilterTests(TestCase):

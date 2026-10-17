@@ -1,6 +1,7 @@
 from typing import ClassVar
 
 import django_filters
+from constance import config
 from django.db.models import Q, QuerySet
 from django.utils.translation import gettext_lazy as _
 
@@ -91,6 +92,12 @@ class ReportFilter(django_filters.FilterSet):
             "is_active",
         ]
 
+    def __init__(self, *args, **kwargs) -> None:
+        """Hide the laboratory filter when the flag is disabled."""
+        super().__init__(*args, **kwargs)
+        if not config.ENABLE_LABS:
+            self.filters.pop("laboratory", None)
+
     def filter_by_lab_number(
         self, queryset: QuerySet, name: str, value: str
     ) -> QuerySet:
@@ -155,6 +162,12 @@ class ReportExportFilter(django_filters.FilterSet):
             "condition",
             "status",
         ]
+
+    def __init__(self, *args, **kwargs) -> None:
+        """Hide the laboratory filter when the flag is disabled."""
+        super().__init__(*args, **kwargs)
+        if not config.ENABLE_LABS:
+            self.filters.pop("laboratory", None)
 
 
 class AnalysisThresholdFilter(django_filters.FilterSet):
