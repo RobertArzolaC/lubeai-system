@@ -37,6 +37,12 @@
             {% trans "Search component types..." as search_placeholder %}
             {% render_field filter.form.name_search class="w-full rounded-xl border border-stroke bg-whiten py-3 px-5 text-black transition-all duration-300 focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/5 focus:outline-none dark:border-strokedark dark:bg-boxdark-2 dark:text-white" placeholder=search_placeholder %}
         </div>
+        {% if show_organization %}
+        <div class="w-full md:w-56">
+            <label for="id_organization" class="mb-2.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{{ filter.form.organization.label }}</label>
+            {% render_field filter.form.organization class="w-full rounded-xl border border-stroke bg-whiten py-3 px-4 text-sm font-semibold text-black outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/5 dark:border-form-strokedark dark:bg-meta-4 dark:text-white" %}
+        </div>
+        {% endif %}
         <div class="w-full md:w-56">
             <label for="id_is_active" class="mb-2.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{{ filter.form.is_active.label }}</label>
             {% render_field filter.form.is_active class="w-full rounded-xl border border-stroke bg-whiten py-3 px-4 text-sm font-semibold text-black outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/5 dark:border-form-strokedark dark:bg-meta-4 dark:text-white" %}
@@ -55,9 +61,14 @@
 <!-- Table Container -->
 <div class="overflow-hidden rounded-2xl border border-stroke bg-white shadow-sm dark:border-strokedark dark:bg-boxdark">
     <div class="grid grid-cols-12 border-b border-stroke bg-gray-2/50 py-5 px-6 dark:border-strokedark dark:bg-meta-4/30">
-        <div class="col-span-4 flex items-center">
+        <div class="col-span-{% if show_organization %}2{% else %}4{% endif %} flex items-center">
             <p class="text-xs font-bold uppercase tracking-widest text-black dark:text-white">{% trans "Name" %}</p>
         </div>
+        {% if show_organization %}
+        <div class="col-span-2 flex items-center">
+            <p class="text-xs font-bold uppercase tracking-widest text-black dark:text-white">{% trans "Client" %}</p>
+        </div>
+        {% endif %}
         <div class="col-span-4 flex items-center">
             <p class="text-xs font-bold uppercase tracking-widest text-black dark:text-white">{% trans "Description" %}</p>
         </div>
@@ -72,9 +83,16 @@
     <div class="flex flex-col">
         {% for component_type in component_types %}
         <div class="grid grid-cols-12 border-b border-stroke py-6 px-6 transition-all duration-200 last:border-b-0 hover:bg-gray-50 dark:border-strokedark dark:hover:bg-meta-4/20">
-            <div class="col-span-4 flex items-center">
+            <div class="col-span-{% if show_organization %}2{% else %}4{% endif %} flex items-center">
                 <p class="text-base font-bold text-black dark:text-white">{{ component_type.name }}</p>
             </div>
+            {% if show_organization %}
+            <div class="col-span-2 flex items-center">
+                {% if component_type.organization %}
+                <span class="inline-flex items-center rounded-md border border-blue-500/20 bg-blue-500/10 px-2 py-0.5 text-[10px] font-bold text-blue-500">{{ component_type.organization.name }}</span>
+                {% else %}—{% endif %}
+            </div>
+            {% endif %}
             <div class="col-span-4 flex items-center">
                 <p class="line-clamp-2 text-sm font-medium text-bodydark2">{{ component_type.description|default:"—" }}</p>
             </div>

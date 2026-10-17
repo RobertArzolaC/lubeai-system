@@ -2,7 +2,9 @@
 
 from types import SimpleNamespace
 
+from django.contrib.auth.models import Permission
 from django.test import TestCase
+from django.urls import reverse
 
 from apps.equipment import factories as equipment_factories
 from apps.equipment import filtersets, forms, models
@@ -18,6 +20,15 @@ def user_for(organization):
     user.organization = organization
     user.save(update_fields=["organization"])
     return user
+
+
+def grant_permissions(user, *codenames: str) -> None:
+    """Grant the given equipment permission codenames to ``user``."""
+    permissions = Permission.objects.filter(
+        content_type__app_label="equipment",
+        codename__in=codenames,
+    )
+    user.user_permissions.add(*permissions)
 
 
 class OrganizationFormFieldTests(TestCase):
@@ -226,3 +237,46 @@ class ClientListContextTests(TestCase):
         """The flag follows ``can_choose_organization``."""
         self.assertTrue(self._show_flag(user_for(self.lab)))
         self.assertFalse(self._show_flag(user_for(self.final)))
+
+
+class ClientColumnRenderingTests(TestCase):
+    """The Client column and filter appear for parent users only."""
+
+    def setUp(self) -> None:
+        """Build a lab owning a final client with one branch."""
+        self.lab = organization_factories.OrganizationFactory(
+            slug="cr-lab", kind=choices.OrganizationKind.LAB
+        )
+        self.final = organization_factories.OrganizationFactory(
+            slug="cr-final", kind=choices.OrganizationKind.FINAL, parent=self.lab
+        )
+        self.branch = equipment_factories.BranchFactory(
+            name="Sucursal Unica", organization=self.final
+        )
+
+    def test_parent_sees_column_and_filter(self) -> None:
+        """A parent user gets the organization filter and the client name."""
+        user = user_for(self.lab)
+        grant_permissions(user, "view_branch")
+        self.client.force_login(user)
+        response = self.client.get(reverse("apps.equipment:branch_list"))
+        self.assertContains(response, 'name="organization"')
+        self.assertContains(response, self.final.name)
+
+    def test_leaf_does_not_see_column_or_filter(self) -> None:
+        """A leaf user sees the plain list, without the client column."""
+        user = user_for(self.final)
+        grant_permissions(user, "view_branch")
+        self.client.force_login(user)
+        response = self.client.get(reverse("apps.equipment:branch_list"))
+        self.assertNotContains(response, 'name="organization"')
+
+    def test_machine_list_shows_client_column(self) -> None:
+        """The machine list renders the client column for a parent user."""
+        equipment_factories.MachineFactory(organization=self.final)
+        user = user_for(self.lab)
+        grant_permissions(user, "view_machine")
+        self.client.force_login(user)
+        response = self.client.get(reverse("apps.equipment:machine_list"))
+        self.assertContains(response, 'name="organization"')
+        self.assertContains(response, self.final.name)
