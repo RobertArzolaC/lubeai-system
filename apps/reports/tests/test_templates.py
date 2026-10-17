@@ -174,3 +174,25 @@ class ReportDetailFlagTests(TestCase):
             response,
             reverse("apps.reports:laboratory_detail", kwargs={"pk": laboratory.pk}),
         )
+
+
+class ReportExportFlagTests(TestCase):
+    """The export laboratory filter is gated by the flag."""
+
+    def setUp(self) -> None:
+        """Log in a superuser able to access the report export page."""
+        self.user = UserFactory(is_staff=True, is_superuser=True)
+        self.client.force_login(self.user)
+
+    @override_config(ENABLE_LABS=False)
+    def test_export_hides_laboratory_filter_when_flag_disabled(self) -> None:
+        """The export page hides the laboratory filter when off."""
+        response = self.client.get(reverse("apps.reports:report_export"))
+        self.assertNotContains(response, 'name="laboratory"')
+        self.assertNotContains(response, 'for="id_laboratory"')
+
+    @override_config(ENABLE_LABS=True)
+    def test_export_shows_laboratory_filter_when_flag_enabled(self) -> None:
+        """The export page shows the laboratory filter when on."""
+        response = self.client.get(reverse("apps.reports:report_export"))
+        self.assertContains(response, 'name="laboratory"')

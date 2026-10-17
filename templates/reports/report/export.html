@@ -35,10 +35,12 @@
             <label for="id_end_date" class="mb-2.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{{ filter.form.end_date.label }}</label>
             {% render_field filter.form.end_date class="w-full rounded-xl border border-stroke bg-whiten py-3 px-4 text-sm font-semibold text-black outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/5 dark:border-form-strokedark dark:bg-meta-4 dark:text-white" type="date" %}
         </div>
+        {% if config.ENABLE_LABS %}
         <div class="md:col-span-3">
             <label for="id_laboratory" class="mb-2.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{{ filter.form.laboratory.label }}</label>
             {% render_field filter.form.laboratory class="w-full rounded-xl border border-stroke bg-whiten py-3 px-4 text-sm font-semibold text-black outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/5 dark:border-form-strokedark dark:bg-meta-4 dark:text-white" %}
         </div>
+        {% endif %}
         <div class="md:col-span-3">
             <label for="id_machine" class="mb-2.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{{ filter.form.machine.label }}</label>
             {% render_field filter.form.machine class="w-full rounded-xl border border-stroke bg-whiten py-3 px-4 text-sm font-semibold text-black outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/5 dark:border-form-strokedark dark:bg-meta-4 dark:text-white" %}
