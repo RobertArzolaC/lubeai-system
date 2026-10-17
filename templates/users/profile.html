@@ -115,10 +115,10 @@
                             {% endif %}
                         </span>
                     </div>
-                    {% if user.account.parent_account %}
+                    {% if user.organization %}
                     <div class="flex items-center justify-between border-b border-stroke pb-3 dark:border-strokedark">
-                        <span class="text-sm opacity-70">{% trans "Parent Account" %}</span>
-                        <span class="font-semibold text-black dark:text-white">{{ user.account.parent_account.user.get_full_name }}</span>
+                        <span class="text-sm opacity-70">{% trans "Organization" %}</span>
+                        <span class="font-semibold text-black dark:text-white">{{ user.organization.name }}</span>
                     </div>
                     {% endif %}
                     <div class="flex items-center justify-between">
