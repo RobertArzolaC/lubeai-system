@@ -80,19 +80,21 @@
                 <i data-lucide="chevron-down" class="h-4 w-4 text-bodydark2 transition-transform duration-200 group-open:rotate-180" stroke-width="1.8" aria-hidden="true"></i>
             </summary>
             <div class="grid grid-cols-1 gap-4 border-t border-stroke p-4 md:grid-cols-12 dark:border-strokedark">
+                {% if config.ENABLE_LABS %}
                 <div class="md:col-span-3">
                     <label for="id_laboratory" class="mb-2.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{{ filter.form.laboratory.label }}</label>
                     {% render_field filter.form.laboratory class="w-full rounded-xl border border-stroke bg-white py-3 px-4 text-sm font-semibold text-black outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/5 dark:border-form-strokedark dark:bg-meta-4 dark:text-white" %}
                 </div>
-                <div class="md:col-span-3">
+                {% endif %}
+                <div class="md:col-span-{% if config.ENABLE_LABS %}3{% else %}4{% endif %}">
                     <label for="id_machine" class="mb-2.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{{ filter.form.machine.label }}</label>
                     {% render_field filter.form.machine class="w-full rounded-xl border border-stroke bg-white py-3 px-4 text-sm font-semibold text-black outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/5 dark:border-form-strokedark dark:bg-meta-4 dark:text-white" %}
                 </div>
-                <div class="md:col-span-3">
+                <div class="md:col-span-{% if config.ENABLE_LABS %}3{% else %}4{% endif %}">
                     <label for="id_component" class="mb-2.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{{ filter.form.component.label }}</label>
                     {% render_field filter.form.component class="w-full rounded-xl border border-stroke bg-white py-3 px-4 text-sm font-semibold text-black outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/5 dark:border-form-strokedark dark:bg-meta-4 dark:text-white" %}
                 </div>
-                <div class="md:col-span-3">
+                <div class="md:col-span-{% if config.ENABLE_LABS %}3{% else %}4{% endif %}">
                     <label for="id_is_active" class="mb-2.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{{ filter.form.is_active.label }}</label>
                     {% render_field filter.form.is_active class="w-full rounded-xl border border-stroke bg-white py-3 px-4 text-sm font-semibold text-black outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/5 dark:border-form-strokedark dark:bg-meta-4 dark:text-white" %}
                 </div>
@@ -113,15 +115,17 @@
 <!-- Table Container -->
 <div class="overflow-hidden rounded-2xl border border-stroke bg-white shadow-sm dark:border-strokedark dark:bg-boxdark">
     <div class="grid grid-cols-12 border-b border-stroke bg-gray-2/50 py-5 px-6 dark:border-strokedark dark:bg-meta-4/30">
-        <div class="col-span-2 flex items-center">
+        <div class="col-span-{% if config.ENABLE_LABS %}2{% else %}3{% endif %} flex items-center">
             <p class="text-xs font-bold uppercase tracking-widest text-black dark:text-white">{% trans "Report" %}</p>
         </div>
-        <div class="col-span-2 flex items-center">
+        <div class="col-span-{% if config.ENABLE_LABS %}2{% else %}3{% endif %} flex items-center">
             <p class="text-xs font-bold uppercase tracking-widest text-black dark:text-white">{% trans "Machine / Component" %}</p>
         </div>
+        {% if config.ENABLE_LABS %}
         <div class="col-span-2 flex items-center">
             <p class="text-xs font-bold uppercase tracking-widest text-black dark:text-white">{% trans "Laboratory" %}</p>
         </div>
+        {% endif %}
         <div class="col-span-2 flex items-center">
             <p class="text-xs font-bold uppercase tracking-widest text-black dark:text-white">{% trans "Sample Date" %}</p>
         </div>
@@ -136,21 +140,23 @@
     <div class="flex flex-col">
         {% for report in reports %}
         <div class="grid grid-cols-12 border-b border-stroke py-6 px-6 transition-all duration-200 last:border-b-0 hover:bg-gray-50 dark:border-strokedark dark:hover:bg-meta-4/20">
-            <div class="col-span-2 flex items-center">
+            <div class="col-span-{% if config.ENABLE_LABS %}2{% else %}3{% endif %} flex items-center">
                 <div>
                     <p class="text-base font-bold text-black dark:text-white">{{ report.lab_number }}</p>
                     <p class="text-xs font-medium text-bodydark2">{{ report.per_number|default:report.serial_number_code }}</p>
                 </div>
             </div>
-            <div class="col-span-2 flex items-center">
+            <div class="col-span-{% if config.ENABLE_LABS %}2{% else %}3{% endif %} flex items-center">
                 <div>
                     <p class="text-sm font-semibold text-black dark:text-white">{% if report.machine %}{{ report.machine.name }}{% else %}—{% endif %}</p>
                     <p class="text-xs font-medium text-bodydark2">{% if report.component %}{{ report.component.type.name }}{% else %}—{% endif %}</p>
                 </div>
             </div>
+            {% if config.ENABLE_LABS %}
             <div class="col-span-2 flex items-center">
                 <p class="text-sm font-medium text-bodydark2">{% if report.laboratory %}{{ report.laboratory.name }}{% else %}—{% endif %}</p>
             </div>
+            {% endif %}
             <div class="col-span-2 flex items-center">
                 <p class="text-sm font-medium text-bodydark2">{{ report.sample_date|date:"d/m/Y"|default:"—" }}</p>
             </div>

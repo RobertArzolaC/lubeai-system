@@ -108,6 +108,29 @@ class ReportsMenuFlagTests(TestCase):
         self.assertContains(response, "Informes")
 
 
+class ReportListFlagTests(TestCase):
+    """The report list laboratory column and filter are gated by the flag."""
+
+    def setUp(self) -> None:
+        """Log in a superuser able to view the report list."""
+        self.user = UserFactory(is_staff=True, is_superuser=True)
+        self.client.force_login(self.user)
+
+    @override_config(ENABLE_LABS=False)
+    def test_report_list_hides_laboratory_when_flag_disabled(self) -> None:
+        """The report list hides the laboratory filter and column when off."""
+        response = self.client.get(reverse("apps.reports:report_list"))
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, 'name="laboratory"')
+        self.assertNotContains(response, "Laboratorio")
+
+    @override_config(ENABLE_LABS=True)
+    def test_report_list_shows_laboratory_when_flag_enabled(self) -> None:
+        """The report list shows the laboratory filter and column when on."""
+        response = self.client.get(reverse("apps.reports:report_list"))
+        self.assertContains(response, 'name="laboratory"')
+
+
 class LaboratoryFlagMissingConfigTests(SimpleTestCase):
     """The laboratory gate degrades to falsy when ``config`` is not in context."""
 
