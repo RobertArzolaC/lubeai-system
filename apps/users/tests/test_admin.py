@@ -4,6 +4,7 @@ from django.contrib.admin.sites import AdminSite
 from django.test import RequestFactory, TestCase
 from django.urls import reverse
 
+from apps.organizations import choices as org_choices
 from apps.organizations import factories as org_factories
 from apps.users import admin as users_admin
 from apps.users import models as users_models
@@ -81,3 +82,46 @@ class UserAdminOrganizationSaveTests(TestCase):
         self.assertEqual(response.status_code, 302)
         target.refresh_from_db()
         self.assertEqual(target.organization, self.organization)
+
+
+class UserAdminOrganizationScopeTests(TestCase):
+    """The assignable organizations follow the acting user subtree."""
+
+    def setUp(self) -> None:
+        """Build a model admin and the tenant tree."""
+        self.site = AdminSite()
+        self.model_admin = users_admin.CustomUserAdmin(users_models.User, self.site)
+        self.tenant = org_factories.OrganizationFactory(
+            slug="adm-tenant", kind=org_choices.OrganizationKind.LAB
+        )
+        self.child = org_factories.OrganizationFactory(
+            slug="adm-child",
+            kind=org_choices.OrganizationKind.FINAL,
+            parent=self.tenant,
+        )
+        self.outsider = org_factories.OrganizationFactory(
+            slug="adm-outsider", kind=org_choices.OrganizationKind.LAB
+        )
+
+    def field_organization_ids(self, user) -> set[int]:
+        """Return the organization ids offered by the admin field."""
+        request = RequestFactory().get("/admin/users/user/")
+        request.user = user
+        field = self.model_admin.formfield_for_foreignkey(
+            users_models.User._meta.get_field("organization"), request
+        )
+        return set(field.queryset.values_list("id", flat=True))
+
+    def test_scoped_staff_sees_only_its_subtree(self) -> None:
+        """A staff user with an organization sees it and its descendants."""
+        staff = UserFactory(is_staff=True, organization=self.tenant)
+        self.assertEqual(
+            self.field_organization_ids(staff), {self.tenant.id, self.child.id}
+        )
+
+    def test_superuser_sees_every_organization(self) -> None:
+        """A superuser is unrestricted."""
+        admin = UserFactory(is_staff=True, is_superuser=True)
+        ids = self.field_organization_ids(admin)
+        self.assertIn(self.outsider.id, ids)
+        self.assertIn(self.tenant.id, ids)

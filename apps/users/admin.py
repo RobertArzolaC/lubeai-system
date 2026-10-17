@@ -1,9 +1,11 @@
 from typing import ClassVar
 
 from allauth.account.models import EmailAddress
+from django import forms
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
+from apps.organizations import scoping
 from apps.users import models
 from apps.users.forms import CustomUserChangeForm, CustomUserCreationForm
 
@@ -71,6 +73,12 @@ class CustomUserAdmin(UserAdmin):
     )
     search_fields = ("email",)
     ordering = ("email",)
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs) -> forms.Field:
+        """Scope the assignable organizations to the actor's subtree."""
+        if db_field.name == "organization":
+            kwargs["queryset"] = scoping.visible_organizations(request.user)
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
     def is_email_verified(self, obj):
         email = EmailAddress.objects.filter(user=obj, primary=True).first()
