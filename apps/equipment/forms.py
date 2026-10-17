@@ -138,6 +138,24 @@ class MachineForm(OrganizationScopeFormMixin, forms.ModelForm):
                     models.Fleet.objects.filter(is_active=True), user
                 )
 
+    def clean(self):
+        """Keep the machine's client coherent with its branch's client."""
+        cleaned = super().clean()
+        organization = cleaned.get("organization") or getattr(
+            self.instance, "organization", None
+        )
+        branch = cleaned.get("branch")
+        if branch is None:
+            return cleaned
+        if organization is None:
+            cleaned["organization"] = branch.organization
+        elif branch.organization_id != organization.pk:
+            self.add_error(
+                "branch",
+                _("The branch does not belong to the selected client."),
+            )
+        return cleaned
+
 
 class ComponentTypeForm(OrganizationScopeFormMixin, forms.ModelForm):
     """Form for creating and updating component types."""

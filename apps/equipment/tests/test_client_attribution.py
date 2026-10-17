@@ -93,3 +93,53 @@ class OrganizationFormFieldTests(TestCase):
         form.save()
         component_type.refresh_from_db()
         self.assertEqual(component_type.organization_id, owner.id)
+
+
+class MachineClientCoherenceTests(TestCase):
+    """A machine's branch must belong to the selected client."""
+
+    def setUp(self) -> None:
+        """Build a lab with two final clients, each owning a branch."""
+        self.lab = organization_factories.OrganizationFactory(
+            slug="mc-lab", kind=choices.OrganizationKind.LAB
+        )
+        self.client_a = organization_factories.OrganizationFactory(
+            slug="mc-a", kind=choices.OrganizationKind.FINAL, parent=self.lab
+        )
+        self.client_b = organization_factories.OrganizationFactory(
+            slug="mc-b", kind=choices.OrganizationKind.FINAL, parent=self.lab
+        )
+        self.user = user_for(self.lab)
+        self.branch_b = equipment_factories.BranchFactory(organization=self.client_b)
+
+    def _machine_data(self, **overrides):
+        """Build a valid machine payload with room for overrides."""
+        data = {
+            "organization": self.client_a.pk,
+            "branch": "",
+            "fleet": "",
+            "name": "Maquina",
+            "serial_number": "SN-1",
+            "model": "M",
+            "is_active": True,
+        }
+        data.update(overrides)
+        return data
+
+    def test_branch_of_another_client_is_rejected(self) -> None:
+        """A branch owned by a different client invalidates the form."""
+        form = forms.MachineForm(
+            data=self._machine_data(branch=self.branch_b.pk), user=self.user
+        )
+        self.assertFalse(form.is_valid())
+        self.assertIn("branch", form.errors)
+
+    def test_organization_is_taken_from_the_branch(self) -> None:
+        """Without an explicit client, the branch's client is used."""
+        form = forms.MachineForm(
+            data=self._machine_data(organization="", branch=self.branch_b.pk),
+            user=self.user,
+        )
+        self.assertTrue(form.is_valid())
+        machine = form.save()
+        self.assertEqual(machine.organization_id, self.client_b.id)
