@@ -154,3 +154,20 @@ Metodos: `is_tenant`, `tenant` (raiz), `ancestors`, `descendants(include_self)`,
 - Facturacion / planes por tenant.
 - Limites de uso por tenant.
 - Dominios propios por cliente (solo subdominio de la plataforma).
+
+## 14. Adenda: tipos de componente por organizacion
+
+- `Component` ya pertenece a la organizacion de forma transitiva
+  (`Component -> Machine -> Organization`), por lo que no lleva un FK directo.
+- `ComponentType` (la nomenclatura) pasa a ser **por organizacion**:
+  `organization` FK nullable. Visibilidad = **subarbol del usuario** (su
+  organizacion y sus descendientes). Un cliente final ve solo sus tipos; un
+  intermediario ve los suyos y los de sus finales; MARCO (raiz) ve todos los de
+  su tenant. No existe catalogo global, para que ninguna empresa vea tipos que
+  no usa.
+- Los tipos existentes se asignan a MARCO en una migracion de datos.
+- Reutiliza el scoping existente (`scope_queryset`) y la asignacion de
+  organizacion al crear (`UserStampMixin`).
+- Se aplica en: listado/detalle/CRUD de tipos, `ComponentForm.type`,
+  `AnalysisThresholdForm.component_type`, `DashboardFilter` y el autocompletado
+  de maquinas/componentes.
