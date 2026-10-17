@@ -6,6 +6,7 @@ from django.test import TestCase
 
 from apps.equipment import factories as equipment_factories
 from apps.equipment import filtersets, forms, models
+from apps.equipment import views as equipment_views
 from apps.organizations import choices
 from apps.organizations import factories as organization_factories
 from apps.users import factories as user_factories
@@ -194,3 +195,34 @@ class ClientFilterTests(TestCase):
             filterset.filters["organization"].queryset.values_list("id", flat=True)
         )
         self.assertEqual(ids, {self.lab.id, self.client_a.id, self.client_b.id})
+
+
+class ClientListContextTests(TestCase):
+    """The list views expose the organization join and the show flag."""
+
+    def setUp(self) -> None:
+        """Build a lab with one final client."""
+        self.lab = organization_factories.OrganizationFactory(
+            slug="lc-lab", kind=choices.OrganizationKind.LAB
+        )
+        self.final = organization_factories.OrganizationFactory(
+            slug="lc-final", kind=choices.OrganizationKind.FINAL, parent=self.lab
+        )
+
+    def test_machine_list_selects_organization(self) -> None:
+        """The machine list joins the organization to avoid N+1 queries."""
+        related = equipment_views.MachineListView().get_queryset().query.select_related
+        self.assertIn("organization", related)
+
+    def _show_flag(self, user) -> bool:
+        """Return ``show_organization`` for ``user`` on the branch list."""
+        view = equipment_views.BranchListView()
+        view.request = SimpleNamespace(user=user, GET={})
+        view.kwargs = {}
+        view.object_list = view.get_queryset()
+        return view.get_context_data()["show_organization"]
+
+    def test_show_organization_flag(self) -> None:
+        """The flag follows ``can_choose_organization``."""
+        self.assertTrue(self._show_flag(user_for(self.lab)))
+        self.assertFalse(self._show_flag(user_for(self.final)))

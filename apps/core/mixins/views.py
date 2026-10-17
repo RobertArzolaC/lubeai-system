@@ -159,3 +159,24 @@ class BaseDeleteView(LoginRequiredMixin, PermissionRequiredMixin, View):
 
 class BaseView(LoginRequiredMixin, PermissionRequiredMixin, View):
     pass
+
+
+class ClientAttributionMixin:
+    """Expose the owning organization in tenant-scoped list views.
+
+    Adds the ``organization`` join to the queryset and a ``show_organization``
+    context flag that templates use to render the "Client" column and filter
+    only when the user can act on more than one organization.
+    """
+
+    def get_queryset(self) -> QuerySet:
+        """Return the list queryset with the owning organization joined."""
+        return super().get_queryset().select_related("organization")
+
+    def get_context_data(self, **kwargs: Any) -> dict:
+        """Expose ``show_organization`` to the list template."""
+        context = super().get_context_data(**kwargs)
+        context["show_organization"] = scoping.can_choose_organization(
+            scoping.request_user(getattr(self, "request", None))
+        )
+        return context

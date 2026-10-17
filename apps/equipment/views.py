@@ -8,7 +8,7 @@ from apps.equipment import filtersets, forms, models
 from apps.organizations import scoping
 
 
-class MachineListView(core_mixins.BaseListView):
+class MachineListView(core_mixins.ClientAttributionMixin, core_mixins.BaseListView):
     model = models.Machine
     permission_required = "equipment.view_machine"
     filterset_class = filtersets.MachineFilter
@@ -45,6 +45,9 @@ class MachineDetailView(core_mixins.BaseDetailView):
             "apps.equipment:machine_update", kwargs={"pk": self.object.pk}
         )
         context["components"] = self.object.components.select_related("type")
+        context["show_organization"] = scoping.can_choose_organization(
+            self.request.user
+        )
         return context
 
 
@@ -136,7 +139,7 @@ class MachineDeleteView(core_mixins.BaseDeleteView):
     permission_required = "equipment.delete_machine"
 
 
-class BranchListView(core_mixins.BaseListView):
+class BranchListView(core_mixins.ClientAttributionMixin, core_mixins.BaseListView):
     """View for listing branches with filtering and pagination."""
 
     model = models.Branch
@@ -180,6 +183,9 @@ class BranchDetailView(core_mixins.BaseDetailView):
         context["machines"] = self.object.machines.filter(
             is_active=True
         ).select_related("fleet")
+        context["show_organization"] = scoping.can_choose_organization(
+            self.request.user
+        )
         return context
 
 
@@ -324,7 +330,7 @@ class FleetDeleteView(core_mixins.BaseDeleteView):
     permission_required = "equipment.delete_fleet"
 
 
-class ComponentTypeListView(core_mixins.BaseListView):
+class ComponentTypeListView(core_mixins.ClientAttributionMixin, core_mixins.BaseListView):
     """View for listing component types with filtering and pagination."""
 
     model = models.ComponentType
@@ -363,6 +369,9 @@ class ComponentTypeDetailView(core_mixins.BaseDetailView):
             self.object.components.filter(is_active=True).select_related("machine"),
             self.request.user,
             field="machine__organization",
+        )
+        context["show_organization"] = scoping.can_choose_organization(
+            self.request.user
         )
         return context
 
