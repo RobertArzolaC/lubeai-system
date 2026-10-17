@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-16 22:04-0500\n"
+"POT-Creation-Date: 2026-10-16 22:12-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -142,9 +142,9 @@ msgstr "Todas las máquinas"
 
 #: apps/alerts/filtersets.py:36 apps/alerts/models.py:28
 #: apps/dashboard/filtersets.py:28 apps/equipment/models.py:119
-#: apps/equipment/models.py:162 apps/equipment/views.py:26
-#: apps/equipment/views.py:41 apps/equipment/views.py:60
-#: apps/equipment/views.py:90 apps/reports/filtersets.py:55
+#: apps/equipment/models.py:162 apps/equipment/views.py:27
+#: apps/equipment/views.py:42 apps/equipment/views.py:67
+#: apps/equipment/views.py:103 apps/reports/filtersets.py:55
 #: apps/reports/filtersets.py:142 apps/reports/filtersets.py:238
 #: apps/reports/models.py:75 apps/reports/services/chart_export_pdf.py:212
 #: templates/alerts/alert/detail.html:38
@@ -193,9 +193,9 @@ msgid "Component associated with this alert"
 msgstr "Componente asociado con esta alerta"
 
 #: apps/alerts/models.py:46 apps/reports/models.py:239
-#: apps/reports/models.py:276 apps/reports/views.py:142
-#: apps/reports/views.py:167 apps/reports/views.py:189
-#: apps/reports/views.py:209 templates/reports/report/list.html:119
+#: apps/reports/models.py:276 apps/reports/views.py:149
+#: apps/reports/views.py:174 apps/reports/views.py:202
+#: apps/reports/views.py:228 templates/reports/report/list.html:119
 msgid "Report"
 msgstr "Informe"
 
@@ -206,7 +206,7 @@ msgstr "Informe de origen de esta alerta"
 #: apps/alerts/models.py:55 apps/equipment/models.py:15
 #: apps/equipment/models.py:42 apps/equipment/models.py:79
 #: apps/organizations/models.py:85 apps/reports/models.py:66
-#: apps/users/models.py:19
+#: apps/users/models.py:19 templates/users/profile.html:120
 msgid "Organization"
 msgstr "Organización"
 
@@ -270,6 +270,11 @@ msgstr "Alerta"
 msgid "Can acknowledge alert"
 msgstr "Puede reconocer alertas"
 
+#: apps/alerts/services/notifications.py:95
+#, python-format
+msgid "[%(brand)s] Alerta: condición detectada"
+msgstr ""
+
 #: apps/alerts/views.py:84
 msgid "Alert updated successfully"
 msgstr "Alerta actualizada correctamente"
@@ -294,38 +299,38 @@ msgid "The email address is not registered with us."
 msgstr "La dirección de correo electrónico no está registrada con nosotros."
 
 #: apps/core/breadcrumbs.py:15 apps/equipment/models.py:120
-#: apps/equipment/views.py:27 templates/equipment/branch/detail.html:84
+#: apps/equipment/views.py:28 templates/equipment/branch/detail.html:84
 #: templates/equipment/fleet/detail.html:53 templates/includes/aside.html:47
 #: templates/includes/aside.html:49
 msgid "Machines"
 msgstr "Máquinas"
 
 #: apps/core/breadcrumbs.py:16 apps/equipment/models.py:52
-#: apps/equipment/views.py:135 templates/includes/aside.html:56
+#: apps/equipment/views.py:148 templates/includes/aside.html:56
 #: templates/includes/aside.html:58
 msgid "Branches"
 msgstr "Sucursales"
 
 #: apps/core/breadcrumbs.py:17 apps/equipment/models.py:25
-#: apps/equipment/views.py:220 templates/includes/aside.html:65
+#: apps/equipment/views.py:233 templates/includes/aside.html:65
 #: templates/includes/aside.html:67
 msgid "Fleets"
 msgstr "Flotas"
 
 #: apps/core/breadcrumbs.py:18 apps/equipment/models.py:149
-#: apps/equipment/views.py:305 templates/includes/aside.html:74
+#: apps/equipment/views.py:318 templates/includes/aside.html:74
 #: templates/includes/aside.html:76
 msgid "Component Types"
 msgstr "Tipos de componente"
 
 #: apps/core/breadcrumbs.py:19 apps/reports/models.py:35
-#: apps/reports/views.py:47 templates/includes/aside.html:91
+#: apps/reports/views.py:51 templates/includes/aside.html:91
 #: templates/includes/aside.html:93
 msgid "Laboratories"
 msgstr "Laboratorios"
 
 #: apps/core/breadcrumbs.py:20 apps/reports/models.py:240
-#: apps/reports/views.py:143 templates/includes/aside.html:85
+#: apps/reports/views.py:150 templates/includes/aside.html:85
 #: templates/includes/aside.html:100 templates/includes/aside.html:102
 #: templates/reports/laboratory/list.html:65
 msgid "Reports"
@@ -336,7 +341,7 @@ msgstr "Informes"
 msgid "Thresholds"
 msgstr "Umbrales"
 
-#: apps/core/breadcrumbs.py:23 apps/users/models.py:59 apps/users/views.py:93
+#: apps/core/breadcrumbs.py:23 apps/users/models.py:59 apps/users/views.py:97
 #: templates/includes/aside.html:151 templates/includes/aside.html:153
 #: templates/includes/navbar.html:75 templates/users/account/form.html:6
 #: templates/users/account/form.html:138 templates/users/account/list.html:8
@@ -368,7 +373,7 @@ msgstr "Eliminar"
 msgid "Dashboard"
 msgstr "Tablero"
 
-#: apps/core/breadcrumbs.py:37 apps/reports/views.py:475
+#: apps/core/breadcrumbs.py:37 apps/reports/views.py:494
 #: templates/includes/aside.html:119 templates/includes/aside.html:121
 #: templates/reports/report/component_analysis.html:5
 #: templates/reports/report/component_analysis.html:6
@@ -624,8 +629,8 @@ msgstr "Año"
 
 #: apps/dashboard/filtersets.py:23 apps/equipment/filtersets.py:69
 #: apps/equipment/models.py:24 apps/equipment/models.py:88
-#: apps/equipment/views.py:219 apps/equipment/views.py:237
-#: apps/equipment/views.py:261 apps/equipment/views.py:280
+#: apps/equipment/views.py:232 apps/equipment/views.py:250
+#: apps/equipment/views.py:274 apps/equipment/views.py:293
 #: templates/dashboard/includes/filters.html:15
 #: templates/dashboard/includes/tabs.html:22
 #: templates/equipment/machine/detail.html:73
@@ -634,8 +639,8 @@ msgid "Fleet"
 msgstr "Flota"
 
 #: apps/dashboard/filtersets.py:33 apps/equipment/models.py:148
-#: apps/equipment/views.py:304 apps/equipment/views.py:322
-#: apps/equipment/views.py:346 apps/equipment/views.py:365
+#: apps/equipment/views.py:317 apps/equipment/views.py:335
+#: apps/equipment/views.py:361 apps/equipment/views.py:380
 #: apps/reports/models.py:582 apps/reports/services/chart_export_pdf.py:210
 #: templates/equipment/machine/includes/formset_row.html:7
 #: templates/reports/analysis_threshold/detail.html:41
@@ -712,9 +717,9 @@ msgid "All Branches"
 msgstr "Todas las sucursales"
 
 #: apps/equipment/filtersets.py:64 apps/equipment/models.py:51
-#: apps/equipment/models.py:70 apps/equipment/views.py:134
-#: apps/equipment/views.py:152 apps/equipment/views.py:176
-#: apps/equipment/views.py:195 templates/equipment/machine/detail.html:64
+#: apps/equipment/models.py:70 apps/equipment/views.py:147
+#: apps/equipment/views.py:165 apps/equipment/views.py:189
+#: apps/equipment/views.py:208 templates/equipment/machine/detail.html:64
 #: templates/equipment/machine/list.html:72
 msgid "Branch"
 msgstr "Sucursal"
@@ -723,27 +728,27 @@ msgstr "Sucursal"
 msgid "All Fleets"
 msgstr "Todas las flotas"
 
-#: apps/equipment/forms.py:52
+#: apps/equipment/forms.py:53
 msgid "Select country"
 msgstr "Seleccionar país"
 
-#: apps/equipment/forms.py:60
+#: apps/equipment/forms.py:61
 msgid "Select region"
 msgstr "Seleccionar región"
 
-#: apps/equipment/forms.py:68
+#: apps/equipment/forms.py:69
 msgid "Select subregion"
 msgstr "Seleccionar subregión"
 
-#: apps/equipment/forms.py:76
+#: apps/equipment/forms.py:77
 msgid "Select city"
 msgstr "Seleccionar ciudad"
 
-#: apps/equipment/forms.py:82 templates/equipment/branch/detail.html:72
+#: apps/equipment/forms.py:83 templates/equipment/branch/detail.html:72
 msgid "Subregion"
 msgstr "Subregión"
 
-#: apps/equipment/forms.py:151
+#: apps/equipment/forms.py:162
 msgid "Select Component Type"
 msgstr "Seleccionar tipo de componente"
 
@@ -816,35 +821,35 @@ msgstr "Tipo/categoría de este componente"
 msgid "Components"
 msgstr "Componentes"
 
-#: apps/equipment/views.py:55
+#: apps/equipment/views.py:56
 msgid "Machine created successfully"
 msgstr "Máquina creada correctamente"
 
-#: apps/equipment/views.py:84
+#: apps/equipment/views.py:91
 msgid "Machine updated successfully"
 msgstr "Máquina actualizada correctamente"
 
-#: apps/equipment/views.py:170
+#: apps/equipment/views.py:183
 msgid "Branch created successfully"
 msgstr "Sucursal creada correctamente"
 
-#: apps/equipment/views.py:188
+#: apps/equipment/views.py:201
 msgid "Branch updated successfully"
 msgstr "Sucursal actualizada correctamente"
 
-#: apps/equipment/views.py:255
+#: apps/equipment/views.py:268
 msgid "Fleet created successfully"
 msgstr "Flota creada correctamente"
 
-#: apps/equipment/views.py:273
+#: apps/equipment/views.py:286
 msgid "Fleet updated successfully"
 msgstr "Flota actualizada correctamente"
 
-#: apps/equipment/views.py:340
+#: apps/equipment/views.py:355
 msgid "Component type created successfully"
 msgstr "Tipo de componente creado correctamente"
 
-#: apps/equipment/views.py:358
+#: apps/equipment/views.py:373
 msgid "Component type updated successfully"
 msgstr "Tipo de componente actualizado correctamente"
 
@@ -878,8 +883,8 @@ msgstr "Plataforma"
 
 #: apps/organizations/choices.py:9 apps/reports/filtersets.py:50
 #: apps/reports/filtersets.py:137 apps/reports/models.py:34
-#: apps/reports/models.py:57 apps/reports/views.py:46 apps/reports/views.py:64
-#: apps/reports/views.py:88 apps/reports/views.py:107
+#: apps/reports/models.py:57 apps/reports/views.py:50 apps/reports/views.py:68
+#: apps/reports/views.py:95 apps/reports/views.py:114
 #: templates/reports/laboratory/list.html:59
 #: templates/reports/report/detail.html:53
 #: templates/reports/report/list.html:126
@@ -967,7 +972,8 @@ msgstr "Gráfico: oscuro"
 
 #: apps/organizations/models.py:81
 msgid "Per-organization overrides of the kind default capabilities"
-msgstr "Sobrescrituras por organización de las capacidades por defecto del tipo"
+msgstr ""
+"Sobrescrituras por organización de las capacidades por defecto del tipo"
 
 #: apps/organizations/models.py:86
 #, fuzzy
@@ -1338,7 +1344,7 @@ msgstr "Eliminar máquina"
 msgid "Select Component"
 msgstr "Seleccionar tipo de componente"
 
-#: apps/reports/forms.py:194
+#: apps/reports/forms.py:200
 msgid ""
 "For inverse logic, warning limit should be greater than or equal to critical "
 "limit."
@@ -1346,7 +1352,7 @@ msgstr ""
 "Para la lógica inversa, el límite de advertencia debe ser mayor o igual que "
 "el límite crítico."
 
-#: apps/reports/forms.py:203
+#: apps/reports/forms.py:209
 msgid "Warning limit should be less than or equal to critical limit."
 msgstr "El límite de advertencia debe ser menor o igual que el límite crítico."
 
@@ -1816,13 +1822,13 @@ msgstr "Descripción de la fuente de desgaste"
 msgid "Description of the wear source for this parameter"
 msgstr "Descripción de la fuente de desgaste para este parámetro"
 
-#: apps/reports/models.py:630 apps/reports/views.py:360
-#: apps/reports/views.py:380 apps/reports/views.py:402
-#: apps/reports/views.py:421
+#: apps/reports/models.py:630 apps/reports/views.py:379
+#: apps/reports/views.py:399 apps/reports/views.py:421
+#: apps/reports/views.py:440
 msgid "Analysis Threshold"
 msgstr "Umbral de análisis"
 
-#: apps/reports/models.py:631 apps/reports/views.py:361
+#: apps/reports/models.py:631 apps/reports/views.py:380
 msgid "Analysis Thresholds"
 msgstr "Umbrales de análisis"
 
@@ -1894,35 +1900,35 @@ msgstr "Generado el"
 msgid "REPORTE DE INSPECCIONES"
 msgstr "REPORTE DE INSPECCIONES"
 
-#: apps/reports/views.py:82
+#: apps/reports/views.py:89
 msgid "Laboratory created successfully"
 msgstr "Laboratorio creado correctamente"
 
-#: apps/reports/views.py:100
+#: apps/reports/views.py:107
 msgid "Laboratory updated successfully"
 msgstr "Laboratorio actualizado correctamente"
 
-#: apps/reports/views.py:183
+#: apps/reports/views.py:190
 msgid "Report created successfully"
 msgstr "Informe creado correctamente"
 
-#: apps/reports/views.py:191 templates/reports/report/list.html:32
+#: apps/reports/views.py:204 templates/reports/report/list.html:32
 msgid "Create Report"
 msgstr "Crear informe"
 
-#: apps/reports/views.py:202
+#: apps/reports/views.py:215
 msgid "Report updated successfully"
 msgstr "Informe actualizado correctamente"
 
-#: apps/reports/views.py:211 templates/reports/report/detail.html:29
+#: apps/reports/views.py:230 templates/reports/report/detail.html:29
 msgid "Edit Report"
 msgstr "Editar informe"
 
-#: apps/reports/views.py:270
+#: apps/reports/views.py:289
 msgid "Report Export"
 msgstr "Exportación de informes"
 
-#: apps/reports/views.py:293 apps/reports/views.py:325
+#: apps/reports/views.py:312 apps/reports/views.py:344
 #, python-format
 msgid ""
 "The result exceeds the maximum of %(max)s records. Please refine your "
@@ -1930,11 +1936,11 @@ msgid ""
 msgstr ""
 "El resultado supera el máximo de %(max)s registros. Refine sus filtros."
 
-#: apps/reports/views.py:396
+#: apps/reports/views.py:415
 msgid "Analysis threshold created successfully"
 msgstr "Umbral de análisis creado correctamente"
 
-#: apps/reports/views.py:414
+#: apps/reports/views.py:433
 msgid "Analysis threshold updated successfully"
 msgstr "Umbral de análisis actualizado correctamente"
 
@@ -1995,8 +2001,8 @@ msgstr "dirección de correo electrónico"
 msgid "Tenant/client organization this user belongs to"
 msgstr "Organización (tenant/cliente) a la que pertenece este usuario"
 
-#: apps/users/models.py:58 apps/users/views.py:92 apps/users/views.py:118
-#: apps/users/views.py:140 templates/users/profile.html:60
+#: apps/users/models.py:58 apps/users/views.py:96 apps/users/views.py:122
+#: apps/users/views.py:144 templates/users/profile.html:60
 msgid "Account"
 msgstr "Cuenta"
 
@@ -2004,11 +2010,11 @@ msgstr "Cuenta"
 msgid "Settings updated successfully"
 msgstr "Configuración actualizada con éxito"
 
-#: apps/users/views.py:104
+#: apps/users/views.py:108
 msgid "Account created successfully"
 msgstr "Cuenta creada con éxito"
 
-#: apps/users/views.py:129
+#: apps/users/views.py:133
 msgid "Account updated successfully"
 msgstr "Cuenta actualizada con éxito"
 
@@ -3650,10 +3656,6 @@ msgstr "Verificación"
 msgid "Verified"
 msgstr "Verificado"
 
-#: templates/users/profile.html:120
-msgid "Parent Account"
-msgstr "Cuenta Principal"
-
 #: templates/users/profile.html:125
 msgid "Full Name"
 msgstr "Nombre Completo"
@@ -3709,6 +3711,9 @@ msgid ""
 msgstr ""
 "Protege tu cuenta asegurándote de que tu contraseña sea segura y se "
 "actualice regularmente."
+
+#~ msgid "Parent Account"
+#~ msgstr "Cuenta Principal"
 
 #~ msgid "Enable email verification."
 #~ msgstr "Habilitar la verificación de correo electrónico."
