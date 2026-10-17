@@ -1,0 +1,136 @@
+{% extends "layouts/dashboard.html" %}
+{% load i18n %}
+{% load widget_tweaks %}
+
+{% block title_page %}{{ entity }}{% endblock title_page %}
+{% block toolbar_title %}{{ entity }}{% endblock %}
+
+{% block content %}
+<form method="post" enctype="multipart/form-data"
+      action="{% if form.instance.pk %}{% url 'apps.organizations:organization_update' form.instance.pk %}{% else %}{% url 'apps.organizations:organization_create' %}{% endif %}">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+    <div class="mb-6 rounded-lg border border-danger/20 bg-danger/10 p-4 text-sm font-medium text-danger" role="alert">
+        {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="grid grid-cols-1 gap-9 lg:grid-cols-12">
+        <!-- Details + contact -->
+        <div class="lg:col-span-7 flex flex-col gap-9">
+            <div class="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+                <div class="border-b border-stroke py-4 px-7 dark:border-strokedark">
+                    <h3 class="font-medium text-black dark:text-white">{{ entity }} {% trans "Details" %}</h3>
+                </div>
+                <div class="p-7">
+                    <div class="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
+                        <div class="w-full sm:w-2/3">
+                            <label class="mb-3 block text-sm font-medium text-black dark:text-white" for="{{ form.name.id_for_label }}">
+                                {{ form.name.label }} <span class="text-danger" aria-hidden="true">*</span>
+                            </label>
+                            {% render_field form.name class="w-full rounded border border-stroke bg-gray py-3 px-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white" %}
+                            {% for error in form.name.errors %}<p class="mt-1 text-xs text-danger">{{ error }}</p>{% endfor %}
+                        </div>
+                        <div class="w-full sm:w-1/3">
+                            <label class="mb-3 block text-sm font-medium text-black dark:text-white" for="{{ form.code.id_for_label }}">{{ form.code.label }}</label>
+                            {% render_field form.code class="w-full rounded border border-stroke bg-gray py-3 px-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white" %}
+                        </div>
+                    </div>
+
+                    <div class="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
+                        <div class="w-full sm:w-1/2">
+                            <label class="mb-3 block text-sm font-medium text-black dark:text-white" for="{{ form.kind.id_for_label }}">{{ form.kind.label }}</label>
+                            {% render_field form.kind class="w-full rounded border border-stroke bg-gray py-3 px-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white" %}
+                            {% for error in form.kind.errors %}<p class="mt-1 text-xs text-danger">{{ error }}</p>{% endfor %}
+                        </div>
+                        {% if form.parent %}
+                        <div class="w-full sm:w-1/2">
+                            <label class="mb-3 block text-sm font-medium text-black dark:text-white" for="{{ form.parent.id_for_label }}">{{ form.parent.label }}</label>
+                            {% render_field form.parent class="w-full rounded border border-stroke bg-gray py-3 px-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white" %}
+                            {% for error in form.parent.errors %}<p class="mt-1 text-xs text-danger">{{ error }}</p>{% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
+                        <div class="w-full sm:w-1/2">
+                            <label class="mb-3 block text-sm font-medium text-black dark:text-white" for="{{ form.phone.id_for_label }}">{{ form.phone.label }}</label>
+                            {% render_field form.phone class="w-full rounded border border-stroke bg-gray py-3 px-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white" %}
+                        </div>
+                        <div class="w-full sm:w-1/2">
+                            <label class="mb-3 block text-sm font-medium text-black dark:text-white" for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+                            {% render_field form.email class="w-full rounded border border-stroke bg-gray py-3 px-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white" %}
+                        </div>
+                    </div>
+
+                    <div class="mb-5.5">
+                        <label class="mb-3 block text-sm font-medium text-black dark:text-white" for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
+                        {% render_field form.description class="w-full rounded border border-stroke bg-gray py-3 px-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white" %}
+                    </div>
+
+                    <label class="flex cursor-pointer items-center gap-3">
+                        {% render_field form.is_active class="form-check-input h-5 w-5 rounded border-stroke text-primary focus:ring-primary" %}
+                        <span class="text-sm font-medium text-black dark:text-white">{{ form.is_active.label }}</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Capabilities -->
+            <div class="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+                <div class="border-b border-stroke py-4 px-7 dark:border-strokedark">
+                    <h3 class="font-medium text-black dark:text-white">{% trans "Capabilities" %}</h3>
+                    <p class="mt-1 text-xs font-medium text-bodydark2">{% trans "JSON overrides of the kind defaults (labs, fleet, thresholds, analysis, alerts)." %}</p>
+                </div>
+                <div class="p-7">
+                    {% render_field form.capabilities class="w-full rounded border border-stroke bg-gray py-3 px-4.5 font-mono text-sm text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white" %}
+                    {% for error in form.capabilities.errors %}<p class="mt-1 text-xs text-danger">{{ error }}</p>{% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Branding -->
+        <div class="lg:col-span-5 flex flex-col gap-9">
+            <div class="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+                <div class="border-b border-stroke py-4 px-7 dark:border-strokedark">
+                    <h3 class="font-medium text-black dark:text-white">{% trans "Branding" %}</h3>
+                    <p class="mt-1 text-xs font-medium text-bodydark2">{% trans "Values are inherited from ancestors when left blank." %}</p>
+                </div>
+                <div class="flex flex-col gap-4 p-7">
+                    <div>
+                        <label class="mb-3 block text-sm font-medium text-black dark:text-white" for="{{ form.logo.id_for_label }}">{{ form.logo.label }}</label>
+                        {% if form.instance.logo %}
+                        <img src="{{ form.instance.logo.url }}" alt="Logo" class="mb-3 h-12 w-auto" />
+                        {% endif %}
+                        {% render_field form.logo class="w-full rounded border border-stroke bg-gray py-3 px-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white" %}
+                    </div>
+
+                    {% for field in form %}
+                    {% if "chart_" in field.name or field.name == "primary_color" %}
+                    <div class="flex items-center gap-3">
+                        <div class="w-24 flex-shrink-0">
+                            <label class="block text-xs font-semibold text-bodydark2" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <input type="color" value="{{ field.value|default:'#465fff' }}" class="h-8 w-8 cursor-pointer rounded border border-stroke dark:border-strokedark"
+                                   oninput="this.nextElementSibling.value = this.value" />
+                            {% render_field field class="w-24 rounded border border-stroke bg-gray py-1.5 px-2 text-xs text-black focus:border-primary dark:border-strokedark dark:bg-meta-4 dark:text-white" %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-4.5">
+                <a href="{{ back_url }}" class="flex justify-center rounded border border-stroke py-2 px-6 font-medium text-black hover:shadow-1 dark:border-strokedark dark:text-white">
+                    {% trans "Discard" %}
+                </a>
+                <button type="submit" class="flex justify-center rounded bg-primary py-2 px-6 font-medium text-white hover:bg-opacity-90">
+                    {% trans "Save Changes" %}
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock content %}

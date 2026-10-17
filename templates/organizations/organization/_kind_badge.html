@@ -1,0 +1,10 @@
+{% load i18n %}
+{% if kind == "platform" %}
+<span class="inline-flex items-center gap-1 rounded-md border border-purple-500/20 bg-purple-500/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-purple-600">{{ label }}</span>
+{% elif kind == "lab" %}
+<span class="inline-flex items-center gap-1 rounded-md border border-primary/20 bg-primary/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary">{{ label }}</span>
+{% elif kind == "intermediary" %}
+<span class="inline-flex items-center gap-1 rounded-md border border-warning/20 bg-warning/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-warning">{{ label }}</span>
+{% else %}
+<span class="inline-flex items-center gap-1 rounded-md border border-success/20 bg-success/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-success">{{ label }}</span>
+{% endif %}
