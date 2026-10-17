@@ -155,8 +155,14 @@ class RoleForm(core_mixins.OrganizationScopeFormMixin, forms.ModelForm):
         }
 
     def __init__(self, *args, user=None, **kwargs) -> None:
-        """Scope the organization field to the acting user."""
+        """Scope the organization field to the acting user.
+
+        The owning organization is immutable on update: a role must never be
+        silently moved across tenants.
+        """
         super().__init__(*args, user=user, **kwargs)
+        if self.instance.pk and "organization" in self.fields:
+            self.fields["organization"].disabled = True
 
     @property
     def selected_permission_ids(self) -> set[str]:
@@ -302,6 +308,37 @@ class UserManagementForm(core_mixins.OrganizationScopeFormMixin, forms.ModelForm
                 for group in self.instance.groups.all()
                 if hasattr(group, "role")
             ]
+
+    def clean_email(self) -> str:
+        """Reject a duplicate email case-insensitively (avoids a 500)."""
+        email = self.cleaned_data.get("email")
+        if (
+            email
+            and not self.instance.pk
+            and models.User.objects.filter(email__iexact=email).exists()
+        ):
+            raise forms.ValidationError(
+                _("A user with this email already exists."), code="duplicate"
+            )
+        return email
+
+    def clean(self) -> dict:
+        """Reject roles that do not belong to the selected organization."""
+        cleaned = super().clean()
+        organization = cleaned.get("organization") or getattr(
+            self.instance, "organization", None
+        )
+        roles = cleaned.get("roles")
+        if organization is not None and roles:
+            mismatched = bool(
+                [role for role in roles if role.organization_id != organization.pk]
+            )
+            if mismatched:
+                self.add_error(
+                    "roles",
+                    _("One or more roles do not belong to the selected organization."),
+                )
+        return cleaned
 
     def save(self, commit: bool = True) -> models.User:
         """Persist the user through :class:`UserService`.

@@ -43,6 +43,39 @@ class UserManagementFormTests(TestCase):
         self.assertFalse(form.is_valid())
         self.assertIn("organization", form.errors)
 
+    def test_rejects_case_variant_duplicate_email(self) -> None:
+        """A case-variant duplicate email fails validation, not with a 500."""
+        UserFactory(email="Dup@example.com")
+        form = UserManagementForm(
+            {
+                "organization": self.lab.pk,
+                "first_name": "Ana",
+                "last_name": "Diaz",
+                "email": "dup@example.com",
+                "is_active": "on",
+            },
+            user=self.actor,
+        )
+        self.assertFalse(form.is_valid())
+        self.assertIn("email", form.errors)
+
+    def test_rejects_role_from_other_organization(self) -> None:
+        """A role that belongs to another org cannot be assigned."""
+        role_of_child = RoleFactory(organization=self.child)
+        form = UserManagementForm(
+            {
+                "organization": self.lab.pk,
+                "first_name": "Ana",
+                "last_name": "Diaz",
+                "email": "ana@example.com",
+                "is_active": "on",
+                "roles": [role_of_child.pk],
+            },
+            user=self.actor,
+        )
+        self.assertFalse(form.is_valid())
+        self.assertIn("roles", form.errors)
+
     def test_email_disabled_when_editing(self) -> None:
         """Editing an existing user disables the email field."""
         member = UserFactory(organization=self.lab)

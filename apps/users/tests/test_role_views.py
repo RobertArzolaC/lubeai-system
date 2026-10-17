@@ -92,6 +92,24 @@ class RoleViewTests(TestCase):
         role.refresh_from_db()
         self.assertEqual(list(role.group.permissions.all()), [permission])
 
+    def test_update_cannot_move_role_across_organizations(self) -> None:
+        """The owning organization is immutable on update."""
+        grant(self.user, "view_role", "change_role")
+        role = RoleFactory(organization=self.lab)
+        foreign = organization_factories.OrganizationFactory()
+        response = self.client.post(
+            reverse("apps.users:role_update", args=[role.pk]),
+            {
+                "organization": foreign.pk,
+                "name": role.name,
+                "description": role.description,
+                "is_active": "on",
+            },
+        )
+        self.assertEqual(response.status_code, 302)
+        role.refresh_from_db()
+        self.assertEqual(role.organization, self.lab)
+
     def test_delete_removes_group(self) -> None:
         """Deleting a role through the view removes its backing group."""
         grant(self.user, "delete_role")

@@ -6,6 +6,7 @@ from django.test import TestCase
 from apps.organizations import models as organization_models
 from apps.organizations.factories import OrganizationFactory
 from apps.organizations.services import OrganizationService
+from apps.users.factories import UserFactory
 
 
 class OrganizationServiceTests(TestCase):
@@ -49,6 +50,33 @@ class OrganizationServiceTests(TestCase):
     def test_none_parent_accepted(self) -> None:
         """A root organization (no parent) is valid."""
         OrganizationService.assert_valid_parent(OrganizationFactory(), None)
+
+    def test_delete_organization_refuses_children(self) -> None:
+        """Deleting an org with children raises instead of cascading."""
+        root = OrganizationFactory()
+        OrganizationFactory(parent=root)
+        with self.assertRaises(ValidationError):
+            OrganizationService.delete_organization(root)
+        self.assertTrue(
+            organization_models.Organization.objects.filter(pk=root.pk).exists()
+        )
+
+    def test_delete_organization_refuses_users(self) -> None:
+        """Deleting an org with users raises instead of orphaning them."""
+        organization = OrganizationFactory()
+        UserFactory(organization=organization)
+        with self.assertRaises(ValidationError):
+            OrganizationService.delete_organization(organization)
+
+    def test_delete_organization_removes_leaf(self) -> None:
+        """A leaf organization with no users is deleted."""
+        organization = OrganizationFactory()
+        OrganizationService.delete_organization(organization)
+        self.assertFalse(
+            organization_models.Organization.objects.filter(
+                pk=organization.pk
+            ).exists()
+        )
 
     def test_deactivate_cascades_to_descendants(self) -> None:
         """Deactivating a node deactivates its whole subtree."""

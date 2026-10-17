@@ -1,9 +1,11 @@
+from typing import Any
+
 from django.contrib import messages
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
 )
 from django.contrib.messages.views import SuccessMessageMixin
-from django.db.models import Count
+from django.db.models import Count, QuerySet
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
@@ -19,7 +21,7 @@ class ProfileView(LoginRequiredMixin, TemplateView):
     template_name = "users/profile.html"
     paginate_by = 6
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> dict:
         context = super().get_context_data(**kwargs)
         context["entity"] = _("Profile")
         context["back_url"] = reverse_lazy("apps.dashboard:index")
@@ -32,7 +34,7 @@ class SettingsView(SuccessMessageMixin, LoginRequiredMixin, View):
     success_message = _("Settings updated successfully")
     success_url = reverse_lazy("apps.users:settings")
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> dict:
         user = self.request.user
 
         context = {
@@ -90,11 +92,11 @@ class AccountListView(core_mixins.BaseListView):
     context_object_name = "accounts"
     tenant_field = "user__organization"
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet:
         """Return accounts with the user and organization preloaded."""
         return super().get_queryset().select_related("user", "user__organization")
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> dict:
         context = super().get_context_data(**kwargs)
         context["entity"] = _("Account")
         context["entity_plural"] = _("Accounts")
@@ -115,12 +117,12 @@ class AccountCreateView(core_mixins.BaseCreateView):
         form.save(self.request)
         return super().form_valid(form)
 
-    def get_form_kwargs(self):
+    def get_form_kwargs(self) -> dict:
         kwargs = super().get_form_kwargs()
         kwargs.pop("instance", None)
         return kwargs
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> dict:
         context = super().get_context_data(**kwargs)
         context["entity"] = _("Account")
         context["back_url"] = reverse_lazy("apps.users:account_list")
@@ -137,12 +139,13 @@ class AccountUpdateView(core_mixins.BaseUpdateView):
     success_url = reverse_lazy("apps.users:account_list")
     tenant_field = "user__organization"
 
-    def get_form_kwargs(self):
+    def get_form_kwargs(self) -> dict:
+        """Pass the acting user so the organization choices are scoped."""
         kwargs = super().get_form_kwargs()
         kwargs["user"] = self.request.user
         return kwargs
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> dict:
         context = super().get_context_data(**kwargs)
         context["entity"] = _("Account")
         context["back_url"] = reverse_lazy("apps.users:account_list")
@@ -165,7 +168,7 @@ class RoleListView(core_mixins.BaseListView):
     context_object_name = "roles"
     tenant_field = "organization"
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet:
         """Return roles with organization, group and permission count."""
         return (
             super()
@@ -175,7 +178,8 @@ class RoleListView(core_mixins.BaseListView):
             .order_by("name")
         )
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> dict:
+        """Add entity labels, navigation and the client-column flag."""
         context = super().get_context_data(**kwargs)
         context["entity"] = _("Role")
         context["entity_plural"] = _("Roles")
@@ -197,12 +201,14 @@ class RoleCreateView(core_mixins.BaseCreateView):
     success_message = _("Role created successfully")
     success_url = reverse_lazy("apps.users:role_list")
 
-    def get_form_kwargs(self):
+    def get_form_kwargs(self) -> dict:
+        """Pass the acting user so the organization choices are scoped."""
         kwargs = super().get_form_kwargs()
         kwargs["user"] = self.request.user
         return kwargs
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> dict:
+        """Add the entity labels and navigation context."""
         context = super().get_context_data(**kwargs)
         context["entity"] = _("Role")
         context["back_url"] = reverse_lazy("apps.users:role_list")
@@ -221,12 +227,14 @@ class RoleUpdateView(core_mixins.BaseUpdateView):
     context_object_name = "role"
     tenant_field = "organization"
 
-    def get_form_kwargs(self):
+    def get_form_kwargs(self) -> dict:
+        """Pass the acting user so the organization choices are scoped."""
         kwargs = super().get_form_kwargs()
         kwargs["user"] = self.request.user
         return kwargs
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> dict:
+        """Add the entity labels and navigation context."""
         context = super().get_context_data(**kwargs)
         context["entity"] = _("Role")
         context["back_url"] = reverse_lazy("apps.users:role_list")
@@ -250,7 +258,7 @@ class UserListView(core_mixins.ClientAttributionMixin, core_mixins.BaseListView)
     template_name = "users/user/list.html"
     context_object_name = "users"
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet:
         """Return users with organization and roles preloaded."""
         return (
             super()
@@ -260,7 +268,8 @@ class UserListView(core_mixins.ClientAttributionMixin, core_mixins.BaseListView)
             .order_by("first_name", "last_name")
         )
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> dict:
+        """Add entity labels and navigation context."""
         context = super().get_context_data(**kwargs)
         context["entity"] = _("User")
         context["entity_plural"] = _("Users")
@@ -279,13 +288,15 @@ class UserCreateView(core_mixins.BaseCreateView):
     success_message = _("User created successfully")
     success_url = reverse_lazy("apps.users:user_list")
 
-    def get_form_kwargs(self):
+    def get_form_kwargs(self) -> dict:
+        """Pass the acting user and the preset organization from the query."""
         kwargs = super().get_form_kwargs()
         kwargs["user"] = self.request.user
         kwargs["organization"] = self.request.GET.get("organization")
         return kwargs
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> dict:
+        """Add the entity labels and navigation context."""
         context = super().get_context_data(**kwargs)
         context["entity"] = _("User")
         context["back_url"] = reverse_lazy("apps.users:user_list")
@@ -304,13 +315,15 @@ class UserUpdateView(core_mixins.BaseUpdateView):
     context_object_name = "user"
     tenant_field = "organization"
 
-    def get_form_kwargs(self):
+    def get_form_kwargs(self) -> dict:
+        """Pass the acting user and the preset organization from the query."""
         kwargs = super().get_form_kwargs()
         kwargs["user"] = self.request.user
         kwargs["organization"] = self.request.GET.get("organization")
         return kwargs
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> dict:
+        """Add the entity labels and navigation context."""
         context = super().get_context_data(**kwargs)
         context["entity"] = _("User")
         context["back_url"] = reverse_lazy("apps.users:user_list")

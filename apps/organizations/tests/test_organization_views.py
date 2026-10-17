@@ -96,6 +96,19 @@ class OrganizationViewTests(TestCase):
             organization_models.Organization.objects.filter(pk=self.lab.pk).exists()
         )
 
+    def test_delete_blocked_with_users(self) -> None:
+        """Review Focus #1: deleting an org that still has users is refused."""
+        grant(self.user, "delete_organization")
+        org = OrganizationFactory(name="Client With User", parent=self.lab)
+        UserFactory(organization=org)
+        response = self.client.post(
+            reverse("apps.organizations:organization_delete", args=[org.pk])
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertTrue(
+            organization_models.Organization.objects.filter(pk=org.pk).exists()
+        )
+
     def test_delete_leaf_succeeds(self) -> None:
         """A leaf organization with no users can be deleted."""
         grant(self.user, "delete_organization")

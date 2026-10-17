@@ -82,7 +82,7 @@
                 <div class="flex items-stretch gap-3">
                     <!-- Depth spine: one segment per ancestor level -->
                     <div class="flex flex-col gap-0.5 py-1" aria-hidden="true">
-                        {% for _ancestor in organization.ancestors %}
+                        {% for _segment in organization.depth_segments %}
                         <span class="block h-2 w-1 rounded-full bg-primary/25"></span>
                         {% endfor %}
                         <span class="block h-2 w-1 rounded-full bg-primary"></span>

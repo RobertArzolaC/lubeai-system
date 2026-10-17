@@ -94,3 +94,21 @@ class OrganizationService:
             organization: The subtree root to deactivate.
         """
         organization.descendants(include_self=True).update(is_active=False)
+
+    @staticmethod
+    def delete_organization(organization: models.Organization) -> None:
+        """Delete a leaf organization that has no children or users.
+
+        Args:
+            organization: The organization to delete.
+
+        Raises:
+            ValidationError: If the organization still has child organizations
+                or users (deleting it would cascade-destroy them).
+        """
+        if organization.children.exists() or organization.users.exists():
+            raise ValidationError(
+                _("This organization still has child organizations or users."),
+                code="in-use",
+            )
+        organization.delete()

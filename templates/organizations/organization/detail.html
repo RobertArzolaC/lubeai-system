@@ -22,7 +22,7 @@
                     {% include "organizations/organization/_kind_badge.html" with kind=organization.kind label=organization.get_kind_display %}
                 </div>
                 <nav class="mt-2 flex flex-wrap items-center gap-1.5 text-xs font-medium text-bodydark2">
-                    {% for ancestor in organization.ancestors reversed %}
+                    {% for ancestor in ancestors reversed %}
                     <span>{{ ancestor.name }}</span>
                     <i data-lucide="chevron-right" class="h-3 w-3" stroke-width="2" aria-hidden="true"></i>
                     {% endfor %}

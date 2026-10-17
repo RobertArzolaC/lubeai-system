@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import ClassVar
 
 import django_filters
-from django.db.models import Q
+from django.db.models import Q, QuerySet
 from django.utils.translation import gettext_lazy as _
 
 from apps.organizations import choices, models, scoping
@@ -48,7 +48,7 @@ class OrganizationFilter(django_filters.FilterSet):
                 request.user
             )
 
-    def filter_by_name(self, queryset, name, value):
+    def filter_by_name(self, queryset, name, value) -> QuerySet:
         """Filter organizations by name, slug or code."""
         return queryset.filter(
             Q(name__icontains=value)

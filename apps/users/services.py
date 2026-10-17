@@ -101,17 +101,20 @@ class RoleService:
             The newly created :class:`~apps.users.models.Role`.
         """
         slug = self.unique_slug(organization, name)
-        group = Group.objects.create(name=self.build_group_name(organization.pk, slug))
-        group.permissions.set(permissions)
-        return models.Role.objects.create(
-            organization=organization,
-            name=name,
-            slug=slug,
-            description=description,
-            group=group,
-            created_by=actor,
-            updated_by=actor,
-        )
+        with transaction.atomic():
+            group = Group.objects.create(
+                name=self.build_group_name(organization.pk, slug)
+            )
+            group.permissions.set(permissions)
+            return models.Role.objects.create(
+                organization=organization,
+                name=name,
+                slug=slug,
+                description=description,
+                group=group,
+                created_by=actor,
+                updated_by=actor,
+            )
 
     def update_role(
         self,

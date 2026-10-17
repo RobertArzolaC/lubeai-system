@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from django.core.exceptions import ValidationError
 from django.db.models import Count, QuerySet
 from django.http import JsonResponse
 from django.urls import reverse_lazy
@@ -11,6 +12,7 @@ from django.utils.translation import gettext_lazy as _
 
 from apps.core import mixins as core_mixins
 from apps.organizations import filtersets, forms, models, scoping
+from apps.organizations.services import OrganizationService
 
 
 class OrganizationListView(core_mixins.BaseListView):
@@ -39,7 +41,32 @@ class OrganizationListView(core_mixins.BaseListView):
         context["add_entity_url"] = reverse_lazy(
             "apps.organizations:organization_create"
         )
+        self._annotate_depths(context["organizations"])
         return context
+
+    def _annotate_depths(self, organizations) -> None:
+        """Attach a ``depth_segments`` range to each row without per-row queries.
+
+        The parent chain is resolved in Python from a single ``id -> parent_id``
+        map, so rendering the hierarchy spine never triggers an N+1.
+
+        Args:
+            organizations: The (possibly paginated) organizations to annotate.
+        """
+        parent_map = dict(
+            scoping.visible_organizations(self.request.user).values_list(
+                "id", "parent_id"
+            )
+        )
+        for organization in organizations:
+            depth = 0
+            node = organization.parent_id
+            seen: set[int] = set()
+            while node is not None and node not in seen:
+                seen.add(node)
+                depth += 1
+                node = parent_map.get(node)
+            organization.depth_segments = range(depth)
 
 
 class OrganizationDetailView(core_mixins.BaseDetailView):
@@ -51,13 +78,14 @@ class OrganizationDetailView(core_mixins.BaseDetailView):
     context_object_name = "organization"
 
     def get_queryset(self) -> QuerySet:
-        """Scope the detail object to the user's subtree."""
-        return scoping.visible_organizations(self.request.user)
+        """Scope the detail object to the user's subtree (parent preloaded)."""
+        return scoping.visible_organizations(self.request.user).select_related("parent")
 
     def get_context_data(self, **kwargs: Any) -> dict:
         context = super().get_context_data(**kwargs)
         organization = self.object
         user = self.request.user
+        context["ancestors"] = organization.ancestors()
         context["children"] = (
             organization.children.select_related("parent")
             .annotate(children_count=Count("children"))
@@ -148,17 +176,12 @@ class OrganizationDeleteView(core_mixins.BaseDeleteView):
                 {"status": "error", "message": _("Organization not found.")},
                 status=404,
             )
-        if organization.children.exists() or organization.users.exists():
+        try:
+            OrganizationService.delete_organization(organization)
+        except ValidationError as error:
             return JsonResponse(
-                {
-                    "status": "error",
-                    "message": _(
-                        "This organization still has child organizations or users."
-                    ),
-                },
-                status=400,
+                {"status": "error", "message": error.messages[0]}, status=400
             )
-        organization.delete()
         return JsonResponse(
             {
                 "status": "success",

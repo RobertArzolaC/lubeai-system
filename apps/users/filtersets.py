@@ -1,7 +1,7 @@
 from typing import ClassVar
 
 import django_filters
-from django.db.models import Q
+from django.db.models import Q, QuerySet
 from django.utils.translation import gettext_lazy as _
 
 from apps.organizations import models as organization_models
@@ -25,7 +25,7 @@ class AccountFilter(django_filters.FilterSet):
         model = models.Account
         fields: ClassVar[list[str]] = ["name_search", "is_active"]
 
-    def filter_by_name(self, queryset, name, value):
+    def filter_by_name(self, queryset, name, value) -> QuerySet:
         return queryset.filter(
             Q(user__first_name__icontains=value)
             | Q(user__last_name__icontains=value)
@@ -61,7 +61,7 @@ class RoleFilter(django_filters.FilterSet):
         super().__init__(*args, **kwargs)
         scoping.scope_organization_filter(self)
 
-    def filter_by_name(self, queryset, name, value):
+    def filter_by_name(self, queryset, name, value) -> QuerySet:
         """Filter roles by name or description."""
         return queryset.filter(
             Q(name__icontains=value) | Q(description__icontains=value)
@@ -109,7 +109,7 @@ class UserFilter(django_filters.FilterSet):
         if request is not None and "role" in self.filters:
             self.filters["role"].queryset = _visible_roles(request.user)
 
-    def filter_by_name(self, queryset, name, value):
+    def filter_by_name(self, queryset, name, value) -> QuerySet:
         """Filter users by first/last name or email."""
         return queryset.filter(
             Q(first_name__icontains=value)
