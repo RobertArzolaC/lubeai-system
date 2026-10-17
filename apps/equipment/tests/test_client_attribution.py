@@ -1,9 +1,11 @@
 """Tests for client attribution on branches, machines and component types."""
 
+from types import SimpleNamespace
+
 from django.test import TestCase
 
 from apps.equipment import factories as equipment_factories
-from apps.equipment import forms
+from apps.equipment import filtersets, forms, models
 from apps.organizations import choices
 from apps.organizations import factories as organization_factories
 from apps.users import factories as user_factories
@@ -143,3 +145,52 @@ class MachineClientCoherenceTests(TestCase):
         self.assertTrue(form.is_valid())
         machine = form.save()
         self.assertEqual(machine.organization_id, self.client_b.id)
+
+
+class ClientFilterTests(TestCase):
+    """The list filters accept an organization and hide it for leaf users."""
+
+    def setUp(self) -> None:
+        """Build a lab with two final clients, each owning a branch."""
+        self.lab = organization_factories.OrganizationFactory(
+            slug="cf-lab", kind=choices.OrganizationKind.LAB
+        )
+        self.client_a = organization_factories.OrganizationFactory(
+            slug="cf-a", kind=choices.OrganizationKind.FINAL, parent=self.lab
+        )
+        self.client_b = organization_factories.OrganizationFactory(
+            slug="cf-b", kind=choices.OrganizationKind.FINAL, parent=self.lab
+        )
+        self.branch_a = equipment_factories.BranchFactory(organization=self.client_a)
+        self.branch_b = equipment_factories.BranchFactory(organization=self.client_b)
+        equipment_factories.MachineFactory(organization=self.client_a)
+        self.user = user_for(self.lab)
+
+    def test_branch_filter_by_organization(self) -> None:
+        """Filtering by organization narrows the branches."""
+        request = SimpleNamespace(user=self.user)
+        filtered = filtersets.BranchFilter(
+            {"organization": self.client_a.pk},
+            queryset=models.Branch.objects.all(),
+            request=request,
+        ).qs
+        self.assertEqual(list(filtered), [self.branch_a])
+
+    def test_organization_filter_hidden_for_leaf(self) -> None:
+        """A leaf user gets no organization filter."""
+        request = SimpleNamespace(user=user_for(self.client_a))
+        filterset = filtersets.BranchFilter(
+            queryset=models.Branch.objects.all(), request=request
+        )
+        self.assertNotIn("organization", filterset.filters)
+
+    def test_organization_filter_choices_are_scoped(self) -> None:
+        """The choices are limited to the visible subtree."""
+        request = SimpleNamespace(user=self.user)
+        filterset = filtersets.MachineFilter(
+            queryset=models.Machine.objects.all(), request=request
+        )
+        ids = set(
+            filterset.filters["organization"].queryset.values_list("id", flat=True)
+        )
+        self.assertEqual(ids, {self.lab.id, self.client_a.id, self.client_b.id})
