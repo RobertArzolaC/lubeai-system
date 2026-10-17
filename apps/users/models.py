@@ -7,6 +7,7 @@ from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 from model_utils.models import SoftDeletableModel, TimeStampedModel
 
+from apps.core import models as core_models
 from apps.users.managers import CustomUserManager
 
 
@@ -69,3 +70,54 @@ class Account(SoftDeletableModel, TimeStampedModel):
     @cached_property
     def is_email_verified(self):
         return EmailAddress.objects.filter(user=self.user, verified=True).exists()
+
+
+class Role(TimeStampedModel, core_models.BaseUserTracked, core_models.IsActive):
+    """A tenant-scoped role backed by a Django :class:`~django.contrib.auth.models.Group`.
+
+    Each role belongs to an organization and wraps a single ``auth.Group`` whose
+    permissions define what the role can do. Assigning a role to a user adds the
+    backing group to the user's groups, so Django's permission model keeps
+    working unchanged.
+    """
+
+    organization = models.ForeignKey(
+        "organizations.Organization",
+        verbose_name=_("Organization"),
+        on_delete=models.CASCADE,
+        related_name="roles",
+        help_text=_("Organization this role belongs to"),
+    )
+    name = models.CharField(_("Name"), max_length=120)
+    slug = models.SlugField(
+        _("Slug"),
+        max_length=140,
+        help_text=_("Stable identifier, unique within the organization"),
+    )
+    description = models.TextField(_("Description"), blank=True)
+    group = models.OneToOneField(
+        "auth.Group",
+        verbose_name=_("Django group"),
+        on_delete=models.CASCADE,
+        related_name="role",
+        help_text=_("Group that stores this role's permissions"),
+    )
+
+    class Meta:
+        verbose_name = _("Role")
+        verbose_name_plural = _("Roles")
+        ordering = ("name",)
+        constraints: ClassVar[list[models.BaseConstraint]] = [
+            models.UniqueConstraint(
+                fields=["organization", "slug"],
+                name="users_role_unique_org_slug",
+            )
+        ]
+        indexes: ClassVar[list[models.Index]] = [
+            models.Index(fields=["organization"]),
+            models.Index(fields=["is_active"]),
+        ]
+
+    def __str__(self) -> str:
+        """Return ``"<name> (<organization>)"``."""
+        return f"{self.name} ({self.organization.name})"

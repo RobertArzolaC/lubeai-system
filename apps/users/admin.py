@@ -159,6 +159,17 @@ class CustomUserAdmin(UserAdmin):
         return super().get_queryset(request)
 
 
+@admin.register(models.Role)
+class RoleAdmin(admin.ModelAdmin):
+    """Admin configuration for the tenant-scoped Role model."""
+
+    list_display = ("name", "organization", "is_active")
+    list_filter = ("is_active", "organization")
+    search_fields = ("name", "slug")
+    autocomplete_fields: ClassVar[list[str]] = ["organization"]
+    readonly_fields = ("created", "modified")
+
+
 @admin.register(models.Account)
 class AccountAdmin(admin.ModelAdmin):
     list_display = (
