@@ -140,19 +140,48 @@
                     </li>
                     {% endif %}
 
-                    {% if perms.users.view_account %}
+                    {% if perms.organizations.view_organization or perms.users.view_user or perms.users.view_role or perms.users.view_account %}
                     <li class="group-[.collapsed]:hidden">
                         <h3 class="mb-4 ml-4 mt-8 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                            {% trans "Administration" %}
+                            {% trans "Clients" %}
                         </h3>
                     </li>
+                    {% if perms.organizations.view_organization %}
+                    <li>
+                        <a class="flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-gray-600 dark:text-bodydark1 duration-300 ease-in-out hover:bg-gray-2 dark:hover:bg-meta-4 transition-all group-[.collapsed]:justify-center group-[.collapsed]:px-0 {% if "/organizations/" in request.path %}bg-gray-2 dark:bg-meta-4 !text-primary{% endif %}"
+                           href="{% url 'apps.organizations:organization_list' %}" title="{% trans 'Organizations' %}">
+                            <i data-lucide="building-2" class="h-5 w-5 flex-shrink-0" stroke-width="1.8" aria-hidden="true"></i>
+                            <span class="group-[.collapsed]:hidden duration-300 ease-in-out overflow-hidden whitespace-nowrap">{% trans "Organizations" %}</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% if perms.users.view_user %}
+                    <li>
+                        <a class="flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-gray-600 dark:text-bodydark1 duration-300 ease-in-out hover:bg-gray-2 dark:hover:bg-meta-4 transition-all group-[.collapsed]:justify-center group-[.collapsed]:px-0 {% if request.resolver_match.url_name == 'user_list' or request.resolver_match.url_name == 'user_create' or request.resolver_match.url_name == 'user_update' %}bg-gray-2 dark:bg-meta-4 !text-primary{% endif %}"
+                           href="{% url 'apps.users:user_list' %}" title="{% trans 'Users' %}">
+                            <i data-lucide="users" class="h-5 w-5 flex-shrink-0" stroke-width="1.8" aria-hidden="true"></i>
+                            <span class="group-[.collapsed]:hidden duration-300 ease-in-out overflow-hidden whitespace-nowrap">{% trans "Users" %}</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% if perms.users.view_role %}
+                    <li>
+                        <a class="flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-gray-600 dark:text-bodydark1 duration-300 ease-in-out hover:bg-gray-2 dark:hover:bg-meta-4 transition-all group-[.collapsed]:justify-center group-[.collapsed]:px-0 {% if "roles" in request.path %}bg-gray-2 dark:bg-meta-4 !text-primary{% endif %}"
+                           href="{% url 'apps.users:role_list' %}" title="{% trans 'Roles' %}">
+                            <i data-lucide="shield-check" class="h-5 w-5 flex-shrink-0" stroke-width="1.8" aria-hidden="true"></i>
+                            <span class="group-[.collapsed]:hidden duration-300 ease-in-out overflow-hidden whitespace-nowrap">{% trans "Roles" %}</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% if perms.users.view_account %}
                     <li>
                         <a class="flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-gray-600 dark:text-bodydark1 duration-300 ease-in-out hover:bg-gray-2 dark:hover:bg-meta-4 transition-all group-[.collapsed]:justify-center group-[.collapsed]:px-0 {% if "accounts" in request.path %}bg-gray-2 dark:bg-meta-4 !text-primary{% endif %}"
                            href="{% url 'apps.users:account_list' %}" title="{% trans 'Accounts' %}">
-                            <i data-lucide="users" class="h-5 w-5 flex-shrink-0" stroke-width="1.8" aria-hidden="true"></i>
+                            <i data-lucide="user-cog" class="h-5 w-5 flex-shrink-0" stroke-width="1.8" aria-hidden="true"></i>
                             <span class="group-[.collapsed]:hidden duration-300 ease-in-out overflow-hidden whitespace-nowrap">{% trans "Accounts" %}</span>
                         </a>
                     </li>
+                    {% endif %}
                     {% endif %}
                 </ul>
             </div>

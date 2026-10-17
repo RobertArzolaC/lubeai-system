@@ -122,9 +122,10 @@ class DashboardViewTests(TestCase):
             )
         self.client.force_login(self.user)
         DashboardService()  # warm up any lazy imports
-        # 3 request queries (tenant middleware + session + user) and 8 bounded
-        # dashboard aggregations; no N+1 as the dataset grows.
-        with self.assertNumQueries(11):
+        # Request-time queries (session, user, tenant-organization lookups and
+        # the audit insert) plus 8 bounded dashboard aggregations; no N+1 as the
+        # dataset grows.
+        with self.assertNumQueries(14):
             self.client.get(reverse("apps.dashboard:data"))
 
     def _query_count(self, path: str, **params: object) -> int:

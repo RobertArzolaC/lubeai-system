@@ -11,6 +11,13 @@ from django.views.generic import TemplateView
 from apps.dashboard import filtersets
 from apps.dashboard.services import DashboardFilters, DashboardService
 from apps.organizations import scoping
+from apps.users import models as user_models
+
+CLIENT_ADMIN_PERMISSIONS = (
+    "organizations.view_organization",
+    "users.view_user",
+    "users.view_role",
+)
 
 
 class DashboardView(LoginRequiredMixin, TemplateView):
@@ -23,13 +30,43 @@ class DashboardView(LoginRequiredMixin, TemplateView):
     template_name = "dashboard/index.html"
 
     def get_context_data(self, **kwargs: Any) -> dict:
-        """Add the initial payload and the available filter options."""
+        """Add the initial payload, the filter options and client counts."""
         context = super().get_context_data(**kwargs)
         organization_ids = scoping.user_visible_organization_ids(self.request.user)
         service = DashboardService(organization_ids=organization_ids)
         context["dashboard_data"] = service.build_context()
         context["filter_options"] = service.get_filter_options(organization_ids)
+        context.update(self._client_administration(self.request.user))
         return context
+
+    def _client_administration(self, user) -> dict:
+        """Return the client-administration flag and scoped counts.
+
+        Args:
+            user: The request user.
+
+        Returns:
+            Context with ``show_client_administration`` and ``client_counts``.
+        """
+        show = any(user.has_perm(permission) for permission in CLIENT_ADMIN_PERMISSIONS)
+        if not show:
+            return {
+                "show_client_administration": False,
+                "client_counts": {"organizations": 0, "users": 0, "roles": 0},
+            }
+        visible = scoping.visible_organizations(user)
+        return {
+            "show_client_administration": True,
+            "client_counts": {
+                "organizations": visible.count(),
+                "users": user_models.User.objects.filter(
+                    organization__in=visible
+                ).count(),
+                "roles": user_models.Role.objects.filter(
+                    organization__in=visible
+                ).count(),
+            },
+        }
 
 
 class DashboardDataView(LoginRequiredMixin, View):
@@ -54,7 +91,5 @@ class DashboardDataView(LoginRequiredMixin, View):
         )
         organization_ids = scoping.user_visible_organization_ids(request.user)
         return JsonResponse(
-            DashboardService(
-                filters, organization_ids=organization_ids
-            ).build_context()
+            DashboardService(filters, organization_ids=organization_ids).build_context()
         )

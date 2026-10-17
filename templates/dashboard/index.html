@@ -16,6 +16,12 @@
     {% include "dashboard/includes/tabs.html" %}
 </div>
 
+{% if show_client_administration %}
+<div class="mt-6">
+    {% include "dashboard/includes/administration.html" %}
+</div>
+{% endif %}
+
 {{ dashboard_data|json_script:"dashboard-data" }}
 {% endblock content %}
 
