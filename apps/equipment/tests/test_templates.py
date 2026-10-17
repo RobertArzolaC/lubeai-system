@@ -3,7 +3,8 @@
 from constance.test import override_config
 from django.contrib.auth.models import Permission
 from django.core.cache import cache
-from django.test import TestCase
+from django.template import Context, Template
+from django.test import SimpleTestCase, TestCase
 from django.urls import reverse
 
 from apps.equipment.factories import (
@@ -211,6 +212,9 @@ class DashboardFleetFlagTests(TestCase):
         self.assertContains(response, 'data-fleet-enabled="false"')
         self.assertNotContains(response, "chart-fleet")
         self.assertNotContains(response, 'name="fleet"')
+        self.assertEqual(response.content.count(b'<th class="px-3 py-2">'), 5)
+        self.assertContains(response, 'colspan="5"')
+        self.assertNotContains(response, 'colspan="6"')
 
     @override_config(ENABLE_FLEET=True)
     def test_dashboard_shows_fleet_widgets_when_flag_enabled(self) -> None:
@@ -219,6 +223,18 @@ class DashboardFleetFlagTests(TestCase):
         self.assertContains(response, 'data-fleet-enabled="true"')
         self.assertContains(response, "chart-fleet")
         self.assertContains(response, 'name="fleet"')
+        self.assertEqual(response.content.count(b'<th class="px-3 py-2">'), 6)
+        self.assertContains(response, 'colspan="6"')
+        self.assertNotContains(response, 'colspan="5"')
+
+
+class FleetFlagMissingConfigTests(SimpleTestCase):
+    """The fleet gate degrades to falsy when ``config`` is not in context."""
+
+    def test_flag_is_falsy_without_config_in_context(self) -> None:
+        """A missing ``config`` object renders the branch as hidden, not an error."""
+        template = Template("{% if config.ENABLE_FLEET %}on{% else %}off{% endif %}")
+        self.assertEqual(template.render(Context({})), "off")
 
 
 class EquipmentRowPermissionGatingTests(TestCase):
