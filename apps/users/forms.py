@@ -12,6 +12,7 @@ from django.utils.crypto import get_random_string
 from django.utils.translation import gettext_lazy as _
 
 from apps.core import mixins as core_mixins
+from apps.organizations import scoping
 from apps.users import mixins, models, services
 
 
@@ -228,5 +229,111 @@ class RoleForm(core_mixins.OrganizationScopeFormMixin, forms.ModelForm):
                 description=self.cleaned_data.get("description", ""),
                 permissions=permissions,
                 actor=self.user,
+            )
+        return self.instance
+
+
+class UserManagementForm(core_mixins.OrganizationScopeFormMixin, forms.ModelForm):
+    """Create or update a user of an organization, with role assignment.
+
+    The ``organization`` field is scoped to the acting user's subtree (via
+    :class:`~apps.core.mixins.forms.OrganizationScopeFormMixin`) and ``roles``
+    offers only the active roles within that subtree. Saving delegates to
+    :class:`apps.users.services.UserService`.
+    """
+
+    roles = forms.ModelMultipleChoiceField(
+        queryset=models.Role.objects.none(),
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
+        label=_("Roles"),
+    )
+
+    class Meta:
+        model = models.User
+        fields: ClassVar[list[str]] = [
+            "organization",
+            "first_name",
+            "last_name",
+            "email",
+            "is_active",
+        ]
+        widgets: ClassVar[dict] = {
+            "first_name": forms.TextInput(attrs={"class": "form-control"}),
+            "last_name": forms.TextInput(attrs={"class": "form-control"}),
+            "email": forms.EmailInput(attrs={"class": "form-control"}),
+            "is_active": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+        }
+
+    def __init__(
+        self,
+        *args,
+        organization=None,
+        user=None,
+        **kwargs,
+    ) -> None:
+        """Scope organization/roles and preload the instance's roles.
+
+        Args:
+            *args: Positional arguments forwarded to ``ModelForm``.
+            organization: Optional organization id to preselect.
+            user: The acting user, used to scope the choices.
+            **kwargs: Keyword arguments forwarded to ``ModelForm``.
+        """
+        super().__init__(*args, user=user, **kwargs)
+        self._preset_organization = organization
+
+        if organization is not None and "organization" in self.fields:
+            self.fields["organization"].initial = organization
+
+        role_queryset = models.Role.objects.filter(is_active=True).select_related(
+            "organization"
+        )
+        if user is not None:
+            visible_ids = scoping.user_visible_organization_ids(user)
+            if visible_ids is not None:
+                role_queryset = role_queryset.filter(organization_id__in=visible_ids)
+        self.fields["roles"].queryset = role_queryset
+
+        if self.instance.pk:
+            self.fields["email"].disabled = True
+            self.fields["roles"].initial = [
+                group.role
+                for group in self.instance.groups.all()
+                if hasattr(group, "role")
+            ]
+
+    def save(self, commit: bool = True) -> models.User:
+        """Persist the user through :class:`UserService`.
+
+        Args:
+            commit: Accepted for signature compatibility (unused).
+
+        Returns:
+            The created or updated user.
+        """
+        service = services.UserService()
+        roles = self.cleaned_data.get("roles", [])
+        organization = self.cleaned_data.get("organization") or getattr(
+            self.instance, "organization", None
+        )
+        if self.instance.pk:
+            self.instance = service.update_user(
+                self.instance,
+                first_name=self.cleaned_data["first_name"],
+                last_name=self.cleaned_data["last_name"],
+                organization=organization,
+                roles=roles,
+                is_active=self.cleaned_data.get("is_active", True),
+            )
+        else:
+            self.instance = service.create_user(
+                actor=self.user,
+                email=self.cleaned_data["email"],
+                first_name=self.cleaned_data["first_name"],
+                last_name=self.cleaned_data["last_name"],
+                organization=organization,
+                roles=roles,
+                is_active=self.cleaned_data.get("is_active", True),
             )
         return self.instance
