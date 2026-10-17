@@ -42,6 +42,45 @@ class OrganizationListView(core_mixins.BaseListView):
         return context
 
 
+class OrganizationDetailView(core_mixins.BaseDetailView):
+    """Show an organization with its children, users and roles."""
+
+    model = models.Organization
+    permission_required = "organizations.view_organization"
+    template_name = "organizations/organization/detail.html"
+    context_object_name = "organization"
+
+    def get_queryset(self) -> QuerySet:
+        """Scope the detail object to the user's subtree."""
+        return scoping.visible_organizations(self.request.user)
+
+    def get_context_data(self, **kwargs: Any) -> dict:
+        context = super().get_context_data(**kwargs)
+        organization = self.object
+        user = self.request.user
+        context["children"] = (
+            organization.children.select_related("parent")
+            .annotate(children_count=Count("children"))
+            .order_by("name")
+        )
+        context["organization_users"] = (
+            organization.users.select_related("organization")
+            .prefetch_related("groups__role")
+            .order_by("first_name", "last_name")
+        )
+        context["roles"] = (
+            organization.roles.select_related("group")
+            .annotate(permission_count=Count("group__permissions"))
+            .order_by("name")
+        )
+        context["branding"] = organization.get_branding()
+        context["capabilities"] = organization.resolved_capabilities()
+        context["can_manage_children"] = user.has_perm("organizations.add_organization")
+        context["can_manage_users"] = user.has_perm("users.add_user")
+        context["can_manage_roles"] = user.has_perm("users.add_role")
+        return context
+
+
 class OrganizationCreateView(core_mixins.BaseCreateView):
     """Create an organization within the acting user's subtree."""
 

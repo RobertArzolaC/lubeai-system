@@ -1,0 +1,226 @@
+{% extends "layouts/dashboard.html" %}
+{% load i18n %}
+
+{% block title_page %}{{ organization.name }}{% endblock title_page %}
+{% block toolbar_title %}{{ organization.name }}{% endblock %}
+
+{% block content %}
+<!-- Header card -->
+<div class="mb-8 rounded-2xl border border-stroke bg-white p-7 shadow-sm dark:border-strokedark dark:bg-boxdark">
+    <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+        <div class="flex items-start gap-5">
+            {% if branding.logo %}
+            <img src="{{ branding.logo.url }}" alt="{{ organization.name }}" class="h-16 w-16 rounded-2xl border border-stroke object-contain p-1 dark:border-strokedark" />
+            {% else %}
+            <div class="flex h-16 w-16 items-center justify-center rounded-2xl border border-stroke bg-gray-2 dark:border-strokedark dark:bg-meta-4">
+                <i data-lucide="building-2" class="h-8 w-8 text-primary" stroke-width="1.8" aria-hidden="true"></i>
+            </div>
+            {% endif %}
+            <div>
+                <div class="flex items-center gap-3">
+                    <h2 class="text-2xl font-bold tracking-tight text-black dark:text-white">{{ organization.name }}</h2>
+                    {% include "organizations/organization/_kind_badge.html" with kind=organization.kind label=organization.get_kind_display %}
+                </div>
+                <nav class="mt-2 flex flex-wrap items-center gap-1.5 text-xs font-medium text-bodydark2">
+                    {% for ancestor in organization.ancestors reversed %}
+                    <span>{{ ancestor.name }}</span>
+                    <i data-lucide="chevron-right" class="h-3 w-3" stroke-width="2" aria-hidden="true"></i>
+                    {% endfor %}
+                    <span class="font-bold text-black dark:text-white">{{ organization.name }}</span>
+                </nav>
+                {% if organization.code %}
+                <p class="mt-2 text-xs font-semibold uppercase tracking-wide text-bodydark2">{{ organization.code }}</p>
+                {% endif %}
+            </div>
+        </div>
+        <div class="flex items-center gap-3">
+            {% include "includes/status_badge.html" with is_active=organization.is_active %}
+            {% if perms.organizations.change_organization %}
+            <a href="{% url 'apps.organizations:organization_update' organization.pk %}" class="inline-flex items-center justify-center gap-2 rounded-lg border border-stroke py-2.5 px-5 text-sm font-semibold text-black transition hover:bg-gray-50 dark:border-strokedark dark:text-white dark:hover:bg-white/5">
+                <i data-lucide="pencil" class="h-4 w-4" stroke-width="1.8" aria-hidden="true"></i>
+                {% trans "Edit" %}
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Branding + capabilities -->
+    <div class="mt-7 grid grid-cols-1 gap-6 border-t border-stroke pt-6 dark:border-strokedark lg:grid-cols-2">
+        <div>
+            <h3 class="mb-3 text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Branding" %}</h3>
+            <div class="flex flex-wrap items-center gap-3">
+                {% for slot, color in branding.items %}
+                {% if color and slot != "logo" %}
+                <div class="flex items-center gap-2">
+                    <span class="h-5 w-5 rounded-md border border-stroke dark:border-strokedark" style="background-color: {{ color }}"></span>
+                    <span class="text-[11px] font-medium text-bodydark2">{{ slot }}</span>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        <div>
+            <h3 class="mb-3 text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Capabilities" %}</h3>
+            <div class="flex flex-wrap gap-2">
+                {% for key, enabled in capabilities.items %}
+                <span class="inline-flex items-center gap-1.5 rounded-full border py-1 px-3 text-xs font-bold {% if enabled %}border-success/20 bg-success/10 text-success{% else %}border-stroke bg-gray-2 text-bodydark2 dark:border-strokedark dark:bg-meta-4{% endif %}">
+                    {% if enabled %}<i data-lucide="check" class="h-3 w-3" stroke-width="3" aria-hidden="true"></i>{% else %}<i data-lucide="x" class="h-3 w-3" stroke-width="3" aria-hidden="true"></i>{% endif %}
+                    {{ key }}
+                </span>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tabs -->
+<div class="rounded-2xl border border-stroke bg-white shadow-sm dark:border-strokedark dark:bg-boxdark">
+    <div class="flex flex-wrap items-center gap-2 border-b border-stroke px-6 py-4 dark:border-strokedark" role="tablist">
+        <button type="button" role="tab" data-tab="children" aria-selected="true"
+                class="js-tab inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-bold text-primary bg-primary/10 transition">
+            <i data-lucide="sitemap" class="h-4 w-4" stroke-width="1.8" aria-hidden="true"></i>
+            {% trans "Child organizations" %} ({{ children|length }})
+        </button>
+        <button type="button" role="tab" data-tab="users" aria-selected="false"
+                class="js-tab inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-bold text-bodydark2 transition hover:text-primary">
+            <i data-lucide="users" class="h-4 w-4" stroke-width="1.8" aria-hidden="true"></i>
+            {% trans "Users" %} ({{ organization_users|length }})
+        </button>
+        <button type="button" role="tab" data-tab="roles" aria-selected="false"
+                class="js-tab inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-bold text-bodydark2 transition hover:text-primary">
+            <i data-lucide="shield-check" class="h-4 w-4" stroke-width="1.8" aria-hidden="true"></i>
+            {% trans "Roles" %} ({{ roles|length }})
+        </button>
+    </div>
+
+    <!-- Children panel -->
+    <div class="js-tab-panel" data-panel="children">
+        <div class="flex items-center justify-between px-6 py-4">
+            <p class="text-sm font-medium text-bodydark2">{% trans "Direct child organizations of this node." %}</p>
+            {% if can_manage_children %}
+            <a href="{% url 'apps.organizations:organization_create' %}?parent={{ organization.pk }}" class="inline-flex items-center gap-2 rounded-lg bg-primary py-2 px-4 text-xs font-semibold text-white hover:bg-opacity-90">
+                <i data-lucide="plus" class="h-3.5 w-3.5" stroke-width="2" aria-hidden="true"></i>
+                {% trans "Add child" %}
+            </a>
+            {% endif %}
+        </div>
+        <div class="flex flex-col">
+            {% for child in children %}
+            <div class="grid grid-cols-12 items-center border-t border-stroke py-4 px-6 dark:border-strokedark">
+                <div class="col-span-6 flex items-center gap-3">
+                    <a href="{% url 'apps.organizations:organization_detail' child.pk %}" class="text-sm font-bold text-black hover:text-primary dark:text-white">{{ child.name }}</a>
+                    {% include "organizations/organization/_kind_badge.html" with kind=child.kind label=child.get_kind_display %}
+                </div>
+                <div class="col-span-3 text-xs font-medium text-bodydark2">
+                    {{ child.children_count }} {% trans "children" %}
+                </div>
+                <div class="col-span-3 flex items-center justify-end gap-3">
+                    {% include "includes/status_badge.html" with is_active=child.is_active %}
+                    <a href="{% url 'apps.organizations:organization_detail' child.pk %}" class="flex h-8 w-8 items-center justify-center rounded-lg border border-stroke text-bodydark2 hover:text-primary dark:border-strokedark" title="{% trans 'View' %}">
+                        <i data-lucide="eye" class="h-4 w-4" stroke-width="1.8" aria-hidden="true"></i>
+                    </a>
+                </div>
+            </div>
+            {% empty %}
+            <p class="border-t border-stroke py-8 text-center text-sm font-medium text-bodydark2 dark:border-strokedark">{% trans "No child organizations." %}</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Users panel -->
+    <div class="js-tab-panel hidden" data-panel="users">
+        <div class="flex items-center justify-between px-6 py-4">
+            <p class="text-sm font-medium text-bodydark2">{% trans "Users that belong directly to this organization." %}</p>
+            {% if can_manage_users %}
+            <a href="{% url 'apps.users:user_create' %}?organization={{ organization.pk }}" class="inline-flex items-center gap-2 rounded-lg bg-primary py-2 px-4 text-xs font-semibold text-white hover:bg-opacity-90">
+                <i data-lucide="plus" class="h-3.5 w-3.5" stroke-width="2" aria-hidden="true"></i>
+                {% trans "Add user" %}
+            </a>
+            {% endif %}
+        </div>
+        <div class="flex flex-col">
+            {% for member in organization_users %}
+            <div class="grid grid-cols-12 items-center border-t border-stroke py-4 px-6 dark:border-strokedark">
+                <div class="col-span-6 flex flex-col">
+                    <span class="text-sm font-bold text-black dark:text-white">{{ member.full_name }}</span>
+                    <span class="text-xs font-medium text-bodydark2">{{ member.email }}</span>
+                </div>
+                <div class="col-span-3 flex flex-wrap gap-1.5">
+                    {% for group in member.groups.all %}
+                    {% if group.role %}
+                    <span class="inline-flex items-center rounded-md border border-primary/20 bg-primary/10 px-2 py-0.5 text-[10px] font-bold text-primary">{{ group.role.name }}</span>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+                <div class="col-span-3 flex items-center justify-end gap-3">
+                    {% include "includes/status_badge.html" with is_active=member.is_active %}
+                    {% if perms.users.change_user %}
+                    <a href="{% url 'apps.users:user_update' member.pk %}" class="flex h-8 w-8 items-center justify-center rounded-lg border border-stroke text-bodydark2 hover:text-primary dark:border-strokedark" title="{% trans 'Edit' %}">
+                        <i data-lucide="pencil" class="h-4 w-4" stroke-width="1.8" aria-hidden="true"></i>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% empty %}
+            <p class="border-t border-stroke py-8 text-center text-sm font-medium text-bodydark2 dark:border-strokedark">{% trans "No users in this organization." %}</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Roles panel -->
+    <div class="js-tab-panel hidden" data-panel="roles">
+        <div class="flex items-center justify-between px-6 py-4">
+            <p class="text-sm font-medium text-bodydark2">{% trans "Roles defined for this organization." %}</p>
+            {% if can_manage_roles %}
+            <a href="{% url 'apps.users:role_create' %}?organization={{ organization.pk }}" class="inline-flex items-center gap-2 rounded-lg bg-primary py-2 px-4 text-xs font-semibold text-white hover:bg-opacity-90">
+                <i data-lucide="plus" class="h-3.5 w-3.5" stroke-width="2" aria-hidden="true"></i>
+                {% trans "Add role" %}
+            </a>
+            {% endif %}
+        </div>
+        <div class="flex flex-col">
+            {% for role in roles %}
+            <div class="grid grid-cols-12 items-center border-t border-stroke py-4 px-6 dark:border-strokedark">
+                <div class="col-span-6 flex flex-col">
+                    <span class="text-sm font-bold text-black dark:text-white">{{ role.name }}</span>
+                    <span class="text-xs font-medium text-bodydark2">{{ role.description|default:"—" }}</span>
+                </div>
+                <div class="col-span-3 text-xs font-semibold text-bodydark2">{{ role.permission_count }} {% trans "permissions" %}</div>
+                <div class="col-span-3 flex items-center justify-end gap-3">
+                    {% include "includes/status_badge.html" with is_active=role.is_active %}
+                    {% if perms.users.change_role %}
+                    <a href="{% url 'apps.users:role_update' role.pk %}" class="flex h-8 w-8 items-center justify-center rounded-lg border border-stroke text-bodydark2 hover:text-primary dark:border-strokedark" title="{% trans 'Edit' %}">
+                        <i data-lucide="pencil" class="h-4 w-4" stroke-width="1.8" aria-hidden="true"></i>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% empty %}
+            <p class="border-t border-stroke py-8 text-center text-sm font-medium text-bodydark2 dark:border-strokedark">{% trans "No roles for this organization." %}</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const tabs = document.querySelectorAll('.js-tab');
+        const panels = document.querySelectorAll('.js-tab-panel');
+        const activate = (name) => {
+            tabs.forEach((tab) => {
+                const active = tab.dataset.tab === name;
+                tab.setAttribute('aria-selected', active ? 'true' : 'false');
+                tab.classList.toggle('text-primary', active);
+                tab.classList.toggle('bg-primary/10', active);
+                tab.classList.toggle('text-bodydark2', !active);
+            });
+            panels.forEach((panel) => {
+                panel.classList.toggle('hidden', panel.dataset.panel !== name);
+            });
+        };
+        tabs.forEach((tab) => tab.addEventListener('click', () => activate(tab.dataset.tab)));
+    });
+</script>
+{% endblock extra_js %}

@@ -14,6 +14,11 @@ urlpatterns = [
         name="organization_create",
     ),
     path(
+        "<int:pk>/",
+        views.OrganizationDetailView.as_view(),
+        name="organization_detail",
+    ),
+    path(
         "<int:pk>/update/",
         views.OrganizationUpdateView.as_view(),
         name="organization_update",
