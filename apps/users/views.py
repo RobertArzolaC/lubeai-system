@@ -4,6 +4,7 @@ from django.contrib.auth.mixins import (
 )
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Count
+from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
@@ -238,3 +239,109 @@ class RoleDeleteView(core_mixins.BaseDeleteView):
     model = models.Role
     permission_required = "users.delete_role"
     tenant_field = "organization"
+
+
+class UserListView(core_mixins.ClientAttributionMixin, core_mixins.BaseListView):
+    """List the users visible to the acting user."""
+
+    model = models.User
+    permission_required = "users.view_user"
+    filterset_class = filtersets.UserFilter
+    template_name = "users/user/list.html"
+    context_object_name = "users"
+
+    def get_queryset(self):
+        """Return users with organization and roles preloaded."""
+        return (
+            super()
+            .get_queryset()
+            .select_related("organization")
+            .prefetch_related("groups__role")
+            .order_by("first_name", "last_name")
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["entity"] = _("User")
+        context["entity_plural"] = _("Users")
+        context["back_url"] = reverse_lazy("apps.dashboard:index")
+        context["add_entity_url"] = reverse_lazy("apps.users:user_create")
+        return context
+
+
+class UserCreateView(core_mixins.BaseCreateView):
+    """Create a user and assign their organization and roles."""
+
+    model = models.User
+    form_class = forms.UserManagementForm
+    permission_required = "users.add_user"
+    template_name = "users/user/form.html"
+    success_message = _("User created successfully")
+    success_url = reverse_lazy("apps.users:user_list")
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        kwargs["organization"] = self.request.GET.get("organization")
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["entity"] = _("User")
+        context["back_url"] = reverse_lazy("apps.users:user_list")
+        return context
+
+
+class UserUpdateView(core_mixins.BaseUpdateView):
+    """Update a user's data, organization, status and roles."""
+
+    model = models.User
+    form_class = forms.UserManagementForm
+    permission_required = "users.change_user"
+    template_name = "users/user/form.html"
+    success_message = _("User updated successfully")
+    success_url = reverse_lazy("apps.users:user_list")
+    context_object_name = "user"
+    tenant_field = "organization"
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        kwargs["organization"] = self.request.GET.get("organization")
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["entity"] = _("User")
+        context["back_url"] = reverse_lazy("apps.users:user_list")
+        return context
+
+
+class UserDeleteView(core_mixins.BaseDeleteView):
+    """Deactivate a user instead of deleting it."""
+
+    model = models.User
+    permission_required = "users.delete_user"
+    tenant_field = "organization"
+
+    def post(self, request, *args, **kwargs) -> JsonResponse:
+        """Deactivate the user so soft-delete semantics are preserved."""
+        user = (
+            scoping.scope_queryset(
+                models.User.objects.all(), request.user, field="organization"
+            )
+            .filter(pk=kwargs.get("pk"))
+            .first()
+        )
+        if user is None:
+            return JsonResponse(
+                {"status": "error", "message": _("User not found.")}, status=404
+            )
+        user.is_active = False
+        user.save(update_fields=["is_active"])
+        return JsonResponse(
+            {
+                "status": "success",
+                "message": _("The user was successfully deactivated."),
+            }
+        )
