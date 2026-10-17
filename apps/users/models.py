@@ -14,6 +14,15 @@ class User(AbstractUser):
     username = None
     email = models.EmailField(_("email address"), unique=True)
     avatar = models.ImageField(upload_to="users/avatars/", null=True, blank=True)
+    organization = models.ForeignKey(
+        "organizations.Organization",
+        verbose_name=_("Organization"),
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="users",
+        help_text=_("Tenant/client organization this user belongs to"),
+    )
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS: ClassVar[list[str]] = []
@@ -30,6 +39,11 @@ class User(AbstractUser):
     @cached_property
     def is_account(self):
         return hasattr(self, "account")
+
+    @cached_property
+    def tenant(self):
+        """Return the root tenant of this user's organization, if any."""
+        return self.organization.tenant if self.organization_id else None
 
 
 class Account(SoftDeletableModel, TimeStampedModel):

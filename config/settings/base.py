@@ -52,6 +52,7 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     "apps.core.apps.CoreConfig",
+    "apps.organizations.apps.OrganizationsConfig",
     "apps.authentication.apps.AuthenticationConfig",
     "apps.users.apps.UsersConfig",
     "apps.theme.apps.ThemeConfig",
@@ -86,6 +87,7 @@ MIDDLEWARE = [
     "django.middleware.locale.LocaleMiddleware",
     "easyaudit.middleware.easyaudit.EasyAuditMiddleware",
     "allauth.account.middleware.AccountMiddleware",
+    "apps.organizations.middleware.TenantMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -105,6 +107,7 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 "constance.context_processors.config",
                 "apps.core.context_processors.site_processor",
+                "apps.organizations.context_processors.branding",
             ],
         },
     },
@@ -178,6 +181,16 @@ LOCALE_PATHS = [BASE_DIR / "locale/"]
 
 CITIES_LIGHT_TRANSLATION_LANGUAGES = ["es", "en"]
 CITIES_LIGHT_INCLUDE_COUNTRIES = ["PE"]
+
+# Tenancy settings
+# https://docs.djangoproject.com/en/5.0/ref/settings/
+
+# Base domain used to resolve a tenant from a subdomain (e.g. ``marco`` in
+# ``marco.example.com``). Empty disables subdomain resolution.
+TENANT_BASE_DOMAIN = config("TENANT_BASE_DOMAIN", default="")
+
+# Fallback tenant slug used when no subdomain matches (local development).
+DEFAULT_TENANT_SLUG = config("DEFAULT_TENANT_SLUG", default="marco")
 
 # Django Allauth settings
 # https://django-allauth.readthedocs.io/en/latest/configuration.html

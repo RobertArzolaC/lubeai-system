@@ -10,6 +10,15 @@ from apps.equipment import choices
 
 class Fleet(TimeStampedModel, core_models.BaseUserTracked, core_models.IsActive):
     name = models.CharField(_("Name"), max_length=200, help_text=_("Fleet name"))
+    organization = models.ForeignKey(
+        "organizations.Organization",
+        verbose_name=_("Organization"),
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="fleets",
+        help_text=_("Tenant/client organization that owns this fleet"),
+    )
 
     class Meta:
         verbose_name = _("Fleet")
@@ -28,6 +37,16 @@ class Branch(
     core_models.NameDescription,
     core_models.IsActive,
 ):
+    organization = models.ForeignKey(
+        "organizations.Organization",
+        verbose_name=_("Organization"),
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="branches",
+        help_text=_("Tenant/client organization that owns this branch"),
+    )
+
     class Meta:
         verbose_name = _("Branch")
         verbose_name_plural = _("Branches")
@@ -54,6 +73,15 @@ class Machine(TimeStampedModel, core_models.BaseUserTracked, core_models.IsActiv
         blank=True,
         related_name="machines",
         help_text=_("Branch/location where this machine is placed"),
+    )
+    organization = models.ForeignKey(
+        "organizations.Organization",
+        verbose_name=_("Organization"),
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="machines",
+        help_text=_("Tenant/client organization that owns this machine"),
     )
     fleet = models.ForeignKey(
         Fleet,

@@ -50,6 +50,15 @@ class Alert(TimeStampedModel, BaseUserTracked):
         related_name="alerts",
         help_text=_("Source report of this alert"),
     )
+    organization = models.ForeignKey(
+        "organizations.Organization",
+        verbose_name=_("Organization"),
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="alerts",
+        help_text=_("Tenant/client organization that owns this alert"),
+    )
     category = models.CharField(
         _("Category"),
         max_length=50,

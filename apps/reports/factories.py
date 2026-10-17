@@ -119,6 +119,7 @@ class ReportFactory(factory.django.DjangoModelFactory):
         equipment_factories.ComponentFactory,
         machine=factory.SelfAttribute("..machine"),
     )
+    organization = factory.SelfAttribute("machine.organization")
     lab_number = factory.Sequence(lambda n: f"INFORME-{n:06d}")
     lubricant = factory.Sequence(lambda n: LUBRICANTS[n % len(LUBRICANTS)])
     lubricant_hours = factory.Faker("random_int", min=0, max=5000)

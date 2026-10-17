@@ -61,6 +61,15 @@ class Report(TimeStampedModel, core_models.BaseUserTracked, core_models.IsActive
         related_name="reports",
         help_text=_("Laboratory that performed the analysis"),
     )
+    organization = models.ForeignKey(
+        "organizations.Organization",
+        verbose_name=_("Organization"),
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="reports",
+        help_text=_("Tenant/client organization that owns this report"),
+    )
     machine = models.ForeignKey(
         equipment_models.Machine,
         verbose_name=_("Machine"),

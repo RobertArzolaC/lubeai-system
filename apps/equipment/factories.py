@@ -1,6 +1,7 @@
 import factory
 
 from apps.equipment import choices, models
+from apps.organizations import factories as organization_factories
 from apps.users import factories as user_factories
 
 PORTS = [
@@ -91,6 +92,7 @@ class FleetFactory(factory.django.DjangoModelFactory):
 
     name = factory.Sequence(lambda n: FLEETS[n % len(FLEETS)])
     is_active = True
+    organization = factory.SubFactory(organization_factories.OrganizationFactory)
     created_by = factory.SubFactory(user_factories.UserFactory)
     updated_by = factory.SelfAttribute("created_by")
 
@@ -107,6 +109,7 @@ class BranchFactory(factory.django.DjangoModelFactory):
     )
     address = factory.Sequence(lambda n: f"Terminal Marítimo {n + 1}, Zona Portuaria")
     is_active = True
+    organization = factory.SubFactory(organization_factories.OrganizationFactory)
     created_by = factory.SubFactory(user_factories.UserFactory)
     updated_by = factory.SelfAttribute("created_by")
 
@@ -119,6 +122,7 @@ class MachineFactory(factory.django.DjangoModelFactory):
 
     branch = factory.SubFactory(BranchFactory)
     fleet = factory.SubFactory(FleetFactory)
+    organization = factory.SelfAttribute("branch.organization")
     name = factory.Sequence(lambda n: VESSELS[n % len(VESSELS)])
     serial_number = factory.Sequence(lambda n: f"IMO {9000000 + n}")
     model = factory.Sequence(lambda n: VESSEL_MODELS[n % len(VESSEL_MODELS)])

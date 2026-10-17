@@ -5,6 +5,7 @@ from django.contrib.auth.mixins import (
     PermissionRequiredMixin,
 )
 from django.contrib.messages.views import SuccessMessageMixin
+from django.db.models import QuerySet
 from django.http import JsonResponse
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import (
@@ -19,6 +20,18 @@ from django.views.generic import (
 from django_filters.views import FilterView
 
 from apps.core import mixins as core_mixins
+from apps.organizations import scoping
+
+
+def scope_view_queryset(view, queryset: QuerySet) -> QuerySet:
+    """Scope ``queryset`` to the organizations visible to the view's user.
+
+    Views may be instantiated without a request (e.g. in unit tests); in that
+    case the queryset is returned unchanged.
+    """
+    return scoping.scope_queryset(
+        queryset, scoping.request_user(getattr(view, "request", None))
+    )
 
 
 class BaseCreateView(
@@ -38,7 +51,9 @@ class BaseUpdateView(
     core_mixins.UserStampMixin,
     UpdateView,
 ):
-    pass
+    def get_queryset(self) -> QuerySet:
+        """Scope the updatable object to the user's organizations."""
+        return scope_view_queryset(self, super().get_queryset())
 
 
 class BaseListView(LoginRequiredMixin, PermissionRequiredMixin, FilterView, ListView):
@@ -51,6 +66,14 @@ class BaseListView(LoginRequiredMixin, PermissionRequiredMixin, FilterView, List
     page_size_options: ClassVar[tuple[int, ...]] = (5, 10, 25, 50)
     default_page_size: ClassVar[int] = 5
     paginate_by: int | None = 5
+
+    def get_queryset(self) -> QuerySet:
+        """Return the list queryset scoped to the user's organizations.
+
+        The scoped queryset is also the base the FilterSet receives, so a
+        user can only filter within its own subtree.
+        """
+        return scope_view_queryset(self, super().get_queryset())
 
     def get_paginate_by(self, queryset) -> int:
         """Return the page size from ``items_per_page`` or the view default.
@@ -84,7 +107,9 @@ class BaseTemplateView(LoginRequiredMixin, PermissionRequiredMixin, TemplateView
 
 
 class BaseDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
-    pass
+    def get_queryset(self) -> QuerySet:
+        """Scope the detail object to the user's organizations."""
+        return scope_view_queryset(self, super().get_queryset())
 
 
 class BaseFormView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
@@ -96,7 +121,10 @@ class BaseDeleteView(LoginRequiredMixin, PermissionRequiredMixin, View):
         object_id = kwargs.get("pk")
         entity_name = self.model._meta.verbose_name
         try:
-            current_object = self.model.objects.get(pk=object_id)
+            queryset = scope_view_queryset(
+                self, self.model._default_manager.all()
+            )
+            current_object = queryset.get(pk=object_id)
             current_object.delete()
             return JsonResponse(
                 {

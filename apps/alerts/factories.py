@@ -19,6 +19,7 @@ class AlertFactory(factory.django.DjangoModelFactory):
     report = factory.SubFactory(report_factories.ReportFactory)
     machine = factory.SubFactory(equipment_factories.MachineFactory)
     component = factory.SubFactory(equipment_factories.ComponentFactory)
+    organization = factory.SelfAttribute("machine.organization")
     category = factory.Iterator(
         [choice[0] for choice in report_choices.Category.choices]
     )
