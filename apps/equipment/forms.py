@@ -139,8 +139,14 @@ class MachineForm(OrganizationScopeFormMixin, forms.ModelForm):
                 )
 
     def clean(self):
-        """Keep the machine's client coherent with its branch's client."""
+        """Keep the machine's client coherent with its branch's client.
+
+        Only applies when the Client field is present: without it (no user, or
+        a leaf user) the form keeps its legacy behaviour untouched.
+        """
         cleaned = super().clean()
+        if "organization" not in self.fields:
+            return cleaned
         organization = cleaned.get("organization") or getattr(
             self.instance, "organization", None
         )
@@ -149,7 +155,10 @@ class MachineForm(OrganizationScopeFormMixin, forms.ModelForm):
             return cleaned
         if organization is None:
             cleaned["organization"] = branch.organization
-        elif branch.organization_id != organization.pk:
+        elif (
+            branch.organization_id is not None
+            and branch.organization_id != organization.pk
+        ):
             self.add_error(
                 "branch",
                 _("The branch does not belong to the selected client."),

@@ -73,7 +73,7 @@ class OrganizationScopeFormMixin:
         field.label = _("Client")
         field.empty_label = _("Own organization")
 
-    def clean_organization(self):
+    def clean_organization(self) -> object:
         """Reject organizations outside the acting user's subtree."""
         organization = self.cleaned_data.get("organization")
         if organization is not None and not scoping.is_organization_visible(
@@ -82,7 +82,7 @@ class OrganizationScopeFormMixin:
             raise ValidationError(_("You cannot use that client."), code="invalid")
         return organization
 
-    def clean(self):
+    def clean(self) -> dict:
         """Treat an empty selection as "no change" instead of a clear."""
         cleaned = super().clean()
         if "organization" in self.fields and not cleaned.get("organization"):

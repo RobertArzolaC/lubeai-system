@@ -280,3 +280,147 @@ class ClientColumnRenderingTests(TestCase):
         response = self.client.get(reverse("apps.equipment:machine_list"))
         self.assertContains(response, 'name="organization"')
         self.assertContains(response, self.final.name)
+
+
+class MachineFormLegacyBehaviourTests(TestCase):
+    """Coherence never changes forms without a choosable client field."""
+
+    def setUp(self) -> None:
+        """Build a lab with two final clients and a branch of the second one."""
+        self.lab = organization_factories.OrganizationFactory(
+            slug="mb-lab", kind=choices.OrganizationKind.LAB
+        )
+        self.client_a = organization_factories.OrganizationFactory(
+            slug="mb-a", kind=choices.OrganizationKind.FINAL, parent=self.lab
+        )
+        self.client_b = organization_factories.OrganizationFactory(
+            slug="mb-b", kind=choices.OrganizationKind.FINAL, parent=self.lab
+        )
+        self.branch_b = equipment_factories.BranchFactory(organization=self.client_b)
+        self.user = user_for(self.lab)
+
+    def _data(self, **overrides):
+        """Build a machine payload with the branch of the second client."""
+        data = {
+            "organization": self.client_a.pk,
+            "branch": self.branch_b.pk,
+            "fleet": "",
+            "name": "Machine",
+            "serial_number": "SN-MB",
+            "model": "M",
+            "is_active": True,
+        }
+        data.update(overrides)
+        return data
+
+    def test_no_user_form_is_not_subject_to_coherence(self) -> None:
+        """A form without a user keeps the legacy behaviour (no coherence)."""
+        machine = equipment_factories.MachineFactory(
+            organization=self.client_a, branch=self.branch_b
+        )
+        form = forms.MachineForm(data=self._data(), instance=machine)
+        self.assertNotIn("organization", form.fields)
+        self.assertTrue(form.is_valid())
+
+    def test_branch_without_organization_is_accepted(self) -> None:
+        """A branch without an owner does not block the machine."""
+        branch = equipment_factories.BranchFactory(organization=None)
+        unrestricted = user_factories.UserFactory()
+        form = forms.MachineForm(data=self._data(branch=branch.pk), user=unrestricted)
+        self.assertIn("organization", form.fields)
+        self.assertTrue(form.is_valid())
+
+
+class ClientCreationViewTests(TestCase):
+    """Creating through the views attributes the record to the chosen client."""
+
+    def setUp(self) -> None:
+        """Build a lab with a final client and an unrelated tenant."""
+        self.lab = organization_factories.OrganizationFactory(
+            slug="cv-lab", kind=choices.OrganizationKind.LAB
+        )
+        self.child = organization_factories.OrganizationFactory(
+            slug="cv-child", kind=choices.OrganizationKind.FINAL, parent=self.lab
+        )
+        self.other = organization_factories.OrganizationFactory(
+            slug="cv-other", kind=choices.OrganizationKind.LAB
+        )
+        self.user = user_for(self.lab)
+
+    def test_branch_created_for_child(self) -> None:
+        """A branch created through the view belongs to the chosen client."""
+        grant_permissions(self.user, "add_branch")
+        self.client.force_login(self.user)
+        response = self.client.post(
+            reverse("apps.equipment:branch_create"),
+            {
+                "organization": self.child.pk,
+                "name": "Sucursal hija",
+                "is_active": True,
+            },
+        )
+        self.assertRedirects(
+            response,
+            reverse("apps.equipment:branch_list"),
+            fetch_redirect_response=False,
+        )
+        branch = models.Branch.objects.get(name="Sucursal hija")
+        self.assertEqual(branch.organization_id, self.child.id)
+
+    def test_branch_foreign_organization_is_rejected(self) -> None:
+        """A branch posted for an unseen organization is not created."""
+        grant_permissions(self.user, "add_branch")
+        self.client.force_login(self.user)
+        response = self.client.post(
+            reverse("apps.equipment:branch_create"),
+            {"organization": self.other.pk, "name": "Forjada", "is_active": True},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(models.Branch.objects.filter(name="Forjada").exists())
+
+    def _machine_data(self, **overrides):
+        """Build a valid machine payload including formset management data."""
+        prefix = forms.ComponentFormSet().prefix
+        data: dict = {
+            "organization": self.child.pk,
+            "branch": "",
+            "fleet": "",
+            "name": "Maquina hija",
+            "serial_number": "SN-CV-1",
+            "model": "M",
+            "is_active": True,
+            f"{prefix}-TOTAL_FORMS": "0",
+            f"{prefix}-INITIAL_FORMS": "0",
+            f"{prefix}-MIN_NUM_FORMS": "0",
+            f"{prefix}-MAX_NUM_FORMS": "1000",
+        }
+        data.update(overrides)
+        return data
+
+    def test_machine_created_for_child(self) -> None:
+        """A machine created through the view belongs to the chosen client."""
+        grant_permissions(self.user, "add_machine")
+        self.client.force_login(self.user)
+        response = self.client.post(
+            reverse("apps.equipment:machine_create"), self._machine_data()
+        )
+        self.assertRedirects(
+            response,
+            reverse("apps.equipment:machine_list"),
+            fetch_redirect_response=False,
+        )
+        machine = models.Machine.objects.get(serial_number="SN-CV-1")
+        self.assertEqual(machine.organization_id, self.child.id)
+
+    def test_machine_foreign_organization_is_rejected(self) -> None:
+        """A machine posted for an unseen organization is not created."""
+        grant_permissions(self.user, "add_machine")
+        self.client.force_login(self.user)
+        response = self.client.post(
+            reverse("apps.equipment:machine_create"),
+            self._machine_data(organization=self.other.pk, serial_number="SN-CV-2"),
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(
+            models.Machine.objects.filter(serial_number="SN-CV-2").exists()
+        )

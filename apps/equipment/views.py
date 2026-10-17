@@ -330,7 +330,9 @@ class FleetDeleteView(core_mixins.BaseDeleteView):
     permission_required = "equipment.delete_fleet"
 
 
-class ComponentTypeListView(core_mixins.ClientAttributionMixin, core_mixins.BaseListView):
+class ComponentTypeListView(
+    core_mixins.ClientAttributionMixin, core_mixins.BaseListView
+):
     """View for listing component types with filtering and pagination."""
 
     model = models.ComponentType
