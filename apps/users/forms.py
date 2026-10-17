@@ -59,6 +59,9 @@ class AccountCreationForm(mixins.PermissionFormMixin, SignupForm):
             user.first_name = self.cleaned_data["first_name"]
             user.last_name = self.cleaned_data["last_name"]
             user.avatar = self.cleaned_data["avatar"]
+            user.organization = getattr(
+                getattr(request, "user", None), "organization", None
+            )
 
             temp_password = get_random_string(length=12)
             user.set_password(temp_password)

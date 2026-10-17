@@ -27,10 +27,12 @@ def scope_view_queryset(view, queryset: QuerySet) -> QuerySet:
     """Scope ``queryset`` to the organizations visible to the view's user.
 
     Views may be instantiated without a request (e.g. in unit tests); in that
-    case the queryset is returned unchanged.
+    case the queryset is returned unchanged. The tenancy field defaults to
+    ``organization`` and can be overridden per view via ``tenant_field``.
     """
+    field = getattr(view, "tenant_field", "organization")
     return scoping.scope_queryset(
-        queryset, scoping.request_user(getattr(view, "request", None))
+        queryset, scoping.request_user(getattr(view, "request", None)), field=field
     )
 
 

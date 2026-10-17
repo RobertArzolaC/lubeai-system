@@ -85,6 +85,7 @@ class AccountListView(core_mixins.BaseListView):
     filterset_class = filtersets.AccountFilter
     template_name = "users/account/list.html"
     context_object_name = "accounts"
+    tenant_field = "user__organization"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -127,6 +128,7 @@ class AccountUpdateView(core_mixins.BaseUpdateView):
     permission_required = "users.change_account"
     success_message = _("Account updated successfully")
     success_url = reverse_lazy("apps.users:account_list")
+    tenant_field = "user__organization"
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -143,3 +145,4 @@ class AccountUpdateView(core_mixins.BaseUpdateView):
 class AccountDeleteView(core_mixins.BaseDeleteView):
     model = models.Account
     permission_required = "users.delete_account"
+    tenant_field = "user__organization"
