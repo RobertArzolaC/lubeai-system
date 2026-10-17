@@ -11,10 +11,12 @@ from apps.equipment import filtersets, forms, models
 from apps.equipment import views as equipment_views
 from apps.organizations import choices
 from apps.organizations import factories as organization_factories
+from apps.organizations import models as organization_models
 from apps.users import factories as user_factories
+from apps.users import models as user_models
 
 
-def user_for(organization):
+def user_for(organization: organization_models.Organization) -> user_models.User:
     """Return a persisted user belonging to ``organization``."""
     user = user_factories.UserFactory()
     user.organization = organization
@@ -22,7 +24,7 @@ def user_for(organization):
     return user
 
 
-def grant_permissions(user, *codenames: str) -> None:
+def grant_permissions(user: user_models.User, *codenames: str) -> None:
     """Grant the given equipment permission codenames to ``user``."""
     permissions = Permission.objects.filter(
         content_type__app_label="equipment",
@@ -126,7 +128,7 @@ class MachineClientCoherenceTests(TestCase):
         self.user = user_for(self.lab)
         self.branch_b = equipment_factories.BranchFactory(organization=self.client_b)
 
-    def _machine_data(self, **overrides):
+    def _machine_data(self, **overrides: object) -> dict:
         """Build a valid machine payload with room for overrides."""
         data = {
             "organization": self.client_a.pk,
@@ -225,7 +227,7 @@ class ClientListContextTests(TestCase):
         related = equipment_views.MachineListView().get_queryset().query.select_related
         self.assertIn("organization", related)
 
-    def _show_flag(self, user) -> bool:
+    def _show_flag(self, user: user_models.User) -> bool:
         """Return ``show_organization`` for ``user`` on the branch list."""
         view = equipment_views.BranchListView()
         view.request = SimpleNamespace(user=user, GET={})
@@ -299,7 +301,7 @@ class MachineFormLegacyBehaviourTests(TestCase):
         self.branch_b = equipment_factories.BranchFactory(organization=self.client_b)
         self.user = user_for(self.lab)
 
-    def _data(self, **overrides):
+    def _data(self, **overrides: object) -> dict:
         """Build a machine payload with the branch of the second client."""
         data = {
             "organization": self.client_a.pk,
@@ -378,7 +380,7 @@ class ClientCreationViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertFalse(models.Branch.objects.filter(name="Forjada").exists())
 
-    def _machine_data(self, **overrides):
+    def _machine_data(self, **overrides: object) -> dict:
         """Build a valid machine payload including formset management data."""
         prefix = forms.ComponentFormSet().prefix
         data: dict = {

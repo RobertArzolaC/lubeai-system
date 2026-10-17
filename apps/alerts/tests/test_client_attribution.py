@@ -11,10 +11,12 @@ from apps.alerts import views as alert_views
 from apps.equipment import factories as equipment_factories
 from apps.organizations import choices
 from apps.organizations import factories as organization_factories
+from apps.organizations import models as organization_models
 from apps.users import factories as user_factories
+from apps.users import models as user_models
 
 
-def user_for(organization):
+def user_for(organization: organization_models.Organization) -> user_models.User:
     """Return a persisted user belonging to ``organization``."""
     user = user_factories.UserFactory()
     user.organization = organization
@@ -22,7 +24,7 @@ def user_for(organization):
     return user
 
 
-def grant_permissions(user, *codenames: str) -> None:
+def grant_permissions(user: user_models.User, *codenames: str) -> None:
     """Grant the given alerts permission codenames to ``user``."""
     permissions = Permission.objects.filter(
         content_type__app_label="alerts",
@@ -107,13 +109,14 @@ class AlertClientColumnTests(TestCase):
         self.assertIn("organization", related)
 
     def test_parent_sees_column_and_filter(self) -> None:
-        """A parent user gets the organization filter and the client name."""
+        """A parent user gets the organization column, filter and badge."""
         user = user_for(self.lab)
         grant_permissions(user, "view_alert")
         self.client.force_login(user)
         response = self.client.get(reverse("apps.alerts:alert_list"))
+        self.assertContains(response, ">Cliente</p>")
         self.assertContains(response, 'name="organization"')
-        self.assertContains(response, self.child.name)
+        self.assertContains(response, f'text-blue-500">{self.child.name}</span>')
 
     def test_leaf_does_not_see_column_or_filter(self) -> None:
         """A leaf user sees the plain list, without the client column."""
@@ -121,4 +124,5 @@ class AlertClientColumnTests(TestCase):
         grant_permissions(user, "view_alert")
         self.client.force_login(user)
         response = self.client.get(reverse("apps.alerts:alert_list"))
+        self.assertNotContains(response, ">Cliente</p>")
         self.assertNotContains(response, 'name="organization"')
