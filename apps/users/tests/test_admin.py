@@ -1,6 +1,7 @@
 """Tests for the user admin organization assignment."""
 
 from django.contrib.admin.sites import AdminSite
+from django.contrib.auth.models import Permission
 from django.test import RequestFactory, TestCase
 from django.urls import reverse
 
@@ -38,9 +39,9 @@ class UserAdminOrganizationFieldTests(TestCase):
         self.assertFalse(form_class.base_fields["organization"].required)
 
     def test_changelist_shows_organization(self) -> None:
-        """The changelist lists and filters by organization."""
+        """The changelist lists the organization and offers a scoped filter."""
         self.assertIn("organization", self.model_admin.list_display)
-        self.assertIn("organization", self.model_admin.list_filter)
+        self.assertIn(users_admin.OrganizationListFilter, self.model_admin.list_filter)
 
 
 class UserAdminOrganizationSaveTests(TestCase):
@@ -125,3 +126,95 @@ class UserAdminOrganizationScopeTests(TestCase):
         ids = self.field_organization_ids(admin)
         self.assertIn(self.outsider.id, ids)
         self.assertIn(self.tenant.id, ids)
+
+
+class UserAdminScopedActorTests(TestCase):
+    """A scoped staff actor cannot widen or erase tenancy through the admin."""
+
+    def setUp(self) -> None:
+        """Build the tenant tree and two scoped staff actors."""
+        self.site = AdminSite()
+        self.model_admin = users_admin.CustomUserAdmin(users_models.User, self.site)
+        self.tenant = org_factories.OrganizationFactory(
+            slug="sa-tenant", kind=org_choices.OrganizationKind.LAB
+        )
+        self.child = org_factories.OrganizationFactory(
+            slug="sa-child",
+            kind=org_choices.OrganizationKind.FINAL,
+            parent=self.tenant,
+        )
+        self.outsider = org_factories.OrganizationFactory(
+            slug="sa-outsider", kind=org_choices.OrganizationKind.LAB
+        )
+        permissions = Permission.objects.filter(
+            codename__in=["view_user", "change_user", "add_user"]
+        )
+        # A multi-organization actor (tenant + child) and a leaf actor (child).
+        self.actor = UserFactory(is_staff=True, organization=self.tenant)
+        self.actor.user_permissions.add(*permissions)
+        self.leaf = UserFactory(is_staff=True, organization=self.child)
+        self.leaf.user_permissions.add(*permissions)
+
+    def admin_request(self, user):
+        """Return a request whose user is the given actor."""
+        request = RequestFactory().get("/admin/users/user/")
+        request.user = user
+        return request
+
+    def test_out_of_subtree_change_preserves_organization(self) -> None:
+        """Submitting an empty selection never clears another branch's owner."""
+        self.client.force_login(self.actor)
+        target = UserFactory(organization=self.outsider)
+        response = self.client.post(
+            reverse("admin:users_user_change", args=[target.pk]),
+            {"email": target.email, "is_active": "on", "organization": ""},
+        )
+        self.assertEqual(response.status_code, 302)
+        target.refresh_from_db()
+        self.assertEqual(target.organization, self.outsider)
+
+    def test_add_without_organization_creates_unassigned_user(self) -> None:
+        """Leaving the organization empty on add stores a null organization."""
+        self.client.force_login(self.actor)
+        response = self.client.post(
+            reverse("admin:users_user_add"),
+            {
+                "email": "scoped-new@example.com",
+                "password1": "Sup3rSecret!42",
+                "password2": "Sup3rSecret!42",
+                "is_active": "on",
+            },
+        )
+        self.assertEqual(response.status_code, 302)
+        user = users_models.User.objects.get(email="scoped-new@example.com")
+        self.assertIsNone(user.organization)
+
+    def test_leaf_actor_organization_field_is_disabled(self) -> None:
+        """A single-organization actor cannot reassign the organization."""
+        form_class = self.model_admin.get_form(
+            self.admin_request(self.leaf),
+            obj=UserFactory(organization=self.outsider),
+        )
+        self.assertTrue(form_class().fields["organization"].disabled)
+
+    def test_leaf_actor_has_no_organization_filter(self) -> None:
+        """A single-organization actor gets no organization filter."""
+        self.assertNotIn(
+            users_admin.OrganizationListFilter,
+            self.model_admin.get_list_filter(self.admin_request(self.leaf)),
+        )
+
+    def test_chooser_organization_filter_is_scoped(self) -> None:
+        """The organization filter only offers the actor's subtree."""
+        request = self.admin_request(self.actor)
+        self.assertIn(
+            users_admin.OrganizationListFilter,
+            self.model_admin.get_list_filter(request),
+        )
+        list_filter = users_admin.OrganizationListFilter(
+            request, {}, users_models.User, self.model_admin
+        )
+        self.assertEqual(
+            {value for value, _label in list_filter.lookup_choices},
+            {self.tenant.id, self.child.id},
+        )
