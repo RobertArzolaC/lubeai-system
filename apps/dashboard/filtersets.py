@@ -6,6 +6,7 @@ import django_filters
 from django.utils.translation import gettext_lazy as _
 
 from apps.equipment import models as equipment_models
+from apps.organizations import scoping
 from apps.reports import models as reports_models
 
 
@@ -36,3 +37,17 @@ class DashboardFilter(django_filters.FilterSet):
     class Meta:
         model = reports_models.Report
         fields: ClassVar[list[str]] = ["year", "fleet", "machine", "component_type"]
+
+    def __init__(self, *args, **kwargs) -> None:
+        """Scope fleet/machine/component type choices to the user's subtree."""
+        super().__init__(*args, **kwargs)
+        scoping.scope_choices(
+            self,
+            {
+                "fleet": equipment_models.Fleet.objects.filter(is_active=True),
+                "machine": equipment_models.Machine.objects.filter(is_active=True),
+                "component_type": equipment_models.ComponentType.objects.filter(
+                    is_active=True
+                ),
+            },
+        )

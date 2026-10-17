@@ -261,12 +261,27 @@ class Command(BaseCommand):
             user.save(update_fields=["organization"])
 
     def _seed_component_types(self, marco: org_models.Organization) -> None:
-        """Create the component types."""
+        """Create MARCO's own component types (the standard catalog)."""
         for name, description in COMPONENT_TYPES:
             equipment_models.ComponentType.objects.get_or_create(
+                organization=marco,
                 name=name,
                 defaults={"description": description, "created_by": None},
             )
+
+    def _ensure_types_for(
+        self, organization: org_models.Organization
+    ) -> list[equipment_models.ComponentType]:
+        """Return (creating if needed) the standard types for an organization."""
+        types: list[equipment_models.ComponentType] = []
+        for name, description in COMPONENT_TYPES:
+            component_type, _ = equipment_models.ComponentType.objects.get_or_create(
+                organization=organization,
+                name=name,
+                defaults={"description": description, "created_by": None},
+            )
+            types.append(component_type)
+        return types
 
     def _seed_thresholds(self, marco: org_models.Organization) -> None:
         """Create the global analysis thresholds."""
@@ -292,13 +307,13 @@ class Command(BaseCommand):
                 kind=org_choices.OrganizationKind.FINAL
             )
         )
-        component_types = list(equipment_models.ComponentType.objects.all())
         laboratory, _ = report_models.Laboratory.objects.get_or_create(
             code="MARCO-LAB",
             defaults={"name": "Laboratorio MARCO", "created_by": None},
         )
 
         for org in final_orgs:
+            org_types = self._ensure_types_for(org)
             for branch_index, branch_name in enumerate(BRANCHES[:2]):
                 branch, _ = equipment_models.Branch.objects.get_or_create(
                     organization=org,
@@ -317,8 +332,8 @@ class Command(BaseCommand):
                     },
                 )
                 for type_index in range(2):
-                    component_type = component_types[
-                        (branch_index + type_index) % len(component_types)
+                    component_type = org_types[
+                        (branch_index + type_index) % len(org_types)
                     ]
                     component, _ = equipment_models.Component.objects.get_or_create(
                         machine=machine,

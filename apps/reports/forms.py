@@ -166,12 +166,13 @@ class AnalysisThresholdForm(forms.ModelForm):
             "is_active": forms.CheckboxInput(attrs={"class": "form-check-input"}),
         }
 
-    def __init__(self, *args, **kwargs) -> None:
-        """Limit the component type choices to active records."""
+    def __init__(self, *args, user=None, **kwargs) -> None:
+        """Limit the component type choices to the user's organizations."""
         super().__init__(*args, **kwargs)
-        self.fields[
-            "component_type"
-        ].queryset = equipment_models.ComponentType.objects.filter(is_active=True)
+        types = equipment_models.ComponentType.objects.filter(is_active=True)
+        if user is not None:
+            types = scoping.scope_queryset(types, user)
+        self.fields["component_type"].queryset = types
 
     def clean(self) -> dict:
         """

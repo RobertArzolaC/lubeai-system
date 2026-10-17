@@ -37,7 +37,7 @@ class DashboardDataView(LoginRequiredMixin, View):
 
     def get(self, request, *args: Any, **kwargs: Any) -> JsonResponse:
         """Apply the request filters and return the JSON payload."""
-        filterset = filtersets.DashboardFilter(request.GET)
+        filterset = filtersets.DashboardFilter(request.GET, request=request)
         if not filterset.is_valid():
             return JsonResponse(
                 {"detail": _("Invalid filters")},

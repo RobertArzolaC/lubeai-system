@@ -66,10 +66,15 @@ class MachineCreateView(core_mixins.BaseCreateView):
         context = super().get_context_data(**kwargs)
         context["entity"] = _("Machine")
         context["back_url"] = reverse_lazy("apps.equipment:machine_list")
+        form_kwargs = {"user": self.request.user}
         if self.request.POST:
-            context["component_formset"] = forms.ComponentFormSet(self.request.POST)
+            context["component_formset"] = forms.ComponentFormSet(
+                self.request.POST, form_kwargs=form_kwargs
+            )
         else:
-            context["component_formset"] = forms.ComponentFormSet()
+            context["component_formset"] = forms.ComponentFormSet(
+                form_kwargs=form_kwargs
+            )
         return context
 
     def form_valid(self, form):
@@ -102,12 +107,17 @@ class MachineUpdateView(core_mixins.BaseUpdateView):
         context = super().get_context_data(**kwargs)
         context["entity"] = _("Machine")
         context["back_url"] = reverse_lazy("apps.equipment:machine_list")
+        form_kwargs = {"user": self.request.user}
         if self.request.POST:
             context["component_formset"] = forms.ComponentFormSet(
-                self.request.POST, instance=self.object
+                self.request.POST,
+                instance=self.object,
+                form_kwargs=form_kwargs,
             )
         else:
-            context["component_formset"] = forms.ComponentFormSet(instance=self.object)
+            context["component_formset"] = forms.ComponentFormSet(
+                instance=self.object, form_kwargs=form_kwargs
+            )
         return context
 
     def form_valid(self, form):

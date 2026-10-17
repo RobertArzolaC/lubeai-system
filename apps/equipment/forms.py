@@ -154,11 +154,12 @@ class ComponentForm(forms.ModelForm):
             "is_active": forms.CheckboxInput(attrs={"class": "form-check-input"}),
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, user=None, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["type"].queryset = models.ComponentType.objects.filter(
-            is_active=True
-        )
+        types = models.ComponentType.objects.filter(is_active=True)
+        if user is not None:
+            types = scoping.scope_queryset(types, user)
+        self.fields["type"].queryset = types
         self.fields["type"].empty_label = _("Select Component Type")
 
 

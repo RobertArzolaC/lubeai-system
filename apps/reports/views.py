@@ -415,6 +415,12 @@ class AnalysisThresholdCreateView(core_mixins.BaseCreateView):
     success_message = _("Analysis threshold created successfully")
     success_url = reverse_lazy("apps.reports:analysisthreshold_list")
 
+    def get_form_kwargs(self) -> dict:
+        """Pass the acting user so component type choices are scoped."""
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
     def get_context_data(self, **kwargs: Any) -> dict:
         """Add entity name and navigation URL."""
         context = super().get_context_data(**kwargs)
@@ -433,6 +439,12 @@ class AnalysisThresholdUpdateView(core_mixins.BaseUpdateView):
     success_message = _("Analysis threshold updated successfully")
     success_url = reverse_lazy("apps.reports:analysisthreshold_list")
     context_object_name = "threshold"
+
+    def get_form_kwargs(self) -> dict:
+        """Pass the acting user so component type choices are scoped."""
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
 
     def get_context_data(self, **kwargs: Any) -> dict:
         """Add entity name and navigation URL."""

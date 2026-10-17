@@ -141,13 +141,27 @@ class ComponentType(
     Component Type model.
 
     Represents categories/types of industrial components
-    (e.g., Pump, Motor, Compressor, Turbine, etc.)
+    (e.g., Pump, Motor, Compressor, Turbine, etc.). Types belong to an
+    organization: a node sees its own types and those of its descendants.
     """
+
+    organization = models.ForeignKey(
+        "organizations.Organization",
+        verbose_name=_("Organization"),
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="component_types",
+        help_text=_("Organization that owns this component type"),
+    )
 
     class Meta:
         verbose_name = _("Component Type")
         verbose_name_plural = _("Component Types")
         ordering = ("name",)
+        indexes: ClassVar[list[models.Index]] = [
+            models.Index(fields=["organization", "is_active"]),
+        ]
 
 
 class Component(TimeStampedModel, core_models.BaseUserTracked, core_models.IsActive):
