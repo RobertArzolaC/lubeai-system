@@ -1,10 +1,21 @@
 """Rendering tests for the real reports templates."""
 
-from django.test import TestCase
+from constance.test import override_config
+from django.contrib.auth.models import Permission
+from django.template import Context, Template
+from django.test import SimpleTestCase, TestCase
 from django.urls import reverse
 
 from apps.reports import factories
 from apps.users.factories import UserFactory
+
+
+def grant_permissions(user, *codenames: str) -> None:
+    """Grant the given reports permission codenames to ``user``."""
+    permissions = Permission.objects.filter(
+        content_type__app_label="reports", codename__in=codenames
+    )
+    user.user_permissions.add(*permissions)
 
 
 class ReportsTemplateRenderingTests(TestCase):
@@ -58,3 +69,49 @@ class ReportsTemplateRenderingTests(TestCase):
         """The export page renders successfully for authorized users."""
         response = self.client.get(reverse("apps.reports:report_export"))
         self.assertEqual(response.status_code, 200)
+
+
+class ReportsMenuFlagTests(TestCase):
+    """The laboratories menu entry is gated by the feature flag."""
+
+    @override_config(ENABLE_LABS=False)
+    def test_menu_hides_laboratory_link_when_flag_disabled(self) -> None:
+        """A superuser does not see the laboratory link while the flag is off."""
+        user = UserFactory(is_staff=True, is_superuser=True)
+        self.client.force_login(user)
+        response = self.client.get(reverse("apps.dashboard:index"))
+        self.assertNotContains(response, reverse("apps.reports:laboratory_list"))
+
+    @override_config(ENABLE_LABS=True)
+    def test_menu_shows_laboratory_link_when_flag_enabled(self) -> None:
+        """A superuser sees the laboratory link when the flag is on."""
+        user = UserFactory(is_staff=True, is_superuser=True)
+        self.client.force_login(user)
+        response = self.client.get(reverse("apps.dashboard:index"))
+        self.assertContains(response, reverse("apps.reports:laboratory_list"))
+
+    @override_config(ENABLE_LABS=False)
+    def test_reports_header_hidden_for_view_only_laboratory_user(self) -> None:
+        """A view_laboratory-only user sees no orphan reports header when off."""
+        user = UserFactory()
+        grant_permissions(user, "view_laboratory")
+        self.client.force_login(user)
+        response = self.client.get(reverse("apps.dashboard:index"))
+        self.assertNotContains(response, "Informes")
+
+    def test_reports_header_visible_for_component_analysis_user(self) -> None:
+        """A view_component_analysis-only user still sees the reports header."""
+        user = UserFactory()
+        grant_permissions(user, "view_component_analysis")
+        self.client.force_login(user)
+        response = self.client.get(reverse("apps.dashboard:index"))
+        self.assertContains(response, "Informes")
+
+
+class LaboratoryFlagMissingConfigTests(SimpleTestCase):
+    """The laboratory gate degrades to falsy when ``config`` is not in context."""
+
+    def test_flag_is_falsy_without_config_in_context(self) -> None:
+        """A missing ``config`` object renders the branch as hidden, not an error."""
+        template = Template("{% if config.ENABLE_LABS %}on{% else %}off{% endif %}")
+        self.assertEqual(template.render(Context({})), "off")
