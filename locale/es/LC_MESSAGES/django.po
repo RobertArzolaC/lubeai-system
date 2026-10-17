@@ -3768,3 +3768,18 @@ msgstr ""
 
 #~ msgid "Oil Analysis"
 #~ msgstr "Análisis de Aceite"
+
+msgid "Client"
+msgstr "Cliente"
+
+msgid "All Clients"
+msgstr "Todos los clientes"
+
+msgid "Own organization"
+msgstr "Mi organización"
+
+msgid "You cannot use that client."
+msgstr "No puedes usar ese cliente."
+
+msgid "The branch does not belong to the selected client."
+msgstr "La sucursal no pertenece al cliente seleccionado."
