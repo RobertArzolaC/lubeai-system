@@ -15,6 +15,7 @@ from datetime import timedelta
 from decimal import Decimal
 from typing import Any, ClassVar
 
+from django.contrib.auth.models import Permission
 from django.core.management.base import BaseCommand, CommandParser
 from django.db import transaction
 from django.utils import timezone
@@ -111,6 +112,18 @@ CONDITIONS: list[str] = [
     report_choices.ReportCondition.NORMAL,
     report_choices.ReportCondition.CAUTION,
     report_choices.ReportCondition.CRITICAL,
+]
+
+# Permissions granted to the demo users so they can evaluate the UI
+# (without them the scoped users would get a 403 on reports/alerts).
+DEMO_VIEW_PERMISSIONS: list[str] = [
+    "view_report",
+    "view_component_analysis",
+    "view_analysisthreshold",
+    "view_alert",
+    "view_machine",
+    "view_branch",
+    "view_componenttype",
 ]
 
 
@@ -211,21 +224,18 @@ class Command(BaseCommand):
 
     def _seed_users(self, marco: org_models.Organization) -> None:
         """Create one user per role (idempotent, password: ``Demo12345!``)."""
+
+        def organization(slug: str) -> org_models.Organization:
+            return org_models.Organization.objects.get(slug=slug)
+
         users = [
             ("admin@marco.pe", "Admin", "MARCO", marco, True, True),
-            (
-                "laboratorio@marco.pe",
-                "Lab",
-                "MARCO",
-                marco,
-                False,
-                False,
-            ),
+            ("laboratorio@marco.pe", "Lab", "MARCO", marco, False, False),
             (
                 "operaciones@minera-andina.pe",
                 "Operaciones",
                 "Andina",
-                org_models.Organization.objects.get(slug="minera-andina"),
+                organization("minera-andina"),
                 False,
                 False,
             ),
@@ -233,7 +243,15 @@ class Command(BaseCommand):
                 "reportes@planta-concentradora.pe",
                 "Reportes",
                 "Concentradora",
-                org_models.Organization.objects.get(slug="planta-concentradora"),
+                organization("planta-concentradora"),
+                False,
+                False,
+            ),
+            (
+                "reportes@planta-lixiviacion.pe",
+                "Reportes",
+                "Lixiviacion",
+                organization("planta-lixiviacion"),
                 False,
                 False,
             ),
@@ -241,12 +259,14 @@ class Command(BaseCommand):
                 "cliente@transportes-lima.pe",
                 "Cliente",
                 "Lima",
-                org_models.Organization.objects.get(slug="transportes-lima"),
+                organization("transportes-lima"),
                 False,
                 False,
             ),
         ]
-        for email, first_name, last_name, organization, is_staff, is_superuser in users:
+
+        permissions = Permission.objects.filter(codename__in=DEMO_VIEW_PERMISSIONS)
+        for email, first_name, last_name, user_org, is_staff, is_superuser in users:
             user = User.objects.filter(email=email).first()
             if user is None:
                 user = User.objects.create_user(
@@ -257,8 +277,9 @@ class Command(BaseCommand):
                     is_staff=is_staff,
                     is_superuser=is_superuser,
                 )
-            user.organization = organization
+            user.organization = user_org
             user.save(update_fields=["organization"])
+            user.user_permissions.add(*permissions)
 
     def _seed_component_types(self, marco: org_models.Organization) -> None:
         """Create MARCO's own component types (the standard catalog)."""

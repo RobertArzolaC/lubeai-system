@@ -6,6 +6,7 @@ from django.test import TestCase
 from apps.equipment import models as equipment_models
 from apps.organizations import choices, models
 from apps.reports import models as report_models
+from apps.users.models import User
 
 
 class SeedDemoDataTests(TestCase):
@@ -55,3 +56,25 @@ class SeedDemoDataTests(TestCase):
             organization__kind=choices.OrganizationKind.FINAL
         ).count()
         self.assertEqual(wrong, 0)
+
+    def test_creates_user_for_each_final_organization(self) -> None:
+        """Every final client organization has at least one user."""
+        call_command("seed_demo_data", months=1, verbosity=0)
+        for slug in (
+            "planta-concentradora",
+            "planta-lixiviacion",
+            "transportes-lima",
+        ):
+            organization = models.Organization.objects.get(slug=slug)
+            self.assertTrue(
+                User.objects.filter(organization=organization).exists(), slug
+            )
+
+    def test_demo_client_users_can_view_alerts_and_reports(self) -> None:
+        """Demo client users have the permissions needed to evaluate."""
+        call_command("seed_demo_data", months=1, verbosity=0)
+        user = User.objects.get(email="reportes@planta-lixiviacion.pe")
+        self.assertTrue(user.has_perm("alerts.view_alert"))
+        self.assertTrue(user.has_perm("reports.view_report"))
+        self.assertTrue(user.has_perm("reports.view_component_analysis"))
+        self.assertTrue(user.has_perm("equipment.view_machine"))
