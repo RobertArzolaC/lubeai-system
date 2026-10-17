@@ -24,6 +24,19 @@ urlpatterns = [
         views.AccountDeleteView.as_view(),
         name="account_delete",
     ),
+    # Roles URLs
+    path("roles/", views.RoleListView.as_view(), name="role_list"),
+    path("roles/create/", views.RoleCreateView.as_view(), name="role_create"),
+    path(
+        "roles/<int:pk>/update/",
+        views.RoleUpdateView.as_view(),
+        name="role_update",
+    ),
+    path(
+        "roles/<int:pk>/delete/",
+        views.RoleDeleteView.as_view(),
+        name="role_delete",
+    ),
     # API URLs
     path(
         "api/toggle-user-status/",

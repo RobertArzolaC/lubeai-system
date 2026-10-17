@@ -1,3 +1,4 @@
+from itertools import groupby
 from typing import ClassVar
 
 from allauth.account.forms import SignupForm
@@ -5,11 +6,13 @@ from allauth.account.models import EmailAddress
 from constance import config
 from django import forms
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
+from django.contrib.auth.models import Permission
 from django.db import transaction
 from django.utils.crypto import get_random_string
 from django.utils.translation import gettext_lazy as _
 
-from apps.users import mixins, models
+from apps.core import mixins as core_mixins
+from apps.users import mixins, models, services
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -116,3 +119,114 @@ class AccountSettingsForm(forms.ModelForm):
     class Meta:
         model = models.Account
         fields = "__all__"
+
+
+class RoleForm(core_mixins.OrganizationScopeFormMixin, forms.ModelForm):
+    """Create or update a tenant-scoped role and its permission set.
+
+    The form exposes a ``permissions`` multiple choice rendered as a matrix
+    grouped by model (see :attr:`permission_groups`). Saving delegates to
+    :class:`apps.users.services.RoleService` so the backing Django group stays
+    in sync (name and permissions).
+    """
+
+    permissions = forms.ModelMultipleChoiceField(
+        queryset=Permission.objects.select_related("content_type").order_by(
+            "content_type__app_label", "content_type__model", "codename"
+        ),
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
+        label=_("Permissions"),
+    )
+
+    class Meta:
+        model = models.Role
+        fields: ClassVar[list[str]] = [
+            "organization",
+            "name",
+            "description",
+            "is_active",
+        ]
+        widgets: ClassVar[dict] = {
+            "name": forms.TextInput(attrs={"class": "form-control"}),
+            "description": forms.Textarea(attrs={"class": "form-control", "rows": 3}),
+            "is_active": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+        }
+
+    def __init__(self, *args, user=None, **kwargs) -> None:
+        """Scope the organization field to the acting user."""
+        super().__init__(*args, user=user, **kwargs)
+
+    @property
+    def selected_permission_ids(self) -> set[str]:
+        """Return the ids of the currently selected permissions as strings."""
+        if self.is_bound:
+            values = (
+                self.data.getlist("permissions")
+                if hasattr(self.data, "getlist")
+                else []
+            )
+            return {str(value) for value in values}
+        if self.instance.pk and self.instance.group_id:
+            return {
+                str(pk)
+                for pk in self.instance.group.permissions.values_list("pk", flat=True)
+            }
+        return set()
+
+    @property
+    def permission_groups(self) -> list[dict]:
+        """Return the permissions grouped by model for the matrix template."""
+        queryset = self.fields["permissions"].queryset
+
+        def key(permission: Permission) -> tuple[str, str]:
+            """Group permissions by their content type."""
+            return (
+                permission.content_type.app_label,
+                permission.content_type.model,
+            )
+
+        groups: list[dict] = []
+        for (_app_label, _model), items in groupby(queryset, key=key):
+            permissions = list(items)
+            content_type = permissions[0].content_type
+            groups.append(
+                {
+                    "key": f"{content_type.app_label}.{content_type.model}",
+                    "label": content_type.name.capitalize(),
+                    "app_label": content_type.app_label,
+                    "permissions": permissions,
+                }
+            )
+        return groups
+
+    def _resolve_organization(self) -> object:
+        """Return the selected organization or fall back to the actor's own."""
+        return (
+            self.cleaned_data.get("organization")
+            or getattr(self.instance, "organization", None)
+            or getattr(self.user, "organization", None)
+        )
+
+    def save(self, commit: bool = True) -> models.Role:
+        """Persist the role through :class:`RoleService`."""
+        service = services.RoleService()
+        permissions = self.cleaned_data.get("permissions", [])
+        if self.instance.pk:
+            self.instance = service.update_role(
+                self.instance,
+                name=self.cleaned_data["name"],
+                description=self.cleaned_data.get("description", ""),
+                is_active=self.cleaned_data.get("is_active", True),
+                permissions=permissions,
+                actor=self.user,
+            )
+        else:
+            self.instance = service.create_role(
+                organization=self._resolve_organization(),
+                name=self.cleaned_data["name"],
+                description=self.cleaned_data.get("description", ""),
+                permissions=permissions,
+                actor=self.user,
+            )
+        return self.instance

@@ -3,12 +3,14 @@ from django.contrib.auth.mixins import (
     LoginRequiredMixin,
 )
 from django.contrib.messages.views import SuccessMessageMixin
+from django.db.models import Count
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import TemplateView, View
 
 from apps.core import mixins as core_mixins
+from apps.organizations import scoping
 from apps.users import filtersets, forms, models
 
 
@@ -150,3 +152,89 @@ class AccountDeleteView(core_mixins.BaseDeleteView):
     model = models.Account
     permission_required = "users.delete_account"
     tenant_field = "user__organization"
+
+
+class RoleListView(core_mixins.BaseListView):
+    """List the roles visible to the acting user."""
+
+    model = models.Role
+    permission_required = "users.view_role"
+    filterset_class = filtersets.RoleFilter
+    template_name = "users/role/list.html"
+    context_object_name = "roles"
+    tenant_field = "organization"
+
+    def get_queryset(self):
+        """Return roles with organization, group and permission count."""
+        return (
+            super()
+            .get_queryset()
+            .select_related("organization", "group")
+            .annotate(permission_count=Count("group__permissions"))
+            .order_by("name")
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["entity"] = _("Role")
+        context["entity_plural"] = _("Roles")
+        context["back_url"] = reverse_lazy("apps.dashboard:index")
+        context["add_entity_url"] = reverse_lazy("apps.users:role_create")
+        context["show_organization"] = scoping.can_choose_organization(
+            self.request.user
+        )
+        return context
+
+
+class RoleCreateView(core_mixins.BaseCreateView):
+    """Create a role with its permission set."""
+
+    model = models.Role
+    form_class = forms.RoleForm
+    permission_required = "users.add_role"
+    template_name = "users/role/form.html"
+    success_message = _("Role created successfully")
+    success_url = reverse_lazy("apps.users:role_list")
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["entity"] = _("Role")
+        context["back_url"] = reverse_lazy("apps.users:role_list")
+        return context
+
+
+class RoleUpdateView(core_mixins.BaseUpdateView):
+    """Update a role and its permission set."""
+
+    model = models.Role
+    form_class = forms.RoleForm
+    permission_required = "users.change_role"
+    template_name = "users/role/form.html"
+    success_message = _("Role updated successfully")
+    success_url = reverse_lazy("apps.users:role_list")
+    context_object_name = "role"
+    tenant_field = "organization"
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["entity"] = _("Role")
+        context["back_url"] = reverse_lazy("apps.users:role_list")
+        return context
+
+
+class RoleDeleteView(core_mixins.BaseDeleteView):
+    """Delete a role (its backing group is removed by a signal)."""
+
+    model = models.Role
+    permission_required = "users.delete_role"
+    tenant_field = "organization"

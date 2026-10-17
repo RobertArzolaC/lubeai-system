@@ -93,9 +93,7 @@ class RoleService:
             The newly created :class:`~apps.users.models.Role`.
         """
         slug = self.unique_slug(organization, name)
-        group = Group.objects.create(
-            name=self.build_group_name(organization.pk, slug)
-        )
+        group = Group.objects.create(name=self.build_group_name(organization.pk, slug))
         group.permissions.set(permissions)
         return models.Role.objects.create(
             organization=organization,

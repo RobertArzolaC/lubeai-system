@@ -1,0 +1,135 @@
+{% extends "layouts/dashboard.html" %}
+{% load i18n %}
+{% load widget_tweaks %}
+{% load breadcrumb_tags %}
+
+{% block title_page %}{{ entity_plural }}{% endblock title_page %}
+{% block toolbar_title %}{{ entity_plural }}{% endblock %}
+
+{% block content %}
+<div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+        <h2 class="text-3xl font-bold tracking-tight text-black dark:text-white">
+            {% trans "Roles Management" %}
+        </h2>
+        <p class="mt-1 text-sm font-medium text-bodydark2">
+            {% trans "Define roles and the permissions they grant, backed by Django groups." %}
+        </p>
+    </div>
+    {% if perms.users.add_role %}
+    <div class="flex items-center gap-3">
+        <a href="{{ add_entity_url }}" class="inline-flex items-center justify-center gap-2 rounded-lg bg-primary py-3 px-7 text-center font-semibold text-white shadow-lg transition-all duration-300 hover:bg-opacity-90 hover:shadow-primary/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
+            <i data-lucide="plus" class="h-5 w-5" stroke-width="1.8" aria-hidden="true"></i>
+            {% trans "Create Role" %}
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<div class="mb-8 rounded-2xl border border-stroke bg-white p-6 shadow-sm dark:border-strokedark dark:bg-boxdark">
+    <form method="get" role="search" class="flex flex-col gap-4 md:flex-row md:items-end">
+        <div class="flex-grow">
+            <label for="id_name_search" class="mb-2.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{{ filter.form.name_search.label }}</label>
+            {% trans "Search roles..." as search_placeholder %}
+            {% render_field filter.form.name_search class="w-full rounded-xl border border-stroke bg-whiten py-3 px-5 text-black transition-all duration-300 focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/5 focus:outline-none dark:border-strokedark dark:bg-boxdark-2 dark:text-white" placeholder=search_placeholder %}
+        </div>
+        {% if show_organization %}
+        <div class="w-full md:w-56">
+            <label for="id_organization" class="mb-2.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{{ filter.form.organization.label }}</label>
+            {% render_field filter.form.organization class="w-full rounded-xl border border-stroke bg-whiten py-3 px-4 text-sm font-semibold text-black outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/5 dark:border-form-strokedark dark:bg-meta-4 dark:text-white" %}
+        </div>
+        {% endif %}
+        <div class="w-full md:w-56">
+            <label for="id_is_active" class="mb-2.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{{ filter.form.is_active.label }}</label>
+            {% render_field filter.form.is_active class="w-full rounded-xl border border-stroke bg-whiten py-3 px-4 text-sm font-semibold text-black outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/5 dark:border-form-strokedark dark:bg-meta-4 dark:text-white" %}
+        </div>
+        <div class="flex items-center gap-3">
+            <button type="submit" class="inline-flex items-center justify-center rounded-xl bg-primary py-3 px-6 text-sm font-bold text-white shadow-lg shadow-primary/20 transition-all duration-300 hover:bg-opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
+                {% trans "Apply" %}
+            </button>
+            <a href="{% url 'apps.users:role_list' %}" class="inline-flex items-center justify-center rounded-xl border border-stroke py-3 px-6 text-sm font-semibold text-black transition hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 dark:border-strokedark dark:text-white dark:hover:bg-white/5">
+                {% trans "Clear" %}
+            </a>
+        </div>
+    </form>
+</div>
+
+<div class="overflow-hidden rounded-2xl border border-stroke bg-white shadow-sm dark:border-strokedark dark:bg-boxdark">
+    <div class="grid grid-cols-12 border-b border-stroke bg-gray-2/50 py-5 px-6 dark:border-strokedark dark:bg-meta-4/30">
+        <div class="col-span-{% if show_organization %}3{% else %}5{% endif %} flex items-center">
+            <p class="text-xs font-bold uppercase tracking-widest text-black dark:text-white">{% trans "Role" %}</p>
+        </div>
+        {% if show_organization %}
+        <div class="col-span-3 flex items-center">
+            <p class="text-xs font-bold uppercase tracking-widest text-black dark:text-white">{% trans "Client" %}</p>
+        </div>
+        {% endif %}
+        <div class="col-span-2 flex items-center">
+            <p class="text-xs font-bold uppercase tracking-widest text-black dark:text-white">{% trans "Permissions" %}</p>
+        </div>
+        <div class="col-span-2 flex items-center">
+            <p class="text-xs font-bold uppercase tracking-widest text-black dark:text-white">{% trans "Status" %}</p>
+        </div>
+        <div class="col-span-2 flex items-center justify-end">
+            <p class="text-xs font-bold uppercase tracking-widest text-black dark:text-white">{% trans "Management" %}</p>
+        </div>
+    </div>
+
+    <div class="flex flex-col">
+        {% for role in roles %}
+        <div class="grid grid-cols-12 border-b border-stroke py-6 px-6 transition-all duration-200 last:border-b-0 hover:bg-gray-50 dark:border-strokedark dark:hover:bg-meta-4/20">
+            <div class="col-span-{% if show_organization %}3{% else %}5{% endif %} flex items-center">
+                <div>
+                    <p class="text-base font-bold text-black dark:text-white">{{ role.name }}</p>
+                    <p class="text-xs font-medium text-bodydark2">{{ role.description|default:"—" }}</p>
+                </div>
+            </div>
+            {% if show_organization %}
+            <div class="col-span-3 flex items-center">
+                <span class="inline-flex items-center rounded-md border border-blue-500/20 bg-blue-500/10 px-2 py-0.5 text-[10px] font-bold text-blue-500">{{ role.organization.name }}</span>
+            </div>
+            {% endif %}
+            <div class="col-span-2 flex items-center">
+                <span class="inline-flex items-center gap-1.5 rounded-full border border-stroke bg-gray-2 py-1 px-3 text-xs font-bold text-black dark:border-strokedark dark:bg-meta-4 dark:text-white">
+                    <i data-lucide="key-round" class="h-3.5 w-3.5" stroke-width="1.8" aria-hidden="true"></i>
+                    {{ role.permission_count }}
+                </span>
+            </div>
+            <div class="col-span-2 flex items-center">
+                {% include "includes/status_badge.html" with is_active=role.is_active %}
+            </div>
+            <div class="col-span-2 flex items-center justify-end">
+                <div class="flex items-center gap-1.5 rounded-xl border border-stroke bg-gray-2 p-1.5 shadow-inner dark:border-strokedark dark:bg-meta-4">
+                    {% if perms.users.change_role %}
+                    <a href="{% url 'apps.users:role_update' role.pk %}" class="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-bodydark2 transition-all duration-300 hover:text-primary hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 dark:bg-boxdark" title="{% trans 'Edit' %}" aria-label="{% trans 'Edit' %}">
+                        <i data-lucide="pencil" class="h-4.5 w-4.5" stroke-width="1.8" aria-hidden="true"></i>
+                    </a>
+                    {% endif %}
+                    {% if perms.users.delete_role %}
+                    <button type="button" class="js-delete flex h-9 w-9 items-center justify-center rounded-lg bg-white text-bodydark2 transition-all duration-300 hover:text-danger hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger/40 dark:bg-boxdark" data-url="{% url 'apps.users:role_delete' role.pk %}" title="{% trans 'Delete' %}" aria-label="{% trans 'Delete' %}">
+                        <i data-lucide="trash-2" class="h-4.5 w-4.5" stroke-width="1.8" aria-hidden="true"></i>
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        {% trans "No roles found" as empty_title %}
+        {% trans "We couldn't find any roles matching your search. Try adjusting your criteria or create a new one." as empty_message %}
+        {% include "includes/empty_state.html" with title=empty_title message=empty_message icon="shield-check" %}
+        {% endfor %}
+    </div>
+
+    {% if is_paginated %}
+    <div class="bg-gray-2/20 dark:bg-meta-4/10">
+        {% include "includes/pagination.html" %}
+    </div>
+    {% endif %}
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+{% trans "Delete Role" as confirm_title %}
+{% trans "Role deleted successfully." as success_message %}
+{% include "includes/delete_script.html" with confirm_title=confirm_title success_message=success_message %}
+{% endblock extra_js %}
