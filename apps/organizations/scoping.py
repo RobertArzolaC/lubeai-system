@@ -98,3 +98,59 @@ def scope_choices(filterset, mapping: dict) -> None:
     for name, queryset in mapping.items():
         if name in filterset.filters:
             filterset.filters[name].queryset = scope_queryset(queryset, request.user)
+
+
+def visible_organizations(user) -> QuerySet:
+    """Return the organizations ``user`` may act upon.
+
+    Unrestricted users get every organization; everyone else gets their own
+    subtree (their organization and its descendants).
+    """
+    from apps.organizations import models as organization_models
+
+    queryset = organization_models.Organization.objects.all()
+    visible_ids = user_visible_organization_ids(user)
+    if visible_ids is None:
+        return queryset
+    return queryset.filter(pk__in=visible_ids)
+
+
+def is_organization_visible(user, organization) -> bool:
+    """Return ``True`` when ``user`` may act on ``organization``."""
+    if organization is None:
+        return False
+    visible_ids = user_visible_organization_ids(user)
+    if visible_ids is None:
+        return True
+    return organization.pk in visible_ids
+
+
+def can_choose_organization(user) -> bool:
+    """Return ``True`` when ``user`` may pick among several organizations.
+
+    This is the single predicate that decides whether the "Client" column,
+    filter and form field are shown.
+    """
+    visible_ids = user_visible_organization_ids(user)
+    return visible_ids is None or len(visible_ids) > 1
+
+
+def scope_organization_filter(filterset, name: str = "organization") -> None:
+    """Scope (or drop) a FilterSet's organization filter for its request user.
+
+    No-op when the FilterSet was built without a request (e.g. direct use in
+    tests), preserving the declared queryset.
+
+    Args:
+        filterset: The bound FilterSet instance.
+        name: Name of the organization filter on the FilterSet.
+    """
+    if name not in filterset.filters:
+        return
+    request = getattr(filterset, "request", None)
+    if request is None:
+        return
+    if not can_choose_organization(request.user):
+        del filterset.filters[name]
+        return
+    filterset.filters[name].queryset = visible_organizations(request.user)

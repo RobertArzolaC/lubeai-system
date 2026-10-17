@@ -99,3 +99,61 @@ class ScopeQuerysetTests(TestCase):
         user = user_factories.UserFactory()
         scoped = scoping.scope_queryset(report_models.Report.objects.all(), user)
         self.assertEqual(scoped.count(), 2)
+
+
+class VisibleOrganizationsTests(TestCase):
+    """``visible_organizations``/``can_choose_organization`` follow the subtree."""
+
+    def setUp(self) -> None:
+        """Build lab -> intermediary -> final."""
+        self.lab = factories.OrganizationFactory(
+            slug="vo-lab", kind=choices.OrganizationKind.LAB
+        )
+        self.inter = factories.OrganizationFactory(
+            slug="vo-inter",
+            kind=choices.OrganizationKind.INTERMEDIARY,
+            parent=self.lab,
+        )
+        self.final = factories.OrganizationFactory(
+            slug="vo-final", kind=choices.OrganizationKind.FINAL, parent=self.inter
+        )
+
+    def _user_for(self, organization):
+        """Return a persisted user belonging to ``organization``."""
+        user = user_factories.UserFactory()
+        user.organization = organization
+        user.save(update_fields=["organization"])
+        return user
+
+    def test_intermediary_sees_subtree(self) -> None:
+        """An intermediary can act on itself and its final clients."""
+        user = self._user_for(self.inter)
+        ids = set(scoping.visible_organizations(user).values_list("id", flat=True))
+        self.assertEqual(ids, {self.inter.id, self.final.id})
+        self.assertTrue(scoping.can_choose_organization(user))
+
+    def test_leaf_cannot_choose(self) -> None:
+        """A final client can only act on itself."""
+        user = self._user_for(self.final)
+        ids = set(scoping.visible_organizations(user).values_list("id", flat=True))
+        self.assertEqual(ids, {self.final.id})
+        self.assertFalse(scoping.can_choose_organization(user))
+
+    def test_unrestricted_user_sees_all(self) -> None:
+        """An unassigned user is unrestricted and can choose."""
+        user = user_factories.UserFactory()
+        self.assertIsNone(scoping.user_visible_organization_ids(user))
+        self.assertTrue(scoping.can_choose_organization(user))
+
+    def test_anonymous_cannot_choose(self) -> None:
+        """Anonymous users cannot choose an organization."""
+        from django.contrib.auth.models import AnonymousUser
+
+        self.assertFalse(scoping.can_choose_organization(AnonymousUser()))
+
+    def test_is_organization_visible(self) -> None:
+        """Visibility accepts descendants and rejects ancestors and ``None``."""
+        user = self._user_for(self.inter)
+        self.assertTrue(scoping.is_organization_visible(user, self.final))
+        self.assertFalse(scoping.is_organization_visible(user, self.lab))
+        self.assertFalse(scoping.is_organization_visible(user, None))
