@@ -5,6 +5,7 @@ from django.utils.translation import gettext_lazy as _
 
 from apps.core import mixins as core_mixins
 from apps.equipment import filtersets, forms, models
+from apps.organizations import scoping
 
 
 class MachineListView(core_mixins.BaseListView):
@@ -55,6 +56,12 @@ class MachineCreateView(core_mixins.BaseCreateView):
     success_message = _("Machine created successfully")
     success_url = reverse_lazy("apps.equipment:machine_list")
 
+    def get_form_kwargs(self) -> dict:
+        """Pass the acting user so branch/fleet choices are scoped."""
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["entity"] = _("Machine")
@@ -84,6 +91,12 @@ class MachineUpdateView(core_mixins.BaseUpdateView):
     success_message = _("Machine updated successfully")
     success_url = reverse_lazy("apps.equipment:machine_list")
     context_object_name = "machine"
+
+    def get_form_kwargs(self) -> dict:
+        """Pass the acting user so branch/fleet choices are scoped."""
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -324,9 +337,11 @@ class ComponentTypeDetailView(core_mixins.BaseDetailView):
         context["edit_url"] = reverse_lazy(
             "apps.equipment:component_type_update", kwargs={"pk": self.object.pk}
         )
-        context["components"] = self.object.components.filter(
-            is_active=True
-        ).select_related("machine")
+        context["components"] = scoping.scope_queryset(
+            self.object.components.filter(is_active=True).select_related("machine"),
+            self.request.user,
+            field="machine__organization",
+        )
         return context
 
 

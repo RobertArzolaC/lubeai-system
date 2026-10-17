@@ -288,7 +288,7 @@ class Command(BaseCommand):
     def _seed_equipment_and_reports(self, marco: org_models.Organization) -> None:
         """Create equipment per final client and a report history per component."""
         final_orgs = list(
-            org_models.Organization.objects.filter(
+            marco.descendants(include_self=False).filter(
                 kind=org_choices.OrganizationKind.FINAL
             )
         )

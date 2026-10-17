@@ -7,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 
 from apps.core import widgets as core_widgets
 from apps.equipment import constants, models
+from apps.organizations import scoping
 
 
 class FleetForm(forms.ModelForm):
@@ -103,16 +104,26 @@ class MachineForm(forms.ModelForm):
             "is_active": forms.CheckboxInput(attrs={"class": "form-check-input"}),
         }
 
-    def __init__(self, *args, **kwargs) -> None:
-        """Hide the fleet field when the fleet feature flag is disabled.
+    def __init__(self, *args, user=None, **kwargs) -> None:
+        """Hide the fleet field when disabled and scope relation choices.
 
         Args:
             *args: Positional arguments forwarded to ``ModelForm``.
+            user: The acting user, used to scope branch/fleet choices.
             **kwargs: Keyword arguments forwarded to ``ModelForm``.
         """
         super().__init__(*args, **kwargs)
         if not config.ENABLE_FLEET:
             self.fields.pop("fleet", None)
+
+        if user is not None:
+            self.fields["branch"].queryset = scoping.scope_queryset(
+                models.Branch.objects.filter(is_active=True), user
+            )
+            if "fleet" in self.fields:
+                self.fields["fleet"].queryset = scoping.scope_queryset(
+                    models.Fleet.objects.filter(is_active=True), user
+                )
 
 
 class ComponentTypeForm(forms.ModelForm):

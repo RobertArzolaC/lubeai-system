@@ -280,8 +280,10 @@ class ComponentAnalysisFilter(django_filters.FilterSet):
 
         if self.data.get("machine"):
             machine_id = self.data.get("machine")
-            self.filters[
-                "component"
-            ].queryset = equipment_models.Component.objects.filter(
-                machine_id=machine_id, is_active=True
-            ).select_related("type")
+            self.filters["component"].queryset = scoping.scope_queryset(
+                equipment_models.Component.objects.filter(
+                    machine_id=machine_id, is_active=True
+                ).select_related("type"),
+                scoping.request_user(getattr(self, "request", None)),
+                field="machine__organization",
+            )

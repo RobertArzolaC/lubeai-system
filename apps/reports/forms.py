@@ -5,6 +5,7 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from apps.equipment import models as equipment_models
+from apps.organizations import scoping
 from apps.reports import models
 
 
@@ -103,7 +104,7 @@ class ReportForm(forms.ModelForm):
             "is_active": forms.CheckboxInput(attrs={"class": "form-check-input"}),
         }
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args, user=None, **kwargs) -> None:
         """Limit relation choices to active records and mark required fields."""
         super().__init__(*args, **kwargs)
         self.fields["machine"].required = True
@@ -118,12 +119,17 @@ class ReportForm(forms.ModelForm):
         else:
             self.fields.pop("laboratory", None)
 
-        self.fields["machine"].queryset = equipment_models.Machine.objects.filter(
-            is_active=True
-        )
-        self.fields["component"].queryset = equipment_models.Component.objects.filter(
+        machines = equipment_models.Machine.objects.filter(is_active=True)
+        components = equipment_models.Component.objects.filter(
             is_active=True
         ).select_related("type")
+        if user is not None:
+            machines = scoping.scope_queryset(machines, user)
+            components = scoping.scope_queryset(
+                components, user, field="machine__organization"
+            )
+        self.fields["machine"].queryset = machines
+        self.fields["component"].queryset = components
 
 
 class AnalysisThresholdForm(forms.ModelForm):

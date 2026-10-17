@@ -87,6 +87,10 @@ class AccountListView(core_mixins.BaseListView):
     context_object_name = "accounts"
     tenant_field = "user__organization"
 
+    def get_queryset(self):
+        """Return accounts with the user and organization preloaded."""
+        return super().get_queryset().select_related("user", "user__organization")
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["entity"] = _("Account")

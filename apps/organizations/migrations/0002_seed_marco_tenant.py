@@ -50,6 +50,9 @@ def remove_marco_tenant(apps, schema_editor) -> None:
     user = apps.get_model("users", "User")
     user.objects.filter(organization=marco).update(organization=None)
 
+    # Never cascade-delete a populated subtree on rollback.
+    if marco.children.exists():
+        return
     marco.delete()
 
 

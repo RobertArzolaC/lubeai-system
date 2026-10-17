@@ -1,4 +1,3 @@
-
 from apps.reports import choices
 
 # Default color mapping for parameters (used when no organization palette is provided)

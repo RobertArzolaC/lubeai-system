@@ -215,6 +215,10 @@ ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
 
 ACCOUNT_EMAIL_VERIFICATION = "none"
 
+# Users are created by their organization (invite/B2B); public self-signup is
+# disabled so a self-registered account cannot end up without a tenant.
+ACCOUNT_ALLOW_REGISTRATION = False
+
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
     "allauth.account.auth_backends.AuthenticationBackend",

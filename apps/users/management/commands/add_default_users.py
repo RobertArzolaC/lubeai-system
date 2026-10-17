@@ -2,6 +2,7 @@ from allauth.account.models import EmailAddress
 from django.contrib.auth.models import Permission
 from django.core.management.base import BaseCommand
 
+from apps.organizations.models import Organization
 from apps.users.models import User
 
 
@@ -36,7 +37,9 @@ class Command(BaseCommand):
         users_created = 0
         users_existed = 0
 
-        superuser = self.create_user(superuser_data, default_password)
+        superuser = self.create_user(
+            superuser_data, default_password, self.get_default_organization()
+        )
         if superuser:
             users_created += 1
             self.stdout.write(
@@ -51,7 +54,9 @@ class Command(BaseCommand):
             )
 
         for staff_data in staff_users_data:
-            staff_user = self.create_user(staff_data, default_password)
+            staff_user = self.create_user(
+                staff_data, default_password, self.get_default_organization()
+            )
             if staff_user:
                 users_created += 1
                 self.assign_staff_permissions(staff_user)
@@ -77,12 +82,14 @@ class Command(BaseCommand):
             )
         )
 
-    def create_user(self, user_data, password):
+    def create_user(self, user_data, password, organization=None):
         user_data = user_data.copy()
         email = user_data.pop("email")
         user = User.objects.filter(email=email).first()
         if not user:
-            user = User.objects.create_user(email=email, password=password, **user_data)
+            user = User.objects.create_user(
+                email=email, password=password, organization=organization, **user_data
+            )
 
             EmailAddress.objects.get_or_create(
                 user=user,
@@ -93,6 +100,14 @@ class Command(BaseCommand):
             return user
 
         return None
+
+    def get_default_organization(self):
+        """Return (creating if needed) the MARCO tenant."""
+        organization, _ = Organization.objects.get_or_create(
+            slug="marco",
+            defaults={"name": "MARCO Peruana", "kind": "lab"},
+        )
+        return organization
 
     def assign_staff_permissions(self, user):
         result_permissions = Permission.objects.filter(

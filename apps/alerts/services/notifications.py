@@ -12,6 +12,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.db.models import QuerySet
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from django.utils.translation import gettext_lazy as _
 
 from apps.alerts import models
 from apps.users import models as user_models
@@ -91,7 +92,7 @@ class AlertNotificationService:
             else "MARCO"
         )
         email_message = EmailMultiAlternatives(
-            subject=f"[{brand}] Alerta: condición detectada",
+            subject=_("[%(brand)s] Alerta: condición detectada") % {"brand": brand},
             body=text_content,
             to=[account.user.email],
         )

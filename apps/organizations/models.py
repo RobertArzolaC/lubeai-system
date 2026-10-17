@@ -8,7 +8,7 @@ capabilities default from the tenant ``kind`` with per-node overrides.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -136,13 +136,13 @@ class Organization(
             queryset = queryset.exclude(pk=self.pk)
         return queryset
 
-    def get_branding(self) -> dict:
+    def get_branding(self) -> dict[str, Any]:
         """Return the resolved branding, inheriting from ancestors.
 
         Child values win over ancestors; missing slots fall back to
         :data:`apps.organizations.constants.DEFAULT_BRANDING`.
         """
-        branding: dict = dict(constants.DEFAULT_BRANDING)
+        branding: dict[str, Any] = dict(constants.DEFAULT_BRANDING)
         chain = list(reversed(self.ancestors(include_self=True)))
 
         for node in chain:
@@ -158,10 +158,12 @@ class Organization(
         branding["logo"] = logo
         return branding
 
-    def resolved_capabilities(self) -> dict:
+    def resolved_capabilities(self) -> dict[str, Any]:
         """Return capabilities merged from the tenant down to this node."""
         chain = list(reversed(self.ancestors(include_self=True)))
-        capabilities: dict = dict(constants.DEFAULT_CAPABILITIES.get(chain[0].kind, {}))
+        capabilities: dict[str, Any] = dict(
+            constants.DEFAULT_CAPABILITIES.get(chain[0].kind, {})
+        )
         for node in chain:
             capabilities.update(node.capabilities or {})
         return capabilities

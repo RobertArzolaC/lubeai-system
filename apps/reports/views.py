@@ -32,11 +32,15 @@ class LaboratoryListView(core_mixins.BaseListView):
     context_object_name = "laboratories"
 
     def get_queryset(self) -> QuerySet:
-        """Return laboratories annotated with their active report count."""
+        """Return laboratories annotated with their visible report count."""
+        visible = scoping.user_visible_organization_ids(self.request.user)
+        report_filter = Q(reports__is_active=True)
+        if visible is not None:
+            report_filter &= Q(reports__organization_id__in=visible)
         return (
             super()
             .get_queryset()
-            .annotate(reports_count=Count("reports", filter=Q(reports__is_active=True)))
+            .annotate(reports_count=Count("reports", filter=report_filter))
             .order_by("name")
         )
 
@@ -66,9 +70,12 @@ class LaboratoryDetailView(core_mixins.BaseDetailView):
         context["edit_url"] = reverse_lazy(
             "apps.reports:laboratory_update", kwargs={"pk": self.object.pk}
         )
-        context["reports"] = self.object.reports.select_related(
-            "machine", "component"
-        ).filter(is_active=True)[:10]
+        context["reports"] = scoping.scope_queryset(
+            self.object.reports.select_related("machine", "component").filter(
+                is_active=True
+            ),
+            self.request.user,
+        )[:10]
         return context
 
 
@@ -183,6 +190,12 @@ class ReportCreateView(core_mixins.BaseCreateView):
     success_message = _("Report created successfully")
     success_url = reverse_lazy("apps.reports:report_list")
 
+    def get_form_kwargs(self) -> dict:
+        """Pass the acting user so machine/component choices are scoped."""
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
     def get_context_data(self, **kwargs: Any) -> dict:
         """Add entity name and navigation URL."""
         context = super().get_context_data(**kwargs)
@@ -202,6 +215,12 @@ class ReportUpdateView(core_mixins.BaseUpdateView):
     success_message = _("Report updated successfully")
     success_url = reverse_lazy("apps.reports:report_list")
     context_object_name = "report"
+
+    def get_form_kwargs(self) -> dict:
+        """Pass the acting user so machine/component choices are scoped."""
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
 
     def get_context_data(self, **kwargs: Any) -> dict:
         """Add entity name and navigation URL."""
