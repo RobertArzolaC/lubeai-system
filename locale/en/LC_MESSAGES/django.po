@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-16 22:12-0500\n"
+"POT-Creation-Date: 2026-10-16 22:52-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -141,10 +141,10 @@ msgid "All Machines"
 msgstr ""
 
 #: apps/alerts/filtersets.py:36 apps/alerts/models.py:28
-#: apps/dashboard/filtersets.py:28 apps/equipment/models.py:119
-#: apps/equipment/models.py:162 apps/equipment/views.py:27
+#: apps/dashboard/filtersets.py:29 apps/equipment/models.py:119
+#: apps/equipment/models.py:176 apps/equipment/views.py:27
 #: apps/equipment/views.py:42 apps/equipment/views.py:67
-#: apps/equipment/views.py:103 apps/reports/filtersets.py:55
+#: apps/equipment/views.py:108 apps/reports/filtersets.py:55
 #: apps/reports/filtersets.py:142 apps/reports/filtersets.py:238
 #: apps/reports/models.py:75 apps/reports/services/chart_export_pdf.py:212
 #: templates/alerts/alert/detail.html:38
@@ -163,7 +163,7 @@ msgid "All Components"
 msgstr ""
 
 #: apps/alerts/filtersets.py:41 apps/alerts/models.py:37
-#: apps/equipment/models.py:178 apps/reports/filtersets.py:60
+#: apps/equipment/models.py:192 apps/reports/filtersets.py:60
 #: apps/reports/filtersets.py:147 apps/reports/filtersets.py:251
 #: apps/reports/models.py:84 templates/alerts/alert/detail.html:46
 #: templates/dashboard/includes/filters.html:34
@@ -205,8 +205,9 @@ msgstr ""
 
 #: apps/alerts/models.py:55 apps/equipment/models.py:15
 #: apps/equipment/models.py:42 apps/equipment/models.py:79
-#: apps/organizations/models.py:85 apps/reports/models.py:66
-#: apps/users/models.py:19 templates/users/profile.html:120
+#: apps/equipment/models.py:150 apps/organizations/models.py:85
+#: apps/reports/models.py:66 apps/users/models.py:19
+#: templates/users/profile.html:120
 msgid "Organization"
 msgstr ""
 
@@ -306,19 +307,19 @@ msgid "Machines"
 msgstr ""
 
 #: apps/core/breadcrumbs.py:16 apps/equipment/models.py:52
-#: apps/equipment/views.py:148 templates/includes/aside.html:56
+#: apps/equipment/views.py:158 templates/includes/aside.html:56
 #: templates/includes/aside.html:58
 msgid "Branches"
 msgstr ""
 
 #: apps/core/breadcrumbs.py:17 apps/equipment/models.py:25
-#: apps/equipment/views.py:233 templates/includes/aside.html:65
+#: apps/equipment/views.py:243 templates/includes/aside.html:65
 #: templates/includes/aside.html:67
 msgid "Fleets"
 msgstr ""
 
-#: apps/core/breadcrumbs.py:18 apps/equipment/models.py:149
-#: apps/equipment/views.py:318 templates/includes/aside.html:74
+#: apps/core/breadcrumbs.py:18 apps/equipment/models.py:160
+#: apps/equipment/views.py:328 templates/includes/aside.html:74
 #: templates/includes/aside.html:76
 msgid "Component Types"
 msgstr ""
@@ -373,7 +374,7 @@ msgstr ""
 msgid "Dashboard"
 msgstr ""
 
-#: apps/core/breadcrumbs.py:37 apps/reports/views.py:494
+#: apps/core/breadcrumbs.py:37 apps/reports/views.py:506
 #: templates/includes/aside.html:119 templates/includes/aside.html:121
 #: templates/reports/report/component_analysis.html:5
 #: templates/reports/report/component_analysis.html:6
@@ -623,14 +624,14 @@ msgstr ""
 msgid "Status Histories"
 msgstr ""
 
-#: apps/dashboard/filtersets.py:18 templates/dashboard/includes/filters.html:5
+#: apps/dashboard/filtersets.py:19 templates/dashboard/includes/filters.html:5
 msgid "Year"
 msgstr ""
 
-#: apps/dashboard/filtersets.py:23 apps/equipment/filtersets.py:69
+#: apps/dashboard/filtersets.py:24 apps/equipment/filtersets.py:69
 #: apps/equipment/models.py:24 apps/equipment/models.py:88
-#: apps/equipment/views.py:232 apps/equipment/views.py:250
-#: apps/equipment/views.py:274 apps/equipment/views.py:293
+#: apps/equipment/views.py:242 apps/equipment/views.py:260
+#: apps/equipment/views.py:284 apps/equipment/views.py:303
 #: templates/dashboard/includes/filters.html:15
 #: templates/dashboard/includes/tabs.html:22
 #: templates/equipment/machine/detail.html:73
@@ -638,9 +639,9 @@ msgstr ""
 msgid "Fleet"
 msgstr ""
 
-#: apps/dashboard/filtersets.py:33 apps/equipment/models.py:148
-#: apps/equipment/views.py:317 apps/equipment/views.py:335
-#: apps/equipment/views.py:361 apps/equipment/views.py:380
+#: apps/dashboard/filtersets.py:34 apps/equipment/models.py:159
+#: apps/equipment/views.py:327 apps/equipment/views.py:345
+#: apps/equipment/views.py:371 apps/equipment/views.py:390
 #: apps/reports/models.py:582 apps/reports/services/chart_export_pdf.py:210
 #: templates/equipment/machine/includes/formset_row.html:7
 #: templates/reports/analysis_threshold/detail.html:41
@@ -717,9 +718,9 @@ msgid "All Branches"
 msgstr ""
 
 #: apps/equipment/filtersets.py:64 apps/equipment/models.py:51
-#: apps/equipment/models.py:70 apps/equipment/views.py:147
-#: apps/equipment/views.py:165 apps/equipment/views.py:189
-#: apps/equipment/views.py:208 templates/equipment/machine/detail.html:64
+#: apps/equipment/models.py:70 apps/equipment/views.py:157
+#: apps/equipment/views.py:175 apps/equipment/views.py:199
+#: apps/equipment/views.py:218 templates/equipment/machine/detail.html:64
 #: templates/equipment/machine/list.html:72
 msgid "Branch"
 msgstr ""
@@ -748,7 +749,7 @@ msgstr ""
 msgid "Subregion"
 msgstr ""
 
-#: apps/equipment/forms.py:162
+#: apps/equipment/forms.py:163
 msgid "Select Component Type"
 msgstr ""
 
@@ -804,19 +805,23 @@ msgstr ""
 msgid "Unit of measurement for machine usage"
 msgstr ""
 
-#: apps/equipment/models.py:165
+#: apps/equipment/models.py:155
+msgid "Organization that owns this component type"
+msgstr ""
+
+#: apps/equipment/models.py:179
 msgid "Machine this component belongs to"
 msgstr ""
 
-#: apps/equipment/models.py:169 templates/users/profile.html:65
+#: apps/equipment/models.py:183 templates/users/profile.html:65
 msgid "Type"
 msgstr ""
 
-#: apps/equipment/models.py:174
+#: apps/equipment/models.py:188
 msgid "Type/category of this component"
 msgstr ""
 
-#: apps/equipment/models.py:179 templates/equipment/machine/detail.html:87
+#: apps/equipment/models.py:193 templates/equipment/machine/detail.html:87
 #: templates/equipment/machine/includes/formset.html:5
 msgid "Components"
 msgstr ""
@@ -825,31 +830,31 @@ msgstr ""
 msgid "Machine created successfully"
 msgstr ""
 
-#: apps/equipment/views.py:91
+#: apps/equipment/views.py:96
 msgid "Machine updated successfully"
 msgstr ""
 
-#: apps/equipment/views.py:183
+#: apps/equipment/views.py:193
 msgid "Branch created successfully"
 msgstr ""
 
-#: apps/equipment/views.py:201
+#: apps/equipment/views.py:211
 msgid "Branch updated successfully"
 msgstr ""
 
-#: apps/equipment/views.py:268
+#: apps/equipment/views.py:278
 msgid "Fleet created successfully"
 msgstr ""
 
-#: apps/equipment/views.py:286
+#: apps/equipment/views.py:296
 msgid "Fleet updated successfully"
 msgstr ""
 
-#: apps/equipment/views.py:355
+#: apps/equipment/views.py:365
 msgid "Component type created successfully"
 msgstr ""
 
-#: apps/equipment/views.py:373
+#: apps/equipment/views.py:383
 msgid "Component type updated successfully"
 msgstr ""
 
@@ -1312,13 +1317,13 @@ msgstr ""
 msgid "Select Component"
 msgstr ""
 
-#: apps/reports/forms.py:200
+#: apps/reports/forms.py:201
 msgid ""
 "For inverse logic, warning limit should be greater than or equal to critical "
 "limit."
 msgstr ""
 
-#: apps/reports/forms.py:209
+#: apps/reports/forms.py:210
 msgid "Warning limit should be less than or equal to critical limit."
 msgstr ""
 
@@ -1781,8 +1786,8 @@ msgid "Description of the wear source for this parameter"
 msgstr ""
 
 #: apps/reports/models.py:630 apps/reports/views.py:379
-#: apps/reports/views.py:399 apps/reports/views.py:421
-#: apps/reports/views.py:440
+#: apps/reports/views.py:399 apps/reports/views.py:427
+#: apps/reports/views.py:452
 msgid "Analysis Threshold"
 msgstr ""
 
@@ -1897,7 +1902,7 @@ msgstr ""
 msgid "Analysis threshold created successfully"
 msgstr ""
 
-#: apps/reports/views.py:433
+#: apps/reports/views.py:439
 msgid "Analysis threshold updated successfully"
 msgstr ""
 
