@@ -290,6 +290,17 @@ git commit -m "feat(users): scope assignable organizations to the actor subtree"
 
 ---
 
+## Pase de arreglos (revision final, contexto fresco)
+
+La revision del branch completo encontro dos hallazgos Critical/Important que el plan no cubria; se arreglaron en un solo pase, con tests primero:
+
+- **C1 (Critical):** con el campo ya expuesto, un actor con sub-arbol que editaba un usuario de otra rama veia el selector vacio (la organizacion del objetivo no esta en su queryset), enviaba `organization=""` y guardaba `organization=None`; como en `scoping` "sin organizacion" significa **sin restriccion**, un guardado normal ensanchaba el acceso del objetivo. Arreglo: `get_form` envuelve el formulario del admin con `_PreserveOrganizationMixin`, cuyo `clean_organization` trata el vacio como "sin cambio" (conserva la organizacion actual) y el campo se **deshabilita** para actores de una sola organizacion.
+- **I2 (Important):** `list_filter` con el FK desnudo ofrecia organizaciones fuera del sub-arbol del actor. Arreglo: `OrganizationListFilter` (SimpleListFilter) con `lookups` acotado a `scoping.visible_organizations`, y `get_list_filter` que lo omite para actores de una sola organizacion.
+
+Consecuencias de diseno asumidas: en el admin **una organizacion no se puede dejar vacia** (vacio = sin cambio), igual que en el resto de la app; el fieldset sigue mostrando el campo deshabilitado en vez de ocultarlo (ocultarlo romperia el render de `fieldsets`). El caso "el alta en el admin puede crear un usuario sin organizacion" es **preexistente** (antes de este cambio todos los usuarios creados desde el admin quedaban sin organizacion) y se mantiene por diseno.
+
+---
+
 ## Fuera de alcance (decidido en esta iteracion)
 
 - **Selector de organizacion en el alta de cuentas (`AccountCreationForm`)**: no se incluye porque el POST de `apps.users:account_create` ya esta roto hoy. `AccountCreationForm` es un `Form` plano (sin `.instance`) pero `AccountCreateView` hereda `UserStampMixin` → `CreateView`: `AccountCreateView.form_valid` llama `form.save(self.request)` y luego `super().form_valid(form)`, que pasa por `UserStampMixin.form_valid` (`form.instance` → `AttributeError`) y por `ModelFormMixin.form_valid` (`form.save()` sin `request`). Requiere decidir primero el arreglo de ese flujo.
