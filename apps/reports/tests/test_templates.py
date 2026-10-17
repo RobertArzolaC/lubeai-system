@@ -138,3 +138,39 @@ class LaboratoryFlagMissingConfigTests(SimpleTestCase):
         """A missing ``config`` object renders the branch as hidden, not an error."""
         template = Template("{% if config.ENABLE_LABS %}on{% else %}off{% endif %}")
         self.assertEqual(template.render(Context({})), "off")
+
+
+class ReportDetailFlagTests(TestCase):
+    """The report detail laboratory link is gated by the flag."""
+
+    def setUp(self) -> None:
+        """Log in a superuser able to view the report detail."""
+        self.user = UserFactory(is_staff=True, is_superuser=True)
+        self.client.force_login(self.user)
+
+    @override_config(ENABLE_LABS=False)
+    def test_report_detail_disables_laboratory_link_when_flag_disabled(self) -> None:
+        """The report detail shows the laboratory as plain text (no link) when off."""
+        laboratory = factories.LaboratoryFactory()
+        report = factories.ReportFactory(laboratory=laboratory)
+        response = self.client.get(
+            reverse("apps.reports:report_detail", kwargs={"pk": report.pk})
+        )
+        self.assertContains(response, laboratory.name)
+        self.assertNotContains(
+            response,
+            reverse("apps.reports:laboratory_detail", kwargs={"pk": laboratory.pk}),
+        )
+
+    @override_config(ENABLE_LABS=True)
+    def test_report_detail_links_laboratory_when_flag_enabled(self) -> None:
+        """The report detail links to the laboratory when on."""
+        laboratory = factories.LaboratoryFactory()
+        report = factories.ReportFactory(laboratory=laboratory)
+        response = self.client.get(
+            reverse("apps.reports:report_detail", kwargs={"pk": report.pk})
+        )
+        self.assertContains(
+            response,
+            reverse("apps.reports:laboratory_detail", kwargs={"pk": laboratory.pk}),
+        )

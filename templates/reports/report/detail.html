@@ -53,7 +53,11 @@
                 <dt class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Laboratory" %}</dt>
                 <dd class="mt-1 text-sm font-semibold text-black dark:text-white">
                     {% if report.laboratory %}
+                    {% if config.ENABLE_LABS %}
                     <a href="{% url 'apps.reports:laboratory_detail' report.laboratory.pk %}" class="text-primary hover:underline">{{ report.laboratory.name }}</a>
+                    {% else %}
+                    <span>{{ report.laboratory.name }}</span>
+                    {% endif %}
                     {% else %}—{% endif %}
                 </dd>
             </div>
