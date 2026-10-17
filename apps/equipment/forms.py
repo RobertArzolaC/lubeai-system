@@ -6,6 +6,7 @@ from django.forms import inlineformset_factory
 from django.utils.translation import gettext_lazy as _
 
 from apps.core import widgets as core_widgets
+from apps.core.mixins import OrganizationScopeFormMixin
 from apps.equipment import constants, models
 from apps.organizations import scoping
 
@@ -25,12 +26,13 @@ class FleetForm(forms.ModelForm):
         }
 
 
-class BranchForm(forms.ModelForm):
+class BranchForm(OrganizationScopeFormMixin, forms.ModelForm):
     """Form for creating and updating branches."""
 
     class Meta:
         model = models.Branch
         fields: ClassVar[list[str]] = [
+            "organization",
             "name",
             "description",
             "address",
@@ -83,13 +85,24 @@ class BranchForm(forms.ModelForm):
             "subregion": _("Subregion"),
         }
 
+    def __init__(self, *args, user=None, **kwargs) -> None:
+        """Scope the organization choices to the acting user.
 
-class MachineForm(forms.ModelForm):
+        Args:
+            *args: Positional arguments forwarded to ``ModelForm``.
+            user: The acting user, used to scope the organization choices.
+            **kwargs: Keyword arguments forwarded to ``ModelForm``.
+        """
+        super().__init__(*args, user=user, **kwargs)
+
+
+class MachineForm(OrganizationScopeFormMixin, forms.ModelForm):
     """Form for creating and updating machines."""
 
     class Meta:
         model = models.Machine
         fields: ClassVar[list[str]] = [
+            "organization",
             "branch",
             "fleet",
             "name",
@@ -112,7 +125,7 @@ class MachineForm(forms.ModelForm):
             user: The acting user, used to scope branch/fleet choices.
             **kwargs: Keyword arguments forwarded to ``ModelForm``.
         """
-        super().__init__(*args, **kwargs)
+        super().__init__(*args, user=user, **kwargs)
         if not config.ENABLE_FLEET:
             self.fields.pop("fleet", None)
 
@@ -126,12 +139,13 @@ class MachineForm(forms.ModelForm):
                 )
 
 
-class ComponentTypeForm(forms.ModelForm):
+class ComponentTypeForm(OrganizationScopeFormMixin, forms.ModelForm):
     """Form for creating and updating component types."""
 
     class Meta:
         model = models.ComponentType
         fields: ClassVar[list[str]] = [
+            "organization",
             "name",
             "description",
             "is_active",
@@ -141,6 +155,16 @@ class ComponentTypeForm(forms.ModelForm):
             "description": forms.Textarea(attrs={"class": "form-control", "rows": 3}),
             "is_active": forms.CheckboxInput(attrs={"class": "form-check-input"}),
         }
+
+    def __init__(self, *args, user=None, **kwargs) -> None:
+        """Scope the organization choices to the acting user.
+
+        Args:
+            *args: Positional arguments forwarded to ``ModelForm``.
+            user: The acting user, used to scope the organization choices.
+            **kwargs: Keyword arguments forwarded to ``ModelForm``.
+        """
+        super().__init__(*args, user=user, **kwargs)
 
 
 class ComponentForm(forms.ModelForm):

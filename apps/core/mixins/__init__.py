@@ -1,5 +1,5 @@
 from apps.core.mixins.cache import CacheMixin
-from apps.core.mixins.forms import UserStampMixin
+from apps.core.mixins.forms import OrganizationScopeFormMixin, UserStampMixin
 from apps.core.mixins.views import (
     BaseCreateView,
     BaseDeleteView,
@@ -21,5 +21,6 @@ __all__ = [
     "BaseUpdateView",
     "BaseView",
     "CacheMixin",
+    "OrganizationScopeFormMixin",
     "UserStampMixin",
 ]

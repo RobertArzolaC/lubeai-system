@@ -193,6 +193,12 @@ class BranchCreateView(core_mixins.BaseCreateView):
     success_message = _("Branch created successfully")
     success_url = reverse_lazy("apps.equipment:branch_list")
 
+    def get_form_kwargs(self) -> dict:
+        """Pass the acting user so the client choices are scoped."""
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
     def get_context_data(self, **kwargs: object) -> dict:
         """Add navigation context."""
         context = super().get_context_data(**kwargs)
@@ -211,6 +217,12 @@ class BranchUpdateView(core_mixins.BaseUpdateView):
     success_message = _("Branch updated successfully")
     success_url = reverse_lazy("apps.equipment:branch_list")
     context_object_name = "branch"
+
+    def get_form_kwargs(self) -> dict:
+        """Pass the acting user so the client choices are scoped."""
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
 
     def get_context_data(self, **kwargs: object) -> dict:
         """Add navigation context."""
@@ -365,6 +377,12 @@ class ComponentTypeCreateView(core_mixins.BaseCreateView):
     success_message = _("Component type created successfully")
     success_url = reverse_lazy("apps.equipment:component_type_list")
 
+    def get_form_kwargs(self) -> dict:
+        """Pass the acting user so the client choices are scoped."""
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
     def get_context_data(self, **kwargs: object) -> dict:
         """Add navigation context."""
         context = super().get_context_data(**kwargs)
@@ -383,6 +401,12 @@ class ComponentTypeUpdateView(core_mixins.BaseUpdateView):
     success_message = _("Component type updated successfully")
     success_url = reverse_lazy("apps.equipment:component_type_list")
     context_object_name = "component_type"
+
+    def get_form_kwargs(self) -> dict:
+        """Pass the acting user so the client choices are scoped."""
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
 
     def get_context_data(self, **kwargs: object) -> dict:
         """Add navigation context."""
