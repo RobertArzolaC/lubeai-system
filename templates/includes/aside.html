@@ -6,8 +6,12 @@
     <!-- SIDEBAR HEADER -->
     <div class="relative flex items-center justify-center gap-2 px-6 py-5.5 lg:py-6.5 transition-all group-[.collapsed]:px-0">
         <a href="{% url 'apps.dashboard:index' %}" class="flex items-center justify-center gap-3">
-            <span class="block flex-shrink-0 text-2xl font-bold tracking-tight text-black group-[.collapsed]:hidden dark:text-white">LUBEAI</span>
-            <img src="{% static 'assets/images/logos/logo.png' %}" alt="LUBEAI" class="h-8 hidden group-[.collapsed]:block flex-shrink-0" />
+            <span class="block flex-shrink-0 text-2xl font-bold tracking-tight text-black group-[.collapsed]:hidden dark:text-white">{{ current_organization.name|default:"MARCO" }}</span>
+            {% if branding.logo %}
+            <img src="{{ branding.logo.url }}" alt="{{ current_organization.name|default:'MARCO' }}" class="h-8 hidden group-[.collapsed]:block flex-shrink-0" />
+            {% else %}
+            <img src="{% static 'assets/images/logos/logo.png' %}" alt="{{ current_organization.name|default:'MARCO' }}" class="h-8 hidden group-[.collapsed]:block flex-shrink-0" />
+            {% endif %}
         </a>
     </div>
     <!-- SIDEBAR HEADER -->
@@ -31,7 +35,7 @@
                         </a>
                     </li>
 
-                    {% if perms.equipment.view_machine or perms.equipment.view_branch or perms.equipment.view_componenttype or config.ENABLE_FLEET and perms.equipment.view_fleet %}
+                    {% if perms.equipment.view_machine or perms.equipment.view_branch or perms.equipment.view_componenttype or show_fleet and perms.equipment.view_fleet %}
                     <li class="group-[.collapsed]:hidden">
                         <h3 class="mb-4 ml-4 mt-8 text-xs font-semibold text-gray-500 uppercase tracking-wider">
                             {% trans "Equipment" %}
@@ -55,7 +59,7 @@
                         </a>
                     </li>
                     {% endif %}
-                    {% if config.ENABLE_FLEET and perms.equipment.view_fleet %}
+                    {% if show_fleet and perms.equipment.view_fleet %}
                     <li>
                         <a class="flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-gray-600 dark:text-bodydark1 duration-300 ease-in-out hover:bg-gray-2 dark:hover:bg-meta-4 transition-all group-[.collapsed]:justify-center group-[.collapsed]:px-0 {% if "fleets" in request.path %}bg-gray-2 dark:bg-meta-4 !text-primary{% endif %}"
                            href="{% url 'apps.equipment:fleet_list' %}" title="{% trans 'Fleets' %}">
@@ -75,13 +79,13 @@
                     {% endif %}
                     {% endif %}
 
-                    {% if perms.reports.view_report or perms.reports.view_analysisthreshold or perms.reports.view_component_analysis or config.ENABLE_LABS and perms.reports.view_laboratory %}
+                    {% if perms.reports.view_report or perms.reports.view_analysisthreshold or perms.reports.view_component_analysis or show_labs and perms.reports.view_laboratory %}
                     <li class="group-[.collapsed]:hidden">
                         <h3 class="mb-4 ml-4 mt-8 text-xs font-semibold text-gray-500 uppercase tracking-wider">
                             {% trans "Reports" %}
                         </h3>
                     </li>
-                    {% if config.ENABLE_LABS and perms.reports.view_laboratory %}
+                    {% if show_labs and perms.reports.view_laboratory %}
                     <li>
                         <a class="flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-gray-600 dark:text-bodydark1 duration-300 ease-in-out hover:bg-gray-2 dark:hover:bg-meta-4 transition-all group-[.collapsed]:justify-center group-[.collapsed]:px-0 {% if "laboratories" in request.path %}bg-gray-2 dark:bg-meta-4 !text-primary{% endif %}"
                            href="{% url 'apps.reports:laboratory_list' %}" title="{% trans 'Laboratories' %}">

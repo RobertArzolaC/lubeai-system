@@ -6,7 +6,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <title>{{ site.name }} | {% block title_page %}{% endblock title_page %}</title>
+    <title>{{ current_organization.name|default:site.name }} | {% block title_page %}{% endblock title_page %}</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="shortcut icon" href="{% static 'assets/images/logos/favicon.png' %}" />
@@ -26,6 +26,7 @@
     </script>
 
     {% tailwind_css %}
+    {% if branding.primary_color %}<style>:root{ --color-primary: {{ branding.primary_color }}; --color-brand-500: {{ branding.primary_color }}; }</style>{% endif %}
     <style>
         /* Sidebar Collapse Transitions */
         #sidebar { transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); }

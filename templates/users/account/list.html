@@ -70,18 +70,6 @@
                         </div>
                     </div>
 
-                    {% if filter.form.is_organization %}
-                    <div>
-                        <label class="mb-2.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Account Category" %}</label>
-                        <div class="relative z-20">
-                            {% render_field filter.form.is_organization class="relative z-20 w-full appearance-none rounded-lg border border-stroke bg-gray-2 py-3 px-4 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-meta-4 dark:focus:border-primary text-sm font-semibold" %}
-                            <span class="absolute top-1/2 right-4 z-30 -translate-y-1/2 pointer-events-none text-body">
-                                <i data-lucide="chevron-down" class="w-4 h-4" stroke-width="1.8" aria-hidden="true"></i>
-                            </span>
-                        </div>
-                    </div>
-                    {% endif %}
-
                     <div class="pt-2">
                         <button type="submit" class="flex w-full justify-center rounded-xl bg-primary py-3.5 text-sm font-bold text-white hover:bg-opacity-90 transition-all duration-300 shadow-lg shadow-primary/20">
                             {% trans "Apply Filters" %}
@@ -130,11 +118,8 @@
                         <p class="text-xs font-medium text-bodydark2 mt-0.5">{{ account.user.email }}</p>
                         {% if request.user.is_superuser or request.user.is_staff %}
                             <div class="mt-2 flex gap-1.5">
-                                {% if account.is_organization %}
-                                    <span class="inline-flex items-center rounded-md bg-blue-500/10 px-2 py-0.5 text-[10px] font-bold text-blue-500 border border-blue-500/20">{% trans "ORGANIZATION" %}</span>
-                                {% endif %}
-                                {% if account.is_child_account %}
-                                    <span class="inline-flex items-center rounded-md bg-purple-500/10 px-2 py-0.5 text-[10px] font-bold text-purple-500 border border-purple-500/20">{% trans "SUBSIDIARY" %}</span>
+                                {% if account.user.organization %}
+                                    <span class="inline-flex items-center rounded-md bg-blue-500/10 px-2 py-0.5 text-[10px] font-bold text-blue-500 border border-blue-500/20">{{ account.user.organization.name }}</span>
                                 {% endif %}
                             </div>
                         {% endif %}

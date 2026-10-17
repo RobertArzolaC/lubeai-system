@@ -63,18 +63,12 @@
                             <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
                                 <div class="flex items-center gap-3">
                                     <span class="text-sm opacity-70">{% trans "Type:" %}</span>
-                                    {% if user.account.is_organization %}
-                                        <span class="rounded bg-primary bg-opacity-10 py-1 px-3 text-sm font-medium text-white">{% trans "Organization" %}</span>
+                                    {% if user.organization %}
+                                        <span class="rounded bg-primary bg-opacity-10 py-1 px-3 text-sm font-medium text-white">{{ user.organization.name }}</span>
                                     {% else %}
                                         <span class="rounded bg-success bg-opacity-10 py-1 px-3 text-sm font-medium text-white">{% trans "Individual" %}</span>
                                     {% endif %}
                                 </div>
-                                {% if user.account.parent_account %}
-                                <div class="flex items-center gap-3">
-                                    <span class="text-sm opacity-70">{% trans "Parent:" %}</span>
-                                    <span class="text-sm font-medium text-black dark:text-white">{{ user.account.parent_account.user.get_full_name }}</span>
-                                </div>
-                                {% endif %}
                             </div>
                         </div>
                         {% endif %}

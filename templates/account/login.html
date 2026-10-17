@@ -14,7 +14,11 @@
         <div class="hidden w-full xl:block xl:w-1/2 bg-gray-50 dark:bg-white/[0.02]">
             <div class="py-20 px-10 text-center">
                 <a class="mb-10 inline-block" href="/">
+                    {% if branding.logo %}
+                    <img src="{{ branding.logo.url }}" alt="{{ current_organization.name|default:'Logo' }}" class="h-12 mx-auto" />
+                    {% else %}
                     <img src="{% static 'assets/images/logos/logo.png' %}" alt="Logo" class="h-12 mx-auto" />
+                    {% endif %}
                 </a>
                 <h3 class="mb-4 text-2xl font-bold text-black dark:text-white">
                     {% trans "Sign in to your account" %}
