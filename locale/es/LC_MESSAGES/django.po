@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-16 19:14-0500\n"
+"POT-Creation-Date: 2026-10-16 20:08-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -81,8 +81,8 @@ msgstr "Descartada"
 
 #: apps/alerts/filtersets.py:16 apps/equipment/filtersets.py:13
 #: apps/equipment/filtersets.py:36 apps/equipment/filtersets.py:59
-#: apps/equipment/filtersets.py:96 apps/reports/filtersets.py:15
-#: apps/reports/filtersets.py:43 apps/reports/filtersets.py:165
+#: apps/equipment/filtersets.py:96 apps/reports/filtersets.py:16
+#: apps/reports/filtersets.py:44 apps/reports/filtersets.py:178
 #: apps/users/filtersets.py:11
 msgid "Search"
 msgstr "Buscar"
@@ -97,8 +97,8 @@ msgstr "Todas las severidades"
 msgid "Severity"
 msgstr "Severidad"
 
-#: apps/alerts/filtersets.py:24 apps/reports/filtersets.py:62
-#: apps/reports/filtersets.py:142
+#: apps/alerts/filtersets.py:24 apps/reports/filtersets.py:63
+#: apps/reports/filtersets.py:149
 msgid "All Statuses"
 msgstr "Todos los estados"
 
@@ -122,12 +122,12 @@ msgstr "Todos los estados"
 msgid "Status"
 msgstr "Estado"
 
-#: apps/alerts/filtersets.py:29 apps/reports/filtersets.py:170
+#: apps/alerts/filtersets.py:29 apps/reports/filtersets.py:183
 msgid "All Categories"
 msgstr "Todas las categorías"
 
 #: apps/alerts/filtersets.py:30 apps/alerts/models.py:54
-#: apps/reports/filtersets.py:171 apps/reports/models.py:581
+#: apps/reports/filtersets.py:184 apps/reports/models.py:581
 #: templates/alerts/alert/list.html:126
 #: templates/alerts/email/alert_notification.html:19
 #: templates/reports/analysis_threshold/detail.html:37
@@ -135,8 +135,8 @@ msgstr "Todas las categorías"
 msgid "Category"
 msgstr "Categoría"
 
-#: apps/alerts/filtersets.py:34 apps/reports/filtersets.py:52
-#: apps/reports/filtersets.py:126
+#: apps/alerts/filtersets.py:34 apps/reports/filtersets.py:53
+#: apps/reports/filtersets.py:133
 msgid "All Machines"
 msgstr "Todas las máquinas"
 
@@ -144,8 +144,8 @@ msgstr "Todas las máquinas"
 #: apps/dashboard/filtersets.py:28 apps/equipment/models.py:91
 #: apps/equipment/models.py:134 apps/equipment/views.py:26
 #: apps/equipment/views.py:41 apps/equipment/views.py:60
-#: apps/equipment/views.py:90 apps/reports/filtersets.py:53
-#: apps/reports/filtersets.py:127 apps/reports/filtersets.py:210
+#: apps/equipment/views.py:90 apps/reports/filtersets.py:54
+#: apps/reports/filtersets.py:134 apps/reports/filtersets.py:223
 #: apps/reports/models.py:66 apps/reports/services/chart_export_pdf.py:212
 #: templates/alerts/alert/detail.html:38
 #: templates/alerts/email/alert_notification.html:21
@@ -153,22 +153,22 @@ msgstr "Todas las máquinas"
 #: templates/dashboard/includes/tabs.html:20
 #: templates/equipment/machine/list.html:69
 #: templates/reports/report/component_analysis.html:96
-#: templates/reports/report/detail.html:74
+#: templates/reports/report/detail.html:78
 msgid "Machine"
 msgstr "Máquina"
 
-#: apps/alerts/filtersets.py:39 apps/reports/filtersets.py:57
-#: apps/reports/filtersets.py:131
+#: apps/alerts/filtersets.py:39 apps/reports/filtersets.py:58
+#: apps/reports/filtersets.py:138
 msgid "All Components"
 msgstr "Todos los componentes"
 
 #: apps/alerts/filtersets.py:40 apps/alerts/models.py:37
-#: apps/equipment/models.py:150 apps/reports/filtersets.py:58
-#: apps/reports/filtersets.py:132 apps/reports/filtersets.py:223
+#: apps/equipment/models.py:150 apps/reports/filtersets.py:59
+#: apps/reports/filtersets.py:139 apps/reports/filtersets.py:236
 #: apps/reports/models.py:75 templates/alerts/alert/detail.html:46
 #: templates/dashboard/includes/filters.html:34
 #: templates/dashboard/includes/tabs.html:24
-#: templates/reports/report/detail.html:78
+#: templates/reports/report/detail.html:82
 msgid "Component"
 msgstr "Componente"
 
@@ -195,7 +195,7 @@ msgstr "Componente asociado con esta alerta"
 #: apps/alerts/models.py:46 apps/reports/models.py:230
 #: apps/reports/models.py:267 apps/reports/views.py:138
 #: apps/reports/views.py:163 apps/reports/views.py:185
-#: apps/reports/views.py:205 templates/reports/report/list.html:117
+#: apps/reports/views.py:205 templates/reports/report/list.html:119
 msgid "Report"
 msgstr "Informe"
 
@@ -676,8 +676,8 @@ msgstr "¿Está activo?"
 
 #: apps/equipment/filtersets.py:19 apps/equipment/filtersets.py:42
 #: apps/equipment/filtersets.py:75 apps/equipment/filtersets.py:102
-#: apps/reports/filtersets.py:21 apps/reports/filtersets.py:77
-#: apps/reports/filtersets.py:178 apps/users/filtersets.py:17
+#: apps/reports/filtersets.py:22 apps/reports/filtersets.py:78
+#: apps/reports/filtersets.py:191 apps/users/filtersets.py:17
 #: templates/equipment/component_type/detail.html:63
 #: templates/equipment/machine/detail.html:98
 #: templates/includes/status_badge.html:5 templates/users/profile.html:50
@@ -686,8 +686,8 @@ msgstr "Activo"
 
 #: apps/equipment/filtersets.py:20 apps/equipment/filtersets.py:43
 #: apps/equipment/filtersets.py:76 apps/equipment/filtersets.py:103
-#: apps/reports/filtersets.py:22 apps/reports/filtersets.py:78
-#: apps/reports/filtersets.py:179 apps/users/filtersets.py:18
+#: apps/reports/filtersets.py:23 apps/reports/filtersets.py:79
+#: apps/reports/filtersets.py:192 apps/users/filtersets.py:18
 #: templates/equipment/component_type/detail.html:65
 #: templates/equipment/machine/detail.html:100
 #: templates/includes/status_badge.html:9 templates/users/profile.html:52
@@ -1126,11 +1126,11 @@ msgstr "Resumen"
 msgid "Wear"
 msgstr "Desgaste"
 
-#: apps/reports/constants.py:109 apps/reports/filtersets.py:69
-#: apps/reports/filtersets.py:137 apps/reports/models.py:150
+#: apps/reports/constants.py:109 apps/reports/filtersets.py:70
+#: apps/reports/filtersets.py:144 apps/reports/models.py:150
 #: templates/dashboard/includes/tabs.html:26
 #: templates/reports/report/component_analysis.html:482
-#: templates/reports/report/list.html:129
+#: templates/reports/report/list.html:133
 msgid "Condition"
 msgstr "Condición"
 
@@ -1144,58 +1144,58 @@ msgstr "Tendencias"
 msgid "Advanced"
 msgstr "Avanzado"
 
-#: apps/reports/filtersets.py:18 apps/reports/filtersets.py:74
-#: apps/reports/filtersets.py:175
+#: apps/reports/filtersets.py:19 apps/reports/filtersets.py:75
+#: apps/reports/filtersets.py:188
 msgid "All Records"
 msgstr "Todos los registros"
 
-#: apps/reports/filtersets.py:19 apps/reports/filtersets.py:75
-#: apps/reports/filtersets.py:176
+#: apps/reports/filtersets.py:20 apps/reports/filtersets.py:76
+#: apps/reports/filtersets.py:189
 msgid "Record Status"
 msgstr "Estado del registro"
 
-#: apps/reports/filtersets.py:47 apps/reports/filtersets.py:121
+#: apps/reports/filtersets.py:48 apps/reports/filtersets.py:128
 msgid "All Laboratories"
 msgstr "Todos los laboratorios"
 
-#: apps/reports/filtersets.py:48 apps/reports/filtersets.py:122
+#: apps/reports/filtersets.py:49 apps/reports/filtersets.py:129
 #: apps/reports/models.py:34 apps/reports/models.py:57 apps/reports/views.py:42
 #: apps/reports/views.py:60 apps/reports/views.py:84 apps/reports/views.py:103
 #: templates/reports/laboratory/list.html:59
 #: templates/reports/report/detail.html:53
-#: templates/reports/report/list.html:123
+#: templates/reports/report/list.html:126
 msgid "Laboratory"
 msgstr "Laboratorio"
 
-#: apps/reports/filtersets.py:63 apps/reports/filtersets.py:143
+#: apps/reports/filtersets.py:64 apps/reports/filtersets.py:150
 msgid "Report Status"
 msgstr "Estado del informe"
 
-#: apps/reports/filtersets.py:68 apps/reports/filtersets.py:136
+#: apps/reports/filtersets.py:69 apps/reports/filtersets.py:143
 msgid "All Conditions"
 msgstr "Todas las condiciones"
 
-#: apps/reports/filtersets.py:112
+#: apps/reports/filtersets.py:119
 msgid "Start Date"
 msgstr "Fecha de inicio"
 
-#: apps/reports/filtersets.py:117
+#: apps/reports/filtersets.py:124
 msgid "End Date"
 msgstr "Fecha de fin"
 
-#: apps/reports/filtersets.py:209 apps/reports/filtersets.py:215
+#: apps/reports/filtersets.py:222 apps/reports/filtersets.py:228
 #, fuzzy
 #| msgid "Delete Machine"
 msgid "Select Machine"
 msgstr "Eliminar máquina"
 
-#: apps/reports/filtersets.py:222 apps/reports/filtersets.py:229
+#: apps/reports/filtersets.py:235 apps/reports/filtersets.py:242
 #, fuzzy
 #| msgid "Select Component Type"
 msgid "Select Component"
 msgstr "Seleccionar tipo de componente"
 
-#: apps/reports/forms.py:189
+#: apps/reports/forms.py:194
 msgid ""
 "For inverse logic, warning limit should be greater than or equal to critical "
 "limit."
@@ -1203,7 +1203,7 @@ msgstr ""
 "Para la lógica inversa, el límite de advertencia debe ser mayor o igual que "
 "el límite crítico."
 
-#: apps/reports/forms.py:198
+#: apps/reports/forms.py:203
 msgid "Warning limit should be less than or equal to critical limit."
 msgstr "El límite de advertencia debe ser menor o igual que el límite crítico."
 
@@ -1237,7 +1237,7 @@ msgstr "Número de identificación del laboratorio (N.º Lab)"
 
 #: apps/reports/models.py:89
 #: templates/reports/report/component_analysis.html:1009
-#: templates/reports/report/detail.html:61
+#: templates/reports/report/detail.html:65
 msgid "Lubricant"
 msgstr "Lubricante"
 
@@ -1294,8 +1294,8 @@ msgstr "Código de número de serie del informe (Cód./Núm. de Serie)"
 #: templates/reports/report/component_analysis.html:1538
 #: templates/reports/report/component_analysis.html:1589
 #: templates/reports/report/component_analysis.html:1723
-#: templates/reports/report/detail.html:91
-#: templates/reports/report/list.html:126
+#: templates/reports/report/detail.html:95
+#: templates/reports/report/list.html:130
 msgid "Sample Date"
 msgstr "Fecha de muestra"
 
@@ -1311,7 +1311,7 @@ msgstr "N.º PER"
 msgid "PER identification number (No. PER)"
 msgstr "Número de identificación PER (N.º PER)"
 
-#: apps/reports/models.py:137 templates/reports/report/detail.html:95
+#: apps/reports/models.py:137 templates/reports/report/detail.html:99
 msgid "Reception Date"
 msgstr "Fecha de recepción"
 
@@ -1327,7 +1327,7 @@ msgstr "Estado actual del informe"
 msgid "Equipment condition assessment"
 msgstr "Evaluación de la condición del equipo"
 
-#: apps/reports/models.py:157 templates/reports/report/detail.html:111
+#: apps/reports/models.py:157 templates/reports/report/detail.html:115
 msgid "Notes"
 msgstr "Notas"
 
@@ -1335,7 +1335,7 @@ msgstr "Notas"
 msgid "Additional notes or observations"
 msgstr "Notas u observaciones adicionales"
 
-#: apps/reports/models.py:162 templates/reports/report/detail.html:99
+#: apps/reports/models.py:162 templates/reports/report/detail.html:103
 msgid "Report Date"
 msgstr "Fecha del informe"
 
@@ -1359,7 +1359,7 @@ msgstr "Cambio de aceite"
 msgid "Oil change indicator (Cambio de Aceite)"
 msgstr "Indicador de cambio de aceite (Cambio de Aceite)"
 
-#: apps/reports/models.py:180 templates/reports/report/detail.html:123
+#: apps/reports/models.py:180 templates/reports/report/detail.html:127
 msgid "Others"
 msgstr "Otros"
 
@@ -1367,7 +1367,7 @@ msgstr "Otros"
 msgid "Other observations or notes (Otros)"
 msgstr "Otras observaciones o notas (Otros)"
 
-#: apps/reports/models.py:185 templates/reports/report/detail.html:115
+#: apps/reports/models.py:185 templates/reports/report/detail.html:119
 msgid "Recommendations"
 msgstr "Recomendaciones"
 
@@ -1409,7 +1409,7 @@ msgstr "Posición PM"
 msgid "Position relative to preventive maintenance (PRE-PM/POST-PM/INSP)"
 msgstr "Posición relativa al mantenimiento preventivo (PRE-PM/POST-PM/INSP)"
 
-#: apps/reports/models.py:218 templates/reports/report/detail.html:119
+#: apps/reports/models.py:218 templates/reports/report/detail.html:123
 msgid "Action Required"
 msgstr "Acción requerida"
 
@@ -1607,7 +1607,7 @@ msgstr "Prueba de mancha"
 msgid "Qualitative spot test for contamination"
 msgstr "Prueba cualitativa de mancha para contaminación"
 
-#: apps/reports/models.py:517 templates/reports/report/detail.html:178
+#: apps/reports/models.py:517 templates/reports/report/detail.html:182
 msgid "Visual Appearance"
 msgstr "Apariencia visual"
 
@@ -1888,6 +1888,10 @@ msgstr "Habilitar la verificación de correo electrónico."
 #: config/settings/tools/django_constance.py:20
 msgid "Enable fleet management"
 msgstr "Habilitar gestión de flotas"
+
+#: config/settings/tools/django_constance.py:21
+msgid "Enable laboratory management"
+msgstr "Habilitar gestión de laboratorios"
 
 #: templates/account/account_inactive.html:6
 #: templates/account/account_inactive.html:18
@@ -2258,11 +2262,11 @@ msgstr ""
 "Busca por máquina, componente o clave y luego refina con los filtros "
 "avanzados."
 
-#: templates/alerts/alert/list.html:113 templates/reports/report/list.html:107
+#: templates/alerts/alert/list.html:113 templates/reports/report/list.html:109
 msgid "Clear all filters"
 msgstr "Limpiar todos los filtros"
 
-#: templates/alerts/alert/list.html:129 templates/reports/report/list.html:120
+#: templates/alerts/alert/list.html:129 templates/reports/report/list.html:122
 msgid "Machine / Component"
 msgstr "Máquina / Componente"
 
@@ -2272,7 +2276,7 @@ msgstr "Máquina / Componente"
 #: templates/equipment/machine/list.html:83
 #: templates/reports/analysis_threshold/list.html:78
 #: templates/reports/laboratory/list.html:71
-#: templates/reports/report/list.html:132 templates/users/account/list.html:110
+#: templates/reports/report/list.html:136 templates/users/account/list.html:110
 msgid "Management"
 msgstr "Gestión"
 
@@ -2370,7 +2374,7 @@ msgid "Total Samples"
 msgstr "Total Muestras"
 
 #: templates/dashboard/includes/kpis.html:7
-#: templates/reports/report/export.html:164
+#: templates/reports/report/export.html:166
 msgid "records"
 msgstr "registros"
 
@@ -2706,7 +2710,7 @@ msgstr "Algo salió mal de nuestro lado. Estamos trabajando para solucionarlo."
 msgid "Error"
 msgstr "Error"
 
-#: templates/includes/aside.html:37 templates/reports/report/detail.html:71
+#: templates/includes/aside.html:37 templates/reports/report/detail.html:75
 msgid "Equipment"
 msgstr "Equipos"
 
@@ -2746,7 +2750,7 @@ msgid "Success"
 msgstr "Éxito"
 
 #: templates/includes/delete_script.html:29
-#: templates/reports/report/export.html:172
+#: templates/reports/report/export.html:174
 #: templates/users/account/list.html:290
 msgid "There was a problem processing your request."
 msgstr "Hubo un problema al procesar tu solicitud."
@@ -3179,55 +3183,55 @@ msgstr "No hay datos de dilución de combustible disponibles"
 msgid "Identification"
 msgstr "Identificación"
 
-#: templates/reports/report/detail.html:82
+#: templates/reports/report/detail.html:86
 msgid "Machine Hours / Kms"
 msgstr "Horas / Km de la máquina"
 
-#: templates/reports/report/detail.html:88
+#: templates/reports/report/detail.html:92
 msgid "Dates"
 msgstr "Fechas"
 
-#: templates/reports/report/detail.html:108
+#: templates/reports/report/detail.html:112
 msgid "Notes & Recommendations"
 msgstr "Notas y recomendaciones"
 
-#: templates/reports/report/detail.html:134
+#: templates/reports/report/detail.html:138
 msgid "Laboratory Analysis"
 msgstr "Análisis de laboratorio"
 
-#: templates/reports/report/detail.html:140
+#: templates/reports/report/detail.html:144
 msgid "Total Wear Metals"
 msgstr "Total de metales de desgaste"
 
-#: templates/reports/report/detail.html:144
+#: templates/reports/report/detail.html:148
 msgid "Total Contaminants"
 msgstr "Total de contaminantes"
 
-#: templates/reports/report/detail.html:148
+#: templates/reports/report/detail.html:152
 msgid "Additive Health"
 msgstr "Salud de aditivos"
 
-#: templates/reports/report/detail.html:156
+#: templates/reports/report/detail.html:160
 msgid "Viscosity @ 40°C / 100°C"
 msgstr "Viscosidad @ 40 °C / 100 °C"
 
-#: templates/reports/report/detail.html:160
+#: templates/reports/report/detail.html:164
 msgid "TBN / TAN"
 msgstr "TBN / TAN"
 
-#: templates/reports/report/detail.html:164
+#: templates/reports/report/detail.html:168
 msgid "Water (Crackle / FTIR)"
 msgstr "Agua (Crackle / FTIR)"
 
-#: templates/reports/report/detail.html:170
+#: templates/reports/report/detail.html:174
 msgid "Oxidation / Nitration / Sulfation"
 msgstr "Oxidación / Nitración / Sulfatación"
 
-#: templates/reports/report/detail.html:174
+#: templates/reports/report/detail.html:178
 msgid "PQ Index / ISO Count"
 msgstr "Índice PQ / Conteo ISO"
 
-#: templates/reports/report/detail.html:184
+#: templates/reports/report/detail.html:188
 msgid "No laboratory analysis has been registered for this report."
 msgstr "No se ha registrado ningún análisis de laboratorio para este informe."
 
@@ -3240,33 +3244,33 @@ msgid "Filter the inspection reports and download them as an Excel workbook."
 msgstr ""
 "Filtre los informes de inspección y descárguelos como un libro de Excel."
 
-#: templates/reports/report/export.html:60
-#: templates/reports/report/export.html:77
+#: templates/reports/report/export.html:62
+#: templates/reports/report/export.html:79
 msgid "Preview"
 msgstr "Vista previa"
 
-#: templates/reports/report/export.html:63
+#: templates/reports/report/export.html:65
 msgid "Download Excel"
 msgstr "Descargar Excel"
 
-#: templates/reports/report/export.html:68
+#: templates/reports/report/export.html:70
 #, python-format
 msgid "A maximum of %(max_records)s records can be exported in a single file."
 msgstr ""
 "Se puede exportar un máximo de %(max_records)s registros en un solo archivo."
 
-#: templates/reports/report/export.html:81
+#: templates/reports/report/export.html:83
 msgid ""
 "Apply your filters and press Preview to see the first rows of the export."
 msgstr ""
 "Aplique sus filtros y pulse Vista previa para ver las primeras filas de la "
 "exportación."
 
-#: templates/reports/report/export.html:151
+#: templates/reports/report/export.html:153
 msgid "Loading preview..."
 msgstr "Cargando vista previa..."
 
-#: templates/reports/report/export.html:166
+#: templates/reports/report/export.html:168
 msgid "No reports match the selected filters."
 msgstr "Ningún informe coincide con los filtros seleccionados."
 
@@ -3284,18 +3288,18 @@ msgstr ""
 msgid "Lab, PER, serial or machine"
 msgstr "Lab, PER, serie o máquina"
 
-#: templates/reports/report/list.html:104
+#: templates/reports/report/list.html:106
 msgid ""
 "Search by lab, PER, serial or machine, then refine with the advanced filters."
 msgstr ""
 "Busque por lab, PER, serie o máquina y luego refine con los filtros "
 "avanzados."
 
-#: templates/reports/report/list.html:168
+#: templates/reports/report/list.html:174
 msgid "No reports found"
 msgstr "No se encontraron informes"
 
-#: templates/reports/report/list.html:169
+#: templates/reports/report/list.html:175
 msgid ""
 "We couldn't find any reports matching your search. Try adjusting your "
 "criteria or create a new report."
@@ -3303,11 +3307,11 @@ msgstr ""
 "No encontramos ningún informe que coincida con su búsqueda. Ajuste sus "
 "criterios o cree un nuevo informe."
 
-#: templates/reports/report/list.html:183
+#: templates/reports/report/list.html:189
 msgid "Delete Report"
 msgstr "Eliminar informe"
 
-#: templates/reports/report/list.html:184
+#: templates/reports/report/list.html:190
 msgid "Report deleted successfully."
 msgstr "Informe eliminado correctamente."
 
