@@ -16,7 +16,6 @@ CONSTANCE_CONFIG = {
     "COMPANY_LOGO": ("default.png", _("Company logo"), "image_field"),
     "JSON_FIELD_EXAMPLE": ({"name": "test"}, _("Test json field"), "json_field"),
     "ENABLE_SEND_EMAIL": (True, _("Enable sending emails.")),
-    "ENABLE_VERIFICATION_EMAIL": (True, _("Enable email verification.")),
     "ENABLE_FLEET": (False, _("Enable fleet management")),
     "ENABLE_LABS": (False, _("Enable laboratory management")),
 }
@@ -26,8 +25,12 @@ CONSTANCE_CONFIG_FIELDSETS = {
         "fields": (
             "COMPANY_LOGO",
             "JSON_FIELD_EXAMPLE",
+        ),
+        "collapse": False,
+    },
+    "2. Feature flags": {
+        "fields": (
             "ENABLE_SEND_EMAIL",
-            "ENABLE_VERIFICATION_EMAIL",
             "ENABLE_FLEET",
             "ENABLE_LABS",
         ),
