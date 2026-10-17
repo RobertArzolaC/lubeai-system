@@ -1,6 +1,5 @@
 """Tests for the ``apps.users.api`` module."""
 
-from allauth.account.models import EmailAddress
 from django.test import TestCase
 from django.urls import reverse
 
@@ -61,40 +60,3 @@ class ToggleUserStatusViewTests(TestCase):
             self.url, {"user_id": self.target.pk, "action": "activate"}
         )
         self.assertEqual(response.status_code, 302)
-
-
-class VerifyEmailViewTests(TestCase):
-    """Tests for the verify-email endpoint."""
-
-    def setUp(self) -> None:
-        self.operator = UserFactory(is_staff=True)
-        self.target = UserFactory()
-        EmailAddress.objects.create(
-            user=self.target,
-            email=self.target.email,
-            primary=True,
-            verified=False,
-        )
-        self.client.force_login(self.operator)
-        self.url = reverse("apps.users:verify_email_api")
-
-    def test_missing_user_id(self) -> None:
-        """Posting without a user id returns a failed JSON response."""
-        response = self.client.post(self.url, {})
-        self.assertEqual(response.status_code, 200)
-        self.assertFalse(response.json()["success"])
-
-    def test_verify_email(self) -> None:
-        """Posting a valid user id marks its email as verified."""
-        response = self.client.post(self.url, {"user_id": self.target.pk})
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue(response.json()["success"])
-        email = EmailAddress.objects.get(user=self.target)
-        self.assertTrue(email.verified)
-
-    def test_verify_email_for_unlinked_user(self) -> None:
-        """A user without an EmailAddress record returns a JSON 404 response."""
-        orphan = UserFactory()
-        response = self.client.post(self.url, {"user_id": orphan.pk})
-        self.assertEqual(response.status_code, 404)
-        self.assertFalse(response.json()["success"])

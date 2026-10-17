@@ -56,9 +56,4 @@ urlpatterns = [
         api.ToggleUserStatusView.as_view(),
         name="toggle_user_status_api",
     ),
-    path(
-        "api/verify-email/",
-        api.VerifyEmailView.as_view(),
-        name="verify_email_api",
-    ),
 ]
