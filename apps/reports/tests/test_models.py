@@ -1,11 +1,10 @@
 """Tests for the ``apps.reports.models`` module."""
 
-from django.test import TestCase
-
+from apps.core.tests.base import TenantSchemaTestCase
 from apps.reports import factories, models
 
 
-class LaboratoryModelTests(TestCase):
+class LaboratoryModelTests(TenantSchemaTestCase):
     """Tests for the :class:`Laboratory` model."""
 
     def test_str_returns_name_and_code(self) -> None:
@@ -21,7 +20,7 @@ class LaboratoryModelTests(TestCase):
         self.assertEqual(names, ["Alpha", "Zeta"])
 
 
-class ReportModelTests(TestCase):
+class ReportModelTests(TenantSchemaTestCase):
     """Tests for the :class:`Report` model."""
 
     def test_str_returns_lab_number_and_condition(self) -> None:
@@ -43,7 +42,7 @@ class ReportModelTests(TestCase):
         self.assertEqual(report.component_name, "N/A")
 
 
-class LabAnalysisModelTests(TestCase):
+class LabAnalysisModelTests(TenantSchemaTestCase):
     """Tests for the computed properties of :class:`LabAnalysis`."""
 
     def test_total_wear_metals_sums_primary_metals(self) -> None:
@@ -76,7 +75,7 @@ class LabAnalysisModelTests(TestCase):
         self.assertEqual(analysis.additive_depletion_pct, 100.0)
 
 
-class AnalysisThresholdModelTests(TestCase):
+class AnalysisThresholdModelTests(TenantSchemaTestCase):
     """Tests for the :class:`AnalysisThreshold` model."""
 
     def test_str_for_global_threshold(self) -> None:

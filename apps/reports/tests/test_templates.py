@@ -3,9 +3,10 @@
 from constance.test import override_config
 from django.contrib.auth.models import Permission
 from django.template import Context, Template
-from django.test import SimpleTestCase, TestCase
+from django.test import SimpleTestCase
 from django.urls import reverse
 
+from apps.core.tests.base import TenantSchemaTestCase
 from apps.reports import factories
 from apps.users.factories import UserFactory
 
@@ -18,10 +19,11 @@ def grant_permissions(user, *codenames: str) -> None:
     user.user_permissions.add(*permissions)
 
 
-class ReportsTemplateRenderingTests(TestCase):
+class ReportsTemplateRenderingTests(TenantSchemaTestCase):
     """Render the real reports templates to catch syntax and wiring errors."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.user = UserFactory(is_staff=True, is_superuser=True)
         self.client.force_login(self.user)
         self.laboratory = factories.LaboratoryFactory()
@@ -71,7 +73,7 @@ class ReportsTemplateRenderingTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
 
-class ReportsMenuFlagTests(TestCase):
+class ReportsMenuFlagTests(TenantSchemaTestCase):
     """The laboratories menu entry is gated by the feature flag."""
 
     @override_config(ENABLE_LABS=False)
@@ -108,11 +110,12 @@ class ReportsMenuFlagTests(TestCase):
         self.assertContains(response, "Informes")
 
 
-class ReportListFlagTests(TestCase):
+class ReportListFlagTests(TenantSchemaTestCase):
     """The report list laboratory column and filter are gated by the flag."""
 
     def setUp(self) -> None:
         """Log in a superuser able to view the report list and seed one report."""
+        super().setUp()
         self.user = UserFactory(is_staff=True, is_superuser=True)
         self.client.force_login(self.user)
         self.report = factories.ReportFactory()
@@ -144,11 +147,12 @@ class LaboratoryFlagMissingConfigTests(SimpleTestCase):
         self.assertEqual(template.render(Context({})), "off")
 
 
-class ReportDetailFlagTests(TestCase):
+class ReportDetailFlagTests(TenantSchemaTestCase):
     """The report detail laboratory link is gated by the flag."""
 
     def setUp(self) -> None:
         """Log in a superuser able to view the report detail."""
+        super().setUp()
         self.user = UserFactory(is_staff=True, is_superuser=True)
         self.client.force_login(self.user)
 
@@ -180,11 +184,12 @@ class ReportDetailFlagTests(TestCase):
         )
 
 
-class ReportExportFlagTests(TestCase):
+class ReportExportFlagTests(TenantSchemaTestCase):
     """The export laboratory filter is gated by the flag."""
 
     def setUp(self) -> None:
         """Log in a superuser able to access the report export page."""
+        super().setUp()
         self.user = UserFactory(is_staff=True, is_superuser=True)
         self.client.force_login(self.user)
 

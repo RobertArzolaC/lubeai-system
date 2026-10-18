@@ -1,13 +1,13 @@
 """Tests for the ``apps.reports.forms`` module."""
 
 from constance.test import override_config
-from django.test import TestCase
 
+from apps.core.tests.base import TenantSchemaTestCase
 from apps.equipment import factories as equipment_factories
 from apps.reports import factories, forms, models
 
 
-class LaboratoryFormTests(TestCase):
+class LaboratoryFormTests(TenantSchemaTestCase):
     """Tests for :class:`LaboratoryForm`."""
 
     def test_valid_form_saves(self) -> None:
@@ -32,10 +32,11 @@ class LaboratoryFormTests(TestCase):
         self.assertIn("code", form.errors)
 
 
-class ReportFormTests(TestCase):
+class ReportFormTests(TenantSchemaTestCase):
     """Tests for :class:`ReportForm`."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.machine = equipment_factories.MachineFactory()
         self.component = equipment_factories.ComponentFactory(machine=self.machine)
         self.laboratory = factories.LaboratoryFactory()
@@ -114,7 +115,7 @@ class ReportFormTests(TestCase):
         self.assertEqual(report.laboratory, self.laboratory)
 
 
-class AnalysisThresholdFormTests(TestCase):
+class AnalysisThresholdFormTests(TenantSchemaTestCase):
     """Tests for :class:`AnalysisThresholdForm`."""
 
     def threshold_payload(self, **overrides: object) -> dict:

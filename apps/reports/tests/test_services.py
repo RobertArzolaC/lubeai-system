@@ -2,17 +2,18 @@
 
 from io import BytesIO
 
-from django.test import TestCase
 from openpyxl import load_workbook
 
+from apps.core.tests.base import TenantSchemaTestCase
 from apps.reports import factories, models
 from apps.reports.services import ReportExportService
 
 
-class ReportExportServiceTests(TestCase):
+class ReportExportServiceTests(TenantSchemaTestCase):
     """Tests for :class:`ReportExportService`."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.report = factories.ReportFactory()
         factories.LabAnalysisFactory(report=self.report)
 

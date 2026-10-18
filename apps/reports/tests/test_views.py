@@ -4,10 +4,11 @@ from io import BytesIO
 
 from django.conf import settings
 from django.contrib.auth.models import Permission
-from django.test import TestCase, override_settings
+from django.test import override_settings
 from django.urls import NoReverseMatch, reverse
 from openpyxl import load_workbook
 
+from apps.core.tests.base import TenantSchemaTestCase
 from apps.equipment import factories as equipment_factories
 from apps.reports import factories, models
 from apps.users import factories as users_factories
@@ -79,10 +80,11 @@ def report_payload(**overrides: object) -> dict:
 
 
 @override_settings(TEMPLATES=REPORTS_TEMPLATES)
-class LaboratoryViewTests(TestCase):
+class LaboratoryViewTests(TenantSchemaTestCase):
     """CRUD tests for the Laboratory views."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.user = users_factories.UserFactory()
         self.laboratory = factories.LaboratoryFactory(name="Acme Labs")
 
@@ -196,10 +198,11 @@ class LaboratoryViewTests(TestCase):
 
 
 @override_settings(TEMPLATES=REPORTS_TEMPLATES)
-class ReportViewTests(TestCase):
+class ReportViewTests(TenantSchemaTestCase):
     """CRUD tests for the Report views."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.user = users_factories.UserFactory()
         self.report = factories.ReportFactory(status="APPROVED", condition="NORMAL")
 
@@ -287,10 +290,11 @@ class ReportViewTests(TestCase):
 
 
 @override_settings(TEMPLATES=REPORTS_TEMPLATES)
-class AnalysisThresholdViewTests(TestCase):
+class AnalysisThresholdViewTests(TenantSchemaTestCase):
     """CRUD tests for the AnalysisThreshold views."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.user = users_factories.UserFactory()
         self.threshold = factories.AnalysisThresholdFactory()
 
@@ -362,10 +366,11 @@ class AnalysisThresholdViewTests(TestCase):
 
 
 @override_settings(TEMPLATES=REPORTS_TEMPLATES)
-class ReportExportViewTests(TestCase):
+class ReportExportViewTests(TenantSchemaTestCase):
     """Tests for the report export page, preview and download views."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.user = users_factories.UserFactory()
         self.report = factories.ReportFactory()
         factories.LabAnalysisFactory(report=self.report)
@@ -408,10 +413,11 @@ class ReportExportViewTests(TestCase):
 
 
 @override_settings(TEMPLATES=REPORTS_TEMPLATES)
-class ComponentAnalysisViewTests(TestCase):
+class ComponentAnalysisViewTests(TenantSchemaTestCase):
     """Tests for the component analysis page and its API endpoints."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.user = users_factories.UserFactory()
         self.machine = equipment_factories.MachineFactory()
         self.component = equipment_factories.ComponentFactory(machine=self.machine)

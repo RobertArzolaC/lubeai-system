@@ -3,17 +3,18 @@
 from datetime import date
 
 from constance.test import override_config
-from django.test import TestCase
 from django.urls import reverse
 
+from apps.core.tests.base import TenantSchemaTestCase
 from apps.equipment import factories as equipment_factories
 from apps.reports import factories, filtersets, models
 
 
-class LaboratoryFilterTests(TestCase):
+class LaboratoryFilterTests(TenantSchemaTestCase):
     """Tests for :class:`LaboratoryFilter`."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.laboratory = factories.LaboratoryFactory(name="Acme Labs", code="LAB-ACME")
         self.other = factories.LaboratoryFactory(name="Beta Labs", code="LAB-BETA")
 
@@ -43,10 +44,11 @@ class LaboratoryFilterTests(TestCase):
         self.assertNotIn(self.laboratory, filterset.qs)
 
 
-class ReportFilterTests(TestCase):
+class ReportFilterTests(TenantSchemaTestCase):
     """Tests for :class:`ReportFilter`."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.report = factories.ReportFactory(
             lab_number="LAB-AAA", status="APPROVED", condition="NORMAL"
         )
@@ -101,10 +103,11 @@ class ReportFilterTests(TestCase):
         self.assertIn("laboratory", filterset.filters)
 
 
-class AnalysisThresholdFilterTests(TestCase):
+class AnalysisThresholdFilterTests(TenantSchemaTestCase):
     """Tests for :class:`AnalysisThresholdFilter`."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.threshold = factories.AnalysisThresholdFactory(
             parameter="iron_fe", category="wear_metals", unit="ppm"
         )
@@ -134,7 +137,7 @@ class AnalysisThresholdFilterTests(TestCase):
         self.assertIn(self.threshold, filterset.qs)
 
 
-class ReportExportFilterTests(TestCase):
+class ReportExportFilterTests(TenantSchemaTestCase):
     """Tests for :class:`ReportExportFilter`."""
 
     def test_filter_by_date_range(self) -> None:
@@ -160,10 +163,11 @@ class ReportExportFilterTests(TestCase):
         self.assertNotIn("laboratory", filterset.filters)
 
 
-class ComponentAnalysisFilterTests(TestCase):
+class ComponentAnalysisFilterTests(TenantSchemaTestCase):
     """Tests for :class:`ComponentAnalysisFilter`."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.machine = equipment_factories.MachineFactory()
         self.other_machine = equipment_factories.MachineFactory()
         self.component = equipment_factories.ComponentFactory(machine=self.machine)

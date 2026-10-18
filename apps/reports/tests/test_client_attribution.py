@@ -3,9 +3,10 @@
 from types import SimpleNamespace
 
 from django.contrib.auth.models import Permission
-from django.test import RequestFactory, TestCase
+from django.test import RequestFactory
 from django.urls import reverse
 
+from apps.core.tests.base import TenantSchemaTestCase
 from apps.equipment import factories as equipment_factories
 from apps.organizations import choices
 from apps.organizations import factories as organization_factories
@@ -43,11 +44,12 @@ def list_context(view_class, user: user_models.User) -> dict:
     return view.get_context_data()
 
 
-class ReportClientAttributionTests(TestCase):
+class ReportClientAttributionTests(TenantSchemaTestCase):
     """Client attribution for the report list view and filter."""
 
     def setUp(self) -> None:
         """Build a lab with one final client."""
+        super().setUp()
         self.lab = organization_factories.OrganizationFactory(
             slug="ra-lab", kind=choices.OrganizationKind.LAB
         )
@@ -92,11 +94,12 @@ class ReportClientAttributionTests(TestCase):
         self.assertNotIn(report_lab.id, ids)
 
 
-class ReportClientColumnTemplateTests(TestCase):
+class ReportClientColumnTemplateTests(TenantSchemaTestCase):
     """The report list renders the Client column and filter for parent users."""
 
     def setUp(self) -> None:
         """Build a lab with one final client, each owning a report."""
+        super().setUp()
         self.lab = organization_factories.OrganizationFactory(
             slug="rct-lab", kind=choices.OrganizationKind.LAB
         )
@@ -125,11 +128,12 @@ class ReportClientColumnTemplateTests(TestCase):
         self.assertNotContains(response, 'id="id_organization"')
 
 
-class ThresholdClientAttributionTests(TestCase):
+class ThresholdClientAttributionTests(TenantSchemaTestCase):
     """Client attribution and scoping for the threshold list."""
 
     def setUp(self) -> None:
         """Build a lab, a child client and an unrelated tenant."""
+        super().setUp()
         self.lab = organization_factories.OrganizationFactory(
             slug="ta-lab", kind=choices.OrganizationKind.LAB
         )
@@ -223,11 +227,12 @@ class ThresholdClientAttributionTests(TestCase):
         self.assertEqual(ids, {self.final_threshold.id})
 
 
-class ThresholdClientColumnTemplateTests(TestCase):
+class ThresholdClientColumnTemplateTests(TenantSchemaTestCase):
     """The threshold list renders the Client column and filter for parent users."""
 
     def setUp(self) -> None:
         """Build a lab with one final client, each owning a threshold."""
+        super().setUp()
         self.lab = organization_factories.OrganizationFactory(
             slug="tct-lab", kind=choices.OrganizationKind.LAB
         )

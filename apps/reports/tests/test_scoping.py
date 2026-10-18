@@ -1,8 +1,9 @@
 """Tests for organization scoping on the report views."""
 
 from django.contrib.auth.models import Permission
-from django.test import RequestFactory, TestCase
+from django.test import RequestFactory
 
+from apps.core.tests.base import TenantSchemaTestCase
 from apps.organizations import choices
 from apps.organizations import factories as organization_factories
 from apps.reports import factories as report_factories
@@ -11,11 +12,12 @@ from apps.reports import views
 from apps.users import factories as user_factories
 
 
-class ReportListViewScopingTests(TestCase):
+class ReportListViewScopingTests(TenantSchemaTestCase):
     """The report list queryset is restricted to the user's subtree."""
 
     def setUp(self) -> None:
         """Create two tenants, each with a report and a permissioned user."""
+        super().setUp()
         self.tenant_a = organization_factories.OrganizationFactory(
             slug="sc-a", kind=choices.OrganizationKind.LAB
         )
@@ -32,9 +34,7 @@ class ReportListViewScopingTests(TestCase):
         user = user_factories.UserFactory()
         user.organization = organization
         user.save(update_fields=["organization"])
-        user.user_permissions.add(
-            *Permission.objects.filter(codename="view_report")
-        )
+        user.user_permissions.add(*Permission.objects.filter(codename="view_report"))
         return user
 
     def _queryset_ids(self, user):
@@ -56,15 +56,13 @@ class ReportListViewScopingTests(TestCase):
 
     def test_unscoped_user_sees_all_reports(self) -> None:
         """A user without an organization keeps legacy unrestricted access."""
-        self.assertEqual(
-            self._queryset_ids(self.user_a), {self.report_a.id}
-        )
+        self.assertEqual(self._queryset_ids(self.user_a), {self.report_a.id})
         legacy = user_factories.UserFactory()
         ids = self._queryset_ids(legacy)
         self.assertIn(self.report_b.id, ids)
 
 
-class ReportDetailScopingTests(TestCase):
+class ReportDetailScopingTests(TenantSchemaTestCase):
     """Cross-tenant access to a report detail is denied."""
 
     def test_other_tenant_report_detail_is_not_found(self) -> None:
@@ -89,4 +87,6 @@ class ReportDetailScopingTests(TestCase):
             reverse("apps.reports:report_detail", kwargs={"pk": foreign_report.pk})
         )
         self.assertEqual(response.status_code, 404)
-        self.assertTrue(report_models.Report.objects.filter(pk=foreign_report.pk).exists())
+        self.assertTrue(
+            report_models.Report.objects.filter(pk=foreign_report.pk).exists()
+        )
