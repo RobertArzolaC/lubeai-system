@@ -2,6 +2,7 @@ from pathlib import Path
 
 from decouple import Csv, config
 from dj_database_url import parse as db_url
+from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import gettext_lazy as _
 from dotenv import load_dotenv
 
@@ -17,28 +18,46 @@ DEBUG = config("DEBUG", default=True, cast=bool)
 
 SECRET_KEY = config("SECRET_KEY", default="secret-key")
 
-ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="*", cast=Csv())
+# Each client is served from its own subdomain: the leading dot is Django's
+# subdomain wildcard. Override ``ALLOWED_HOSTS`` with the real platform domain.
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", default=".midominio.com,localhost", cast=Csv())
 
 # Application definition
+#
+# The platform isolates clients with one PostgreSQL schema each. ``SHARED_APPS``
+# are migrated into the ``public`` schema (the tenant registry and reference
+# data); ``TENANT_APPS`` are migrated into every tenant schema. A tenant
+# connection searches ``<tenant>, public``, so a TENANT app may reference a
+# SHARED model but never the opposite: a SHARED model must not have a foreign
+# key to a TENANT model (see ``apps.tenancy.models.Tenant``, which deliberately
+# drops the project's ``created_by``/``updated_by`` mixin). An app listed in
+# both is installed in public and in every tenant schema.
 
-DJANGO_APPS = [
-    "django.contrib.admin",
-    "django.contrib.auth",
+SHARED_APPS = [
+    "django_tenants",
+    "apps.tenancy",
     "django.contrib.contenttypes",
+    "cities_light",
+    "constance",
+    "constance.backends.database",
+    # tenant-schemas-celery merges the periodic tasks of the public schema and
+    # of every tenant schema, so django-celery-beat needs its tables in both.
+    "django_celery_beat",
+]
+
+TENANT_APPS = [
+    "django.contrib.auth",
+    "django.contrib.admin",
     "django.contrib.sessions",
+    "django.contrib.sites",
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.humanize",
-    "django.contrib.sites",
-]
-
-THIRD_PARTY_APPS = [
-    "widget_tweaks",
-    "django_filters",
-    "constance",
-    "easyaudit",
     "allauth",
     "allauth.account",
+    "easyaudit",
+    "widget_tweaks",
+    "django_filters",
     "django_extensions",
     "rest_framework",
     "rest_framework.authtoken",
@@ -46,20 +65,20 @@ THIRD_PARTY_APPS = [
     "sesame",
     "dal",
     "dal_select2",
-    "cities_light",
     "tailwind",
+    "apps.core",
+    "apps.authentication",
+    "apps.users",
+    "apps.theme",
+    "apps.organizations",
+    "apps.equipment",
+    "apps.reports",
+    "apps.alerts",
+    "apps.dashboard",
 ]
 
-LOCAL_APPS = [
-    "apps.core.apps.CoreConfig",
-    "apps.organizations.apps.OrganizationsConfig",
-    "apps.authentication.apps.AuthenticationConfig",
-    "apps.users.apps.UsersConfig",
-    "apps.theme.apps.ThemeConfig",
-    "apps.equipment.apps.EquipmentConfig",
-    "apps.reports.apps.ReportsConfig",
-    "apps.alerts.apps.AlertsConfig",
-    "apps.dashboard.apps.DashboardConfig",
+INSTALLED_APPS = list(SHARED_APPS) + [
+    app for app in TENANT_APPS if app not in SHARED_APPS
 ]
 
 TAILWIND_APP_NAME = "apps.theme"
@@ -74,8 +93,6 @@ INTERNAL_IPS = [
     "127.0.0.1",
 ]
 
-INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
-
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -87,7 +104,6 @@ MIDDLEWARE = [
     "django.middleware.locale.LocaleMiddleware",
     "easyaudit.middleware.easyaudit.EasyAuditMiddleware",
     "allauth.account.middleware.AccountMiddleware",
-    "apps.organizations.middleware.TenantMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -117,10 +133,26 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
+#
+# PostgreSQL is mandatory in every environment (development and tests included):
+# the tenant backend below swaps the search path per request and has no SQLite
+# support, so there is deliberately no SQLite fallback. ``DATABASE_URL`` is
+# provided by docker compose in the containers.
 
-DATABASES = {
-    "default": config("DATABASE_URL", default="sqlite:///db.sqlite3", cast=db_url)
-}
+DATABASE_URL = config("DATABASE_URL", default="")
+
+if not DATABASE_URL.startswith(("postgres://", "postgresql://", "psql://")):
+    raise ImproperlyConfigured(
+        "DATABASE_URL must point to a PostgreSQL database; SQLite is not "
+        "supported by the schema-per-tenant backend."
+    )
+
+DATABASES = {"default": db_url(DATABASE_URL)}
+DATABASES["default"]["ENGINE"] = "django_tenants.postgresql_backend"
+
+# Routes every migration to the right schema: SHARED_APPS to ``public`` and
+# TENANT_APPS to the tenant schema being migrated.
+DATABASE_ROUTERS = ("django_tenants.routers.TenantSyncRouter",)
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -183,14 +215,21 @@ CITIES_LIGHT_TRANSLATION_LANGUAGES = ["es", "en"]
 CITIES_LIGHT_INCLUDE_COUNTRIES = ["PE"]
 
 # Tenancy settings
-# https://docs.djangoproject.com/en/5.0/ref/settings/
+# https://django-tenants.readthedocs.io/en/latest/install.html
+#
+# The tenant registry and its domains live in the ``public`` schema and replace
+# the former subdomain/``DEFAULT_TENANT_SLUG`` resolution. A host that matches
+# no ``Domain`` must answer 404, so ``SHOW_PUBLIC_IF_NO_TENANT_FOUND`` stays off
+# and there is no fallback tenant. ``PUBLIC_SCHEMA_URLCONF`` is the public
+# landing page, which has no session and no admin.
 
-# Base domain used to resolve a tenant from a subdomain (e.g. ``marco`` in
-# ``marco.example.com``). Empty disables subdomain resolution.
-TENANT_BASE_DOMAIN = config("TENANT_BASE_DOMAIN", default="")
+TENANT_MODEL = "tenancy.Tenant"
+TENANT_DOMAIN_MODEL = "tenancy.Domain"
 
-# Fallback tenant slug used when no subdomain matches (local development).
-DEFAULT_TENANT_SLUG = config("DEFAULT_TENANT_SLUG", default="marco")
+PUBLIC_SCHEMA_URLCONF = "config.urls_public"
+
+# Skip redundant ``SET search_path`` statements when the path is already right.
+TENANT_LIMIT_SET_CALLS = True
 
 # Django Allauth settings
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
