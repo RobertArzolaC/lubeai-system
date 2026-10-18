@@ -4,10 +4,11 @@ from datetime import date, timedelta
 
 from django.conf import settings
 from django.db import connection, models
-from django.test import TestCase, TransactionTestCase
+from django.test import TestCase
 from django.utils import timezone
 
 from apps.core import models as core_models
+from apps.core.tests.base import TenantSchemaTestCase
 from apps.users.factories import UserFactory
 
 
@@ -90,17 +91,29 @@ class PersonPropertiesTests(TestCase):
         self.assertIsNone(self.person.age)
 
 
-class StatusHistoryTests(TransactionTestCase):
+class StatusHistoryTests(TenantSchemaTestCase):
     """Tests for the abstract :class:`StatusHistory` model."""
 
     @classmethod
     def setUpClass(cls) -> None:
+        """Create the ad-hoc table inside the tenant schema.
+
+        ``ConcreteStatusHistory`` is declared only for these tests, so the
+        tenant migrations do not create it. ``TenantTestCase.setUpClass``
+        selects the tenant schema first (so the table — and the foreign key to
+        ``users_user`` — are created where the rest of the schema lives), and
+        the DDL is committed rather than rolled back per test, so the table is
+        available to every test method and removed with the schema at class
+        teardown.
+        """
         super().setUpClass()
         with connection.schema_editor() as editor:
             editor.create_model(ConcreteStatusHistory)
 
     @classmethod
     def tearDownClass(cls) -> None:
+        """Drop the ad-hoc table before the schema itself is destroyed."""
+        connection.set_tenant(cls.tenant)
         with connection.schema_editor() as editor:
             editor.delete_model(ConcreteStatusHistory)
         super().tearDownClass()
@@ -190,7 +203,7 @@ class BrokenStatusHistory(core_models.StatusHistory):
         app_label = "core"
 
 
-class StatusHistoryContractsTests(TestCase):
+class StatusHistoryContractsTests(TenantSchemaTestCase):
     """Tests for the required subclass contracts."""
 
     def test_create_status_change_requires_parent_kwargs(self) -> None:

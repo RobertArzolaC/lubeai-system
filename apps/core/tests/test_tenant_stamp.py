@@ -2,9 +2,8 @@
 
 from types import SimpleNamespace
 
-from django.test import TestCase
-
 from apps.core.mixins.forms import UserStampMixin
+from apps.core.tests.base import TenantSchemaTestCase
 from apps.equipment import factories as equipment_factories
 from apps.organizations import choices
 from apps.organizations import factories as organization_factories
@@ -12,11 +11,12 @@ from apps.reports import models as report_models
 from apps.users import factories as user_factories
 
 
-class AssignOrganizationTests(TestCase):
+class AssignOrganizationTests(TenantSchemaTestCase):
     """Created tenant-owned instances inherit the right organization."""
 
     def setUp(self) -> None:
         """Build two organizations and a scoped user."""
+        super().setUp()
         self.organization = organization_factories.OrganizationFactory(
             slug="stamp-a", kind=choices.OrganizationKind.LAB
         )

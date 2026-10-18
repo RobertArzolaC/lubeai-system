@@ -3,11 +3,12 @@
 from django.contrib.auth.models import AnonymousUser
 from django.core.cache import cache
 from django.http import HttpResponse
-from django.test import RequestFactory, TestCase, override_settings
+from django.test import RequestFactory, override_settings
 from django.urls import path
 from django.views import View
 
 from apps.core.mixins.cache import CacheMixin
+from apps.core.tests.base import TenantSchemaTestCase
 from apps.users.factories import UserFactory
 
 
@@ -29,10 +30,11 @@ urlpatterns = [
 
 
 @override_settings(ROOT_URLCONF=__name__)
-class CacheMixinTests(TestCase):
+class CacheMixinTests(TenantSchemaTestCase):
     """Tests for the :class:`CacheMixin`."""
 
     def setUp(self) -> None:
+        super().setUp()
         cache.clear()
         CountingCachedView.counter = 0
         self.factory = RequestFactory()

@@ -2,10 +2,11 @@
 
 import json
 
-from django.test import RequestFactory, TestCase
+from django.test import RequestFactory
 from django.urls import reverse
 
 from apps.core import mixins as core_mixins
+from apps.core.tests.base import TenantSchemaTestCase
 from apps.equipment import factories as equipment_factories
 from apps.equipment import models as equipment_models
 from apps.users.factories import UserFactory
@@ -56,10 +57,11 @@ def parse_json(response) -> dict:
     return json.loads(response.content)
 
 
-class BaseListViewPaginationTests(TestCase):
+class BaseListViewPaginationTests(TenantSchemaTestCase):
     """Tests for the pagination behavior of :class:`BaseListView`."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.factory = RequestFactory()
 
     def build_view(self, view_class, query: str = ""):
@@ -114,10 +116,11 @@ class BaseListViewPaginationTests(TestCase):
         )
 
 
-class BaseDeleteViewTests(TestCase):
+class BaseDeleteViewTests(TenantSchemaTestCase):
     """Tests for :class:`BaseDeleteView` behavior."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.user = UserFactory(is_staff=True, is_superuser=True)
         self.factory = RequestFactory()
 
@@ -158,7 +161,7 @@ class BaseDeleteViewTests(TestCase):
         self.assertEqual(parse_json(response)["status"], "error")
 
 
-class ClientAttributionMixinTests(TestCase):
+class ClientAttributionMixinTests(TenantSchemaTestCase):
     """The mixin joins the configured client attribution path."""
 
     def test_default_path_joins_organization(self) -> None:

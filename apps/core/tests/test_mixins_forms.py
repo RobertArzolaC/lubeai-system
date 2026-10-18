@@ -3,11 +3,12 @@
 from django import forms
 from django.db import connection
 from django.http import HttpResponse
-from django.test import RequestFactory, TransactionTestCase
+from django.test import RequestFactory
 from django.views.generic import CreateView
 
 from apps.core import models as core_models
 from apps.core.mixins.forms import UserStampMixin
+from apps.core.tests.base import TenantSchemaTestCase
 from apps.users.factories import UserFactory
 
 
@@ -34,22 +35,32 @@ class StampedCreateView(UserStampMixin, CreateView):
     success_url = "/"
 
 
-class UserStampMixinTests(TransactionTestCase):
+class UserStampMixinTests(TenantSchemaTestCase):
     """Tests for the :class:`UserStampMixin`."""
 
     @classmethod
     def setUpClass(cls) -> None:
+        """Create the ad-hoc table inside the tenant schema.
+
+        ``StampedThing`` is declared only for these tests, so the tenant
+        migrations do not create it; it is created after
+        ``TenantTestCase.setUpClass`` has selected the tenant schema, and lasts
+        for the whole class (the DDL is committed, not rolled back per test).
+        """
         super().setUpClass()
         with connection.schema_editor() as editor:
             editor.create_model(StampedThing)
 
     @classmethod
     def tearDownClass(cls) -> None:
+        """Drop the ad-hoc table before the schema itself is destroyed."""
+        connection.set_tenant(cls.tenant)
         with connection.schema_editor() as editor:
             editor.delete_model(StampedThing)
         super().tearDownClass()
 
     def setUp(self) -> None:
+        super().setUp()
         self.admin = UserFactory(is_staff=True, is_superuser=True)
         self.factory = RequestFactory()
 
