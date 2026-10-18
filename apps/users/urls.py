@@ -20,23 +20,6 @@ urlpatterns = [
         views.UserDeleteView.as_view(),
         name="user_delete",
     ),
-    # Accounts URLs
-    path("accounts/", views.AccountListView.as_view(), name="account_list"),
-    path(
-        "accounts/create/",
-        views.AccountCreateView.as_view(),
-        name="account_create",
-    ),
-    path(
-        "accounts/update/<int:pk>/",
-        views.AccountUpdateView.as_view(),
-        name="account_update",
-    ),
-    path(
-        "accounts/<int:pk>/delete/",
-        views.AccountDeleteView.as_view(),
-        name="account_delete",
-    ),
     # Roles URLs
     path("roles/", views.RoleListView.as_view(), name="role_list"),
     path("roles/create/", views.RoleCreateView.as_view(), name="role_create"),

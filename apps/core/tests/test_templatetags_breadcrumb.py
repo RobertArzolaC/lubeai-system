@@ -77,20 +77,20 @@ class BreadcrumbTests(TestCase):
         path = reverse("apps.alerts:alert_list")
         self.assertEqual(self._titles(path), ["Tablero", "Alertas"])
 
-    def test_account_list(self) -> None:
-        """Accounts list uses its translated label."""
-        path = reverse("apps.users:account_list")
-        self.assertEqual(self._titles(path), ["Tablero", "Cuentas"])
+    def test_user_list(self) -> None:
+        """Users list uses its translated label."""
+        path = reverse("apps.users:user_list")
+        self.assertEqual(self._titles(path), ["Tablero", "Usuarios"])
 
-    def test_account_update_trail(self) -> None:
-        """The account update URL (action before pk) resolves the action."""
-        path = reverse("apps.users:account_update", kwargs={"pk": 1})
-        self.assertEqual(self._titles(path), ["Tablero", "Cuentas", "Actualizar"])
+    def test_user_update_trail(self) -> None:
+        """The user update URL resolves the entity and the action."""
+        path = reverse("apps.users:user_update", kwargs={"pk": 1})
+        self.assertEqual(self._titles(path), ["Tablero", "Usuarios", "Actualizar"])
 
     def test_profile(self) -> None:
-        """Standalone pages use their special label."""
+        """The profile lives under the users section and keeps its label."""
         path = reverse("apps.users:profile")
-        self.assertEqual(self._titles(path), ["Tablero", "Perfil"])
+        self.assertEqual(self._titles(path), ["Tablero", "Usuarios", "Perfil"])
 
     def test_unknown_path_keeps_dashboard_crumb(self) -> None:
         """Unresolvable path segments are skipped gracefully."""

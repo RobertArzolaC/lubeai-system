@@ -146,19 +146,19 @@
                         <tbody>
                             <tr>
                                 <td class="py-3 px-4 border-b border-[#eee] dark:border-strokedark">
-                                    <p class="text-black dark:text-white font-medium">{% trans "Accounts" %}</p>
+                                    <p class="text-black dark:text-white font-medium">{% trans "Users" %}</p>
                                 </td>
                                 <td class="py-3 px-2 border-b border-[#eee] dark:border-strokedark text-center">
-                                    {% if perms.users.view_account %}<span class="text-meta-3 text-xl">●</span>{% else %}<span class="text-meta-1 text-xl">○</span>{% endif %}
+                                    {% if perms.users.view_user %}<span class="text-meta-3 text-xl">●</span>{% else %}<span class="text-meta-1 text-xl">○</span>{% endif %}
                                 </td>
                                 <td class="py-3 px-2 border-b border-[#eee] dark:border-strokedark text-center">
-                                    {% if perms.users.add_account %}<span class="text-meta-3 text-xl">●</span>{% else %}<span class="text-meta-1 text-xl">○</span>{% endif %}
+                                    {% if perms.users.add_user %}<span class="text-meta-3 text-xl">●</span>{% else %}<span class="text-meta-1 text-xl">○</span>{% endif %}
                                 </td>
                                 <td class="py-3 px-2 border-b border-[#eee] dark:border-strokedark text-center">
-                                    {% if perms.users.change_account %}<span class="text-meta-3 text-xl">●</span>{% else %}<span class="text-meta-1 text-xl">○</span>{% endif %}
+                                    {% if perms.users.change_user %}<span class="text-meta-3 text-xl">●</span>{% else %}<span class="text-meta-1 text-xl">○</span>{% endif %}
                                 </td>
                                 <td class="py-3 px-2 border-b border-[#eee] dark:border-strokedark text-center">
-                                    {% if perms.users.delete_account %}<span class="text-meta-3 text-xl">●</span>{% else %}<span class="text-meta-1 text-xl">○</span>{% endif %}
+                                    {% if perms.users.delete_user %}<span class="text-meta-3 text-xl">●</span>{% else %}<span class="text-meta-1 text-xl">○</span>{% endif %}
                                 </td>
                             </tr>
                         </tbody>

@@ -3783,3 +3783,15 @@ msgstr "No puedes usar ese cliente."
 
 msgid "The branch does not belong to the selected client."
 msgstr "La sucursal no pertenece al cliente seleccionado."
+
+msgid "Users"
+msgstr "Usuarios"
+
+msgid "Roles"
+msgstr "Roles"
+
+msgid "Role"
+msgstr "Rol"
+
+msgid "Clients"
+msgstr "Clientes"

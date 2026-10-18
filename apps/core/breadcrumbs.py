@@ -20,7 +20,9 @@ ENTITY_LABELS: Final[dict[str, str]] = {
     "report": _("Reports"),
     "analysisthreshold": _("Thresholds"),
     "alert": _("Alerts"),
-    "account": _("Accounts"),
+    "user": _("Users"),
+    "role": _("Roles"),
+    "organization": _("Organizations"),
 }
 
 # Action labels appended after the entity crumb.
