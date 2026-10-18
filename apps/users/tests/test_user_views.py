@@ -62,7 +62,6 @@ class UserViewTests(TestCase):
         user = users_models.User.objects.get(email="nuevo@example.com")
         self.assertEqual(user.organization, self.child)
         self.assertIn(role.group, user.groups.all())
-        self.assertTrue(users_models.Account.objects.filter(user=user).exists())
 
     def test_create_form_renders(self) -> None:
         """The create form renders for authorized users."""

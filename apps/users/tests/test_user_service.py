@@ -6,7 +6,6 @@ from django.core.exceptions import ValidationError
 from django.test import TestCase
 
 from apps.organizations.factories import OrganizationFactory
-from apps.users import models as users_models
 from apps.users.factories import RoleFactory, UserFactory
 from apps.users.services import UserService
 
@@ -18,8 +17,8 @@ class UserServiceTests(TestCase):
         self.organization = OrganizationFactory()
         self.actor = UserFactory(organization=self.organization)
 
-    def test_create_builds_user_account_and_email(self) -> None:
-        """Creating a user also provisions an account and a pending email."""
+    def test_create_builds_user_and_email(self) -> None:
+        """Creating a user also provisions a pending email address."""
         user = UserService().create_user(
             actor=self.actor,
             email="nuevo@example.com",
@@ -27,7 +26,6 @@ class UserServiceTests(TestCase):
             last_name="Usuario",
             organization=self.organization,
         )
-        self.assertTrue(users_models.Account.objects.filter(user=user).exists())
         self.assertTrue(EmailAddress.objects.filter(user=user, verified=False).exists())
 
     def test_create_assigns_organization_and_roles(self) -> None:

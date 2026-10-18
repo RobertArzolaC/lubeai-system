@@ -38,23 +38,6 @@ class UserFactory(factory.django.DjangoModelFactory):
             self.save(update_fields=["password"])
 
 
-class AccountFactory(factory.django.DjangoModelFactory):
-    """Factory that reuses the ``Account`` auto-created by the user signal."""
-
-    class Meta:
-        model = models.Account
-
-    user = factory.SubFactory(UserFactory)
-
-    @classmethod
-    def _create(cls, model_class, *args, **kwargs):
-        user = kwargs.pop("user")
-        account, _created = model_class.objects.get_or_create(
-            user=user, defaults=kwargs
-        )
-        return account
-
-
 class RoleFactory(factory.django.DjangoModelFactory):
     """Factory for the tenant-scoped :class:`models.Role` model."""
 

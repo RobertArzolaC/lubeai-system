@@ -220,7 +220,6 @@ class UserService:
             user.is_active = is_active
             user.save()
 
-            models.Account.objects.get_or_create(user=user)
             email_address, _created = EmailAddress.objects.get_or_create(
                 user=user,
                 email=user.email,

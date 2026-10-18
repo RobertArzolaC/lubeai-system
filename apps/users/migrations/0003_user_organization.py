@@ -5,16 +5,23 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('organizations', '0001_initial'),
-        ('users', '0002_account'),
+        ("organizations", "0001_initial"),
+        ("users", "0002_account"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='user',
-            name='organization',
-            field=models.ForeignKey(blank=True, help_text='Tenant/client organization this user belongs to', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='users', to='organizations.organization', verbose_name='Organization'),
+            model_name="user",
+            name="organization",
+            field=models.ForeignKey(
+                blank=True,
+                help_text="Tenant/client organization this user belongs to",
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="users",
+                to="organizations.organization",
+                verbose_name="Organization",
+            ),
         ),
     ]

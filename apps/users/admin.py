@@ -168,17 +168,3 @@ class RoleAdmin(admin.ModelAdmin):
     search_fields = ("name", "slug")
     autocomplete_fields: ClassVar[list[str]] = ["organization"]
     readonly_fields = ("created", "modified")
-
-
-@admin.register(models.Account)
-class AccountAdmin(admin.ModelAdmin):
-    list_display = (
-        "user",
-        "full_name",
-    )
-    search_fields = (
-        "user__first_name",
-        "user__last_name",
-    )
-    autocomplete_fields: ClassVar[list[str]] = ["user"]
-    exclude = ("is_removed",)
