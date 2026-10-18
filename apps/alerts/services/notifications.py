@@ -55,10 +55,10 @@ class AlertNotificationService:
     def _send_email(self) -> dict[str, Any]:
         """Notify recipients by email, respecting ``ENABLE_SEND_EMAIL``.
 
-        Recipients are the active accounts whose user has ``alerts.view_alert``
-        and whose organization can see the alert (the alert's organization or
-        one of its ancestors). This keeps notifications inside the owning
-        tenant; users of other tenants are never notified.
+        Recipients are the active users that have ``alerts.view_alert`` and
+        whose organization can see the alert (the alert's organization or one
+        of its ancestors). This keeps notifications inside the owning tenant;
+        users of other tenants are never notified.
         """
         if not config.ENABLE_SEND_EMAIL:
             logger.info("Email sending is disabled via ENABLE_SEND_EMAIL")
@@ -76,32 +76,30 @@ class AlertNotificationService:
         if not alert_organization_ids:
             return {"sent": 0, "errors": []}
 
-        recipients = user_models.Account.objects.filter(
-            user__is_active=True,
-            is_removed=False,
-            user__organization_id__in=self._recipient_organization_ids(
+        recipients = user_models.User.objects.filter(
+            is_active=True,
+            organization_id__in=self._recipient_organization_ids(
                 alert_organization_ids
             ),
-        ).select_related("user", "user__organization")
+        ).select_related("organization")
 
         sent = 0
         errors: list[dict[str, Any]] = []
-        for account in recipients:
-            user = account.user
+        for user in recipients:
             if not user.has_perm("alerts.view_alert"):
                 continue
 
             visible_ids = scoping.user_visible_organization_ids(user)
-            account_alerts = (
+            visible_alerts = (
                 alerts
                 if visible_ids is None
                 else alerts.filter(organization_id__in=visible_ids)
             )
-            if not account_alerts.exists():
+            if not visible_alerts.exists():
                 continue
 
             try:
-                self._dispatch_email(account_alerts, account)
+                self._dispatch_email(visible_alerts, user)
                 sent += 1
             except Exception as exc:
                 logger.exception("Email alert error for %s", user.email)
@@ -122,14 +120,12 @@ class AlertNotificationService:
         recipient_ids: set[int] = set()
         for organization in organizations:
             recipient_ids.add(organization.id)
-            recipient_ids.update(
-                ancestor.id for ancestor in organization.ancestors()
-            )
+            recipient_ids.update(ancestor.id for ancestor in organization.ancestors())
         return recipient_ids
 
     @staticmethod
-    def _dispatch_email(alerts: QuerySet, account: user_models.Account) -> None:
-        """Render and send the alert notification email to a single account."""
+    def _dispatch_email(alerts: QuerySet, user: user_models.User) -> None:
+        """Render and send the alert notification email to a single user."""
         html_content = render_to_string(
             "alerts/email/alert_notification.html", {"alerts": alerts}
         )
@@ -144,9 +140,9 @@ class AlertNotificationService:
         email_message = EmailMultiAlternatives(
             subject=_("[%(brand)s] Alerta: condición detectada") % {"brand": brand},
             body=text_content,
-            to=[account.user.email],
+            to=[user.email],
         )
         email_message.attach_alternative(html_content, "text/html")
         email_message.send(fail_silently=False)
 
-        logger.info("Alert notification email sent to %s", account.user.email)
+        logger.info("Alert notification email sent to %s", user.email)

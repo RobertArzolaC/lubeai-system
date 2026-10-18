@@ -65,6 +65,23 @@ class AlertNotificationScopingTests(TestCase):
         AlertNotificationService([self.alert_a.pk]).send()
         self.assertNotIn(self.user_b_final.email, self._recipient_emails())
 
+    def test_active_user_without_account_profile_is_notified(self) -> None:
+        """Recipients are active users, independent of the Account profile."""
+        user = self._permissioned_user(self.final_a)
+        user.account.delete()  # soft-delete the profile, keep the user active
+        mail.outbox.clear()
+        AlertNotificationService([self.alert_a.pk]).send()
+        self.assertIn(user.email, self._recipient_emails())
+
+    def test_inactive_user_is_not_notified(self) -> None:
+        """A deactivated user never receives alert emails."""
+        user = self._permissioned_user(self.final_a)
+        user.is_active = False
+        user.save(update_fields=["is_active"])
+        mail.outbox.clear()
+        AlertNotificationService([self.alert_a.pk]).send()
+        self.assertNotIn(user.email, self._recipient_emails())
+
     def test_users_without_permission_are_not_notified(self) -> None:
         """A user without ``view_alert`` is skipped."""
         user = user_factories.UserFactory()
