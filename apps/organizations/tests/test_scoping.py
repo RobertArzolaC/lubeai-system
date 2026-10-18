@@ -3,6 +3,7 @@
 from django.test import TestCase
 
 from apps.organizations import choices, factories, scoping
+from apps.organizations import models as organization_models
 from apps.reports import models as report_models
 from apps.users import factories as user_factories
 
@@ -157,3 +158,65 @@ class VisibleOrganizationsTests(TestCase):
         self.assertTrue(scoping.is_organization_visible(user, self.final))
         self.assertFalse(scoping.is_organization_visible(user, self.lab))
         self.assertFalse(scoping.is_organization_visible(user, None))
+
+
+class VisibleOrganizationsStrictChildrenTests(TestCase):
+    """``include_self=False`` excludes the user's own organization."""
+
+    def setUp(self) -> None:
+        """Build a lab with one final client."""
+        self.lab = factories.OrganizationFactory(
+            slug="vc-lab", kind=choices.OrganizationKind.LAB
+        )
+        self.final = factories.OrganizationFactory(
+            slug="vc-final", kind=choices.OrganizationKind.FINAL, parent=self.lab
+        )
+
+    def _user_for(self, organization):
+        """Return a persisted user belonging to ``organization``."""
+        user = user_factories.UserFactory()
+        user.organization = organization
+        user.save(update_fields=["organization"])
+        return user
+
+    def test_exclude_self_returns_only_descendants(self) -> None:
+        """A parent user only sees its descendants in the strict listing."""
+        user = self._user_for(self.lab)
+        ids = set(
+            scoping.visible_organizations(user, include_self=False).values_list(
+                "id", flat=True
+            )
+        )
+        self.assertEqual(ids, {self.final.id})
+
+    def test_include_self_keeps_own_organization(self) -> None:
+        """The default keeps the user's own organization in the listing."""
+        user = self._user_for(self.lab)
+        ids = set(
+            scoping.visible_organizations(user, include_self=True).values_list(
+                "id", flat=True
+            )
+        )
+        self.assertEqual(ids, {self.lab.id, self.final.id})
+
+    def test_exclude_self_leaf_returns_nothing(self) -> None:
+        """A leaf user has no descendants."""
+        user = self._user_for(self.final)
+        self.assertFalse(
+            scoping.visible_organizations(user, include_self=False).exists()
+        )
+
+    def test_exclude_self_unrestricted_returns_all(self) -> None:
+        """An unrestricted user still sees every organization."""
+        user = user_factories.UserFactory()
+        ids = set(
+            scoping.visible_organizations(user, include_self=False).values_list(
+                "id", flat=True
+            )
+        )
+        self.assertEqual(
+            ids,
+            set(organization_models.Organization.objects.values_list("id", flat=True)),
+        )
+        self.assertIn(self.lab.id, ids)
+        self.assertIn(self.final.id, ids)

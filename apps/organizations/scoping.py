@@ -100,11 +100,16 @@ def scope_choices(filterset, mapping: dict) -> None:
             filterset.filters[name].queryset = scope_queryset(queryset, request.user)
 
 
-def visible_organizations(user) -> QuerySet:
+def visible_organizations(user, *, include_self: bool = True) -> QuerySet:
     """Return the organizations ``user`` may act upon.
 
     Unrestricted users get every organization; everyone else gets their own
     subtree (their organization and its descendants).
+
+    Args:
+        user: The request user (may be anonymous).
+        include_self: When ``False`` the user's own organization is excluded,
+            leaving only its descendants. Unrestricted users are unaffected.
     """
     from apps.organizations import models as organization_models
 
@@ -112,6 +117,14 @@ def visible_organizations(user) -> QuerySet:
     visible_ids = user_visible_organization_ids(user)
     if visible_ids is None:
         return queryset
+    if not include_self:
+        organization = getattr(user, "organization", None)
+        if organization is None:
+            return queryset.none()
+        descendant_ids = organization.descendants(include_self=False).values_list(
+            "id", flat=True
+        )
+        return queryset.filter(pk__in=descendant_ids)
     return queryset.filter(pk__in=visible_ids)
 
 
@@ -135,7 +148,9 @@ def can_choose_organization(user) -> bool:
     return visible_ids is None or len(visible_ids) > 1
 
 
-def scope_organization_filter(filterset, name: str = "organization") -> None:
+def scope_organization_filter(
+    filterset, name: str = "organization", *, include_self: bool = True
+) -> None:
     """Scope (or drop) a FilterSet's organization filter for its request user.
 
     No-op when the FilterSet was built without a request (e.g. direct use in
@@ -144,6 +159,8 @@ def scope_organization_filter(filterset, name: str = "organization") -> None:
     Args:
         filterset: The bound FilterSet instance.
         name: Name of the organization filter on the FilterSet.
+        include_self: Forwarded to :func:`visible_organizations`. Pass ``False``
+            to list only the user's descendants.
     """
     if name not in filterset.filters:
         return
@@ -153,4 +170,6 @@ def scope_organization_filter(filterset, name: str = "organization") -> None:
     if not can_choose_organization(request.user):
         del filterset.filters[name]
         return
-    filterset.filters[name].queryset = visible_organizations(request.user)
+    filterset.filters[name].queryset = visible_organizations(
+        request.user, include_self=include_self
+    )

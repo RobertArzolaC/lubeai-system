@@ -128,7 +128,7 @@ class LaboratoryDeleteView(core_mixins.BaseDeleteView):
 # ============================================================================
 
 
-class ReportListView(core_mixins.BaseListView):
+class ReportListView(core_mixins.ClientAttributionMixin, core_mixins.BaseListView):
     """List view for the Report model."""
 
     model = models.Report
@@ -360,7 +360,9 @@ class ReportExportDownloadView(ReportExportQueryMixin, View):
 # ============================================================================
 
 
-class AnalysisThresholdListView(core_mixins.BaseListView):
+class AnalysisThresholdListView(
+    core_mixins.ClientAttributionMixin, core_mixins.BaseListView
+):
     """List view for AnalysisThreshold model."""
 
     model = models.AnalysisThreshold
@@ -368,10 +370,20 @@ class AnalysisThresholdListView(core_mixins.BaseListView):
     filterset_class = filtersets.AnalysisThresholdFilter
     template_name = "reports/analysis_threshold/list.html"
     context_object_name = "thresholds"
+    client_organization_path = "component_type__organization"
 
     def get_queryset(self) -> QuerySet:
-        """Return thresholds with the related component type preloaded."""
-        return super().get_queryset().select_related("component_type")
+        """Return the subtree thresholds plus the global defaults."""
+        queryset = super().get_queryset()
+        visible = scoping.user_visible_organization_ids(
+            scoping.request_user(getattr(self, "request", None))
+        )
+        if visible is None:
+            return queryset
+        return queryset.filter(
+            Q(component_type__isnull=True)
+            | Q(component_type__organization_id__in=visible)
+        )
 
     def get_context_data(self, **kwargs: Any) -> dict:
         """Add entity names and navigation URLs."""

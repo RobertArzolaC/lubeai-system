@@ -67,13 +67,13 @@
         </div>
 
         <!-- Advanced filters disclosure -->
-        {% with lab=filter.form.laboratory.value mach=filter.form.machine.value comp=filter.form.component.value act=filter.form.is_active.value %}
-        <details class="group rounded-xl border border-stroke bg-gray-2/40 dark:border-strokedark dark:bg-meta-4/20" {% if lab or mach or comp or act %}open{% endif %}>
+        {% with lab=filter.form.laboratory.value org=filter.form.organization.value mach=filter.form.machine.value comp=filter.form.component.value act=filter.form.is_active.value %}
+        <details class="group rounded-xl border border-stroke bg-gray-2/40 dark:border-strokedark dark:bg-meta-4/20" {% if lab or org or mach or comp or act %}open{% endif %}>
             <summary class="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 [&::-webkit-details-marker]:hidden">
                 <span class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-bodydark2">
                     <i data-lucide="filter" class="h-4 w-4" stroke-width="1.8" aria-hidden="true"></i>
                     {% trans "Advanced filters" %}
-                    {% if lab or mach or comp or act %}
+                    {% if lab or org or mach or comp or act %}
                     <span class="h-2 w-2 rounded-full bg-primary" aria-hidden="true"></span>
                     {% endif %}
                 </span>
@@ -86,15 +86,21 @@
                     {% render_field filter.form.laboratory class="w-full rounded-xl border border-stroke bg-white py-3 px-4 text-sm font-semibold text-black outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/5 dark:border-form-strokedark dark:bg-meta-4 dark:text-white" %}
                 </div>
                 {% endif %}
-                <div class="md:col-span-{% if config.ENABLE_LABS %}3{% else %}4{% endif %}">
+                {% if show_organization %}
+                <div class="md:col-span-3">
+                    <label for="id_organization" class="mb-2.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{{ filter.form.organization.label }}</label>
+                    {% render_field filter.form.organization class="w-full rounded-xl border border-stroke bg-white py-3 px-4 text-sm font-semibold text-black outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/5 dark:border-form-strokedark dark:bg-meta-4 dark:text-white" %}
+                </div>
+                {% endif %}
+                <div class="md:col-span-{% if config.ENABLE_LABS %}{% if show_organization %}2{% else %}3{% endif %}{% else %}{% if show_organization %}3{% else %}4{% endif %}{% endif %}">
                     <label for="id_machine" class="mb-2.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{{ filter.form.machine.label }}</label>
                     {% render_field filter.form.machine class="w-full rounded-xl border border-stroke bg-white py-3 px-4 text-sm font-semibold text-black outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/5 dark:border-form-strokedark dark:bg-meta-4 dark:text-white" %}
                 </div>
-                <div class="md:col-span-{% if config.ENABLE_LABS %}3{% else %}4{% endif %}">
+                <div class="md:col-span-{% if config.ENABLE_LABS %}{% if show_organization %}2{% else %}3{% endif %}{% else %}{% if show_organization %}3{% else %}4{% endif %}{% endif %}">
                     <label for="id_component" class="mb-2.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{{ filter.form.component.label }}</label>
                     {% render_field filter.form.component class="w-full rounded-xl border border-stroke bg-white py-3 px-4 text-sm font-semibold text-black outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/5 dark:border-form-strokedark dark:bg-meta-4 dark:text-white" %}
                 </div>
-                <div class="md:col-span-{% if config.ENABLE_LABS %}3{% else %}4{% endif %}">
+                <div class="md:col-span-{% if config.ENABLE_LABS %}{% if show_organization %}2{% else %}3{% endif %}{% else %}{% if show_organization %}3{% else %}4{% endif %}{% endif %}">
                     <label for="id_is_active" class="mb-2.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{{ filter.form.is_active.label }}</label>
                     {% render_field filter.form.is_active class="w-full rounded-xl border border-stroke bg-white py-3 px-4 text-sm font-semibold text-black outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/5 dark:border-form-strokedark dark:bg-meta-4 dark:text-white" %}
                 </div>
@@ -115,10 +121,15 @@
 <!-- Table Container -->
 <div class="overflow-hidden rounded-2xl border border-stroke bg-white shadow-sm dark:border-strokedark dark:bg-boxdark">
     <div class="grid grid-cols-12 border-b border-stroke bg-gray-2/50 py-5 px-6 dark:border-strokedark dark:bg-meta-4/30">
-        <div class="col-span-{% if config.ENABLE_LABS %}2{% else %}3{% endif %} flex items-center">
+        <div class="col-span-{% if config.ENABLE_LABS or show_organization %}2{% else %}3{% endif %} flex items-center">
             <p class="text-xs font-bold uppercase tracking-widest text-black dark:text-white">{% trans "Report" %}</p>
         </div>
-        <div class="col-span-{% if config.ENABLE_LABS %}2{% else %}3{% endif %} flex items-center">
+        {% if show_organization %}
+        <div class="col-span-2 flex items-center">
+            <p class="text-xs font-bold uppercase tracking-widest text-black dark:text-white">{% trans "Client" %}</p>
+        </div>
+        {% endif %}
+        <div class="col-span-{% if config.ENABLE_LABS or show_organization %}2{% else %}3{% endif %} flex items-center">
             <p class="text-xs font-bold uppercase tracking-widest text-black dark:text-white">{% trans "Machine / Component" %}</p>
         </div>
         {% if config.ENABLE_LABS %}
@@ -126,10 +137,10 @@
             <p class="text-xs font-bold uppercase tracking-widest text-black dark:text-white">{% trans "Laboratory" %}</p>
         </div>
         {% endif %}
-        <div class="col-span-2 flex items-center">
+        <div class="col-span-{% if config.ENABLE_LABS and show_organization %}1{% else %}2{% endif %} flex items-center">
             <p class="text-xs font-bold uppercase tracking-widest text-black dark:text-white">{% trans "Sample Date" %}</p>
         </div>
-        <div class="col-span-2 flex items-center">
+        <div class="col-span-{% if config.ENABLE_LABS and show_organization %}1{% else %}2{% endif %} flex items-center">
             <p class="text-xs font-bold uppercase tracking-widest text-black dark:text-white">{% trans "Condition" %}</p>
         </div>
         <div class="col-span-2 flex items-center justify-end">
@@ -140,13 +151,20 @@
     <div class="flex flex-col">
         {% for report in reports %}
         <div class="grid grid-cols-12 border-b border-stroke py-6 px-6 transition-all duration-200 last:border-b-0 hover:bg-gray-50 dark:border-strokedark dark:hover:bg-meta-4/20">
-            <div class="col-span-{% if config.ENABLE_LABS %}2{% else %}3{% endif %} flex items-center">
+            <div class="col-span-{% if config.ENABLE_LABS or show_organization %}2{% else %}3{% endif %} flex items-center">
                 <div>
                     <p class="text-base font-bold text-black dark:text-white">{{ report.lab_number }}</p>
                     <p class="text-xs font-medium text-bodydark2">{{ report.per_number|default:report.serial_number_code }}</p>
                 </div>
             </div>
-            <div class="col-span-{% if config.ENABLE_LABS %}2{% else %}3{% endif %} flex items-center">
+            {% if show_organization %}
+            <div class="col-span-2 flex items-center">
+                {% if report.organization %}
+                <span class="inline-flex items-center rounded-md border border-blue-500/20 bg-blue-500/10 px-2 py-0.5 text-[10px] font-bold text-blue-500">{{ report.organization.name }}</span>
+                {% else %}—{% endif %}
+            </div>
+            {% endif %}
+            <div class="col-span-{% if config.ENABLE_LABS or show_organization %}2{% else %}3{% endif %} flex items-center">
                 <div>
                     <p class="text-sm font-semibold text-black dark:text-white">{% if report.machine %}{{ report.machine.name }}{% else %}—{% endif %}</p>
                     <p class="text-xs font-medium text-bodydark2">{% if report.component %}{{ report.component.type.name }}{% else %}—{% endif %}</p>
@@ -157,10 +175,10 @@
                 <p class="text-sm font-medium text-bodydark2">{% if report.laboratory %}{{ report.laboratory.name }}{% else %}—{% endif %}</p>
             </div>
             {% endif %}
-            <div class="col-span-2 flex items-center">
+            <div class="col-span-{% if config.ENABLE_LABS and show_organization %}1{% else %}2{% endif %} flex items-center">
                 <p class="text-sm font-medium text-bodydark2">{{ report.sample_date|date:"d/m/Y"|default:"—" }}</p>
             </div>
-            <div class="col-span-2 flex items-center">
+            <div class="col-span-{% if config.ENABLE_LABS and show_organization %}1{% else %}2{% endif %} flex items-center">
                 {% include "reports/includes/condition_badge.html" with condition=report.condition label=report.get_condition_display %}
             </div>
             <div class="col-span-2 flex items-center justify-end">

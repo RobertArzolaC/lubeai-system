@@ -32,6 +32,25 @@ class CustomPageSizeListView(ListTestView):
     paginate_by = 50
 
 
+class CustomClientPathListView(
+    core_mixins.ClientAttributionMixin, core_mixins.BaseListView
+):
+    """List view with a nested client attribution path."""
+
+    model = equipment_models.Machine
+    permission_required = "equipment.view_machine"
+    client_organization_path = "fleet__organization"
+
+
+class DefaultClientPathListView(
+    core_mixins.ClientAttributionMixin, core_mixins.BaseListView
+):
+    """List view using the default client attribution path."""
+
+    model = equipment_models.ComponentType
+    permission_required = "equipment.view_componenttype"
+
+
 def parse_json(response) -> dict:
     """Decode a plain :class:`django.http.JsonResponse` body."""
     return json.loads(response.content)
@@ -137,3 +156,18 @@ class BaseDeleteViewTests(TestCase):
         response = view.handle_no_permission()
         self.assertEqual(response.status_code, 403)
         self.assertEqual(parse_json(response)["status"], "error")
+
+
+class ClientAttributionMixinTests(TestCase):
+    """The mixin joins the configured client attribution path."""
+
+    def test_default_path_joins_organization(self) -> None:
+        """Without an override the mixin selects the ``organization`` join."""
+        related = DefaultClientPathListView().get_queryset().query.select_related
+        self.assertIn("organization", related)
+
+    def test_custom_path_joins_nested_organization(self) -> None:
+        """An override selects the nested path instead."""
+        related = CustomClientPathListView().get_queryset().query.select_related
+        self.assertIn("fleet", related)
+        self.assertIn("organization", related["fleet"])

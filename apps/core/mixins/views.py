@@ -167,11 +167,16 @@ class ClientAttributionMixin:
     Adds the ``organization`` join to the queryset and a ``show_organization``
     context flag that templates use to render the "Client" column and filter
     only when the user can act on more than one organization.
+
+    Views whose owning organization is reached through a relation (e.g.
+    ``component_type__organization``) override ``client_organization_path``.
     """
+
+    client_organization_path: ClassVar[str] = "organization"
 
     def get_queryset(self) -> QuerySet:
         """Return the list queryset with the owning organization joined."""
-        return super().get_queryset().select_related("organization")
+        return super().get_queryset().select_related(self.client_organization_path)
 
     def get_context_data(self, **kwargs: Any) -> dict:
         """Expose ``show_organization`` to the list template."""

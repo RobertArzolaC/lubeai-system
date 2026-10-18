@@ -7,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 
 from apps.core import widgets as core_widgets
 from apps.equipment import models as equipment_models
+from apps.organizations import models as organization_models
 from apps.organizations import scoping
 from apps.reports import choices, models
 
@@ -43,6 +44,11 @@ class ReportFilter(django_filters.FilterSet):
 
     lab_number_search = django_filters.CharFilter(
         method="filter_by_lab_number", label=_("Search")
+    )
+    organization = django_filters.ModelChoiceFilter(
+        queryset=organization_models.Organization.objects.all(),
+        empty_label=_("All Clients"),
+        label=_("Client"),
     )
     laboratory = django_filters.ModelChoiceFilter(
         queryset=models.Laboratory.objects.filter(is_active=True),
@@ -85,6 +91,7 @@ class ReportFilter(django_filters.FilterSet):
         model = models.Report
         fields: ClassVar[list[str]] = [
             "lab_number_search",
+            "organization",
             "laboratory",
             "machine",
             "component",
@@ -105,6 +112,7 @@ class ReportFilter(django_filters.FilterSet):
                 "component": equipment_models.Component.objects.filter(is_active=True),
             },
         )
+        scoping.scope_organization_filter(self, include_self=False)
 
     def filter_by_lab_number(
         self, queryset: QuerySet, name: str, value: str
@@ -192,6 +200,12 @@ class AnalysisThresholdFilter(django_filters.FilterSet):
         method="filter_by_parameter",
         label=_("Search"),
     )
+    organization = django_filters.ModelChoiceFilter(
+        field_name="component_type__organization",
+        queryset=organization_models.Organization.objects.all(),
+        empty_label=_("All Clients"),
+        label=_("Client"),
+    )
     category = django_filters.ChoiceFilter(
         field_name="category",
         choices=choices.Category.choices,
@@ -210,7 +224,17 @@ class AnalysisThresholdFilter(django_filters.FilterSet):
 
     class Meta:
         model = models.AnalysisThreshold
-        fields: ClassVar[list[str]] = ["parameter_search", "category", "is_active"]
+        fields: ClassVar[list[str]] = [
+            "parameter_search",
+            "organization",
+            "category",
+            "is_active",
+        ]
+
+    def __init__(self, *args, **kwargs) -> None:
+        """Scope the organization filter to the request user."""
+        super().__init__(*args, **kwargs)
+        scoping.scope_organization_filter(self, include_self=False)
 
     def filter_by_parameter(
         self, queryset: QuerySet, name: str, value: str
