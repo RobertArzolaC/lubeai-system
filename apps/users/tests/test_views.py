@@ -5,14 +5,16 @@ from django.test import TestCase, override_settings
 from django.urls import NoReverseMatch, reverse
 
 from apps.users.factories import UserFactory
+from apps.users.tests.base import UserTenantTestCase
 
 AVATAR_MEDIA_ROOT = "/tmp/django_template_avatar_tests"
 
 
-class ProfileViewTests(TestCase):
+class ProfileViewTests(UserTenantTestCase):
     """Tests for :class:`ProfileView`."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.user = UserFactory()
         self.url = reverse("apps.users:profile")
 
@@ -30,10 +32,11 @@ class ProfileViewTests(TestCase):
 
 
 @override_settings(MEDIA_ROOT=AVATAR_MEDIA_ROOT)
-class SettingsViewTests(TestCase):
+class SettingsViewTests(UserTenantTestCase):
     """Tests for :class:`SettingsView`."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.user = UserFactory(first_name="Old", last_name="Name")
         self.client.force_login(self.user)
         self.url = reverse("apps.users:settings")

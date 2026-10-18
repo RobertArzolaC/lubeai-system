@@ -2,15 +2,16 @@
 
 from allauth.account.models import EmailAddress
 from django.db import IntegrityError
-from django.test import TestCase
 
 from apps.users.factories import UserFactory
+from apps.users.tests.base import UserTenantTestCase
 
 
-class UserModelTests(TestCase):
+class UserModelTests(UserTenantTestCase):
     """Tests for the :class:`users_models.User` model."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.user = UserFactory(
             email="jane.doe@example.com",
             first_name="Jane",

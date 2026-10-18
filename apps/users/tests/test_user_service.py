@@ -3,17 +3,18 @@
 from allauth.account.models import EmailAddress
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
-from django.test import TestCase
 
 from apps.organizations.factories import OrganizationFactory
 from apps.users.factories import RoleFactory, UserFactory
 from apps.users.services import UserService
+from apps.users.tests.base import UserTenantTestCase
 
 
-class UserServiceTests(TestCase):
+class UserServiceTests(UserTenantTestCase):
     """Tests for creating and updating users with roles."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.organization = OrganizationFactory()
         self.actor = UserFactory(organization=self.organization)
 

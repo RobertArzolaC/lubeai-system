@@ -6,11 +6,11 @@
     <!-- SIDEBAR HEADER -->
     <div class="relative flex items-center justify-center gap-2 px-6 py-5.5 lg:py-6.5 transition-all group-[.collapsed]:px-0">
         <a href="{% url 'apps.dashboard:index' %}" class="flex items-center justify-center gap-3">
-            <span class="block flex-shrink-0 text-2xl font-bold tracking-tight text-black group-[.collapsed]:hidden dark:text-white">{{ current_organization.name|default:"MARCO" }}</span>
+            <span class="block flex-shrink-0 text-2xl font-bold tracking-tight text-black group-[.collapsed]:hidden dark:text-white">{{ current_organization.name|default:current_tenant.name }}</span>
             {% if branding.logo %}
-            <img src="{{ branding.logo.url }}" alt="{{ current_organization.name|default:'MARCO' }}" class="h-8 hidden group-[.collapsed]:block flex-shrink-0" />
+            <img src="{{ branding.logo.url }}" alt="{{ current_organization.name|default:current_tenant.name }}" class="h-8 hidden group-[.collapsed]:block flex-shrink-0" />
             {% else %}
-            <img src="{% static 'assets/images/logos/logo.png' %}" alt="{{ current_organization.name|default:'MARCO' }}" class="h-8 hidden group-[.collapsed]:block flex-shrink-0" />
+            <img src="{% static 'assets/images/logos/logo.png' %}" alt="{{ current_organization.name|default:current_tenant.name }}" class="h-8 hidden group-[.collapsed]:block flex-shrink-0" />
             {% endif %}
         </a>
     </div>

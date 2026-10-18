@@ -4,7 +4,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <title>{{ current_organization.name|default:site.name }} | {% block title_page %}{% endblock title_page %}</title>
+    <title>{% firstof current_organization.name current_tenant.name site.name %} | {% block title_page %}{% endblock title_page %}</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="shortcut icon" href="{% static 'assets/images/logos/favicon.png' %}" />

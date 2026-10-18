@@ -1,16 +1,18 @@
 """Tests for :class:`apps.users.filtersets.UserFilter`."""
 
-from django.test import RequestFactory, TestCase
+from django.test import RequestFactory
 
 from apps.organizations.factories import OrganizationFactory
 from apps.users.factories import RoleFactory, UserFactory
 from apps.users.filtersets import UserFilter
+from apps.users.tests.base import UserTenantTestCase
 
 
-class UserFilterTests(TestCase):
+class UserFilterTests(UserTenantTestCase):
     """Scoping and search behaviour of the user filter."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.factory = RequestFactory()
         self.lab = OrganizationFactory()
         self.child = OrganizationFactory(parent=self.lab)

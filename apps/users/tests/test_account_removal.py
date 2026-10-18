@@ -2,9 +2,10 @@
 
 from django.db import connection
 from django.db.migrations.executor import MigrationExecutor
-from django.test import TestCase, TransactionTestCase
+from django.test import TestCase
 
 from apps.users import models as users_models
+from apps.users.tests.base import UserTenantTestCase
 
 
 class AccountModelRemovedTests(TestCase):
@@ -19,12 +20,13 @@ class AccountModelRemovedTests(TestCase):
         self.assertFalse(hasattr(users_models.User, "is_account"))
 
 
-class DeleteAccountMigrationTests(TransactionTestCase):
+class DeleteAccountMigrationTests(UserTenantTestCase):
     """The data migration deactivates users whose account was removed.
 
-    Runs the real migration executor so the ``RunPython`` operates on actual
-    rows: an account flagged ``is_removed`` must end as an inactive user, and a
-    normal account must stay active (Review Focus #2).
+    Runs the real migration executor inside the tenant schema so the
+    ``RunPython`` operates on actual rows: an account flagged ``is_removed``
+    must end as an inactive user, and a normal account must stay active
+    (Review Focus #2).
     """
 
     migrate_from = [("users", "0004_role")]
@@ -36,6 +38,7 @@ class DeleteAccountMigrationTests(TransactionTestCase):
         executor.migrate(targets)
 
     def setUp(self) -> None:
+        super().setUp()
         self._migrate(self.migrate_from)
         executor = MigrationExecutor(connection)
         old_apps = executor.loader.project_state(self.migrate_from).apps
@@ -50,6 +53,12 @@ class DeleteAccountMigrationTests(TransactionTestCase):
         )
         account_model.objects.create(user=self.removed_user, is_removed=True)
         account_model.objects.create(user=self.kept_user, is_removed=False)
+
+        # The rows above leave foreign-key trigger events pending; inside the
+        # transaction a test runs in, PostgreSQL refuses to drop a table with
+        # pending trigger events. Draining them keeps the migration honest.
+        with connection.cursor() as cursor:
+            cursor.execute("SET CONSTRAINTS ALL IMMEDIATE")
 
         self._migrate(self.migrate_to)
 

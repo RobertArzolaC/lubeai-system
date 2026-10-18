@@ -94,6 +94,9 @@ INTERNAL_IPS = [
 ]
 
 MIDDLEWARE = [
+    # Must stay first: it selects the tenant schema (and the urlconf) from the
+    # request host before any other middleware reads or writes the database.
+    "django_tenants.middleware.main.TenantMainMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",

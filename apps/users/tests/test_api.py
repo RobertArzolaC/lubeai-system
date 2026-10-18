@@ -1,15 +1,16 @@
 """Tests for the ``apps.users.api`` module."""
 
-from django.test import TestCase
 from django.urls import reverse
 
 from apps.users.factories import UserFactory
+from apps.users.tests.base import UserTenantTestCase
 
 
-class ToggleUserStatusViewTests(TestCase):
+class ToggleUserStatusViewTests(UserTenantTestCase):
     """Tests for the toggle-user-status endpoint."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.operator = UserFactory(is_staff=True)
         self.target = UserFactory(is_active=False)
         self.client.force_login(self.operator)

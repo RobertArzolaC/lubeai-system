@@ -5,6 +5,7 @@ from django.test import TestCase
 
 from apps.users import forms as users_forms
 from apps.users.factories import UserFactory
+from apps.users.tests.base import UserTenantTestCase
 
 User = get_user_model()
 
@@ -34,10 +35,11 @@ class CustomUserChangeFormTests(TestCase):
         self.assertEqual(users_forms.CustomUserChangeForm.Meta.fields, ("email",))
 
 
-class UserSettingsFormTests(TestCase):
+class UserSettingsFormTests(UserTenantTestCase):
     """Tests for :class:`UserSettingsForm`."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.user = UserFactory(first_name="Old", last_name="Name")
 
     def test_valid_data_updates_user(self) -> None:

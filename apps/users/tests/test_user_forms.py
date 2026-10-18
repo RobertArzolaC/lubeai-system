@@ -1,16 +1,16 @@
 """Tests for :class:`apps.users.forms.UserManagementForm`."""
 
-from django.test import TestCase
-
 from apps.organizations.factories import OrganizationFactory
 from apps.users.factories import RoleFactory, UserFactory
 from apps.users.forms import UserManagementForm
+from apps.users.tests.base import UserTenantTestCase
 
 
-class UserManagementFormTests(TestCase):
+class UserManagementFormTests(UserTenantTestCase):
     """Scoping and field behaviour of the user management form."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.lab = OrganizationFactory()
         self.child = OrganizationFactory(parent=self.lab)
         self.actor = UserFactory(organization=self.lab)

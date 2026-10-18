@@ -1,14 +1,14 @@
 """Tests for the ``apps.users.managers`` module."""
 
 from django.contrib.auth import get_user_model
-from django.test import TestCase
 
 from apps.users import models as users_models
+from apps.users.tests.base import UserTenantTestCase
 
 User = get_user_model()
 
 
-class CustomUserManagerTests(TestCase):
+class CustomUserManagerTests(UserTenantTestCase):
     """Tests for the :class:`CustomUserManager`."""
 
     def test_create_user_success(self) -> None:

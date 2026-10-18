@@ -1,127 +1,37 @@
-from allauth.account.models import EmailAddress
-from django.contrib.auth.models import Permission
-from django.core.management.base import BaseCommand
+"""Public entry point for the default-user seeding command.
 
-from apps.organizations.models import Organization
-from apps.users.models import User
+``users`` is a TENANT app, so its command can only run with a schema selected:
+this wrapper runs :mod:`apps.users.management.commands.add_default_users_tenant`
+against every tenant, or against the one given with ``--schema``.
+"""
+
+from __future__ import annotations
+
+from typing import Any
+
+from django_tenants.management.commands import BaseTenantCommand
 
 
-class Command(BaseCommand):
-    help = "Generates default users including superuser and staff users"
+class Command(BaseTenantCommand):
+    """Run the default-user seeding once per tenant schema."""
 
-    def handle(self, *args, **kwargs):
-        superuser_data = {
-            "email": "admin@example.com",
-            "first_name": "Administrator",
-            "last_name": "Principal",
-            "is_staff": True,
-            "is_superuser": True,
-        }
+    COMMAND_NAME = "add_default_users_tenant"
 
-        staff_users_data = [
-            {
-                "email": "staff1@example.com",
-                "first_name": "Staff 1",
-                "last_name": "Manager",
-                "is_staff": True,
-            },
-            {
-                "email": "staff2@example.com",
-                "first_name": "Staff 2",
-                "last_name": "Validator",
-                "is_staff": True,
-            },
-        ]
+    def execute_command(
+        self, tenant: Any, command_name: str, *args: Any, **options: Any
+    ) -> None:
+        """Run the wrapped command with only the options it declares.
 
-        default_password = "holamundo"
-        users_created = 0
-        users_existed = 0
+        ``BaseTenantCommand`` forwards its own ``--schema`` / ``--skip-public``
+        flags to the wrapped command, which does not declare them: ``call_command``
+        would reject them with a ``TypeError``.
 
-        superuser = self.create_user(
-            superuser_data, default_password, self.get_default_organization()
-        )
-        if superuser:
-            users_created += 1
-            self.stdout.write(
-                self.style.SUCCESS(f"Superuser created successfully: {superuser.email}")
-            )
-        else:
-            users_existed += 1
-            self.stdout.write(
-                self.style.WARNING(
-                    f"Superuser already exists: {superuser_data['email']}"
-                )
-            )
-
-        for staff_data in staff_users_data:
-            staff_user = self.create_user(
-                staff_data, default_password, self.get_default_organization()
-            )
-            if staff_user:
-                users_created += 1
-                self.assign_staff_permissions(staff_user)
-                self.stdout.write(
-                    self.style.SUCCESS(
-                        f"Staff user created successfully: {staff_user.email}"
-                    )
-                )
-            else:
-                users_existed += 1
-                self.stdout.write(
-                    self.style.WARNING(
-                        f"Staff user already exists: {staff_data['email']}"
-                    )
-                )
-
-        self.stdout.write(
-            self.style.SUCCESS(
-                f"\nProcess completed:\n"
-                f"- Users created: {users_created}\n"
-                f"- Users already existed: {users_existed}\n"
-                f"- Total users processed: {users_created + users_existed}"
-            )
-        )
-
-    def create_user(self, user_data, password, organization=None):
-        user_data = user_data.copy()
-        email = user_data.pop("email")
-        user = User.objects.filter(email=email).first()
-        if not user:
-            user = User.objects.create_user(
-                email=email, password=password, organization=organization, **user_data
-            )
-
-            EmailAddress.objects.get_or_create(
-                user=user,
-                email=user.email,
-                primary=True,
-                verified=True,
-            )
-            return user
-
-        return None
-
-    def get_default_organization(self):
-        """Return (creating if needed) the MARCO tenant."""
-        organization, _ = Organization.objects.get_or_create(
-            slug="marco",
-            defaults={"name": "MARCO Peruana", "kind": "lab"},
-        )
-        return organization
-
-    def assign_staff_permissions(self, user):
-        result_permissions = Permission.objects.filter(
-            codename__in=[
-                "view_report",
-                "add_report",
-                "change_report",
-                "view_analysisthreshold",
-                "view_component_analysis",
-                "view_alert",
-                "change_alert",
-                "view_machine",
-                "view_branch",
-                "view_componenttype",
-            ]
-        )
-        user.user_permissions.add(*result_permissions)
+        Args:
+            tenant: Tenant whose schema the wrapped command runs against.
+            command_name: Name of the wrapped command.
+            *args: Positional arguments for the wrapped command.
+            **options: Options parsed by this wrapper.
+        """
+        options.pop("schema_name", None)
+        options.pop("skip_public", None)
+        super().execute_command(tenant, command_name, *args, **options)

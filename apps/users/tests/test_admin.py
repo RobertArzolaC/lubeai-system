@@ -2,7 +2,7 @@
 
 from django.contrib.admin.sites import AdminSite
 from django.contrib.auth.models import Permission
-from django.test import RequestFactory, TestCase
+from django.test import RequestFactory
 from django.urls import reverse
 
 from apps.organizations import choices as org_choices
@@ -10,13 +10,15 @@ from apps.organizations import factories as org_factories
 from apps.users import admin as users_admin
 from apps.users import models as users_models
 from apps.users.factories import UserFactory
+from apps.users.tests.base import UserTenantTestCase
 
 
-class UserAdminOrganizationFieldTests(TestCase):
+class UserAdminOrganizationFieldTests(UserTenantTestCase):
     """The admin exposes the ``organization`` field on add and change forms."""
 
     def setUp(self) -> None:
         """Build a model admin and an admin request."""
+        super().setUp()
         self.site = AdminSite()
         self.model_admin = users_admin.CustomUserAdmin(users_models.User, self.site)
         self.request = RequestFactory().get("/admin/users/user/")
@@ -44,11 +46,12 @@ class UserAdminOrganizationFieldTests(TestCase):
         self.assertIn(users_admin.OrganizationListFilter, self.model_admin.list_filter)
 
 
-class UserAdminOrganizationSaveTests(TestCase):
+class UserAdminOrganizationSaveTests(UserTenantTestCase):
     """Saving through the admin persists the organization."""
 
     def setUp(self) -> None:
         """Log an admin in and build a target organization."""
+        super().setUp()
         self.admin = UserFactory(is_staff=True, is_superuser=True)
         self.client.force_login(self.admin)
         self.organization = org_factories.OrganizationFactory(slug="adm-save")
@@ -85,11 +88,12 @@ class UserAdminOrganizationSaveTests(TestCase):
         self.assertEqual(target.organization, self.organization)
 
 
-class UserAdminOrganizationScopeTests(TestCase):
+class UserAdminOrganizationScopeTests(UserTenantTestCase):
     """The assignable organizations follow the acting user subtree."""
 
     def setUp(self) -> None:
         """Build a model admin and the tenant tree."""
+        super().setUp()
         self.site = AdminSite()
         self.model_admin = users_admin.CustomUserAdmin(users_models.User, self.site)
         self.tenant = org_factories.OrganizationFactory(
@@ -128,11 +132,12 @@ class UserAdminOrganizationScopeTests(TestCase):
         self.assertIn(self.tenant.id, ids)
 
 
-class UserAdminScopedActorTests(TestCase):
+class UserAdminScopedActorTests(UserTenantTestCase):
     """A scoped staff actor cannot widen or erase tenancy through the admin."""
 
     def setUp(self) -> None:
         """Build the tenant tree and two scoped staff actors."""
+        super().setUp()
         self.site = AdminSite()
         self.model_admin = users_admin.CustomUserAdmin(users_models.User, self.site)
         self.tenant = org_factories.OrganizationFactory(

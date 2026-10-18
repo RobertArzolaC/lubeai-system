@@ -1,15 +1,15 @@
 """Tests for :class:`apps.users.services.RoleService`."""
 
 from django.contrib.auth.models import Group, Permission
-from django.test import TestCase
 
 from apps.organizations import factories as organization_factories
 from apps.users import models as users_models
 from apps.users.factories import RoleFactory, UserFactory
 from apps.users.services import RoleService
+from apps.users.tests.base import UserTenantTestCase
 
 
-class RoleServiceTests(TestCase):
+class RoleServiceTests(UserTenantTestCase):
     """Tests for the role/group/permission synchronization."""
 
     def test_create_sets_permissions_and_group_name(self) -> None:

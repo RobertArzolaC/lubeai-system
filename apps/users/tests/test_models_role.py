@@ -1,14 +1,14 @@
 """Tests for the tenant-scoped :class:`apps.users.models.Role` model."""
 
 from django.db import IntegrityError
-from django.test import TestCase
 
 from apps.organizations import factories as organization_factories
 from apps.users import models as users_models
 from apps.users.factories import RoleFactory
+from apps.users.tests.base import UserTenantTestCase
 
 
-class RoleModelTests(TestCase):
+class RoleModelTests(UserTenantTestCase):
     """Tests for the :class:`users_models.Role` model."""
 
     def test_unique_org_slug_constraint(self) -> None:
