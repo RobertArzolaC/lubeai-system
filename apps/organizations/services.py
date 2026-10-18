@@ -37,14 +37,15 @@ class OrganizationService:
 
     @staticmethod
     def ensure_unique_slug(name: str, *, exclude_pk: int | None = None) -> str:
-        """Return a slug derived from ``name`` that is globally unique.
+        """Return a slug derived from ``name`` that is unique in the tenant.
 
         Args:
             name: The human-readable organization name.
             exclude_pk: An organization id to ignore (used when renaming).
 
         Returns:
-            A slug, suffixed with ``-2``, ``-3``, ... on collision.
+            A slug, suffixed with ``-2``, ``-3``, ... on collision with another
+            organization of the same tenant schema.
         """
         base = slugify(name) or "organization"
         queryset = models.Organization.objects.filter(slug=base)

@@ -1,9 +1,12 @@
 """Models for the organizations app.
 
-:class:`Organization` models the tenancy tree. A node without a parent is a
-tenant (the hard isolation boundary); children are the tenant's clients
-(intermediaries and final clients). Branding is inherited from ancestors and
-capabilities default from the tenant ``kind`` with per-node overrides.
+:class:`Organization` models the client tree **inside one tenant schema**. The
+tenant itself (the hard isolation boundary) is
+:class:`apps.tenancy.models.Tenant`, which lives in the ``public`` schema; the
+node without a parent here is the tenant's own root organization, created by
+provisioning, and its children are the tenant's clients (intermediaries and
+final clients). Branding is inherited from ancestors and capabilities default
+from the tenant ``kind`` with per-node overrides.
 """
 
 from __future__ import annotations
@@ -27,14 +30,13 @@ class Organization(
     core_models.BaseContact,
     core_models.IsActive,
 ):
-    """A node in the tenancy tree (tenant, intermediary or final client)."""
+    """A node in the tenant's client tree (root, intermediary or final client)."""
 
     name = models.CharField(_("Name"), max_length=200)
     slug = models.SlugField(
         _("Slug"),
         max_length=120,
-        unique=True,
-        help_text=_("Used to resolve the tenant from the request host"),
+        help_text=_("Business identifier, unique within the tenant schema"),
     )
     code = models.CharField(
         _("Code"),
@@ -52,7 +54,7 @@ class Organization(
         null=True,
         blank=True,
         related_name="children",
-        help_text=_("Empty for a root tenant"),
+        help_text=_("Empty only for the tenant's root organization"),
     )
     kind = models.CharField(
         _("Kind"),
@@ -85,8 +87,16 @@ class Organization(
         verbose_name = _("Organization")
         verbose_name_plural = _("Organizations")
         ordering = ("name",)
+        # The table exists once per tenant schema, so this constraint makes the
+        # slug unique *within* a tenant while the same slug stays free in every
+        # other tenant. The unique index it creates covers slug lookups, which
+        # is why slug no longer needs a separate index.
+        constraints: ClassVar[list[models.BaseConstraint]] = [
+            models.UniqueConstraint(
+                fields=["slug"], name="organizations_organization_slug_uniq"
+            ),
+        ]
         indexes: ClassVar[list[models.Index]] = [
-            models.Index(fields=["slug"]),
             models.Index(fields=["kind"]),
             models.Index(fields=["parent"]),
             models.Index(fields=["is_active"]),
@@ -98,12 +108,12 @@ class Organization(
 
     @property
     def is_tenant(self) -> bool:
-        """Return ``True`` when the organization is a root tenant."""
+        """Return ``True`` when the organization is the tenant's root node."""
         return self.parent_id is None
 
     @property
     def tenant(self) -> Organization:
-        """Return the root tenant the organization belongs to."""
+        """Return the root organization of the tenant this node belongs to."""
         node: Organization = self
         while node.parent_id is not None:
             node = node.parent

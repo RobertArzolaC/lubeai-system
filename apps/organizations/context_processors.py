@@ -12,7 +12,8 @@ def branding(request) -> dict:
 
     Args:
         request: The current HTTP request (expects ``organization``/``tenant``
-            set by ``TenantMiddleware``, but degrades gracefully when missing).
+            set by the tenancy middleware, but degrades gracefully when
+            missing).
 
     Returns:
         Context with ``branding``, ``current_organization``, ``current_tenant``,

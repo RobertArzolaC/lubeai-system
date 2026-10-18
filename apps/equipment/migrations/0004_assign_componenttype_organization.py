@@ -31,7 +31,7 @@ def unassign_from_marco(apps, schema_editor) -> None:
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("organizations", "0002_seed_marco_tenant"),
+        ("organizations", "0001_initial"),
         ("equipment", "0003_componenttype_organization_and_more"),
     ]
 

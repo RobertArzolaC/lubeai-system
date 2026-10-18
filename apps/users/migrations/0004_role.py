@@ -10,7 +10,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
     dependencies = [
         ("auth", "0012_alter_user_first_name_max_length"),
-        ("organizations", "0002_seed_marco_tenant"),
+        ("organizations", "0001_initial"),
         ("users", "0003_user_organization"),
     ]
 

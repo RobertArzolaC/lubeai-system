@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('equipment', '0002_branch_organization_fleet_organization_and_more'),
-        ('organizations', '0002_seed_marco_tenant'),
+        ('organizations', '0001_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
