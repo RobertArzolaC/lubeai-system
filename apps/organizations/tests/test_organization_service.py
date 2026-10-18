@@ -1,15 +1,15 @@
 """Tests for :class:`apps.organizations.services.OrganizationService`."""
 
 from django.core.exceptions import ValidationError
-from django.test import TestCase
 
 from apps.organizations import models as organization_models
 from apps.organizations.factories import OrganizationFactory
 from apps.organizations.services import OrganizationService
+from apps.organizations.tests.base import OrganizationTenantTestCase
 from apps.users.factories import UserFactory
 
 
-class OrganizationServiceTests(TestCase):
+class OrganizationServiceTests(OrganizationTenantTestCase):
     """Tests for the organization slug and subtree helpers."""
 
     def test_slug_is_slugified_and_unique(self) -> None:

@@ -1,11 +1,11 @@
 """Tests for the organization management views."""
 
 from django.contrib.auth.models import Permission
-from django.test import TestCase
 from django.urls import reverse
 
 from apps.organizations import models as organization_models
 from apps.organizations.factories import OrganizationFactory
+from apps.organizations.tests.base import OrganizationTenantTestCase
 from apps.users.factories import UserFactory
 
 
@@ -17,10 +17,11 @@ def grant(user, *codenames: str) -> None:
     user.user_permissions.add(*permissions)
 
 
-class OrganizationViewTests(TestCase):
+class OrganizationViewTests(OrganizationTenantTestCase):
     """CRUD, scoping and permission tests for the organization views."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.lab = OrganizationFactory(name="LAB")
         self.child = OrganizationFactory(name="Client Child", parent=self.lab)
         self.foreign = OrganizationFactory(name="Foreign Org")

@@ -1,15 +1,15 @@
 """Tests for the ``seed_demo_data`` management command."""
 
 from django.core.management import call_command
-from django.test import TestCase
 
 from apps.equipment import models as equipment_models
 from apps.organizations import choices, models
+from apps.organizations.tests.base import OrganizationTenantTestCase
 from apps.reports import models as report_models
 from apps.users.models import User
 
 
-class SeedDemoDataTests(TestCase):
+class SeedDemoDataTests(OrganizationTenantTestCase):
     """The seed command builds the MARCO demo hierarchy and history."""
 
     def test_creates_hierarchy(self) -> None:

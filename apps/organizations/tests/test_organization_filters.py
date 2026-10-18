@@ -1,16 +1,18 @@
 """Tests for :class:`apps.organizations.filtersets.OrganizationFilter`."""
 
-from django.test import RequestFactory, TestCase
+from django.test import RequestFactory
 
 from apps.organizations.factories import OrganizationFactory
 from apps.organizations.filtersets import OrganizationFilter
+from apps.organizations.tests.base import OrganizationTenantTestCase
 from apps.users.factories import UserFactory
 
 
-class OrganizationFilterTests(TestCase):
+class OrganizationFilterTests(OrganizationTenantTestCase):
     """Scoping and search behaviour of the organization filter."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.factory = RequestFactory()
 
     def _request_for(self, user):

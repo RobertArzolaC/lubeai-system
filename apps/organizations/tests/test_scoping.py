@@ -1,31 +1,46 @@
-"""Tests for organization-based queryset scoping."""
+"""Tests for organization-based queryset scoping.
 
-from django.test import TestCase
+All cases run inside a tenant schema: the platform boundary is the schema, and
+the scoping rules tested here decide visibility inside one tenant's tree.
+"""
+
+from __future__ import annotations
 
 from apps.organizations import choices, factories, scoping
 from apps.organizations import models as organization_models
+from apps.organizations.tests.base import OrganizationTenantTestCase
 from apps.reports import models as report_models
 from apps.users import factories as user_factories
 
 
-class UserVisibleOrganizationIdsTests(TestCase):
+class UserVisibleOrganizationIdsTests(OrganizationTenantTestCase):
     """``user_visible_organization_ids`` reflects the tenancy subtree."""
 
     def setUp(self) -> None:
-        """Build MARCO -> intermediary -> final plus an unrelated tenant."""
-        self.marco = factories.OrganizationFactory(
-            slug="s-marco", kind=choices.OrganizationKind.LAB
+        """Build root -> intermediary -> final plus a sibling subtree."""
+        super().setUp()
+        self.root = factories.OrganizationFactory(
+            slug="s-root", kind=choices.OrganizationKind.LAB
         )
         self.intermediary = factories.OrganizationFactory(
             slug="s-inter",
             kind=choices.OrganizationKind.INTERMEDIARY,
-            parent=self.marco,
+            parent=self.root,
         )
         self.final = factories.OrganizationFactory(
-            slug="s-final", kind=choices.OrganizationKind.FINAL, parent=self.intermediary
+            slug="s-final",
+            kind=choices.OrganizationKind.FINAL,
+            parent=self.intermediary,
         )
-        self.other = factories.OrganizationFactory(
-            slug="s-other", kind=choices.OrganizationKind.LAB
+        self.sibling = factories.OrganizationFactory(
+            slug="s-sibling",
+            kind=choices.OrganizationKind.INTERMEDIARY,
+            parent=self.root,
+        )
+        self.sibling_final = factories.OrganizationFactory(
+            slug="s-sibling-final",
+            kind=choices.OrganizationKind.FINAL,
+            parent=self.sibling,
         )
 
     def _user_for(self, organization):
@@ -40,8 +55,9 @@ class UserVisibleOrganizationIdsTests(TestCase):
         user = self._user_for(self.intermediary)
         visible = scoping.user_visible_organization_ids(user)
         self.assertEqual(visible, {self.intermediary.id, self.final.id})
-        self.assertNotIn(self.marco.id, visible)
-        self.assertNotIn(self.other.id, visible)
+        self.assertNotIn(self.root.id, visible)
+        self.assertNotIn(self.sibling.id, visible)
+        self.assertNotIn(self.sibling_final.id, visible)
 
     def test_superuser_is_unrestricted(self) -> None:
         """A superuser has no restriction."""
@@ -68,28 +84,32 @@ class UserVisibleOrganizationIdsTests(TestCase):
         self.assertEqual(scoping.user_visible_organization_ids(AnonymousUser()), set())
 
 
-class ScopeQuerysetTests(TestCase):
+class ScopeQuerysetTests(OrganizationTenantTestCase):
     """``scope_queryset`` filters models with a tenancy field."""
 
     def setUp(self) -> None:
-        """Create two tenants each owning a report."""
-        self.tenant_a = factories.OrganizationFactory(
-            slug="s-a", kind=choices.OrganizationKind.LAB
+        """Create two sibling clients, each owning a report."""
+        super().setUp()
+        self.root = factories.OrganizationFactory(
+            slug="s-root", kind=choices.OrganizationKind.LAB
         )
-        self.tenant_b = factories.OrganizationFactory(
-            slug="s-b", kind=choices.OrganizationKind.LAB
+        self.client_a = factories.OrganizationFactory(
+            slug="s-a", kind=choices.OrganizationKind.FINAL, parent=self.root
+        )
+        self.client_b = factories.OrganizationFactory(
+            slug="s-b", kind=choices.OrganizationKind.FINAL, parent=self.root
         )
         self.report_a = report_models.Report.objects.create(
-            lab_number="A-1", organization=self.tenant_a
+            lab_number="A-1", organization=self.client_a
         )
         self.report_b = report_models.Report.objects.create(
-            lab_number="B-1", organization=self.tenant_b
+            lab_number="B-1", organization=self.client_b
         )
 
     def test_scopes_reports_to_visible_organizations(self) -> None:
         """Only reports of the visible organizations are returned."""
         user = user_factories.UserFactory()
-        user.organization = self.tenant_a
+        user.organization = self.client_a
         user.save(update_fields=["organization"])
 
         scoped = scoping.scope_queryset(report_models.Report.objects.all(), user)
@@ -102,11 +122,12 @@ class ScopeQuerysetTests(TestCase):
         self.assertEqual(scoped.count(), 2)
 
 
-class VisibleOrganizationsTests(TestCase):
+class VisibleOrganizationsTests(OrganizationTenantTestCase):
     """``visible_organizations``/``can_choose_organization`` follow the subtree."""
 
     def setUp(self) -> None:
-        """Build lab -> intermediary -> final."""
+        """Build root -> intermediary -> final."""
+        super().setUp()
         self.lab = factories.OrganizationFactory(
             slug="vo-lab", kind=choices.OrganizationKind.LAB
         )
@@ -140,6 +161,26 @@ class VisibleOrganizationsTests(TestCase):
         self.assertEqual(ids, {self.final.id})
         self.assertFalse(scoping.can_choose_organization(user))
 
+    def test_subtree_scoping_still_isolates_children(self) -> None:
+        """A final client cannot see a sibling subtree."""
+        sibling = factories.OrganizationFactory(
+            slug="vo-sibling",
+            kind=choices.OrganizationKind.INTERMEDIARY,
+            parent=self.lab,
+        )
+        sibling_final = factories.OrganizationFactory(
+            slug="vo-sibling-final",
+            kind=choices.OrganizationKind.FINAL,
+            parent=sibling,
+        )
+
+        user = self._user_for(self.final)
+        ids = set(scoping.visible_organizations(user).values_list("id", flat=True))
+
+        self.assertEqual(ids, {self.final.id})
+        self.assertNotIn(sibling.id, ids)
+        self.assertNotIn(sibling_final.id, ids)
+
     def test_unrestricted_user_sees_all(self) -> None:
         """An unassigned user is unrestricted and can choose."""
         user = user_factories.UserFactory()
@@ -160,11 +201,12 @@ class VisibleOrganizationsTests(TestCase):
         self.assertFalse(scoping.is_organization_visible(user, None))
 
 
-class VisibleOrganizationsStrictChildrenTests(TestCase):
+class VisibleOrganizationsStrictChildrenTests(OrganizationTenantTestCase):
     """``include_self=False`` excludes the user's own organization."""
 
     def setUp(self) -> None:
         """Build a lab with one final client."""
+        super().setUp()
         self.lab = factories.OrganizationFactory(
             slug="vc-lab", kind=choices.OrganizationKind.LAB
         )

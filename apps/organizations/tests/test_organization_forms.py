@@ -1,14 +1,13 @@
 """Tests for :class:`apps.organizations.forms.OrganizationForm`."""
 
-from django.test import TestCase
-
 from apps.organizations import models as organization_models
 from apps.organizations.factories import OrganizationFactory
 from apps.organizations.forms import OrganizationForm
+from apps.organizations.tests.base import OrganizationTenantTestCase
 from apps.users.factories import UserFactory
 
 
-class OrganizationFormTests(TestCase):
+class OrganizationFormTests(OrganizationTenantTestCase):
     """Validation and scoping tests for the organization form."""
 
     def test_generates_slug_from_name(self) -> None:
