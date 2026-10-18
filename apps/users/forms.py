@@ -116,12 +116,6 @@ class AccountUpdateForm(mixins.PermissionFormMixin, forms.ModelForm):
         return account
 
 
-class AccountSettingsForm(forms.ModelForm):
-    class Meta:
-        model = models.Account
-        fields = "__all__"
-
-
 class RoleForm(core_mixins.OrganizationScopeFormMixin, forms.ModelForm):
     """Create or update a tenant-scoped role and its permission set.
 

@@ -55,24 +55,6 @@
                             <p class="mt-1.5 text-xs italic">{% trans "Email cannot be changed" %}</p>
                         </div>
 
-                        {% if user.is_account and account_form %}
-                        <div class="mb-5.5 pt-4 border-t border-stroke dark:border-strokedark">
-                            <label class="mb-3 block text-sm font-medium text-black dark:text-white">
-                                {% trans "Account Information" %}
-                            </label>
-                            <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
-                                <div class="flex items-center gap-3">
-                                    <span class="text-sm opacity-70">{% trans "Type:" %}</span>
-                                    {% if user.organization %}
-                                        <span class="rounded bg-primary bg-opacity-10 py-1 px-3 text-sm font-medium text-white">{{ user.organization.name }}</span>
-                                    {% else %}
-                                        <span class="rounded bg-success bg-opacity-10 py-1 px-3 text-sm font-medium text-white">{% trans "Individual" %}</span>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-                        {% endif %}
-
                         <div class="flex justify-end gap-4.5">
                             <a href="{{ back_url }}" class="flex justify-center rounded border border-stroke py-2 px-6 font-medium text-black hover:shadow-1 dark:border-strokedark dark:text-white">
                                 {% trans "Cancel" %}

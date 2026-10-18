@@ -51,6 +51,11 @@ class SettingsViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "users/settings.html")
 
+    def test_settings_context_has_no_account_form(self) -> None:
+        """Settings no longer exposes an Account form."""
+        response = self.client.get(self.url)
+        self.assertNotIn("account_form", response.context)
+
     def test_post_updates_user_profile(self) -> None:
         """Posting valid data updates the user profile and redirects."""
         response = self.client.post(

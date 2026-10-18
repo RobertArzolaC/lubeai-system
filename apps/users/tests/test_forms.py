@@ -65,17 +65,6 @@ class UserSettingsFormTests(TestCase):
         self.assertTrue(form.is_valid())
 
 
-class AccountSettingsFormTests(TestCase):
-    """Tests for :class:`AccountSettingsForm`."""
-
-    def test_meta_targets_account(self) -> None:
-        """The form targets the Account model with all fields."""
-        self.assertEqual(
-            users_forms.AccountSettingsForm.Meta.model, users_models.Account
-        )
-        self.assertEqual(users_forms.AccountSettingsForm.Meta.fields, "__all__")
-
-
 class AccountCreationFormTests(TestCase):
     """Tests for :class:`AccountCreationForm`."""
 

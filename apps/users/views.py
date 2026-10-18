@@ -43,9 +43,6 @@ class SettingsView(SuccessMessageMixin, LoginRequiredMixin, View):
             "user_form": forms.UserSettingsForm(instance=user),
         }
 
-        if user.is_account:
-            context["account_form"] = forms.AccountSettingsForm(instance=user.account)
-
         context.update(kwargs)
         return context
 
@@ -61,14 +58,6 @@ class SettingsView(SuccessMessageMixin, LoginRequiredMixin, View):
             )
             if user_form.is_valid():
                 user_form.save()
-
-            if user.is_account:
-                account_form = forms.AccountSettingsForm(
-                    request.POST, request.FILES, instance=user.account
-                )
-
-                if account_form.is_valid():
-                    account_form.save()
 
             avatar_file = request.FILES.get("avatar")
             remove_avatar = request.POST.get("avatar_remove") == "1"
