@@ -1,11 +1,10 @@
 """Tests for the ``apps.equipment.models`` module."""
 
-from django.test import TestCase
-
+from apps.core.tests.base import TenantSchemaTestCase
 from apps.equipment import factories
 
 
-class FleetModelTests(TestCase):
+class FleetModelTests(TenantSchemaTestCase):
     """Tests for the :class:`Fleet` model."""
 
     def test_str_returns_name(self) -> None:
@@ -14,7 +13,7 @@ class FleetModelTests(TestCase):
         self.assertEqual(str(fleet), "North Fleet")
 
 
-class BranchModelTests(TestCase):
+class BranchModelTests(TenantSchemaTestCase):
     """Tests for the :class:`Branch` model."""
 
     def test_str_returns_name(self) -> None:
@@ -23,7 +22,7 @@ class BranchModelTests(TestCase):
         self.assertEqual(str(branch), "Main Branch")
 
 
-class MachineModelTests(TestCase):
+class MachineModelTests(TenantSchemaTestCase):
     """Tests for the :class:`Machine` model."""
 
     def test_str_includes_serial_number(self) -> None:
@@ -37,7 +36,7 @@ class MachineModelTests(TestCase):
         self.assertEqual(str(machine), "Excavator")
 
 
-class ComponentTypeModelTests(TestCase):
+class ComponentTypeModelTests(TenantSchemaTestCase):
     """Tests for the :class:`ComponentType` model."""
 
     def test_str_returns_name(self) -> None:
@@ -46,7 +45,7 @@ class ComponentTypeModelTests(TestCase):
         self.assertEqual(str(component_type), "Pump")
 
 
-class ComponentModelTests(TestCase):
+class ComponentModelTests(TenantSchemaTestCase):
     """Tests for the :class:`Component` model."""
 
     def test_str_includes_type_and_machine(self) -> None:

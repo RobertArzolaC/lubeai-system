@@ -1,14 +1,14 @@
 """Tests for the ``apps.equipment.filtersets`` module."""
 
-from django.test import TestCase
-
+from apps.core.tests.base import TenantSchemaTestCase
 from apps.equipment import factories, filtersets, models
 
 
-class FleetFilterTests(TestCase):
+class FleetFilterTests(TenantSchemaTestCase):
     """Tests for the :class:`filtersets.FleetFilter`."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.north = factories.FleetFactory(name="North Fleet", is_active=True)
         self.south = factories.FleetFactory(name="South Fleet", is_active=False)
         self.base_queryset = models.Fleet.objects.all()
@@ -38,10 +38,11 @@ class FleetFilterTests(TestCase):
         )
 
 
-class BranchFilterTests(TestCase):
+class BranchFilterTests(TenantSchemaTestCase):
     """Tests for the :class:`BranchFilter`."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.main = factories.BranchFactory(
             name="Main Branch", address="123 Main St", is_active=True
         )
@@ -65,10 +66,11 @@ class BranchFilterTests(TestCase):
         self.assertQuerySetEqual(filtered, [self.remote])
 
 
-class MachineFilterTests(TestCase):
+class MachineFilterTests(TenantSchemaTestCase):
     """Tests for the :class:`MachineFilter`."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.branch = factories.BranchFactory(is_active=True)
         self.other_branch = factories.BranchFactory(is_active=True)
         self.fleet = factories.FleetFactory(is_active=True)
@@ -113,10 +115,11 @@ class MachineFilterTests(TestCase):
         self.assertQuerySetEqual(filtered, [self.machine])
 
 
-class ComponentTypeFilterTests(TestCase):
+class ComponentTypeFilterTests(TenantSchemaTestCase):
     """Tests for the :class:`ComponentTypeFilter`."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.pump = factories.ComponentTypeFactory(
             name="Pump", description="Rotary pump", is_active=True
         )

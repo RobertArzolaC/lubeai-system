@@ -1,13 +1,13 @@
 """Tests for the ``apps.equipment.forms`` module."""
 
 from constance.test import override_config
-from django.test import TestCase
 
+from apps.core.tests.base import TenantSchemaTestCase
 from apps.equipment import forms
 from apps.equipment.factories import FleetFactory, MachineFactory
 
 
-class FleetFormTests(TestCase):
+class FleetFormTests(TenantSchemaTestCase):
     """Tests for the :class:`FleetForm`."""
 
     def test_valid_with_name(self) -> None:
@@ -22,7 +22,7 @@ class FleetFormTests(TestCase):
         self.assertIn("name", form.errors)
 
 
-class BranchFormTests(TestCase):
+class BranchFormTests(TenantSchemaTestCase):
     """Tests for the :class:`BranchForm`."""
 
     def test_valid_with_name(self) -> None:
@@ -31,7 +31,7 @@ class BranchFormTests(TestCase):
         self.assertTrue(form.is_valid())
 
 
-class MachineFormTests(TestCase):
+class MachineFormTests(TenantSchemaTestCase):
     """Tests for the :class:`MachineForm`."""
 
     def test_valid_with_required_fields(self) -> None:
@@ -87,7 +87,7 @@ class MachineFormTests(TestCase):
         self.assertEqual(machine.fleet, fleet)
 
 
-class ComponentTypeFormTests(TestCase):
+class ComponentTypeFormTests(TenantSchemaTestCase):
     """Tests for the :class:`ComponentTypeForm`."""
 
     def test_valid_with_name(self) -> None:

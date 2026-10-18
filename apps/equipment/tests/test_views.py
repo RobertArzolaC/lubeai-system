@@ -3,9 +3,10 @@
 from constance.test import override_config
 from django.conf import settings
 from django.contrib.auth.models import Permission
-from django.test import TestCase, override_settings
+from django.test import override_settings
 from django.urls import reverse
 
+from apps.core.tests.base import TenantSchemaTestCase
 from apps.equipment import factories, forms, models, views
 from apps.users import factories as users_factories
 
@@ -59,10 +60,11 @@ def grant_permissions(user, *codenames: str) -> None:
 
 
 @override_settings(TEMPLATES=EQUIPMENT_TEMPLATES)
-class FleetListViewTests(TestCase):
+class FleetListViewTests(TenantSchemaTestCase):
     """Tests for :class:`FleetListView`."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.user = users_factories.UserFactory()
         self.fleet = factories.FleetFactory(name="North Fleet")
         self.url = reverse("apps.equipment:fleet_list")
@@ -98,10 +100,11 @@ class FleetListViewTests(TestCase):
 
 
 @override_settings(TEMPLATES=EQUIPMENT_TEMPLATES)
-class FleetDetailViewTests(TestCase):
+class FleetDetailViewTests(TenantSchemaTestCase):
     """Tests for :class:`FleetDetailView`."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.user = users_factories.UserFactory()
         self.fleet = factories.FleetFactory()
         self.url = reverse("apps.equipment:fleet_detail", kwargs={"pk": self.fleet.pk})
@@ -128,10 +131,11 @@ class FleetDetailViewTests(TestCase):
 
 
 @override_settings(TEMPLATES=EQUIPMENT_TEMPLATES)
-class FleetCreateViewTests(TestCase):
+class FleetCreateViewTests(TenantSchemaTestCase):
     """Tests for :class:`FleetCreateView`."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.user = users_factories.UserFactory()
         self.url = reverse("apps.equipment:fleet_create")
 
@@ -165,10 +169,11 @@ class FleetCreateViewTests(TestCase):
 
 
 @override_settings(TEMPLATES=EQUIPMENT_TEMPLATES)
-class FleetUpdateViewTests(TestCase):
+class FleetUpdateViewTests(TenantSchemaTestCase):
     """Tests for :class:`FleetUpdateView`."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.user = users_factories.UserFactory()
         self.fleet = factories.FleetFactory(name="North Fleet")
         self.url = reverse("apps.equipment:fleet_update", kwargs={"pk": self.fleet.pk})
@@ -203,10 +208,11 @@ class FleetUpdateViewTests(TestCase):
         self.assertEqual(self.fleet.name, "Renamed Fleet")
 
 
-class FleetDeleteViewTests(TestCase):
+class FleetDeleteViewTests(TenantSchemaTestCase):
     """Tests for :class:`FleetDeleteView`."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.user = users_factories.UserFactory()
         self.fleet = factories.FleetFactory()
 
@@ -246,10 +252,11 @@ class FleetDeleteViewTests(TestCase):
 
 
 @override_settings(TEMPLATES=EQUIPMENT_TEMPLATES)
-class ComponentTypeListViewTests(TestCase):
+class ComponentTypeListViewTests(TenantSchemaTestCase):
     """Tests for :class:`ComponentTypeListView`."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.user = users_factories.UserFactory()
         self.component_type = factories.ComponentTypeFactory(name="Pump")
         self.url = reverse("apps.equipment:component_type_list")
@@ -285,10 +292,11 @@ class ComponentTypeListViewTests(TestCase):
 
 
 @override_settings(TEMPLATES=EQUIPMENT_TEMPLATES)
-class ComponentTypeDetailViewTests(TestCase):
+class ComponentTypeDetailViewTests(TenantSchemaTestCase):
     """Tests for :class:`ComponentTypeDetailView`."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.user = users_factories.UserFactory()
         self.component_type = factories.ComponentTypeFactory()
         self.url = reverse(
@@ -318,10 +326,11 @@ class ComponentTypeDetailViewTests(TestCase):
 
 
 @override_settings(TEMPLATES=EQUIPMENT_TEMPLATES)
-class ComponentTypeCreateViewTests(TestCase):
+class ComponentTypeCreateViewTests(TenantSchemaTestCase):
     """Tests for :class:`ComponentTypeCreateView`."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.user = users_factories.UserFactory()
         self.url = reverse("apps.equipment:component_type_create")
 
@@ -358,10 +367,11 @@ class ComponentTypeCreateViewTests(TestCase):
 
 
 @override_settings(TEMPLATES=EQUIPMENT_TEMPLATES)
-class ComponentTypeUpdateViewTests(TestCase):
+class ComponentTypeUpdateViewTests(TenantSchemaTestCase):
     """Tests for :class:`ComponentTypeUpdateView`."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.user = users_factories.UserFactory()
         self.component_type = factories.ComponentTypeFactory(name="Pump")
         self.url = reverse(
@@ -400,10 +410,11 @@ class ComponentTypeUpdateViewTests(TestCase):
         self.assertEqual(self.component_type.name, "Renamed Type")
 
 
-class ComponentTypeDeleteViewTests(TestCase):
+class ComponentTypeDeleteViewTests(TenantSchemaTestCase):
     """Tests for :class:`ComponentTypeDeleteView`."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.user = users_factories.UserFactory()
         self.component_type = factories.ComponentTypeFactory()
 
@@ -445,10 +456,11 @@ class ComponentTypeDeleteViewTests(TestCase):
 
 
 @override_settings(TEMPLATES=EQUIPMENT_TEMPLATES)
-class MachineAndBranchViewTests(TestCase):
+class MachineAndBranchViewTests(TenantSchemaTestCase):
     """Regression tests for the existing Machine and Branch views."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.user = users_factories.UserFactory()
         self.machine = factories.MachineFactory()
         self.branch = factories.BranchFactory()
@@ -592,7 +604,7 @@ class MachineAndBranchViewTests(TestCase):
         self.assertEqual(self.machine.name, "Updated Machine")
 
 
-class EquipmentQueryOptimizationTests(TestCase):
+class EquipmentQueryOptimizationTests(TenantSchemaTestCase):
     """The list views select related objects to avoid N+1 queries."""
 
     @override_config(ENABLE_FLEET=True)

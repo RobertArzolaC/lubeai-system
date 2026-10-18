@@ -2,9 +2,8 @@
 
 from types import SimpleNamespace
 
-from django.test import TestCase
-
 from apps.core.mixins.forms import UserStampMixin
+from apps.core.tests.base import TenantSchemaTestCase
 from apps.equipment import factories as equipment_factories
 from apps.equipment import models as equipment_models
 from apps.equipment import views as equipment_views
@@ -13,11 +12,12 @@ from apps.organizations import factories as organization_factories
 from apps.users import factories as user_factories
 
 
-class ComponentTypeScopingTests(TestCase):
+class ComponentTypeScopingTests(TenantSchemaTestCase):
     """Component types are visible only within the user's subtree."""
 
     def setUp(self) -> None:
         """Build a tree where each organization owns a distinct type."""
+        super().setUp()
         self.marco = organization_factories.OrganizationFactory(
             slug="ct-marco", kind=choices.OrganizationKind.LAB
         )
@@ -27,7 +27,9 @@ class ComponentTypeScopingTests(TestCase):
             parent=self.marco,
         )
         self.final_a = organization_factories.OrganizationFactory(
-            slug="ct-final-a", kind=choices.OrganizationKind.FINAL, parent=self.intermediary
+            slug="ct-final-a",
+            kind=choices.OrganizationKind.FINAL,
+            parent=self.intermediary,
         )
         self.final_b = organization_factories.OrganizationFactory(
             slug="ct-final-b", kind=choices.OrganizationKind.FINAL, parent=self.marco

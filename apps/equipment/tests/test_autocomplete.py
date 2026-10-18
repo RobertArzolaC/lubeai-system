@@ -2,9 +2,9 @@
 
 import json
 
-from django.test import TestCase
 from django.urls import reverse
 
+from apps.core.tests.base import TenantSchemaTestCase
 from apps.equipment import factories
 from apps.users import factories as user_factories
 
@@ -14,10 +14,11 @@ def forward_payload(**values: object) -> str:
     return json.dumps(values)
 
 
-class MachineAutocompleteTests(TestCase):
+class MachineAutocompleteTests(TenantSchemaTestCase):
     """Tests for :class:`autocomplete.MachineAutocomplete`."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.machine = factories.MachineFactory(name="Alpha Vessel")
         self.other = factories.MachineFactory(name="Beta Vessel")
         self.url = reverse("apps.equipment:autocomplete_machine")
@@ -44,10 +45,11 @@ class MachineAutocompleteTests(TestCase):
         self.assertEqual(ids, {self.machine.pk})
 
 
-class ComponentAutocompleteTests(TestCase):
+class ComponentAutocompleteTests(TenantSchemaTestCase):
     """Tests for :class:`autocomplete.ComponentAutocomplete`."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.machine = factories.MachineFactory()
         self.other_machine = factories.MachineFactory()
         self.component = factories.ComponentFactory(machine=self.machine)

@@ -3,9 +3,9 @@
 from types import SimpleNamespace
 
 from django.contrib.auth.models import Permission
-from django.test import TestCase
 from django.urls import reverse
 
+from apps.core.tests.base import TenantSchemaTestCase
 from apps.equipment import factories as equipment_factories
 from apps.equipment import filtersets, forms, models
 from apps.equipment import views as equipment_views
@@ -33,11 +33,12 @@ def grant_permissions(user: user_models.User, *codenames: str) -> None:
     user.user_permissions.add(*permissions)
 
 
-class OrganizationFormFieldTests(TestCase):
+class OrganizationFormFieldTests(TenantSchemaTestCase):
     """The Client field is scoped and only shown when the user can choose."""
 
     def setUp(self) -> None:
         """Build lab -> intermediary -> final."""
+        super().setUp()
         self.lab = organization_factories.OrganizationFactory(
             slug="ff-lab", kind=choices.OrganizationKind.LAB
         )
@@ -111,11 +112,12 @@ class OrganizationFormFieldTests(TestCase):
         self.assertEqual(component_type.organization_id, owner.id)
 
 
-class MachineClientCoherenceTests(TestCase):
+class MachineClientCoherenceTests(TenantSchemaTestCase):
     """A machine's branch must belong to the selected client."""
 
     def setUp(self) -> None:
         """Build a lab with two final clients, each owning a branch."""
+        super().setUp()
         self.lab = organization_factories.OrganizationFactory(
             slug="mc-lab", kind=choices.OrganizationKind.LAB
         )
@@ -161,11 +163,12 @@ class MachineClientCoherenceTests(TestCase):
         self.assertEqual(machine.organization_id, self.client_b.id)
 
 
-class ClientFilterTests(TestCase):
+class ClientFilterTests(TenantSchemaTestCase):
     """The list filters accept an organization and hide it for leaf users."""
 
     def setUp(self) -> None:
         """Build a lab with two final clients, each owning a branch."""
+        super().setUp()
         self.lab = organization_factories.OrganizationFactory(
             slug="cf-lab", kind=choices.OrganizationKind.LAB
         )
@@ -210,11 +213,12 @@ class ClientFilterTests(TestCase):
         self.assertEqual(ids, {self.lab.id, self.client_a.id, self.client_b.id})
 
 
-class ClientListContextTests(TestCase):
+class ClientListContextTests(TenantSchemaTestCase):
     """The list views expose the organization join and the show flag."""
 
     def setUp(self) -> None:
         """Build a lab with one final client."""
+        super().setUp()
         self.lab = organization_factories.OrganizationFactory(
             slug="lc-lab", kind=choices.OrganizationKind.LAB
         )
@@ -241,11 +245,12 @@ class ClientListContextTests(TestCase):
         self.assertFalse(self._show_flag(user_for(self.final)))
 
 
-class ClientColumnRenderingTests(TestCase):
+class ClientColumnRenderingTests(TenantSchemaTestCase):
     """The Client column and filter appear for parent users only."""
 
     def setUp(self) -> None:
         """Build a lab owning a final client with one branch."""
+        super().setUp()
         self.lab = organization_factories.OrganizationFactory(
             slug="cr-lab", kind=choices.OrganizationKind.LAB
         )
@@ -284,11 +289,12 @@ class ClientColumnRenderingTests(TestCase):
         self.assertContains(response, self.final.name)
 
 
-class MachineFormLegacyBehaviourTests(TestCase):
+class MachineFormLegacyBehaviourTests(TenantSchemaTestCase):
     """Coherence never changes forms without a choosable client field."""
 
     def setUp(self) -> None:
         """Build a lab with two final clients and a branch of the second one."""
+        super().setUp()
         self.lab = organization_factories.OrganizationFactory(
             slug="mb-lab", kind=choices.OrganizationKind.LAB
         )
@@ -333,11 +339,12 @@ class MachineFormLegacyBehaviourTests(TestCase):
         self.assertTrue(form.is_valid())
 
 
-class ClientCreationViewTests(TestCase):
+class ClientCreationViewTests(TenantSchemaTestCase):
     """Creating through the views attributes the record to the chosen client."""
 
     def setUp(self) -> None:
         """Build a lab with a final client and an unrelated tenant."""
+        super().setUp()
         self.lab = organization_factories.OrganizationFactory(
             slug="cv-lab", kind=choices.OrganizationKind.LAB
         )

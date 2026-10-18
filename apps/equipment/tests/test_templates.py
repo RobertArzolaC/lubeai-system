@@ -4,9 +4,10 @@ from constance.test import override_config
 from django.contrib.auth.models import Permission
 from django.core.cache import cache
 from django.template import Context, Template
-from django.test import SimpleTestCase, TestCase
+from django.test import SimpleTestCase
 from django.urls import reverse
 
+from apps.core.tests.base import TenantSchemaTestCase
 from apps.equipment.factories import (
     BranchFactory,
     ComponentTypeFactory,
@@ -25,10 +26,11 @@ def grant_permissions(user, *codenames: str) -> None:
     user.user_permissions.add(*permissions)
 
 
-class EquipmentTemplateRenderingTests(TestCase):
+class EquipmentTemplateRenderingTests(TenantSchemaTestCase):
     """Render the real equipment templates to catch syntax and wiring errors."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.user = UserFactory(is_staff=True, is_superuser=True)
         self.client.force_login(self.user)
         self.machine = MachineFactory()
@@ -150,10 +152,11 @@ class EquipmentTemplateRenderingTests(TestCase):
         )
 
 
-class DashboardModuleAccessTests(TestCase):
+class DashboardModuleAccessTests(TenantSchemaTestCase):
     """Permission-gated equipment links inside the dashboard."""
 
     def setUp(self) -> None:
+        super().setUp()
         cache.clear()
 
     @override_config(ENABLE_FLEET=True)
@@ -197,10 +200,11 @@ class DashboardModuleAccessTests(TestCase):
         self.assertNotContains(response, reverse("apps.equipment:component_type_list"))
 
 
-class DashboardFleetFlagTests(TestCase):
+class DashboardFleetFlagTests(TenantSchemaTestCase):
     """The dashboard fleet filter and chart are gated by the feature flag."""
 
     def setUp(self) -> None:
+        super().setUp()
         cache.clear()
         self.user = UserFactory(is_staff=True, is_superuser=True)
         self.client.force_login(self.user)
@@ -237,10 +241,11 @@ class FleetFlagMissingConfigTests(SimpleTestCase):
         self.assertEqual(template.render(Context({})), "off")
 
 
-class EquipmentRowPermissionGatingTests(TestCase):
+class EquipmentRowPermissionGatingTests(TenantSchemaTestCase):
     """Action buttons in list rows are gated by Django permissions."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.user = UserFactory()
         self.client.force_login(self.user)
         self.fleet = FleetFactory()
