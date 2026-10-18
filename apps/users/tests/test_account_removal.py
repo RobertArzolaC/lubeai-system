@@ -1,15 +1,10 @@
 """Tests for the removal of the legacy ``Account`` model."""
 
-import importlib
-
-from django.test import TestCase
+from django.db import connection
+from django.db.migrations.executor import MigrationExecutor
+from django.test import TestCase, TransactionTestCase
 
 from apps.users import models as users_models
-
-
-def _load_migration():
-    """Import the data migration that removes the Account model."""
-    return importlib.import_module("apps.users.migrations.0005_delete_account")
 
 
 class AccountModelRemovedTests(TestCase):
@@ -24,40 +19,50 @@ class AccountModelRemovedTests(TestCase):
         self.assertFalse(hasattr(users_models.User, "is_account"))
 
 
-class DeleteAccountMigrationTests(TestCase):
-    """The data migration deactivates users whose account was removed."""
+class DeleteAccountMigrationTests(TransactionTestCase):
+    """The data migration deactivates users whose account was removed.
 
-    def test_deactivates_removed_account_users(self) -> None:
-        """Review Focus #2: removed accounts become inactive users."""
+    Runs the real migration executor so the ``RunPython`` operates on actual
+    rows: an account flagged ``is_removed`` must end as an inactive user, and a
+    normal account must stay active (Review Focus #2).
+    """
 
-        class _FakeAccountManager:
-            def filter(self, **kwargs):
-                self.kwargs = kwargs
-                return self
+    migrate_from = [("users", "0004_role")]
+    migrate_to = [("users", "0005_delete_account")]
 
-            def values_list(self, *args, **kwargs):
-                return [1, 2]
+    def _migrate(self, targets) -> None:
+        executor = MigrationExecutor(connection)
+        executor.loader.build_graph()
+        executor.migrate(targets)
 
-        class _FakeAccount:
-            objects = _FakeAccountManager()
+    def setUp(self) -> None:
+        self._migrate(self.migrate_from)
+        executor = MigrationExecutor(connection)
+        old_apps = executor.loader.project_state(self.migrate_from).apps
+        user_model = old_apps.get_model("users", "User")
+        account_model = old_apps.get_model("users", "Account")
 
-        class _FakeUserManager:
-            def filter(self, **kwargs):
-                self.kwargs = kwargs
-                return self
+        self.removed_user = user_model.objects.create(
+            email="removed@example.com", password="x", is_active=True
+        )
+        self.kept_user = user_model.objects.create(
+            email="kept@example.com", password="x", is_active=True
+        )
+        account_model.objects.create(user=self.removed_user, is_removed=True)
+        account_model.objects.create(user=self.kept_user, is_removed=False)
 
-            def update(self, **kwargs):
-                _FakeUserManager.last_update = kwargs
-                return 2
+        self._migrate(self.migrate_to)
 
-        class _FakeUser:
-            objects = _FakeUserManager()
+    def tearDown(self) -> None:
+        executor = MigrationExecutor(connection)
+        executor.migrate(executor.loader.graph.leaf_nodes())
 
-        class _FakeApps:
-            def get_model(self, app_label, model_name):
-                return _FakeAccount if model_name == "Account" else _FakeUser
+    def test_removed_account_user_is_deactivated(self) -> None:
+        """A user whose account was removed becomes inactive."""
+        user = users_models.User.objects.get(pk=self.removed_user.pk)
+        self.assertFalse(user.is_active)
 
-        migration = _load_migration()
-        migration.deactivate_removed_account_users(_FakeApps(), None)
-
-        self.assertEqual(_FakeUserManager.last_update, {"is_active": False})
+    def test_normal_account_user_stays_active(self) -> None:
+        """A user with a live account is left untouched."""
+        user = users_models.User.objects.get(pk=self.kept_user.pk)
+        self.assertTrue(user.is_active)
