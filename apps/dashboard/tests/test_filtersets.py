@@ -2,18 +2,18 @@
 
 from datetime import date
 
-from django.test import TestCase
-
+from apps.core.tests.base import TenantSchemaTestCase
 from apps.dashboard.filtersets import DashboardFilter
 from apps.equipment import factories as equipment_factories
 from apps.reports import factories as reports_factories
 from apps.reports import models as reports_models
 
 
-class DashboardFilterTests(TestCase):
+class DashboardFilterTests(TenantSchemaTestCase):
     """Filtering tests for the dashboard reports queryset."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.fleet = equipment_factories.FleetFactory(name="Flota Sur")
         self.machine = equipment_factories.MachineFactory(fleet=self.fleet)
         self.component_type = equipment_factories.ComponentTypeFactory(name="Bomba")

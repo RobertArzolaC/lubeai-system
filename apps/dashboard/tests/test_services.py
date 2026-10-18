@@ -3,10 +3,10 @@
 import json
 from datetime import date, datetime
 
-from django.test import TestCase
 from django.utils import timezone
 
 from apps.alerts import factories as alerts_factories
+from apps.core.tests.base import TenantSchemaTestCase
 from apps.dashboard.services.dashboard_service import (
     DashboardFilters,
     DashboardService,
@@ -15,10 +15,11 @@ from apps.equipment import factories as equipment_factories
 from apps.reports import factories as reports_factories
 
 
-class DashboardServiceKPITests(TestCase):
+class DashboardServiceKPITests(TenantSchemaTestCase):
     """KPI aggregation tests."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.machine = equipment_factories.MachineFactory(name="Buque Uno")
         self.normal = reports_factories.ReportFactory(
             machine=self.machine, condition="NORMAL", sample_date=date(2024, 3, 1)
@@ -51,10 +52,11 @@ class DashboardServiceKPITests(TestCase):
         self.assertEqual(distribution, {"NORMAL": 1, "CAUTION": 1, "CRITICAL": 1})
 
 
-class DashboardServiceSeriesTests(TestCase):
+class DashboardServiceSeriesTests(TenantSchemaTestCase):
     """Monthly series and grouping tests."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.machine = equipment_factories.MachineFactory(name="Buque Dos")
         reports_factories.ReportFactory(
             machine=self.machine, condition="CRITICAL", sample_date=date(2024, 1, 10)
@@ -125,10 +127,11 @@ class DashboardServiceSeriesTests(TestCase):
         self.assertEqual(data["cautions"], [1, 1])
 
 
-class DashboardServiceFilterTests(TestCase):
+class DashboardServiceFilterTests(TenantSchemaTestCase):
     """Filtering behaviour tests."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.fleet = equipment_factories.FleetFactory(name="Flota Sur")
         self.other_fleet = equipment_factories.FleetFactory(name="Flota Norte")
         self.machine = equipment_factories.MachineFactory(fleet=self.fleet)
@@ -189,10 +192,11 @@ class DashboardServiceFilterTests(TestCase):
         self.assertEqual(alerts.first().detected_at.year, 2024)
 
 
-class DashboardServiceISOTests(TestCase):
+class DashboardServiceISOTests(TenantSchemaTestCase):
     """ISO 4406 parsing and classification tests."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.report_ok = reports_factories.ReportFactory(condition="NORMAL")
         reports_factories.LabAnalysisFactory(
             report=self.report_ok, particle_count_iso="20/18/15"
@@ -214,10 +218,11 @@ class DashboardServiceISOTests(TestCase):
         self.assertTrue(DashboardService._iso_is_within_target("bad-code"))
 
 
-class DashboardServiceAuxTests(TestCase):
+class DashboardServiceAuxTests(TenantSchemaTestCase):
     """Range, recent reports and filter options tests."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.machine = equipment_factories.MachineFactory(name="Buque Cuatro")
         reports_factories.ReportFactory(
             machine=self.machine, condition="NORMAL", sample_date=date(2024, 1, 1)
@@ -251,10 +256,11 @@ class DashboardServiceAuxTests(TestCase):
         self.assertTrue(options["fleets"])
 
 
-class DashboardServiceBuildContextTests(TestCase):
+class DashboardServiceBuildContextTests(TenantSchemaTestCase):
     """Full dashboard payload assembly tests."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.machine = equipment_factories.MachineFactory(name="Buque Cinco")
         self.report = reports_factories.ReportFactory(
             machine=self.machine, condition="CRITICAL", sample_date=date(2024, 5, 15)

@@ -5,10 +5,11 @@ from datetime import date
 from django.conf import settings
 from django.core.cache import cache
 from django.db import connection
-from django.test import TestCase, override_settings
+from django.test import override_settings
 from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 
+from apps.core.tests.base import TenantSchemaTestCase
 from apps.dashboard.services.dashboard_service import DashboardService
 from apps.equipment import factories as equipment_factories
 from apps.reports import factories as reports_factories
@@ -42,10 +43,11 @@ DASHBOARD_TEMPLATES = [
 
 
 @override_settings(TEMPLATES=DASHBOARD_TEMPLATES)
-class DashboardViewTests(TestCase):
+class DashboardViewTests(TenantSchemaTestCase):
     """Tests for the dashboard page and data endpoint."""
 
     def setUp(self) -> None:
+        super().setUp()
         cache.clear()
         self.user = users_factories.UserFactory()
         self.machine = equipment_factories.MachineFactory(name="Buque Test")
@@ -113,18 +115,31 @@ class DashboardViewTests(TestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_data_query_count_is_bounded(self) -> None:
-        """The endpoint avoids N+1 queries as the dataset grows."""
+        """The endpoint avoids N+1 queries as the dataset grows.
+
+        The count is fixed by the request pipeline and the payload, not by the
+        rows: one lookup for the tenant's primary domain (the ``TenantClient``
+        resolves the host of every request), the two ``SET search_path``
+        statements and the domain lookup of ``TenantMainMiddleware``, the
+        session and the user, plus the eight dashboard aggregations. The
+        consolidated view of the laboratory is a single aggregate over the
+        tenant schema — one query per metric — never one query per
+        organization, which is why the extra organizations below do not add
+        queries.
+        """
         for month in range(1, 6):
             reports_factories.ReportFactory(
                 machine=self.machine,
                 condition="NORMAL",
                 sample_date=date(2024, month, 15),
             )
+        # One extra report in a different organization each: a per-organization
+        # implementation would grow with these and fail the exact assertion.
+        for _ in range(4):
+            reports_factories.ReportFactory()
         self.client.force_login(self.user)
         DashboardService()  # warm up any lazy imports
-        # 3 request queries (tenant middleware + session + user) and 8 bounded
-        # dashboard aggregations; no N+1 as the dataset grows.
-        with self.assertNumQueries(11):
+        with self.assertNumQueries(14):
             self.client.get(reverse("apps.dashboard:data"))
 
     def _query_count(self, path: str, **params: object) -> int:
@@ -154,11 +169,12 @@ class DashboardViewTests(TestCase):
         self.assertEqual(second["kpis"]["total"], 3)
 
 
-class DashboardRealTemplateSmokeTests(TestCase):
+class DashboardRealTemplateSmokeTests(TenantSchemaTestCase):
     """Render the real dashboard template with the default template engine."""
 
     def setUp(self) -> None:
         """Avoid leaking cached dashboard pages across tests."""
+        super().setUp()
         cache.clear()
 
     def tearDown(self) -> None:

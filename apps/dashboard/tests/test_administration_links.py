@@ -1,9 +1,9 @@
 """Tests for the client administration entries in the sidebar and dashboard."""
 
 from django.contrib.auth.models import Permission
-from django.test import TestCase
 from django.urls import reverse
 
+from apps.core.tests.base import TenantSchemaTestCase
 from apps.organizations.factories import OrganizationFactory
 from apps.users.factories import RoleFactory, UserFactory
 
@@ -16,10 +16,11 @@ def grant(user, app_label: str, *codenames: str) -> None:
     user.user_permissions.add(*permissions)
 
 
-class AdministrationLinksTests(TestCase):
+class AdministrationLinksTests(TenantSchemaTestCase):
     """Sidebar visibility and dashboard counts for the new modules."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.lab = OrganizationFactory(name="LAB")
         self.child = OrganizationFactory(name="Child", parent=self.lab)
         self.user = UserFactory(organization=self.lab)
