@@ -109,6 +109,23 @@ class ProvisionTenantTests(TenantProvisionTestCase):
             )
             self.assertEqual(User.objects.filter(email="admin@acme.pe").count(), 1)
 
+    def test_domain_conflict_leaves_no_tenant_or_schema(self) -> None:
+        """A domain owned by another tenant fails before any write."""
+        self.provision()
+
+        with self.assertRaisesMessage(ValueError, "already belongs to another tenant"):
+            services.provision_tenant(
+                slug="beta",
+                name="Beta",
+                kind=choices.TenantKind.INTERMEDIARY.value,
+                admin_email="admin@beta.pe",
+                default_password="Demo12345!",
+                domain=f"acme.{settings.PLATFORM_DOMAIN}",
+            )
+
+        self.assertFalse(models.Tenant.objects.filter(slug="beta").exists())
+        self.assertFalse(schema_exists("beta"))
+
     def test_provision_never_creates_a_schema_for_public(self) -> None:
         """The public schema is the registry, not a provisioned client."""
         with self.assertRaises(ValueError):

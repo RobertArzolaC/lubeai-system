@@ -144,6 +144,26 @@ class SeedDemoDataTests(TenantProvisionTestCase):
             ).count()
             self.assertEqual(wrong, 0)
 
+    def test_derives_root_identities_from_the_tenant(self) -> None:
+        """Seeding another tenant never creates MARCO-branded accounts."""
+        self.seed(months=1)
+
+        with tenant_context(self.tenant):
+            self.assertEqual(self.root.slug, "acme")
+            self.assertFalse(User.objects.filter(email="admin@marco.pe").exists())
+            self.assertFalse(User.objects.filter(email="laboratorio@marco.pe").exists())
+            self.assertTrue(
+                User.objects.filter(email="admin@acme.pe", is_superuser=True).exists()
+            )
+            self.assertTrue(User.objects.filter(email="laboratorio@acme.pe").exists())
+            self.assertEqual(User.objects.filter(is_superuser=True).count(), 1)
+            self.assertFalse(
+                report_models.Laboratory.objects.filter(code="MARCO-LAB").exists()
+            )
+            self.assertTrue(
+                report_models.Laboratory.objects.filter(code="ACME-LAB").exists()
+            )
+
     def test_creates_a_user_for_each_final_organization(self) -> None:
         """Every final client organization has at least one user."""
         self.seed(months=1)

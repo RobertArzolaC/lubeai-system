@@ -71,8 +71,13 @@ def provision_tenant(
     try:
         connection.set_schema_to_public()
 
-        tenant = _upsert_tenant(slug=slug, name=name, kind=kind)
         resolved_domain = domain or f"{slug}.{settings.PLATFORM_DOMAIN}"
+        # Validate the host *before* touching the registry: ``Tenant.save``
+        # creates and migrates the schema (DDL, not transactional), so a later
+        # failure would leave an orphan schema behind.
+        _assert_domain_available(slug=slug, domain=resolved_domain)
+
+        tenant = _upsert_tenant(slug=slug, name=name, kind=kind)
         _ensure_domain(tenant=tenant, domain=resolved_domain)
 
         with tenant_context(tenant), transaction.atomic():
@@ -91,6 +96,27 @@ def provision_tenant(
 
     tenant.refresh_from_db()
     return tenant
+
+
+def _assert_domain_available(*, slug: str, domain: str) -> None:
+    """Reject a domain that already belongs to another tenant.
+
+    This runs before any write so a conflict cannot leave a half-provisioned
+    tenant (or an orphan schema) behind.
+
+    Args:
+        slug: Slug of the tenant being provisioned; a domain already owned by
+            the same slug is not a conflict (idempotent re-provisioning).
+        domain: Host name the tenant will answer on.
+
+    Raises:
+        ValueError: If the host name is registered to a different tenant.
+    """
+    conflict = (
+        models.Domain.objects.filter(domain=domain).exclude(tenant__slug=slug).exists()
+    )
+    if conflict:
+        raise ValueError(f"Domain '{domain}' already belongs to another tenant.")
 
 
 def _upsert_tenant(*, slug: str, name: str, kind: str) -> models.Tenant:

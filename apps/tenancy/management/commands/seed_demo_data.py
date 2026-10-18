@@ -320,14 +320,20 @@ class Command(BaseCommand):
         )
 
     def _seed_users(self, root: org_models.Organization) -> None:
-        """Create one user per role (idempotent, demo password)."""
+        """Create one user per role (idempotent, demo password).
+
+        The root users derive their identity from the tenant's root
+        organization, so seeding any tenant never produces another client's
+        branded accounts (and never a second superuser: the ``admin@<slug>``
+        account is the one ``provision_tenant`` already created).
+        """
 
         def organization(slug: str) -> org_models.Organization:
             return org_models.Organization.objects.get(slug=slug)
 
         users = [
-            ("admin@marco.pe", "Admin", "MARCO", root, True, True),
-            ("laboratorio@marco.pe", "Lab", "MARCO", root, False, False),
+            (f"admin@{root.slug}.pe", "Admin", root.name, root, True, True),
+            (f"laboratorio@{root.slug}.pe", "Lab", root.name, root, False, False),
             (
                 "operaciones@minera-andina.pe",
                 "Operaciones",
@@ -426,8 +432,8 @@ class Command(BaseCommand):
             )
         )
         laboratory, _ = report_models.Laboratory.objects.get_or_create(
-            code="MARCO-LAB",
-            defaults={"name": "Laboratorio MARCO", "created_by": None},
+            code=f"{root.slug[:8].upper()}-LAB",
+            defaults={"name": f"Laboratorio {root.name}", "created_by": None},
         )
 
         for org in final_orgs:
