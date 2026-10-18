@@ -7,6 +7,7 @@ from typing import Any
 from constance import config
 
 from apps.organizations import constants
+from apps.organizations import models as organization_models
 
 
 def _tenant_branding(tenant: Any) -> dict[str, Any]:
@@ -56,10 +57,12 @@ def branding(request: Any) -> dict[str, Any]:
     Args:
         request: The current HTTP request. ``request.tenant`` is set by
             ``django_tenants.middleware.main.TenantMainMiddleware`` and
-            ``request.organization`` by a view that resolves a node of the
-            tenant's organization tree. Both may be missing (the ``public``
-            schema, background jobs) and the processor degrades to the platform
-            defaults.
+            ``request.organization`` by
+            :class:`apps.organizations.middleware.OrganizationMiddleware`: the
+            organization in effect is the user's own node when it belongs to
+            one, otherwise the tenant itself (the root organization of its
+            tree). Both may be missing (the ``public`` schema, background jobs)
+            and the processor degrades to the platform defaults.
 
     Returns:
         Context with ``branding``, ``current_organization``, ``current_tenant``,
@@ -69,7 +72,7 @@ def branding(request: Any) -> dict[str, Any]:
     tenant = getattr(request, "tenant", None)
     organization = getattr(request, "organization", None)
 
-    if organization is not None:
+    if isinstance(organization, organization_models.Organization):
         branding_data = organization.get_branding()
         capabilities = organization.resolved_capabilities()
     elif tenant is not None:

@@ -15,7 +15,7 @@
             <div class="py-20 px-10 text-center">
                 <a class="mb-10 inline-block" href="/">
                     {% if branding.logo %}
-                    <img src="{{ branding.logo.url }}" alt="{{ current_organization.name|default:current_tenant.name|default:'Logo' }}" class="h-12 mx-auto" />
+                    <img src="{{ branding.logo.url }}" alt="{% firstof current_organization.name current_tenant.name "Logo" %}" class="h-12 mx-auto" />
                     {% else %}
                     <img src="{% static 'assets/images/logos/logo.png' %}" alt="Logo" class="h-12 mx-auto" />
                     {% endif %}

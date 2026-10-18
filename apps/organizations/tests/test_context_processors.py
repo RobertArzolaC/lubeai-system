@@ -1,10 +1,10 @@
 """Tests for the branding context processor.
 
-Branding is resolved per request: the tenant (``request.tenant``, written by
-``TenantMainMiddleware`` from the ``public`` schema) is always available and
-its brand is the platform client's brand. When a view resolves the tenant's
-organization (``request.organization``, a TENANT model) that node overrides the
-tenant brand for its own subtree.
+Branding is resolved per request: ``request.tenant`` (written by
+``TenantMainMiddleware`` from the ``public`` schema) is the platform client's
+brand, and ``request.organization`` (written by ``OrganizationMiddleware``) is
+the organization **in effect**: the user's own node when it has one, otherwise
+the tenant itself, which stands in for the root organization of its tree.
 """
 
 from __future__ import annotations
@@ -17,6 +17,7 @@ from django.urls import reverse
 from apps.organizations import choices, constants, context_processors, models
 from apps.organizations.tests.base import OrganizationTenantTestCase
 from apps.tenancy import choices as tenancy_choices
+from apps.users.factories import UserFactory
 
 
 class BrandingTenantTests(OrganizationTenantTestCase):
@@ -39,11 +40,12 @@ class BrandingTenantTests(OrganizationTenantTestCase):
         return context_processors.branding(response.wsgi_request)
 
     def test_branding_falls_back_to_tenant_defaults(self) -> None:
-        """With no organization in context the tenant brand is used."""
+        """With no user organization in context the tenant brand is used."""
         context = self.branding_context()
 
         self.assertEqual(context["current_tenant"], self.tenant)
-        self.assertIsNone(context["current_organization"])
+        # The tenant stands in for the root organization of its own tree.
+        self.assertEqual(context["current_organization"], self.tenant)
         self.assertEqual(context["branding"]["primary_color"], "#123abc")
         self.assertEqual(context["branding"]["chart_danger"], "#ff0000")
         self.assertFalse(context["branding"]["logo"])
@@ -73,19 +75,18 @@ class BrandingTenantTests(OrganizationTenantTestCase):
         self.assertTrue(context["show_labs"])
         self.assertFalse(context["show_fleet"])
 
-    def test_branding_prefers_the_request_organization(self) -> None:
-        """An organization resolved for the request overrides the tenant brand."""
-        response = self.client.get(reverse("account_login"))
-        request = response.wsgi_request
+    def test_branding_prefers_the_user_organization(self) -> None:
+        """The organization in effect overrides the tenant brand."""
         organization = models.Organization.objects.create(
             name="Planta Norte",
             slug="planta-norte",
             kind=choices.OrganizationKind.FINAL,
             primary_color="#00ff00",
         )
-        request.organization = organization
+        self.client.force_login(UserFactory(organization=organization))
 
-        context = context_processors.branding(request)
+        response = self.client.get(reverse("apps.users:profile"))
+        context = context_processors.branding(response.wsgi_request)
 
         self.assertEqual(context["current_organization"], organization)
         self.assertEqual(context["current_tenant"], self.tenant)

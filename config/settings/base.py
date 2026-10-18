@@ -102,6 +102,9 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    # Needs ``request.tenant`` (set first) and ``request.user`` (set above): it
+    # publishes the organization in effect as ``request.organization``.
+    "apps.organizations.middleware.OrganizationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.middleware.locale.LocaleMiddleware",
