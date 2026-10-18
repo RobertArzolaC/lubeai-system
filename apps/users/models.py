@@ -42,6 +42,11 @@ class User(AbstractUser):
         return hasattr(self, "account")
 
     @cached_property
+    def is_email_verified(self):
+        """Return ``True`` when the user has a verified email address."""
+        return EmailAddress.objects.filter(user=self, verified=True).exists()
+
+    @cached_property
     def tenant(self):
         """Return the root tenant of this user's organization, if any."""
         return self.organization.tenant if self.organization_id else None

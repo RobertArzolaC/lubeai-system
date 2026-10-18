@@ -26,6 +26,20 @@ class UserModelTests(TestCase):
         """``full_name`` joins first and last names."""
         self.assertEqual(self.user.full_name, "Jane Doe")
 
+    def test_is_email_verified_on_user_true_when_verified(self) -> None:
+        """``User.is_email_verified`` is True for a verified email."""
+        EmailAddress.objects.create(
+            user=self.user, email=self.user.email, primary=True, verified=True
+        )
+        self.assertTrue(self.user.is_email_verified)
+
+    def test_is_email_verified_on_user_false_when_unverified(self) -> None:
+        """``User.is_email_verified`` is False when no email is verified."""
+        EmailAddress.objects.create(
+            user=self.user, email=self.user.email, primary=True, verified=False
+        )
+        self.assertFalse(self.user.is_email_verified)
+
     def test_is_account_true_when_account_exists(self) -> None:
         """A user that has an account reports ``is_account`` as True."""
         self.assertTrue(hasattr(self.user, "account"))
