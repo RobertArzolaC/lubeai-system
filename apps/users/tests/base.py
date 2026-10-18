@@ -3,41 +3,19 @@
 ``users`` is a TENANT app: its tables — and the ``auth`` tables it depends on —
 only exist inside a tenant schema. Every test that touches the database must
 therefore run with a tenant selected, which is what
-:class:`~django_tenants.test.cases.TenantTestCase` does.
+:class:`~apps.core.tests.base.TenantSchemaTestCase` provides; this module only
+keeps the app-specific name so the suite reads in the vocabulary of the app
+under test.
 """
 
 from __future__ import annotations
 
-from django_tenants.test.cases import TenantTestCase
-from django_tenants.test.client import TenantClient
-
-from apps.tenancy import choices
-from apps.tenancy import models as tenancy_models
+from apps.core.tests.base import TenantSchemaTestCase
 
 
-class UserTenantTestCase(TenantTestCase):
-    """Run a test class inside its own throwaway tenant schema.
+class UserTenantTestCase(TenantSchemaTestCase):
+    """Run a test class inside a tenant schema of its own.
 
-    The tenant created by the base class is the hard isolation boundary of the
-    platform, so the tests exercise users (and the roles that group them)
-    exactly where they live in production.
+    The tests exercise users (and the roles that group them) exactly where they
+    live in production.
     """
-
-    @classmethod
-    def setup_tenant(cls, tenant: tenancy_models.Tenant) -> None:
-        """Fill the business fields ``Tenant`` requires before saving.
-
-        Args:
-            tenant: The throwaway tenant created by ``TenantTestCase``. Its
-                ``schema_name`` is already set, so the slug mirrors it and the
-                two stay consistent (``Tenant.save`` derives the schema name
-                from the slug).
-        """
-        tenant.name = "Test tenant"
-        tenant.slug = tenant.schema_name
-        tenant.kind = choices.TenantKind.LAB
-
-    def setUp(self) -> None:
-        """Send client requests to the tenant's primary domain."""
-        super().setUp()
-        self.client = TenantClient(self.tenant)

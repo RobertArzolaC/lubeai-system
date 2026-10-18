@@ -1,32 +1,24 @@
 """Shared test case for the tenancy apps.
 
 Provisioning creates (and migrates) a real PostgreSQL schema, so each test that
-exercises it needs a place to drop what it created. ``TenantTestCase`` already
-provides a throwaway schema for the test itself; this base class adds the
-helpers to provision and remove further tenants inside it.
+exercises it needs a place to drop what it created.
+:class:`~apps.core.tests.base.TenantSchemaTestCase` already provides a throwaway
+schema for the test itself; this base class adds the helpers to provision and
+remove further tenants inside it.
 """
 
 from __future__ import annotations
 
 from django.db import connection
-from django_tenants.test.cases import TenantTestCase
 
+from apps.core.tests.base import TenantSchemaTestCase
 from apps.tenancy import choices, models, services
 
 
-class TenantProvisionTestCase(TenantTestCase):
+class TenantProvisionTestCase(TenantSchemaTestCase):
     """Run tests inside a throwaway tenant and provision extra clients."""
 
-    @classmethod
-    def setup_tenant(cls, tenant: models.Tenant) -> None:
-        """Fill the business fields ``Tenant`` requires before saving.
-
-        Args:
-            tenant: The throwaway tenant created by ``TenantTestCase``.
-        """
-        tenant.name = "Tenancy tests"
-        tenant.slug = tenant.schema_name
-        tenant.kind = choices.TenantKind.LAB
+    tenant_name = "Tenancy tests"
 
     def provision(self, **overrides: object) -> models.Tenant:
         """Provision a tenant and schedule its schema for removal.
