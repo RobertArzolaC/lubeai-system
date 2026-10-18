@@ -1,12 +1,11 @@
 """Tests for the report-level alert generation service."""
 
-from django.test import TestCase
-
 from apps.alerts import models
 from apps.alerts.services.alert_generator import (
     PARAMETER_FIELD_MAP,
     AlertGeneratorService,
 )
+from apps.alerts.tests.base import AlertTenantTestCase
 from apps.reports import factories as report_factories
 
 
@@ -18,10 +17,11 @@ def build_analysis(report, **values):
     return report_factories.LabAnalysisFactory(report=report, **defaults)
 
 
-class AlertGeneratorServiceTests(TestCase):
+class AlertGeneratorServiceTests(AlertTenantTestCase):
     """Tests for :class:`AlertGeneratorService` report-level consolidation."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.service = AlertGeneratorService()
 
     def test_creates_single_alert_per_report(self) -> None:

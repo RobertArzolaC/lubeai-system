@@ -2,10 +2,11 @@
 
 from django.conf import settings
 from django.contrib.auth.models import Permission
-from django.test import TestCase, override_settings
+from django.test import override_settings
 from django.urls import NoReverseMatch, reverse
 
 from apps.alerts import factories, models
+from apps.alerts.tests.base import AlertTenantTestCase
 from apps.users import factories as users_factories
 
 ALERTS_TEMPLATES = [
@@ -68,10 +69,11 @@ def alert_payload(alert, **overrides: object) -> dict:
 
 
 @override_settings(TEMPLATES=ALERTS_TEMPLATES)
-class AlertViewTests(TestCase):
+class AlertViewTests(AlertTenantTestCase):
     """CRUD tests for the Alert views."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.user = users_factories.UserFactory()
         self.alert = factories.AlertFactory(status="OPEN", severity="CRITICAL")
 

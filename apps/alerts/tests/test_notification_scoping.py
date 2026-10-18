@@ -2,20 +2,21 @@
 
 from django.contrib.auth.models import Permission
 from django.core import mail
-from django.test import TestCase
 
 from apps.alerts import factories as alert_factories
 from apps.alerts.services.notifications import AlertNotificationService
+from apps.alerts.tests.base import AlertTenantTestCase
 from apps.organizations import choices
 from apps.organizations import factories as organization_factories
 from apps.users import factories as user_factories
 
 
-class AlertNotificationScopingTests(TestCase):
+class AlertNotificationScopingTests(AlertTenantTestCase):
     """Alert emails never cross the tenant that owns the alert."""
 
     def setUp(self) -> None:
         """Two tenants; an alert owned by a final client of tenant A."""
+        super().setUp()
         self.tenant_a = organization_factories.OrganizationFactory(
             slug="n-a", kind=choices.OrganizationKind.LAB
         )

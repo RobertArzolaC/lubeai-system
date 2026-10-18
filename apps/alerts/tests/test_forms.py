@@ -1,8 +1,7 @@
 """Tests for the ``apps.alerts.forms`` module."""
 
-from django.test import TestCase
-
 from apps.alerts import factories, forms
+from apps.alerts.tests.base import AlertTenantTestCase
 from apps.equipment import factories as equipment_factories
 from apps.users import factories as user_factories
 
@@ -26,10 +25,11 @@ def alert_payload(alert, **overrides: object) -> dict:
     return data
 
 
-class AlertFormTests(TestCase):
+class AlertFormTests(AlertTenantTestCase):
     """Tests for :class:`AlertForm`."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.user = user_factories.UserFactory()
         self.alert = factories.AlertFactory(status="OPEN")
 

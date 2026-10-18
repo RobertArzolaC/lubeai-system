@@ -3,11 +3,11 @@
 from types import SimpleNamespace
 
 from django.contrib.auth.models import Permission
-from django.test import TestCase
 from django.urls import reverse
 
 from apps.alerts import factories, filtersets, models
 from apps.alerts import views as alert_views
+from apps.alerts.tests.base import AlertTenantTestCase
 from apps.equipment import factories as equipment_factories
 from apps.organizations import choices
 from apps.organizations import factories as organization_factories
@@ -33,11 +33,12 @@ def grant_permissions(user: user_models.User, *codenames: str) -> None:
     user.user_permissions.add(*permissions)
 
 
-class AlertClientFilterTests(TestCase):
+class AlertClientFilterTests(AlertTenantTestCase):
     """The alert filter accepts an organization and hides it for leaf users."""
 
     def setUp(self) -> None:
         """Build a lab with a final client and an unrelated tenant."""
+        super().setUp()
         self.lab = organization_factories.OrganizationFactory(
             slug="ac-lab", kind=choices.OrganizationKind.LAB
         )
@@ -87,11 +88,12 @@ class AlertClientFilterTests(TestCase):
         self.assertEqual(ids, {self.lab.id, self.child.id})
 
 
-class AlertClientColumnTests(TestCase):
+class AlertClientColumnTests(AlertTenantTestCase):
     """The alert list exposes the organization join and the client column."""
 
     def setUp(self) -> None:
         """Build a lab with a final client owning one alert."""
+        super().setUp()
         self.lab = organization_factories.OrganizationFactory(
             slug="acc-lab", kind=choices.OrganizationKind.LAB
         )

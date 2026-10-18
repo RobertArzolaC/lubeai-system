@@ -77,7 +77,9 @@ services:
 
   celerybeat:
     <<: *app
-    command: celery -A config beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    # The tenant-aware scheduler comes from ``CELERY_BEAT_SCHEDULER``; passing
+    # ``--scheduler`` here would override it with the non-tenant-aware default.
+    command: celery -A config beat --loglevel=info
 
 volumes:
   postgres_data:

@@ -1,18 +1,19 @@
 """Rendering tests for the real alerts templates."""
 
 from django.db import connection
-from django.test import TestCase
 from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 
 from apps.alerts import factories
+from apps.alerts.tests.base import AlertTenantTestCase
 from apps.users.factories import UserFactory
 
 
-class AlertsTemplateRenderingTests(TestCase):
+class AlertsTemplateRenderingTests(AlertTenantTestCase):
     """Render the real alerts templates to catch syntax and wiring errors."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.user = UserFactory(is_staff=True, is_superuser=True)
         self.client.force_login(self.user)
         self.alert = factories.AlertFactory()

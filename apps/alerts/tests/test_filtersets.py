@@ -3,10 +3,10 @@
 from datetime import datetime
 
 from django import forms
-from django.test import TestCase
 from django.utils import timezone
 
 from apps.alerts import factories, filtersets, models
+from apps.alerts.tests.base import AlertTenantTestCase
 
 
 def aware(year: int, month: int, day: int) -> datetime:
@@ -14,10 +14,11 @@ def aware(year: int, month: int, day: int) -> datetime:
     return datetime(year, month, day, tzinfo=timezone.get_current_timezone())
 
 
-class AlertFilterTests(TestCase):
+class AlertFilterTests(AlertTenantTestCase):
     """Tests for :class:`AlertFilter`."""
 
     def setUp(self) -> None:
+        super().setUp()
         machine = factories.equipment_factories.MachineFactory(name="Main Engine")
         component = factories.equipment_factories.ComponentFactory(machine=machine)
         self.alert = factories.AlertFactory(

@@ -297,7 +297,12 @@ CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
-CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers.DatabaseScheduler"
+# ``django_celery_beat`` is installed in ``public`` and in every tenant schema,
+# so beat must read the periodic tasks of all of them: the tenant-aware
+# scheduler queries ``PeriodicTasks`` in ``public`` and iterates every tenant.
+CELERY_BEAT_SCHEDULER = (
+    "tenant_schemas_celery.db_scheduler.TenantAwareDatabaseScheduler"
+)
 CELERY_BROKER_URL = config("REDIS_URL", default="redis://127.0.0.1:6379/")
 CELERY_RESULT_BACKEND = config("REDIS_URL", default="redis://127.0.0.1:6379/")
 

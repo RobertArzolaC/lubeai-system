@@ -1,17 +1,17 @@
 """Tests for the ``apps.alerts.services`` module."""
 
-from django.test import TestCase
-
 from apps.alerts import factories
 from apps.alerts.services.alert_service import AlertService
 from apps.alerts.services.notifications import AlertNotificationService
+from apps.alerts.tests.base import AlertTenantTestCase
 from apps.users import factories as user_factories
 
 
-class AlertServiceTests(TestCase):
+class AlertServiceTests(AlertTenantTestCase):
     """Tests for the alert lifecycle :class:`AlertService`."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.user = user_factories.UserFactory()
         self.service = AlertService()
 
@@ -68,7 +68,7 @@ class AlertServiceTests(TestCase):
         self.assertIsNone(alert.resolved_at)
 
 
-class AlertNotificationServiceTests(TestCase):
+class AlertNotificationServiceTests(AlertTenantTestCase):
     """Tests for :class:`AlertNotificationService` after channel cleanup."""
 
     def test_send_only_reports_supported_channels(self) -> None:

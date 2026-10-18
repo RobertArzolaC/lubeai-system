@@ -16,5 +16,11 @@ DEBUG = False
 # Email settings
 EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 
+# Keep the test run off the real broker. Creating a notifiable ``Alert``
+# dispatches ``send_alert_notifications_task``; without this the shared Redis of
+# the development stack would receive (and the running worker execute) those
+# throwaway messages. Tasks are still callable in-process.
+CELERY_BROKER_URL = "memory://"
+
 # Testing settings
 TESTING = True
