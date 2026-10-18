@@ -22,9 +22,12 @@ dependencies = [
     "django-cities-light==3.11",
     "django-autocomplete-light==5.0.0",
     "django-tailwind==4.5.0",
+    "django-tenants==4.0.0",
+    "tenant-schemas-celery==5.0.0",
     "python-dotenv==1.2.3",
     "python-decouple==3.8",
     "dj-database-url==3.1.2",
+    "psycopg2-binary==2.9.12",
     "redis==8.1.0",
     "celery==5.6.3",
     "requests==2.34.2",
@@ -45,7 +48,6 @@ dev = [
     "factory_boy==3.3.3",
 ]
 production = [
-    "psycopg2-binary==2.9.12",
     "gunicorn==26.2.0",
     "whitenoise==6.12.0",
     "sentry-sdk>=2.69.1",

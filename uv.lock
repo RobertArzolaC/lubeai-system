@@ -576,17 +576,20 @@ dependencies = [
     { name = "django-model-utils" },
     { name = "django-sesame" },
     { name = "django-tailwind" },
+    { name = "django-tenants" },
     { name = "django-widget-tweaks" },
     { name = "djangorestframework" },
     { name = "honcho" },
     { name = "openpyxl" },
     { name = "pillow" },
+    { name = "psycopg2-binary" },
     { name = "python-decouple" },
     { name = "python-dotenv" },
     { name = "redis" },
     { name = "reportlab" },
     { name = "requests" },
     { name = "setuptools" },
+    { name = "tenant-schemas-celery" },
 ]
 
 [package.dev-dependencies]
@@ -601,7 +604,6 @@ dev = [
 ]
 production = [
     { name = "gunicorn" },
-    { name = "psycopg2-binary" },
     { name = "sentry-sdk" },
     { name = "whitenoise" },
 ]
@@ -624,17 +626,20 @@ requires-dist = [
     { name = "django-model-utils", specifier = "==5.0.0" },
     { name = "django-sesame", specifier = "==3.2.3" },
     { name = "django-tailwind", specifier = "==4.5.0" },
+    { name = "django-tenants", specifier = "==4.0.0" },
     { name = "django-widget-tweaks", specifier = "==1.5.1" },
     { name = "djangorestframework", specifier = "==3.18.1" },
     { name = "honcho", specifier = ">=2.0.0" },
     { name = "openpyxl", specifier = "==3.1.5" },
     { name = "pillow", specifier = "==12.3.0" },
+    { name = "psycopg2-binary", specifier = "==2.9.12" },
     { name = "python-decouple", specifier = "==3.8" },
     { name = "python-dotenv", specifier = "==1.2.3" },
     { name = "redis", specifier = "==8.1.0" },
     { name = "reportlab", specifier = ">=5.0.1" },
     { name = "requests", specifier = "==2.34.2" },
     { name = "setuptools", specifier = "==84.0.0" },
+    { name = "tenant-schemas-celery", specifier = "==5.0.0" },
 ]
 
 [package.metadata.requires-dev]
@@ -649,9 +654,20 @@ dev = [
 ]
 production = [
     { name = "gunicorn", specifier = "==26.2.0" },
-    { name = "psycopg2-binary", specifier = "==2.9.12" },
     { name = "sentry-sdk", specifier = ">=2.69.1" },
     { name = "whitenoise", specifier = "==6.12.0" },
+]
+
+[[package]]
+name = "django-tenants"
+version = "4.0.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/01/1c/a4c3f3eeec5e803f8b4ee9994e42b7ffddb2cea0db4d9b3db304336f095f/django_tenants-4.0.0.tar.gz", hash = "sha256:7fab6fb4dbed32cde1d6232075152b899b9574fa575ebc3da5e994a62071a034", size = 180299, upload-time = "2026-10-09T13:19:45.963Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/0f/e6/7901f88dfb26cb777fb523e6230c3be7778956029c8e89ce329ef148569f/django_tenants-4.0.0-py3-none-any.whl", hash = "sha256:f5422675dd814a7df362c1aab087dadb6f7481275743889295c8eccc2b24bbe3", size = 136327, upload-time = "2026-10-09T13:19:44.408Z" },
 ]
 
 [[package]]
@@ -1202,6 +1218,18 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/5f/d3/3f06a1006f2261d1342aefb3c71eed02f5d4ca5bdbecd86ebc12ad38306e/sqlparse-0.6.0.tar.gz", hash = "sha256:113c35c75365ab9cc9c7231d68c6428fb11c085fc8e9eb1ad659b7ddbf6cd2b9", size = 178477, upload-time = "2026-08-13T19:16:06.396Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/d9/50/f00935da0ec7cbf325f8dc4f772ae46fbc7b672dd62876e73f0a94adda57/sqlparse-0.6.0-py3-none-any.whl", hash = "sha256:b861c0288ce2fa56209a9a6412d2e066ac664b3873b89c26c9d8415e8e32996f", size = 50070, upload-time = "2026-08-13T19:16:04.062Z" },
+]
+
+[[package]]
+name = "tenant-schemas-celery"
+version = "5.0.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "celery" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/fd/39/f6d48532a084de8f4588a3fbacf9efc4d7d255896fd5e3406e6cc74dad43/tenant_schemas_celery-5.0.0.tar.gz", hash = "sha256:139d9fd7795f207f60706caa0c4a041b583c88eeb427c0927d49804c23988f70", size = 19618, upload-time = "2026-08-01T13:14:49.327Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/5d/d4/41ffd3d00438ecfda200a9df0133210d2c671ee4b0e28c8ac6f93307bcdc/tenant_schemas_celery-5.0.0-py3-none-any.whl", hash = "sha256:1f4fc7f587293b7032d1d73eb1562d2c1d18285cb13efff2e925067b23ecb8c6", size = 22045, upload-time = "2026-08-01T13:14:48.212Z" },
 ]
 
 [[package]]
