@@ -4,17 +4,19 @@ from unittest import mock
 
 from allauth.account.forms import BaseSignupForm
 from django import forms
-from django.test import RequestFactory, TestCase
+from django.test import RequestFactory
 
 from apps.authentication import forms as auth_forms
+from apps.core.tests.base import TenantSchemaTestCase
 from apps.users import models as users_models
 from apps.users.factories import UserFactory
 
 
-class CustomSignupFormTests(TestCase):
+class CustomSignupFormTests(TenantSchemaTestCase):
     """Tests for the :class:`CustomSignupForm`."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.request = RequestFactory().post("/authentication/signup/")
 
     def test_profile_fields_present(self) -> None:
@@ -50,7 +52,7 @@ class CustomSignupFormTests(TestCase):
         self.assertEqual(user.last_name, "Lee")
 
 
-class DeactivateAccountFormTests(TestCase):
+class DeactivateAccountFormTests(TenantSchemaTestCase):
     """Tests for the :class:`DeactivateAccountForm`."""
 
     def test_save_unknown_email_raises(self) -> None:

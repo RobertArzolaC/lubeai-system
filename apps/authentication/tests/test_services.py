@@ -1,17 +1,17 @@
 """Tests for the ``apps.authentication.services`` module."""
 
-from django.test import TestCase
-
 from apps.authentication import services
+from apps.core.tests.base import TenantSchemaTestCase
 from apps.users.factories import UserFactory
 
 STRONG_PASSWORD = "9fK2!vX7qL4zM"
 
 
-class GetPasswordChecksTests(TestCase):
+class GetPasswordChecksTests(TenantSchemaTestCase):
     """Tests for :func:`get_password_checks`."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.user = UserFactory()
 
     def test_empty_password_returns_all_unpassed(self) -> None:

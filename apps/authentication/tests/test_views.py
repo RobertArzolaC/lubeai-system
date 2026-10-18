@@ -1,18 +1,20 @@
 """Tests for the ``apps.authentication.views`` module."""
 
-from django.test import TestCase, override_settings
+from django.test import override_settings
 from django.urls import reverse
 
+from apps.core.tests.base import TenantSchemaTestCase
 from apps.users.factories import UserFactory
 
 OLD_PASSWORD = "Passw0rd!123"
 NEW_PASSWORD = "NewPassw0rd!456"
 
 
-class ChangePasswordViewTests(TestCase):
+class ChangePasswordViewTests(TenantSchemaTestCase):
     """Tests for the change-password endpoint."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.user = UserFactory(password=OLD_PASSWORD)
         self.client.force_login(self.user)
         self.url = reverse("apps.authentication:api_change_password")
@@ -46,10 +48,11 @@ class ChangePasswordViewTests(TestCase):
         self.assertTrue(self.user.check_password(NEW_PASSWORD))
 
 
-class DeactivateAccountViewTests(TestCase):
+class DeactivateAccountViewTests(TenantSchemaTestCase):
     """Tests for the deactivate-account endpoint."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.user = UserFactory(is_active=True)
         self.client.force_login(self.user)
         self.url = reverse("apps.authentication:api_deactivate_account")
@@ -72,10 +75,11 @@ class DeactivateAccountViewTests(TestCase):
 STRONG_PASSWORD = "9fK2!vX7qL4zM"
 
 
-class ValidatePasswordViewTests(TestCase):
+class ValidatePasswordViewTests(TenantSchemaTestCase):
     """Tests for the live password-validation endpoint."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.user = UserFactory()
         self.url = reverse("apps.authentication:validate_password_api")
 
@@ -119,10 +123,11 @@ CHANGE_NEW_PASSWORD_MISMATCH = "9fK2!vX7qL4zN"
 
 
 @override_settings(ACCOUNT_RATE_LIMITS={"change_password": "1000/m/user"})
-class PasswordChangeViewTests(TestCase):
+class PasswordChangeViewTests(TenantSchemaTestCase):
     """Tests for the project password-change page."""
 
     def setUp(self) -> None:
+        super().setUp()
         self.user = UserFactory(password="Passw0rd!123")
         self.client.force_login(self.user)
 
