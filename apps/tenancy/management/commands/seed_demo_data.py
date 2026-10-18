@@ -1,11 +1,13 @@
-"""Seed demo data for the MARCO tenant.
+"""Seed demo data into one tenant schema.
 
-Creates a realistic multi-organization dataset so the platform can be
-evaluated: the MARCO tenant with an intermediary and final clients, their
-users, equipment (branches/machines/components), analysis thresholds and a
-long history of reports per component (used by the component analysis page).
+Creates a realistic multi-organization dataset so the platform can be evaluated:
+the tenant's root organization, an intermediary and final clients, their users,
+equipment (branches/machines/components), analysis thresholds and a long history
+of reports per component (used by the component analysis page).
 
-The command is idempotent: running it twice does not duplicate data.
+The command works **inside** the tenant schema and reuses the root organization
+that ``provision_tenant`` created: it never builds a second root. The command is
+idempotent — running it twice does not duplicate data.
 """
 
 from __future__ import annotations
@@ -13,12 +15,13 @@ from __future__ import annotations
 import random
 from datetime import timedelta
 from decimal import Decimal
-from typing import Any, ClassVar
+from typing import Any
 
 from django.contrib.auth.models import Permission
-from django.core.management.base import BaseCommand, CommandParser
-from django.db import transaction
+from django.core.management.base import BaseCommand, CommandError, CommandParser
+from django.db import connection, transaction
 from django.utils import timezone
+from django_tenants.utils import get_public_schema_name, tenant_context
 
 from apps.equipment import choices as equipment_choices
 from apps.equipment import models as equipment_models
@@ -26,16 +29,11 @@ from apps.organizations import choices as org_choices
 from apps.organizations import models as org_models
 from apps.reports import choices as report_choices
 from apps.reports import models as report_models
+from apps.tenancy import constants
+from apps.tenancy import models as tenancy_models
 from apps.users.models import User
 
-COMPONENT_TYPES: list[tuple[str, str]] = [
-    ("Motor Principal", "Motor diesel de propulsión"),
-    ("Bomba Centrífuga", "Bomba de proceso de fluidos"),
-    ("Compresor de Tornillo", "Compresor de aire de tornillo"),
-    ("Caja Reductora", "Reductor de velocidad"),
-    ("Sistema Hidráulico", "Circuito hidráulico de potencia"),
-    ("Turbina de Vapor", "Turbina de vapor auxiliar"),
-]
+COMPONENT_TYPES = constants.DEFAULT_COMPONENT_TYPES
 
 LUBRICANTS: list[str] = [
     "Aceite motor SAE 15W-40 API CI-4",
@@ -86,12 +84,36 @@ PARAMETER_RANGES: dict[str, dict[str, tuple[float, float]]] = {
 
 # Global thresholds seeded so the component analysis uses DB values.
 THRESHOLDS: list[tuple[str, str, float, float, str, bool, str]] = [
-    ("wear_metals", "iron_fe", 75, 100, "ppm", False, "Desgaste de camisas y cilindros."),
+    (
+        "wear_metals",
+        "iron_fe",
+        75,
+        100,
+        "ppm",
+        False,
+        "Desgaste de camisas y cilindros.",
+    ),
     ("wear_metals", "copper_cu", 20, 30, "ppm", False, "Cojinetes y enfriadores."),
-    ("wear_metals", "aluminum_al", 15, 25, "ppm", False, "Pistones y cojinetes de biela."),
+    (
+        "wear_metals",
+        "aluminum_al",
+        15,
+        25,
+        "ppm",
+        False,
+        "Pistones y cojinetes de biela.",
+    ),
     ("wear_metals", "lead_pb", 20, 30, "ppm", False, "Cojinetes de biela y bancada."),
     ("wear_metals", "chromium_cr", 10, 15, "ppm", False, "Anillos y válvulas."),
-    ("contamination", "silicon_si", 15, 20, "ppm", False, "Ingreso de polvo por admisión."),
+    (
+        "contamination",
+        "silicon_si",
+        15,
+        20,
+        "ppm",
+        False,
+        "Ingreso de polvo por admisión.",
+    ),
     ("contamination", "sodium_na", 30, 50, "ppm", False, "Ingreso de refrigerante."),
     ("contamination", "potassium_k", 10, 15, "ppm", False, "Ingreso de refrigerante."),
     ("additives", "zinc_zn", 800, 600, "ppm", True, "Aditivo antidesgaste (ZDDP)."),
@@ -128,14 +150,24 @@ DEMO_VIEW_PERMISSIONS: list[str] = [
 
 
 class Command(BaseCommand):
-    """Seed the MARCO demo dataset."""
+    """Seed the demo dataset of one tenant."""
 
-    help = "Seed demo organizations, equipment and historical reports for MARCO."
-
-    MARCO_SLUG: ClassVar[str] = "marco"
+    help = "Seed demo organizations, equipment and historical reports for a tenant."
 
     def add_arguments(self, parser: CommandParser) -> None:
-        """Register the command options."""
+        """Register the command options.
+
+        Args:
+            parser: The command's argument parser.
+        """
+        parser.add_argument(
+            "--schema",
+            default=None,
+            help=(
+                "Tenant schema to seed. Defaults to the schema already selected "
+                "on the connection."
+            ),
+        )
         parser.add_argument(
             "--months",
             type=int,
@@ -148,50 +180,115 @@ class Command(BaseCommand):
             default=42,
             help="Random seed for reproducible data.",
         )
+        parser.add_argument(
+            "--machines",
+            type=int,
+            default=1,
+            help="Number of machines per branch (default: 1).",
+        )
+        parser.add_argument(
+            "--components",
+            type=int,
+            default=2,
+            help="Number of components per machine (default: 2).",
+        )
 
-    @transaction.atomic
     def handle(self, *args: Any, **options: Any) -> None:
-        """Create the demo data."""
+        """Create the demo data inside the selected tenant schema.
+
+        The transaction is opened **inside** ``tenant_context``: easy-audit
+        registers its CRUD events with ``transaction.on_commit``, so committing
+        after the schema has been restored would write into the wrong schema.
+
+        Args:
+            *args: Unused positional arguments.
+            **options: Parsed management options.
+
+        Raises:
+            CommandError: If no tenant is selected or its root organization is
+                missing (the tenant has not been provisioned).
+        """
         self.rng = random.Random(options["seed"])
         self.months = options["months"]
+        self.machines = options["machines"]
+        self.components = options["components"]
 
-        marco = self._seed_marco()
-        self._seed_organization_tree(marco)
-        self._seed_users(marco)
-        self._seed_component_types(marco)
-        self._seed_thresholds(marco)
-        self._seed_equipment_and_reports(marco)
+        tenant = self._resolve_tenant(options["schema"])
+        with tenant_context(tenant), transaction.atomic():
+            root = self._root_organization(tenant)
+            self._seed_organization_tree(root)
+            self._seed_users(root)
+            self._seed_component_types(root)
+            self._seed_thresholds(root)
+            self._seed_equipment_and_reports(root)
 
-        self.stdout.write(
-            self.style.SUCCESS(
-                "Demo data seeded: "
-                f"{org_models.Organization.objects.count()} organizations, "
-                f"{equipment_models.Machine.objects.count()} machines, "
-                f"{report_models.Report.objects.count()} reports."
+            self.stdout.write(
+                self.style.SUCCESS(
+                    "Demo data seeded: "
+                    f"{org_models.Organization.objects.count()} organizations, "
+                    f"{equipment_models.Machine.objects.count()} machines, "
+                    f"{report_models.Report.objects.count()} reports."
+                )
             )
-        )
 
-    def _seed_marco(self) -> org_models.Organization:
-        """Return (creating if needed) the MARCO tenant."""
-        marco, _ = org_models.Organization.objects.get_or_create(
-            slug=self.MARCO_SLUG,
-            defaults={
-                "name": "MARCO Peruana",
-                "kind": org_choices.OrganizationKind.LAB,
-                "primary_color": "#1c4ed8",
-                "chart_primary": "#1c4ed8",
-            },
-        )
-        return marco
+    def _resolve_tenant(self, schema_name: str | None) -> tenancy_models.Tenant:
+        """Return the tenant whose schema the command will seed.
 
-    def _seed_organization_tree(self, marco: org_models.Organization) -> None:
+        Args:
+            schema_name: Explicit schema name, or ``None`` to use the schema
+                already selected on the connection.
+
+        Returns:
+            The tenant to seed.
+
+        Raises:
+            CommandError: If the schema does not exist or no tenant is selected.
+        """
+        if schema_name:
+            tenant = tenancy_models.Tenant.objects.filter(
+                schema_name=schema_name
+            ).first()
+            if tenant is None:
+                raise CommandError(f"No tenant with schema '{schema_name}'.")
+            return tenant
+
+        tenant = getattr(connection, "tenant", None)
+        if tenant is None or tenant.schema_name == get_public_schema_name():
+            raise CommandError(
+                "Select a tenant with --schema or run the command inside one."
+            )
+        return tenant
+
+    def _root_organization(
+        self, tenant: tenancy_models.Tenant
+    ) -> org_models.Organization:
+        """Return the tenant's root organization.
+
+        Args:
+            tenant: Tenant being seeded.
+
+        Returns:
+            The root organization created by ``provision_tenant``.
+
+        Raises:
+            CommandError: If the tenant has no root organization yet.
+        """
+        root = org_models.Organization.objects.filter(parent__isnull=True).first()
+        if root is None:
+            raise CommandError(
+                f"Tenant '{tenant.slug}' has no root organization; "
+                "run provision_tenant first."
+            )
+        return root
+
+    def _seed_organization_tree(self, root: org_models.Organization) -> None:
         """Create one intermediary (with two final clients) and a direct final."""
         intermediary, _ = org_models.Organization.objects.get_or_create(
             slug="minera-andina",
             defaults={
                 "name": "Minera Andina S.A.C.",
                 "kind": org_choices.OrganizationKind.INTERMEDIARY,
-                "parent": marco,
+                "parent": root,
                 "primary_color": "#0f766e",
                 "chart_primary": "#0f766e",
                 "chart_danger": "#b91c1c",
@@ -216,21 +313,21 @@ class Command(BaseCommand):
             defaults={
                 "name": "Transportes Lima S.A.",
                 "kind": org_choices.OrganizationKind.FINAL,
-                "parent": marco,
+                "parent": root,
                 "primary_color": "#b45309",
                 "chart_primary": "#b45309",
             },
         )
 
-    def _seed_users(self, marco: org_models.Organization) -> None:
-        """Create one user per role (idempotent, password: ``Demo12345!``)."""
+    def _seed_users(self, root: org_models.Organization) -> None:
+        """Create one user per role (idempotent, demo password)."""
 
         def organization(slug: str) -> org_models.Organization:
             return org_models.Organization.objects.get(slug=slug)
 
         users = [
-            ("admin@marco.pe", "Admin", "MARCO", marco, True, True),
-            ("laboratorio@marco.pe", "Lab", "MARCO", marco, False, False),
+            ("admin@marco.pe", "Admin", "MARCO", root, True, True),
+            ("laboratorio@marco.pe", "Lab", "MARCO", root, False, False),
             (
                 "operaciones@minera-andina.pe",
                 "Operaciones",
@@ -271,7 +368,7 @@ class Command(BaseCommand):
             if user is None:
                 user = User.objects.create_user(
                     email=email,
-                    password="Demo12345!",
+                    password=constants.DEMO_PASSWORD,
                     first_name=first_name,
                     last_name=last_name,
                     is_staff=is_staff,
@@ -281,11 +378,11 @@ class Command(BaseCommand):
             user.save(update_fields=["organization"])
             user.user_permissions.add(*permissions)
 
-    def _seed_component_types(self, marco: org_models.Organization) -> None:
-        """Create MARCO's own component types (the standard catalog)."""
+    def _seed_component_types(self, root: org_models.Organization) -> None:
+        """Create the tenant's own component types (the standard catalog)."""
         for name, description in COMPONENT_TYPES:
             equipment_models.ComponentType.objects.get_or_create(
-                organization=marco,
+                organization=root,
                 name=name,
                 defaults={"description": description, "created_by": None},
             )
@@ -304,7 +401,7 @@ class Command(BaseCommand):
             types.append(component_type)
         return types
 
-    def _seed_thresholds(self, marco: org_models.Organization) -> None:
+    def _seed_thresholds(self, root: org_models.Organization) -> None:
         """Create the global analysis thresholds."""
         for category, parameter, warning, critical, unit, inverse, source in THRESHOLDS:
             report_models.AnalysisThreshold.objects.get_or_create(
@@ -321,10 +418,10 @@ class Command(BaseCommand):
                 },
             )
 
-    def _seed_equipment_and_reports(self, marco: org_models.Organization) -> None:
+    def _seed_equipment_and_reports(self, root: org_models.Organization) -> None:
         """Create equipment per final client and a report history per component."""
         final_orgs = list(
-            marco.descendants(include_self=False).filter(
+            root.descendants(include_self=False).filter(
                 kind=org_choices.OrganizationKind.FINAL
             )
         )
@@ -341,32 +438,40 @@ class Command(BaseCommand):
                     name=f"{branch_name} {org.name}",
                     defaults={"created_by": None},
                 )
-                machine, _ = equipment_models.Machine.objects.get_or_create(
-                    organization=org,
-                    branch=branch,
-                    name=f"Equipo {org.slug[:6].upper()}-{branch_index + 1}",
-                    defaults={
-                        "serial_number": f"SN-{org.id}-{branch_index + 1}",
-                        "model": self.rng.choice(MACHINE_MODELS),
-                        "measurement_unit": equipment_choices.MeasurementUnit.HOURS,
-                        "created_by": None,
-                    },
-                )
-                for type_index in range(2):
-                    component_type = org_types[
-                        (branch_index + type_index) % len(org_types)
-                    ]
-                    component, _ = equipment_models.Component.objects.get_or_create(
-                        machine=machine,
-                        type=component_type,
-                        defaults={"created_by": None},
-                    )
-                    self._seed_component_history(
+                for machine_index in range(self.machines):
+                    machine, _ = equipment_models.Machine.objects.get_or_create(
                         organization=org,
-                        machine=machine,
-                        component=component,
-                        laboratory=laboratory,
+                        branch=branch,
+                        name=(
+                            f"Equipo {org.slug[:6].upper()}-"
+                            f"{branch_index + 1}-{machine_index + 1}"
+                        ),
+                        defaults={
+                            "serial_number": (
+                                f"SN-{org.id}-{branch_index + 1}-{machine_index + 1}"
+                            ),
+                            "model": self.rng.choice(MACHINE_MODELS),
+                            "measurement_unit": (
+                                equipment_choices.MeasurementUnit.HOURS
+                            ),
+                            "created_by": None,
+                        },
                     )
+                    for type_index in range(self.components):
+                        component_type = org_types[
+                            (branch_index + machine_index + type_index) % len(org_types)
+                        ]
+                        component, _ = equipment_models.Component.objects.get_or_create(
+                            machine=machine,
+                            type=component_type,
+                            defaults={"created_by": None},
+                        )
+                        self._seed_component_history(
+                            organization=org,
+                            machine=machine,
+                            component=component,
+                            laboratory=laboratory,
+                        )
 
     def _seed_component_history(
         self,

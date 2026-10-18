@@ -135,16 +135,18 @@ class Command(BaseCommand):
 
         return None
 
-    def get_default_organization(self) -> Organization:
-        """Return (creating it if needed) the schema's root organization.
+    def get_default_organization(self) -> Organization | None:
+        """Return the root organization provisioned for the current tenant.
 
-        The demo client MARCO is the root of its own tenant schema.
+        ``provision_tenant`` creates the tenant's root organization; this
+        command must reuse it instead of creating a second organization with a
+        hard-coded name. A schema that has not been provisioned has no root, so
+        the users are created without an organization.
+
+        Returns:
+            The tenant's root organization, or ``None`` when it is missing.
         """
-        organization, _ = Organization.objects.get_or_create(
-            slug="marco",
-            defaults={"name": "MARCO Peruana", "kind": "lab"},
-        )
-        return organization
+        return Organization.objects.filter(parent__isnull=True).order_by("pk").first()
 
     def assign_staff_permissions(self, user: User) -> None:
         """Grant the staff user the permissions the platform manages with.

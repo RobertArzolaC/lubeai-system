@@ -7,8 +7,11 @@ until python -c "import os, socket; s = socket.socket(); s.settimeout(1); s.conn
 done
 
 if [ "${DJANGO_MIGRATE:-0}" = "1" ]; then
-  echo "Running migrations..."
-  python manage.py migrate --noinput
+  echo "Running schema migrations..."
+  # django-tenants: migrate the public schema (SHARED_APPS) and every tenant
+  # schema (TENANT_APPS). Plain ``migrate`` would mark TENANT migrations as
+  # applied in public without creating their tables.
+  python manage.py migrate_schemas --noinput
 fi
 
 if [ "${DJANGO_COMPILEMESSAGES:-0}" = "1" ]; then

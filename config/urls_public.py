@@ -8,7 +8,8 @@ served from its own subdomain by :mod:`config.urls`.
 
 from __future__ import annotations
 
-from django.urls import path
+from django.conf import settings
+from django.urls import include, path
 from django.views.generic import TemplateView
 
 app_name = "public"
@@ -20,3 +21,12 @@ urlpatterns = [
         name="landing",
     ),
 ]
+
+if settings.DEBUG:
+    # django-browser-reload injects its script into every HTML response and
+    # reverses its namespace, which only exists when its urls are routed. The
+    # public schema renders the same base layout as a tenant, so it needs them
+    # too while developing.
+    urlpatterns += [
+        path("__reload__/", include("django_browser_reload.urls")),
+    ]

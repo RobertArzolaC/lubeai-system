@@ -232,6 +232,12 @@ CITIES_LIGHT_INCLUDE_COUNTRIES = ["PE"]
 TENANT_MODEL = "tenancy.Tenant"
 TENANT_DOMAIN_MODEL = "tenancy.Domain"
 
+# Host name of the platform itself: the public schema owns the landing page and
+# every client is served from ``<slug>.<PLATFORM_DOMAIN>``. It is also the
+# domain stored for the ``public`` tenant row, so a request to the platform root
+# resolves the public urlconf instead of answering 404.
+PLATFORM_DOMAIN = config("PLATFORM_DOMAIN", default="localhost")
+
 PUBLIC_SCHEMA_URLCONF = "config.urls_public"
 
 # Skip redundant ``SET search_path`` statements when the path is already right.

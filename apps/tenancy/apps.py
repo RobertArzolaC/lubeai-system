@@ -16,3 +16,9 @@ class TenancyConfig(AppConfig):
     name: str = "apps.tenancy"
     label: str = "tenancy"
     verbose_name: str = _("Tenancy")
+
+    def ready(self) -> None:
+        """Wire the tenant resolver that easy-audit's request log depends on."""
+        from apps.tenancy import signals
+
+        signals.connect()
