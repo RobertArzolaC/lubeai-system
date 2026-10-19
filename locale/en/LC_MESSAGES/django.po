@@ -3,12 +3,11 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-18 18:51-0500\n"
+"POT-Creation-Date: 2026-10-18 21:07-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -626,7 +625,7 @@ msgstr ""
 
 #: apps/core/models.py:129 apps/equipment/models.py:12
 #: apps/equipment/models.py:96 apps/organizations/models.py:35
-#: apps/tenancy/forms.py:39 apps/tenancy/models.py:36 apps/users/models.py:67
+#: apps/tenancy/forms.py:41 apps/tenancy/models.py:36 apps/users/models.py:67
 #: templates/equipment/branch/detail.html:40
 #: templates/equipment/branch/list.html:65
 #: templates/equipment/component_type/detail.html:40
@@ -934,16 +933,16 @@ msgstr ""
 #: templates/organizations/organization/detail.html:50
 #: templates/organizations/organization/form.html:96
 #: templates/tenancy/tenant/detail.html:57
-#: templates/tenancy/tenant/form.html:121
+#: templates/tenancy/tenant/form.html:123
 msgid "Branding"
 msgstr ""
 
 #: apps/organizations/admin.py:37 apps/organizations/models.py:80
-#: apps/tenancy/admin.py:43 apps/tenancy/forms.py:70 apps/tenancy/models.py:70
+#: apps/tenancy/admin.py:43 apps/tenancy/forms.py:71 apps/tenancy/models.py:70
 #: templates/organizations/organization/detail.html:63
 #: templates/organizations/organization/form.html:82
 #: templates/tenancy/tenant/detail.html:70
-#: templates/tenancy/tenant/form.html:107
+#: templates/tenancy/tenant/form.html:109
 msgid "Capabilities"
 msgstr ""
 
@@ -980,7 +979,7 @@ msgid "All kinds"
 msgstr ""
 
 #: apps/organizations/filtersets.py:21 apps/organizations/models.py:60
-#: apps/tenancy/filtersets.py:25 apps/tenancy/forms.py:49
+#: apps/tenancy/filtersets.py:25 apps/tenancy/forms.py:51
 #: apps/tenancy/models.py:44
 msgid "Kind"
 msgstr ""
@@ -1002,7 +1001,7 @@ msgstr ""
 msgid "You cannot create a platform."
 msgstr ""
 
-#: apps/organizations/models.py:37 apps/tenancy/forms.py:44
+#: apps/organizations/models.py:37 apps/tenancy/forms.py:46
 #: apps/tenancy/models.py:38 apps/users/models.py:69
 #: templates/tenancy/tenant/detail.html:25
 msgid "Slug"
@@ -1037,37 +1036,37 @@ msgstr ""
 msgid "Logo"
 msgstr ""
 
-#: apps/organizations/models.py:71 apps/tenancy/forms.py:76
+#: apps/organizations/models.py:71 apps/tenancy/forms.py:77
 #: apps/tenancy/models.py:61
 msgid "Primary color"
 msgstr ""
 
-#: apps/organizations/models.py:72 apps/tenancy/forms.py:82
+#: apps/organizations/models.py:72 apps/tenancy/forms.py:83
 #: apps/tenancy/models.py:62
 msgid "Chart primary"
 msgstr ""
 
-#: apps/organizations/models.py:73 apps/tenancy/forms.py:88
+#: apps/organizations/models.py:73 apps/tenancy/forms.py:89
 #: apps/tenancy/models.py:63
 msgid "Chart success"
 msgstr ""
 
-#: apps/organizations/models.py:74 apps/tenancy/forms.py:94
+#: apps/organizations/models.py:74 apps/tenancy/forms.py:95
 #: apps/tenancy/models.py:64
 msgid "Chart warning"
 msgstr ""
 
-#: apps/organizations/models.py:75 apps/tenancy/forms.py:100
+#: apps/organizations/models.py:75 apps/tenancy/forms.py:101
 #: apps/tenancy/models.py:65
 msgid "Chart danger"
 msgstr ""
 
-#: apps/organizations/models.py:76 apps/tenancy/forms.py:106
+#: apps/organizations/models.py:76 apps/tenancy/forms.py:107
 #: apps/tenancy/models.py:66
 msgid "Chart info"
 msgstr ""
 
-#: apps/organizations/models.py:77 apps/tenancy/forms.py:112
+#: apps/organizations/models.py:77 apps/tenancy/forms.py:113
 #: apps/tenancy/models.py:67
 msgid "Chart dark"
 msgstr ""
@@ -2050,39 +2049,39 @@ msgstr ""
 msgid "Tenancy"
 msgstr ""
 
-#: apps/tenancy/forms.py:46 apps/tenancy/models.py:41
+#: apps/tenancy/forms.py:48 apps/tenancy/models.py:41
 msgid "Business identifier; also used as the PostgreSQL schema name"
 msgstr ""
 
-#: apps/tenancy/forms.py:54 templates/tenancy/tenant/list.html:60
+#: apps/tenancy/forms.py:56 templates/tenancy/tenant/list.html:60
 msgid "Domain"
 msgstr ""
 
-#: apps/tenancy/forms.py:56
+#: apps/tenancy/forms.py:58
 msgid "Host name; defaults to <slug>.<platform domain>"
 msgstr ""
 
-#: apps/tenancy/forms.py:60
+#: apps/tenancy/forms.py:62
 msgid "Administrator email"
 msgstr ""
 
-#: apps/tenancy/forms.py:64
+#: apps/tenancy/forms.py:66
 msgid "Administrator password"
 msgstr ""
 
-#: apps/tenancy/forms.py:66
+#: apps/tenancy/forms.py:67
 msgid "Only applied when the administrator is created"
 msgstr ""
 
-#: apps/tenancy/forms.py:122
+#: apps/tenancy/forms.py:123
 msgid "The public schema is not a client."
 msgstr ""
 
-#: apps/tenancy/forms.py:124
+#: apps/tenancy/forms.py:125
 msgid "A tenant with that slug already exists."
 msgstr ""
 
-#: apps/tenancy/forms.py:131
+#: apps/tenancy/forms.py:132
 msgid "That domain is already in use."
 msgstr ""
 
@@ -3072,14 +3071,14 @@ msgstr ""
 
 #: templates/includes/base_form.html:16
 #: templates/organizations/organization/form.html:127
-#: templates/tenancy/tenant/form.html:144 templates/users/role/form.html:82
+#: templates/tenancy/tenant/form.html:146 templates/users/role/form.html:82
 #: templates/users/user/form.html:80
 msgid "Discard"
 msgstr ""
 
 #: templates/includes/base_form.html:19
 #: templates/organizations/organization/form.html:130
-#: templates/tenancy/tenant/form.html:147 templates/users/role/form.html:85
+#: templates/tenancy/tenant/form.html:149 templates/users/role/form.html:85
 #: templates/users/settings.html:64 templates/users/user/form.html:83
 msgid "Save Changes"
 msgstr ""
@@ -3223,7 +3222,7 @@ msgid "No roles for this organization."
 msgstr ""
 
 #: templates/organizations/organization/form.html:83
-#: templates/tenancy/tenant/form.html:108
+#: templates/tenancy/tenant/form.html:110
 msgid ""
 "JSON overrides of the kind defaults (labs, fleet, thresholds, analysis, "
 "alerts)."
@@ -3798,7 +3797,7 @@ msgid ""
 "administrator."
 msgstr ""
 
-#: templates/tenancy/tenant/form.html:122
+#: templates/tenancy/tenant/form.html:124
 msgid "Empty slots fall back to the platform brand."
 msgstr ""
 
