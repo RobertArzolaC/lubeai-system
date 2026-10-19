@@ -18,7 +18,11 @@ class TenancyConfig(AppConfig):
     verbose_name: str = _("Tenancy")
 
     def ready(self) -> None:
-        """Wire the tenant resolver that easy-audit's request log depends on."""
-        from apps.tenancy import signals
+        """Wire the tenant resolver and register the schema system checks."""
+        # Importing the module runs its ``@register`` decorators.
+        from apps.tenancy import (
+            checks,  # noqa: F401
+            signals,
+        )
 
         signals.connect()
