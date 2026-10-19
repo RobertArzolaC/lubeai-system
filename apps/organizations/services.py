@@ -9,6 +9,35 @@ from django.utils.translation import gettext_lazy as _
 from apps.organizations import constants, models
 
 
+class RootOrganizationError(ValueError):
+    """Base error for a tenant root organization that cannot be resolved."""
+
+
+class MissingRootOrganization(RootOrganizationError):
+    """Raised when a required root organization does not exist."""
+
+
+class MultipleRootOrganizations(RootOrganizationError):
+    """Raised when the tenant schema holds more than one root organization.
+
+    The organization tree must have exactly one node without a parent. More than
+    one means a caller bypassed the guards (the form and provisioning forbid a
+    second root), so choosing one arbitrarily would bind callers to the wrong
+    tree.
+    """
+
+    def __init__(self, count: int) -> None:
+        """Store the observed number of roots and build the message.
+
+        Args:
+            count: Number of root organizations found.
+        """
+        self.count = count
+        super().__init__(
+            f"The tenant schema has {count} root organizations; expected exactly 1."
+        )
+
+
 class ColorPaletteService:
     """Resolve the chart color palette for an organization.
 
@@ -60,6 +89,39 @@ class OrganizationService:
             if not models.Organization.objects.filter(slug=candidate).exists():
                 return candidate
             suffix += 1
+
+    @staticmethod
+    def resolve_root(*, required: bool = True) -> models.Organization | None:
+        """Return the tenant schema's single root organization.
+
+        The tree has exactly one node without a parent: the tenant's own root.
+        Resolving it explicitly — instead of ``filter(parent__isnull=True)``
+        plus ``.first()`` — turns a corrupted tree into an error rather than
+        silently binding the caller to an arbitrary node.
+
+        Args:
+            required: When ``True`` a missing root raises; when ``False`` the
+                method returns ``None`` so the caller can create the root
+                (provisioning is the only such caller).
+
+        Returns:
+            The root organization, or ``None`` when none exists and
+            ``required`` is ``False``.
+
+        Raises:
+            MissingRootOrganization: If no root exists and ``required``.
+            MultipleRootOrganizations: If more than one root exists.
+        """
+        roots = list(models.Organization.objects.filter(parent__isnull=True)[:2])
+        if not roots:
+            if required:
+                raise MissingRootOrganization(
+                    "The tenant schema has no root organization."
+                )
+            return None
+        if len(roots) > 1:
+            raise MultipleRootOrganizations(len(roots))
+        return roots[0]
 
     @staticmethod
     def assert_valid_parent(

@@ -37,6 +37,7 @@ def provision_tenant(
     *,
     branding: dict[str, str] | None = None,
     capabilities: dict[str, Any] | None = None,
+    promote: bool = False,
 ) -> models.Tenant:
     """Create (or complete) a tenant and leave it ready to be served.
 
@@ -60,6 +61,9 @@ def provision_tenant(
             value, so re-provisioning never erases a brand.
         capabilities: Optional per-tenant capability overrides. ``None`` keeps
             the current value.
+        promote: Elevate a pre-existing account that already uses
+            ``admin_email`` to administrator. Off by default so re-running the
+            (idempotent) command never escalates a normal client user.
 
     Returns:
         The provisioned tenant, refreshed after the writes.
@@ -104,6 +108,7 @@ def provision_tenant(
                 root=root,
                 admin_email=admin_email,
                 default_password=default_password,
+                promote=promote,
             )
             _ensure_component_types(root=root)
     finally:
@@ -223,7 +228,8 @@ def _ensure_root_organization(
     """Return the schema's root organization, creating it if it is missing.
 
     The root is the tenant's own node in the organization tree. Only one root
-    may exist, so an existing one is updated instead of duplicated.
+    may exist, so an existing one is updated instead of duplicated; a schema
+    with more than one root is rejected rather than resolved arbitrarily.
 
     Args:
         tenant: Tenant being provisioned.
@@ -233,15 +239,20 @@ def _ensure_root_organization(
 
     Returns:
         The root organization.
+
+    Raises:
+        MultipleRootOrganizations: If the schema already holds more than one
+            root organization.
     """
     from apps.organizations import models as organization_models
+    from apps.organizations.services import OrganizationService
 
     branding = {
         slot: value
         for slot in constants.BRANDING_SLOTS
         if (value := getattr(tenant, slot, ""))
     }
-    root = organization_models.Organization.objects.filter(parent__isnull=True).first()
+    root = OrganizationService.resolve_root(required=False)
     if root is None:
         return organization_models.Organization.objects.create(
             slug=slug, name=name, kind=kind, **branding
@@ -260,20 +271,27 @@ def _ensure_admin(
     root: Organization,
     admin_email: str,
     default_password: str,
+    promote: bool = False,
 ) -> User:
     """Create (or complete) the tenant administrator.
 
     A newly created administrator is a superuser, so it holds every permission
-    the tenant schema knows about. An existing one keeps its password and only
-    gets its organization and flags restored.
+    the tenant schema knows about, and it gets ``default_password``. An account
+    that already used ``admin_email`` keeps its flags and password unless the
+    caller passes ``promote=True`` explicitly: re-provisioning is idempotent and
+    must never escalate a normal client user just because the operator repeated
+    the command with that email.
 
     Args:
         root: Root organization the administrator belongs to.
         admin_email: Administrator email.
         default_password: Password for a newly created administrator.
+        promote: Elevate a pre-existing account to administrator. Off by
+            default so an existing normal user is left untouched.
 
     Returns:
-        The administrator user.
+        The administrator user, or the pre-existing account when it was not
+        promoted.
     """
     from allauth.account.models import EmailAddress
 
@@ -290,6 +308,11 @@ def _ensure_admin(
             "organization": root,
         },
     )
+    if not created and not promote:
+        # A pre-existing account is not ours to elevate. Leave it exactly as it
+        # is; promoting one requires the explicit ``promote`` opt-in.
+        return admin
+
     if created:
         admin.set_password(default_password)
     admin.organization = root

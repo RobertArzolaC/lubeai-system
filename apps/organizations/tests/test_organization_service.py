@@ -4,7 +4,11 @@ from django.core.exceptions import ValidationError
 
 from apps.organizations import models as organization_models
 from apps.organizations.factories import OrganizationFactory
-from apps.organizations.services import OrganizationService
+from apps.organizations.services import (
+    MissingRootOrganization,
+    MultipleRootOrganizations,
+    OrganizationService,
+)
 from apps.organizations.tests.base import OrganizationTenantTestCase
 from apps.users.factories import UserFactory
 
@@ -50,6 +54,30 @@ class OrganizationServiceTests(OrganizationTenantTestCase):
     def test_none_parent_accepted(self) -> None:
         """A root organization (no parent) is valid."""
         OrganizationService.assert_valid_parent(OrganizationFactory(), None)
+
+    def test_resolve_root_returns_the_single_root(self) -> None:
+        """The one root of the schema is returned."""
+        root = OrganizationFactory(slug="raiz")
+        OrganizationFactory(parent=root)
+
+        self.assertEqual(OrganizationService.resolve_root(), root)
+
+    def test_resolve_root_raises_when_missing(self) -> None:
+        """A required root that does not exist is an error, not ``None``."""
+        with self.assertRaises(MissingRootOrganization):
+            OrganizationService.resolve_root()
+
+    def test_resolve_root_is_optional_when_asked(self) -> None:
+        """Provisioning resolves an optional root before creating one."""
+        self.assertIsNone(OrganizationService.resolve_root(required=False))
+
+    def test_resolve_root_fails_when_ambiguous(self) -> None:
+        """Two roots are never silently collapsed into an arbitrary one."""
+        OrganizationFactory(slug="raiz-1")
+        OrganizationFactory(slug="raiz-2")
+
+        with self.assertRaises(MultipleRootOrganizations):
+            OrganizationService.resolve_root()
 
     def test_delete_organization_refuses_children(self) -> None:
         """Deleting an org with children raises instead of cascading."""

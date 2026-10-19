@@ -20,11 +20,47 @@ class OrganizationFormTests(OrganizationTenantTestCase):
 
     def test_generates_unique_slug_on_collision(self) -> None:
         """A colliding slug is suffixed on save."""
-        OrganizationFactory(slug="nueva-planta")
-        form = OrganizationForm({"name": "Nueva Planta", "kind": "final"})
+        root = OrganizationFactory(slug="raiz")
+        OrganizationFactory(slug="nueva-planta", parent=root)
+        form = OrganizationForm(
+            {"name": "Nueva Planta", "kind": "final", "parent": root.pk}
+        )
         self.assertTrue(form.is_valid(), form.errors)
         organization = form.save()
         self.assertEqual(organization.slug, "nueva-planta-2")
+
+    def test_rejects_a_second_root(self) -> None:
+        """I2: once a root exists the form refuses a second one."""
+        root = OrganizationFactory(slug="raiz")
+
+        form = OrganizationForm({"name": "Otra raiz", "kind": "final"})
+
+        self.assertFalse(form.is_valid())
+        self.assertIn("parent", form.errors)
+        self.assertEqual(
+            organization_models.Organization.objects.filter(
+                pk=root.pk
+            ).count(),
+            1,
+        )
+
+    def test_allows_the_first_root(self) -> None:
+        """An unprovisioned schema may still get its first (only) root."""
+        form = OrganizationForm({"name": "Raiz", "kind": "final"})
+
+        self.assertTrue(form.is_valid(), form.errors)
+        self.assertTrue(form.save().is_tenant)
+
+    def test_editing_the_root_keeps_it_root(self) -> None:
+        """Updating the existing root keeps its empty parent valid."""
+        root = OrganizationFactory(slug="raiz")
+
+        form = OrganizationForm(
+            {"name": "Raiz Renombrada", "kind": root.kind},
+            instance=root,
+        )
+
+        self.assertTrue(form.is_valid(), form.errors)
 
     def test_parent_queryset_scoped_to_user_subtree(self) -> None:
         """Only organizations in the user's subtree are offered as parents."""

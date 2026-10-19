@@ -78,9 +78,10 @@ class OrganizationForm(forms.ModelForm):
         parent_field.queryset = queryset
 
     def clean_parent(self):
-        """Reject parents outside the subtree or that would create a cycle."""
+        """Reject a foreign parent, a cycle, or a second root organization."""
         parent = self.cleaned_data.get("parent")
         if parent is None:
+            self.assert_single_root()
             return parent
         if self.user is not None and not scoping.is_organization_visible(
             self.user, parent
@@ -88,6 +89,25 @@ class OrganizationForm(forms.ModelForm):
             raise ValidationError(_("You cannot use that parent."), code="invalid")
         OrganizationService.assert_valid_parent(self.instance, parent)
         return parent
+
+    def assert_single_root(self) -> None:
+        """Reject a second root: the tenant tree has exactly one node without a parent.
+
+        An existing root keeps being the root, so only a *new* root is refused.
+        Provisioning creates that one root; every organization added afterwards
+        must hang from the tree.
+
+        Raises:
+            ValidationError: If a root already exists and the submitted
+                organization would become a second one.
+        """
+        if self.instance.pk is not None and self.instance.parent_id is None:
+            return
+        if models.Organization.objects.filter(parent__isnull=True).exists():
+            raise ValidationError(
+                _("This tenant already has a root organization."),
+                code="root-exists",
+            )
 
     def clean_kind(self):
         """Only superusers may create platform organizations."""

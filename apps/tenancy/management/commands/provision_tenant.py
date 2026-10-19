@@ -93,6 +93,16 @@ class Command(BaseCommand):
             default=None,
             help="Host name (defaults to <slug>.<PLATFORM_DOMAIN>).",
         )
+        parser.add_argument(
+            "--promote",
+            action="store_true",
+            default=False,
+            help=(
+                "Elevate an account that already uses --admin-email to "
+                "administrator. Off by default so re-running the command never "
+                "escalates a normal client user."
+            ),
+        )
 
     def handle(self, *args: Any, **options: Any) -> None:
         """Provision the tenant described by the options.
@@ -119,6 +129,7 @@ class Command(BaseCommand):
                 admin_email=options["admin_email"],
                 default_password=password,
                 domain=options["domain"],
+                promote=options["promote"],
             )
         except ValueError as error:
             raise CommandError(str(error)) from error

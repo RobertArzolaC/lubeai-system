@@ -112,6 +112,41 @@ class ProvisionTenantTests(TenantProvisionTestCase):
             )
             self.assertEqual(User.objects.filter(email="admin@acme.pe").count(), 1)
 
+    def test_reprovision_does_not_promote_a_normal_user(self) -> None:
+        """I4: re-running provisioning never escalates a pre-existing account."""
+        tenant = self.provision()
+        with tenant_context(tenant):
+            # Stand in for a pre-existing, non-privileged account that happens to
+            # use the administrator email.
+            admin = User.objects.get(email="admin@acme.pe")
+            admin.is_superuser = False
+            admin.is_staff = False
+            admin.save(update_fields=["is_superuser", "is_staff"])
+            self.assertFalse(admin.is_superuser)
+
+        self.provision()
+
+        with tenant_context(tenant):
+            normal = User.objects.get(email="admin@acme.pe")
+            self.assertFalse(normal.is_superuser)
+            self.assertFalse(normal.is_staff)
+
+    def test_reprovision_promotes_with_an_explicit_opt_in(self) -> None:
+        """I4: promoting a pre-existing account requires ``promote=True``."""
+        tenant = self.provision()
+        with tenant_context(tenant):
+            admin = User.objects.get(email="admin@acme.pe")
+            admin.is_superuser = False
+            admin.is_staff = False
+            admin.save(update_fields=["is_superuser", "is_staff"])
+
+        self.provision(promote=True)
+
+        with tenant_context(tenant):
+            normal = User.objects.get(email="admin@acme.pe")
+            self.assertTrue(normal.is_superuser)
+            self.assertTrue(normal.is_staff)
+
     def test_domain_conflict_leaves_no_tenant_or_schema(self) -> None:
         """A domain owned by another tenant fails before any write."""
         self.provision()
