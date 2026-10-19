@@ -67,6 +67,23 @@ The project is containerized with lightweight multi-stage images
    docker compose exec django python manage.py loaddata apps/core/fixtures/ubigeo_data.json
    ```
 
+### Datos de prueba
+
+El comando `seed_demo_data` crea una jerarquía de clientes, usuarios demo,
+umbrales de análisis y equipos/componentes con **36 meses de informes** por
+componente, suficientes para las gráficas de histórico de Análisis de Componente:
+
+```bash
+docker compose exec django python manage.py seed_demo_data --schema marco --months 36
+```
+
+Opciones útiles: `--months`, `--machines`, `--components` y `--seed`. El comando es
+idempotente: volver a ejecutarlo actualiza/completa el histórico sin duplicar
+organizaciones, equipos ni informes.
+
+Los usuarios demo usan la contraseña `Demo12345!` (por ejemplo
+`admin@marco.pe`, `laboratorio@marco.pe`, `operaciones@minera-andina.pe`).
+
 ### Production
 
 ```bash

@@ -61,25 +61,29 @@ MACHINE_MODELS: list[str] = [
 
 # (normal, caution, critical) ranges for the main monitored parameters.
 PARAMETER_RANGES: dict[str, dict[str, tuple[float, float]]] = {
-    "iron_fe": {"normal": (8, 40), "caution": (50, 95), "critical": (105, 190)},
-    "copper_cu": {"normal": (1, 18), "caution": (22, 45), "critical": (55, 140)},
-    "aluminum_al": {"normal": (1, 12), "caution": (18, 38), "critical": (45, 85)},
-    "chromium_cr": {"normal": (0, 4), "caution": (8, 14), "critical": (16, 40)},
-    "lead_pb": {"normal": (0, 12), "caution": (18, 35), "critical": (45, 95)},
-    "silicon_si": {"normal": (2, 12), "caution": (18, 45), "critical": (55, 140)},
-    "sodium_na": {"normal": (1, 20), "caution": (35, 80), "critical": (95, 220)},
-    "potassium_k": {"normal": (0, 5), "caution": (8, 14), "critical": (18, 40)},
+    "iron_fe": {"normal": (8, 40), "caution": (75, 99), "critical": (105, 190)},
+    "copper_cu": {"normal": (1, 18), "caution": (20, 29), "critical": (55, 140)},
+    "aluminum_al": {"normal": (1, 12), "caution": (15, 24), "critical": (45, 85)},
+    "chromium_cr": {"normal": (0, 4), "caution": (10, 14), "critical": (16, 40)},
+    "lead_pb": {"normal": (0, 12), "caution": (20, 29), "critical": (45, 95)},
+    "silicon_si": {"normal": (2, 12), "caution": (15, 19), "critical": (55, 140)},
+    "sodium_na": {"normal": (1, 20), "caution": (30, 49), "critical": (95, 220)},
+    "potassium_k": {"normal": (0, 5), "caution": (10, 14), "critical": (18, 40)},
     "zinc_zn": {"normal": (900, 1400), "caution": (650, 780), "critical": (300, 580)},
     "phosphorus_p": {
-        "normal": (800, 1300),
+        "normal": (950, 1300),
         "caution": (720, 790),
         "critical": (350, 680),
     },
-    "magnesium_mg": {"normal": (200, 900), "caution": (100, 180), "critical": (20, 90)},
+    "magnesium_mg": {
+        "normal": (1900, 2600),
+        "caution": (1550, 1750),
+        "critical": (900, 1450),
+    },
     "calcium_ca": {
-        "normal": (1800, 3000),
-        "caution": (900, 1400),
-        "critical": (300, 800),
+        "normal": (2050, 3000),
+        "caution": (1550, 1950),
+        "critical": (700, 1450),
     },
 }
 
@@ -530,6 +534,7 @@ class Command(BaseCommand):
 
         for org in final_orgs:
             org_types = self._ensure_types_for(org)
+            org_token = "".join(part[:3] for part in org.slug.split("-")[:2]).upper()
             for branch_index, branch_name in enumerate(BRANCHES[:2]):
                 branch, _ = equipment_models.Branch.objects.get_or_create(
                     organization=org,
@@ -541,8 +546,7 @@ class Command(BaseCommand):
                         organization=org,
                         branch=branch,
                         name=(
-                            f"Equipo {org.slug[:6].upper()}-"
-                            f"{branch_index + 1}-{machine_index + 1}"
+                            f"Equipo {org_token}-{branch_index + 1}-{machine_index + 1}"
                         ),
                         defaults={
                             "serial_number": (

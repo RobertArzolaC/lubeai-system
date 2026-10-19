@@ -8,6 +8,7 @@ or users, and the same ``--seed`` must produce the same ``lab_number`` values.
 
 from __future__ import annotations
 
+import random
 import shutil
 import tempfile
 
@@ -17,13 +18,14 @@ from django.db import connection
 from django.test import override_settings
 from django_tenants.utils import tenant_context
 
+from apps.alerts.services.alert_generator import AlertGeneratorService
 from apps.equipment import models as equipment_models
 from apps.organizations import choices, models
 from apps.reports import models as report_models
 from apps.tenancy import branding
 from apps.tenancy import choices as tenancy_choices
 from apps.tenancy import models as tenancy_models
-from apps.tenancy.management.commands.seed_demo_data import Command
+from apps.tenancy.management.commands.seed_demo_data import THRESHOLDS, Command
 from apps.tenancy.tests.base import TenantProvisionTestCase
 from apps.users.models import User
 
@@ -243,6 +245,32 @@ class SeedDemoDataTests(TenantProvisionTestCase):
 
         with self.assertRaises(CommandError):
             call_command("seed_demo_data", schema="bare", verbosity=0)
+
+    def test_parameter_ranges_produce_the_intended_alert_severity(self) -> None:
+        """Seeded values stay inside their condition's threshold band."""
+        limits = {
+            parameter: {
+                "warning": warning,
+                "critical": critical,
+                "is_inverse": is_inverse,
+            }
+            for _category, parameter, warning, critical, _unit, is_inverse, _source in THRESHOLDS
+        }
+        command = Command()
+        command.rng = random.Random(42)
+        generator = AlertGeneratorService()
+        expected = {
+            "NORMAL": None,
+            "CAUTION": "CAUTION",
+            "CRITICAL": "CRITICAL",
+        }
+        for condition, severity in expected.items():
+            for parameter, value in command._analysis_values(condition).items():
+                self.assertEqual(
+                    generator._evaluate(value, limits[parameter]),
+                    severity,
+                    f"{condition} {parameter}={value}",
+                )
 
     def test_rejects_non_positive_equipment_counts(self) -> None:
         """``--machines`` / ``--components`` below 1 fail loudly."""
