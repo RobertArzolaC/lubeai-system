@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-18 21:07-0500\n"
+"POT-Creation-Date: 2026-10-18 22:52-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: apps/alerts/apps.py:12 apps/alerts/models.py:104 apps/alerts/views.py:34
+#: apps/alerts/apps.py:12 apps/alerts/models.py:104 apps/alerts/views.py:36
 #: apps/core/breadcrumbs.py:22 templates/includes/aside.html:131
 #: templates/includes/aside.html:136 templates/includes/aside.html:138
 msgid "Alerts"
@@ -78,12 +78,13 @@ msgstr "Resuelta"
 msgid "Dismissed"
 msgstr "Descartada"
 
-#: apps/alerts/filtersets.py:18 apps/equipment/filtersets.py:15
-#: apps/equipment/filtersets.py:38 apps/equipment/filtersets.py:71
-#: apps/equipment/filtersets.py:131 apps/organizations/filtersets.py:17
-#: apps/reports/filtersets.py:18 apps/reports/filtersets.py:46
-#: apps/reports/filtersets.py:201 apps/tenancy/filtersets.py:21
-#: apps/users/filtersets.py:15 apps/users/filtersets.py:50
+#: apps/alerts/filtersets.py:18 apps/dashboard/filtersets.py:20
+#: apps/equipment/filtersets.py:15 apps/equipment/filtersets.py:38
+#: apps/equipment/filtersets.py:71 apps/equipment/filtersets.py:131
+#: apps/organizations/filtersets.py:17 apps/reports/filtersets.py:18
+#: apps/reports/filtersets.py:46 apps/reports/filtersets.py:201
+#: apps/tenancy/filtersets.py:21 apps/users/filtersets.py:15
+#: apps/users/filtersets.py:50 templates/dashboard/includes/filters.html:5
 msgid "Search"
 msgstr "Buscar"
 
@@ -126,13 +127,13 @@ msgstr "Severidad"
 msgid "All Statuses"
 msgstr "Todos los estados"
 
-#: apps/alerts/filtersets.py:32 apps/alerts/models.py:74
-#: apps/core/models.py:154 apps/equipment/filtersets.py:19
-#: apps/equipment/filtersets.py:47 apps/equipment/filtersets.py:90
-#: apps/equipment/filtersets.py:140 apps/organizations/filtersets.py:31
-#: apps/reports/models.py:152 apps/tenancy/filtersets.py:30
-#: apps/users/filtersets.py:24 apps/users/filtersets.py:64
-#: templates/alerts/alert/list.html:146
+#: apps/alerts/filtersets.py:32 apps/alerts/forms.py:129
+#: apps/alerts/models.py:74 apps/core/models.py:154
+#: apps/equipment/filtersets.py:19 apps/equipment/filtersets.py:47
+#: apps/equipment/filtersets.py:90 apps/equipment/filtersets.py:140
+#: apps/organizations/filtersets.py:31 apps/reports/models.py:152
+#: apps/tenancy/filtersets.py:30 apps/users/filtersets.py:24
+#: apps/users/filtersets.py:64 templates/alerts/alert/list.html:146
 #: templates/equipment/branch/detail.html:44
 #: templates/equipment/branch/list.html:76
 #: templates/equipment/component_type/detail.html:48
@@ -170,7 +171,7 @@ msgid "All Machines"
 msgstr "Todas las máquinas"
 
 #: apps/alerts/filtersets.py:42 apps/alerts/models.py:28
-#: apps/dashboard/filtersets.py:29 apps/equipment/models.py:119
+#: apps/dashboard/filtersets.py:35 apps/equipment/models.py:119
 #: apps/equipment/models.py:176 apps/equipment/views.py:27
 #: apps/equipment/views.py:42 apps/equipment/views.py:70
 #: apps/equipment/views.py:111 apps/reports/filtersets.py:61
@@ -178,7 +179,7 @@ msgstr "Todas las máquinas"
 #: apps/reports/models.py:75 apps/reports/services/chart_export_pdf.py:212
 #: templates/alerts/alert/detail.html:38
 #: templates/alerts/email/alert_notification.html:21
-#: templates/dashboard/includes/filters.html:25
+#: templates/dashboard/includes/filters.html:31
 #: templates/dashboard/includes/tabs.html:20
 #: templates/equipment/machine/list.html:75
 #: templates/reports/report/component_analysis.html:96
@@ -195,7 +196,7 @@ msgstr "Todos los componentes"
 #: apps/equipment/models.py:192 apps/reports/filtersets.py:66
 #: apps/reports/filtersets.py:155 apps/reports/filtersets.py:275
 #: apps/reports/models.py:84 templates/alerts/alert/detail.html:46
-#: templates/dashboard/includes/filters.html:34
+#: templates/dashboard/includes/filters.html:40
 #: templates/dashboard/includes/tabs.html:24
 #: templates/reports/report/detail.html:82
 msgid "Component"
@@ -294,8 +295,8 @@ msgstr "Clave de deduplicación"
 msgid "Idempotency key"
 msgstr "Clave de idempotencia"
 
-#: apps/alerts/models.py:103 apps/alerts/views.py:33 apps/alerts/views.py:69
-#: apps/alerts/views.py:97 templates/dashboard/includes/kpis.html:23
+#: apps/alerts/models.py:103 apps/alerts/views.py:35 apps/alerts/views.py:72
+#: apps/alerts/views.py:100 templates/dashboard/includes/kpis.html:23
 msgid "Alert"
 msgstr "Alerta"
 
@@ -308,9 +309,29 @@ msgstr "Puede reconocer alertas"
 msgid "[%(brand)s] Alerta: condición detectada"
 msgstr "[%(brand)s] Alerta: condición detectada"
 
-#: apps/alerts/views.py:84
+#: apps/alerts/views.py:87
 msgid "Alert updated successfully"
 msgstr "Alerta actualizada correctamente"
+
+#: apps/alerts/views.py:136
+#| msgid "You do not have permission to delete this account."
+msgid "You do not have permission to change this alert."
+msgstr "No tienes permiso para cambiar esta alerta."
+
+#: apps/alerts/views.py:161
+#| msgid "Invalid action"
+msgid "Invalid status."
+msgstr "Estado no válido."
+
+#: apps/alerts/views.py:173
+#| msgid "User not found."
+msgid "Alert not found."
+msgstr "Alerta no encontrada."
+
+#: apps/alerts/views.py:190
+#| msgid "New status value."
+msgid "Alert status updated."
+msgstr "Estado de la alerta actualizado."
 
 #: apps/authentication/forms.py:12 templates/users/settings.html:24
 msgid "First Name"
@@ -682,22 +703,22 @@ msgstr "Historial de estado"
 msgid "Status Histories"
 msgstr "Historiales de estado"
 
-#: apps/dashboard/filtersets.py:19 templates/dashboard/includes/filters.html:5
+#: apps/dashboard/filtersets.py:25 templates/dashboard/includes/filters.html:11
 msgid "Year"
 msgstr "Año"
 
-#: apps/dashboard/filtersets.py:24 apps/equipment/filtersets.py:85
+#: apps/dashboard/filtersets.py:30 apps/equipment/filtersets.py:85
 #: apps/equipment/models.py:24 apps/equipment/models.py:88
 #: apps/equipment/views.py:260 apps/equipment/views.py:278
 #: apps/equipment/views.py:302 apps/equipment/views.py:321
-#: templates/dashboard/includes/filters.html:15
+#: templates/dashboard/includes/filters.html:21
 #: templates/dashboard/includes/tabs.html:22
 #: templates/equipment/machine/detail.html:79
 #: templates/equipment/machine/list.html:87
 msgid "Fleet"
 msgstr "Flota"
 
-#: apps/dashboard/filtersets.py:34 apps/equipment/models.py:159
+#: apps/dashboard/filtersets.py:40 apps/equipment/models.py:159
 #: apps/equipment/views.py:347 apps/equipment/views.py:365
 #: apps/equipment/views.py:400 apps/equipment/views.py:425
 #: apps/reports/models.py:582 apps/reports/services/chart_export_pdf.py:210
@@ -2119,8 +2140,7 @@ msgstr "Designa si el cliente se sirve"
 
 #: apps/tenancy/models.py:73
 msgid "Per-tenant overrides of the kind default capabilities"
-msgstr ""
-"Sobrescrituras por cliente de las capacidades por defecto del tipo"
+msgstr "Sobrescrituras por cliente de las capacidades por defecto del tipo"
 
 #: apps/tenancy/models.py:82 apps/tenancy/views.py:69 apps/tenancy/views.py:131
 #: apps/tenancy/views.py:171 templates/tenancy/tenant/list.html:57
@@ -2395,6 +2415,7 @@ msgstr "Alternar visibilidad de la contraseña"
 
 #: templates/account/password_change.html:119
 #: templates/account/password_reset.html:63
+#: templates/alerts/alert/list.html:238
 #: templates/includes/delete_script.html:13 templates/users/settings.html:60
 msgid "Cancel"
 msgstr "Cancelar"
@@ -2666,10 +2687,15 @@ msgid "Management"
 msgstr "Gestión"
 
 #: templates/alerts/alert/list.html:196
+#| msgid "Change Password"
+msgid "Change status"
+msgstr "Cambiar estado"
+
+#: templates/alerts/alert/list.html:204
 msgid "No alerts found"
 msgstr "No se encontraron alertas"
 
-#: templates/alerts/alert/list.html:197
+#: templates/alerts/alert/list.html:205
 msgid ""
 "We couldn't find any alerts matching your search. Try adjusting your "
 "criteria."
@@ -2677,13 +2703,37 @@ msgstr ""
 "No encontramos alertas que coincidan con tu búsqueda. Intenta ajustar los "
 "criterios."
 
-#: templates/alerts/alert/list.html:211
+#: templates/alerts/alert/list.html:219
 msgid "Delete Alert"
 msgstr "Eliminar alerta"
 
-#: templates/alerts/alert/list.html:212
+#: templates/alerts/alert/list.html:220
 msgid "Alert deleted successfully."
 msgstr "Alerta eliminada correctamente."
+
+#: templates/alerts/alert/list.html:232
+msgid "Update alert status"
+msgstr "Actualizar estado de la alerta"
+
+#: templates/alerts/alert/list.html:237
+msgid "Save"
+msgstr "Guardar"
+
+#: templates/alerts/alert/list.html:255
+#: templates/includes/delete_script.html:23
+msgid "Success"
+msgstr "Éxito"
+
+#: templates/alerts/alert/list.html:258 templates/includes/alerts.html:49
+#: templates/includes/delete_script.html:29
+msgid "Error"
+msgstr "Error"
+
+#: templates/alerts/alert/list.html:258
+#: templates/includes/delete_script.html:29
+#: templates/reports/report/export.html:174
+msgid "There was a problem processing your request."
+msgstr "Hubo un problema al procesar tu solicitud."
 
 #: templates/alerts/email/alert_notification.html:5
 msgid "Alert notification"
@@ -2759,18 +2809,23 @@ msgid "ISO 4406 distribution"
 msgstr "ISO 4406 distribución"
 
 #: templates/dashboard/includes/filters.html:7
-#: templates/dashboard/includes/filters.html:17
-#: templates/dashboard/includes/filters.html:27
-#: templates/dashboard/includes/filters.html:36
+#| msgid "Search by machine, component or key..."
+msgid "Lab no., machine or component..."
+msgstr "N.º de informe, máquina o componente..."
+
+#: templates/dashboard/includes/filters.html:13
+#: templates/dashboard/includes/filters.html:23
+#: templates/dashboard/includes/filters.html:33
+#: templates/dashboard/includes/filters.html:42
 #: templates/users/role/_permission_matrix.html:11
 msgid "All"
 msgstr "Todos"
 
-#: templates/dashboard/includes/filters.html:43
+#: templates/dashboard/includes/filters.html:49
 msgid "Reset"
 msgstr "Restablecer"
 
-#: templates/dashboard/includes/filters.html:46
+#: templates/dashboard/includes/filters.html:52
 #: templates/dashboard/includes/kpis.html:13
 msgid "samples"
 msgstr "muestras"
@@ -3114,10 +3169,6 @@ msgstr "Error interno del servidor"
 msgid "Something went wrong on our end. We're working on fixing it."
 msgstr "Algo salió mal de nuestro lado. Estamos trabajando para solucionarlo."
 
-#: templates/includes/alerts.html:49 templates/includes/delete_script.html:29
-msgid "Error"
-msgstr "Error"
-
 #: templates/includes/aside.html:41 templates/reports/report/detail.html:75
 msgid "Equipment"
 msgstr "Equipos"
@@ -3158,15 +3209,6 @@ msgstr "Esta acción es permanente y no se puede deshacer."
 #: templates/includes/delete_script.html:12
 msgid "Yes, delete"
 msgstr "Sí, eliminar"
-
-#: templates/includes/delete_script.html:23
-msgid "Success"
-msgstr "Éxito"
-
-#: templates/includes/delete_script.html:29
-#: templates/reports/report/export.html:174
-msgid "There was a problem processing your request."
-msgstr "Hubo un problema al procesar tu solicitud."
 
 #: templates/includes/footer.html:7
 msgid "Collection Instructions"
@@ -3926,9 +3968,6 @@ msgid "No tenants found"
 msgstr "No se encontraron clientes"
 
 #: templates/tenancy/tenant/list.html:124
-#| msgid ""
-#| "We couldn't find any roles matching your search. Try adjusting your "
-#| "criteria or create a new one."
 msgid ""
 "We couldn't find any tenants matching your search. Try adjusting your "
 "criteria or create a new one."

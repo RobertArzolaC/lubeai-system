@@ -1,3 +1,1 @@
-* Actualizar dashboard agregar busqueda en filtros.
-* Modal para actualizar solo estado de alerta.
-* Agregar filtro y columna por organizacion en "Informes" y "Umbrales".
+* Sin pendientes abiertos: la búsqueda en los filtros del dashboard, el modal para actualizar solo el estado de la alerta y el filtro/columna por organización en "Informes" y "Umbrales" ya están implementados.
