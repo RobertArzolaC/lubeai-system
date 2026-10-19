@@ -1,8 +1,11 @@
 """Tests for the ``apps.users.forms`` module."""
 
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Permission
 from django.test import TestCase
 
+from apps.organizations import factories as organization_factories
+from apps.users import constants as users_constants
 from apps.users import forms as users_forms
 from apps.users.factories import UserFactory
 from apps.users.tests.base import UserTenantTestCase
@@ -60,3 +63,50 @@ class UserSettingsFormTests(UserTenantTestCase):
             data={"first_name": "Only"}, instance=self.user
         )
         self.assertTrue(form.is_valid())
+
+
+class RoleFormPermissionCatalogTests(UserTenantTestCase):
+    """The role form only offers dashboard permissions with readable labels."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.organization = organization_factories.OrganizationFactory()
+        self.user = UserFactory(organization=self.organization)
+        self.form = users_forms.RoleForm(user=self.user)
+
+    def test_only_dashboard_modules_are_offered(self) -> None:
+        """The permission queryset is limited to the dashboard app labels."""
+        app_labels = set(
+            self.form.fields["permissions"].queryset.values_list(
+                "content_type__app_label", flat=True
+            )
+        )
+        self.assertEqual(app_labels, set(users_constants.ROLE_PERMISSION_MODULES))
+
+    def test_system_permissions_are_rejected(self) -> None:
+        """A tampered POST with an auth permission is invalid."""
+        permission = Permission.objects.get(
+            content_type__app_label="auth", codename="add_group"
+        )
+        form = users_forms.RoleForm(
+            data={
+                "organization": self.organization.pk,
+                "name": "Analista",
+                "description": "",
+                "is_active": "on",
+                "permissions": [permission.pk],
+            },
+            user=self.user,
+        )
+        self.assertFalse(form.is_valid())
+        self.assertIn("permissions", form.errors)
+
+    def test_permission_labels_are_human_readable(self) -> None:
+        """Standard and custom permissions get Spanish labels."""
+        labels = [
+            permission["label"]
+            for group in self.form.permission_groups
+            for permission in group["permissions"]
+        ]
+        self.assertIn("Ver Máquina", labels)
+        self.assertIn("Puede ver el análisis de componentes", labels)

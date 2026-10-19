@@ -4,11 +4,13 @@ from typing import ClassVar
 from django import forms
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 from django.contrib.auth.models import Permission
+from django.template.defaultfilters import capfirst
+from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
 from apps.core import mixins as core_mixins
 from apps.organizations import scoping
-from apps.users import models, services
+from apps.users import constants, models, services
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -42,9 +44,7 @@ class RoleForm(core_mixins.OrganizationScopeFormMixin, forms.ModelForm):
     """
 
     permissions = forms.ModelMultipleChoiceField(
-        queryset=Permission.objects.select_related("content_type").order_by(
-            "content_type__app_label", "content_type__model", "codename"
-        ),
+        queryset=Permission.objects.none(),
         required=False,
         widget=forms.CheckboxSelectMultiple,
         label=_("Permissions"),
@@ -65,12 +65,20 @@ class RoleForm(core_mixins.OrganizationScopeFormMixin, forms.ModelForm):
         }
 
     def __init__(self, *args, user=None, **kwargs) -> None:
-        """Scope the organization field to the acting user.
+        """Scope the organization and permission choices.
 
         The owning organization is immutable on update: a role must never be
-        silently moved across tenants.
+        silently moved across tenants. Permissions are limited to the dashboard
+        modules, so a tampered POST with framework permissions is invalid.
         """
         super().__init__(*args, user=user, **kwargs)
+        self.fields["permissions"].queryset = (
+            Permission.objects.filter(
+                content_type__app_label__in=constants.ROLE_PERMISSION_MODULES
+            )
+            .select_related("content_type")
+            .order_by("content_type__app_label", "content_type__model", "codename")
+        )
         if self.instance.pk and "organization" in self.fields:
             self.fields["organization"].disabled = True
 
@@ -91,6 +99,21 @@ class RoleForm(core_mixins.OrganizationScopeFormMixin, forms.ModelForm):
             }
         return set()
 
+    def _permission_label(self, permission: Permission) -> str:
+        """Return a readable Spanish label for ``permission``.
+
+        Standard CRUD codenames are rendered as action + model; custom
+        permissions fall back to their translated stored name so they do not
+        collide with the generic action of their content type.
+        """
+        action, _, _model = permission.codename.partition("_")
+        action_label = constants.PERMISSION_ACTIONS.get(action)
+        if action_label is not None and permission.codename == (
+            f"{action}_{permission.content_type.model}"
+        ):
+            return f"{action_label} {capfirst(permission.content_type.name)}"
+        return gettext(permission.name)
+
     @property
     def permission_groups(self) -> list[dict]:
         """Return the permissions grouped by model for the matrix template."""
@@ -110,9 +133,15 @@ class RoleForm(core_mixins.OrganizationScopeFormMixin, forms.ModelForm):
             groups.append(
                 {
                     "key": f"{content_type.app_label}.{content_type.model}",
-                    "label": content_type.name.capitalize(),
+                    "label": capfirst(content_type.name),
                     "app_label": content_type.app_label,
-                    "permissions": permissions,
+                    "permissions": [
+                        {
+                            "pk": permission.pk,
+                            "label": self._permission_label(permission),
+                        }
+                        for permission in permissions
+                    ],
                 }
             )
         return groups

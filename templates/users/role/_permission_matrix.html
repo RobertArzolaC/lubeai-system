@@ -18,7 +18,7 @@
                        data-group="{{ group_index }}"
                        class="h-4.5 w-4.5 rounded border-stroke text-primary focus:ring-primary"
                        {% if permission.pk|stringformat:"s" in form.selected_permission_ids %}checked{% endif %} />
-                <span>{{ permission.name }}</span>
+                <span>{{ permission.label }}</span>
             </label>
             {% endfor %}
         </div>
