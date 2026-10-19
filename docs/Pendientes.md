@@ -1,1 +1,0 @@
-* Sin pendientes abiertos: la búsqueda en los filtros del dashboard, el modal para actualizar solo el estado de la alerta y el filtro/columna por organización en "Informes" y "Umbrales" ya están implementados.
