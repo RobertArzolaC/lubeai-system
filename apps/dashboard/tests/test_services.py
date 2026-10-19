@@ -137,9 +137,12 @@ class DashboardServiceFilterTests(TenantSchemaTestCase):
         self.machine = equipment_factories.MachineFactory(fleet=self.fleet)
         self.other_machine = equipment_factories.MachineFactory(fleet=self.other_fleet)
         self.component_type = equipment_factories.ComponentTypeFactory(name="Bomba")
+        self.component = equipment_factories.ComponentFactory(
+            machine=self.machine, type=self.component_type
+        )
         reports_factories.ReportFactory(
             machine=self.machine,
-            component__type=self.component_type,
+            component=self.component,
             condition="NORMAL",
             sample_date=date(2023, 6, 1),
         )
@@ -159,11 +162,9 @@ class DashboardServiceFilterTests(TenantSchemaTestCase):
         service = DashboardService(DashboardFilters(fleet_id=self.fleet.pk))
         self.assertEqual(service.get_kpis()["total"], 1)
 
-    def test_filter_by_component_type(self) -> None:
-        """Filtering by component type narrows the report queryset."""
-        service = DashboardService(
-            DashboardFilters(component_type_id=self.component_type.pk)
-        )
+    def test_filter_by_component(self) -> None:
+        """Filtering by component narrows the report queryset."""
+        service = DashboardService(DashboardFilters(component_id=self.component.pk))
         self.assertEqual(service.get_kpis()["total"], 1)
 
     def test_filter_alerts_by_year(self) -> None:
@@ -250,10 +251,12 @@ class DashboardServiceAuxTests(TenantSchemaTestCase):
         self.assertEqual(rows[0]["sample_date"], "2024-12-31")
 
     def test_filter_options(self) -> None:
-        """Filter options expose years, fleets, machines and component types."""
+        """Filter options expose the years and fleets rendered as static selects."""
         options = DashboardService.get_filter_options()
         self.assertIn(2024, options["years"])
         self.assertTrue(options["fleets"])
+        self.assertNotIn("machines", options)
+        self.assertNotIn("component_types", options)
 
 
 class DashboardServiceBuildContextTests(TenantSchemaTestCase):

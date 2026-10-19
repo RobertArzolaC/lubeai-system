@@ -43,14 +43,33 @@ class DashboardFilterTests(TenantSchemaTestCase):
         self.assertIn(self.match, filterset.qs)
         self.assertNotIn(self.other, filterset.qs)
 
-    def test_filter_by_component_type(self) -> None:
-        """The component type filter uses the component type relation."""
+    def test_filter_by_component(self) -> None:
+        """The component filter uses the component relation."""
         filterset = DashboardFilter(
-            {"component_type": self.component_type.pk},
+            {"machine": self.machine.pk, "component": self.match.component_id},
             queryset=reports_models.Report.objects.all(),
         )
+        self.assertTrue(filterset.is_valid())
         self.assertIn(self.match, filterset.qs)
         self.assertNotIn(self.other, filterset.qs)
+
+    def test_component_requires_machine(self) -> None:
+        """A component without a machine is rejected."""
+        filterset = DashboardFilter(
+            {"component": self.match.component_id},
+            queryset=reports_models.Report.objects.all(),
+        )
+        self.assertFalse(filterset.is_valid())
+        self.assertIn("component", filterset.errors)
+
+    def test_component_from_other_machine_is_invalid(self) -> None:
+        """A component that belongs to another machine is rejected."""
+        filterset = DashboardFilter(
+            {"machine": self.machine.pk, "component": self.other.component_id},
+            queryset=reports_models.Report.objects.all(),
+        )
+        self.assertFalse(filterset.is_valid())
+        self.assertIn("component", filterset.errors)
 
     def test_empty_filters_returns_all(self) -> None:
         """An empty filterset keeps the full queryset."""

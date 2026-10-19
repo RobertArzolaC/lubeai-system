@@ -36,6 +36,7 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         service = DashboardService(organization_ids=organization_ids)
         context["dashboard_data"] = service.build_context()
         context["filter_options"] = service.get_filter_options(organization_ids)
+        context["filter_form"] = filtersets.DashboardFilter(request=self.request).form
         context.update(self._client_administration(self.request.user))
         return context
 
@@ -86,8 +87,8 @@ class DashboardDataView(LoginRequiredMixin, View):
             year=cleaned.get("year"),
             fleet_id=cleaned["fleet"].pk if cleaned.get("fleet") else None,
             machine_id=cleaned["machine"].pk if cleaned.get("machine") else None,
-            component_type_id=(
-                cleaned["component_type"].pk if cleaned.get("component_type") else None
+            component_id=(
+                cleaned["component"].pk if cleaned.get("component") else None
             ),
         )
         organization_ids = scoping.user_visible_organization_ids(request.user)

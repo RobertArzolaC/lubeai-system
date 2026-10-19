@@ -47,3 +47,37 @@ class DashboardTemplateContentTests(SimpleTestCase):
         content = self._read(TEMPLATE_DIR / "includes" / "filters.html")
         self.assertIn('name="search"', content)
         self.assertIn('type="search"', content)
+
+    def test_filters_render_autocomplete_fields(self) -> None:
+        """Machine and component use the server-side autocomplete widgets."""
+        content = self._read(TEMPLATE_DIR / "includes" / "filters.html")
+        self.assertIn("filter_form.machine", content)
+        self.assertIn("filter_form.component", content)
+        self.assertNotIn('name="component_type"', content)
+
+    def test_filters_share_a_single_control_style(self) -> None:
+        """Every static filter control uses the shared ``filter-control`` class."""
+        content = self._read(TEMPLATE_DIR / "includes" / "filters.html")
+        self.assertEqual(content.count('class="filter-control w-full"'), 3)
+
+    def test_index_loads_select2_assets(self) -> None:
+        """The index loads the widget media and the custom Select2 skins."""
+        content = self._read(INDEX)
+        self.assertIn("filter_form.media", content)
+        self.assertIn("select2-custom.css", content)
+        self.assertIn("dashboard-filters.css", content)
+
+    def test_filter_bar_styles_match_native_and_select2_controls(self) -> None:
+        """The filter stylesheet normalises native controls and Select2 widgets."""
+        content = (
+            Path(settings.BASE_DIR) / "static" / "css" / "dashboard-filters.css"
+        ).read_text(encoding="utf-8")
+        self.assertIn("#dashboard-filters .filter-control", content)
+        self.assertIn(
+            "#dashboard-filters .select2-container--default .select2-selection--single",
+            content,
+        )
+        self.assertIn(
+            "body .select2-container--default .select2-search--dropdown .select2-search__field",
+            content,
+        )

@@ -309,12 +309,44 @@
         showTab("resumen");
     }
 
+    function select2Element(field) {
+        var jquery = window.jQuery || (window.django && window.django.jQuery);
+        if (!jquery || !field) return null;
+        var element = jquery(field);
+        return element.data("select2") ? element : null;
+    }
+
+    function clearField(field) {
+        field.value = "";
+        var element = select2Element(field);
+        if (element) element.val(null).trigger("change.select2");
+    }
+
     function setupFilters() {
         var form = document.getElementById("dashboard-filters");
+        var jquery = window.jQuery || (window.django && window.django.jQuery);
         if (form) {
+            var machineField = form.elements.namedItem("machine");
+            var componentField = form.elements.namedItem("component");
+            if (machineField && componentField) {
+                /* A component belongs to a machine: drop a stale choice.
+                   Select2 emits change through jQuery, so bind through it. */
+                var onMachineChange = function () {
+                    clearField(componentField);
+                };
+                if (jquery) {
+                    jquery(machineField).on("change", onMachineChange);
+                } else {
+                    machineField.addEventListener("change", onMachineChange);
+                }
+            }
             Array.prototype.forEach.call(form.elements, function (field) {
                 if (field.tagName === "SELECT") {
-                    field.addEventListener("change", refresh);
+                    if (jquery) {
+                        jquery(field).on("change", refresh);
+                    } else {
+                        field.addEventListener("change", refresh);
+                    }
                 } else if (field.type === "search") {
                     field.addEventListener("input", debounce(refresh));
                 }
@@ -325,7 +357,9 @@
             reset.addEventListener("click", function () {
                 if (form) {
                     Array.prototype.forEach.call(form.elements, function (field) {
-                        if (field.tagName === "SELECT" || field.type === "search") {
+                        if (field.tagName === "SELECT") {
+                            clearField(field);
+                        } else if (field.type === "search") {
                             field.value = "";
                         }
                     });

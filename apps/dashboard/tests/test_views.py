@@ -142,6 +142,31 @@ class DashboardViewTests(TenantSchemaTestCase):
         self.assertEqual(first["kpis"]["total"], 2)
         self.assertEqual(second["kpis"]["total"], 0)
 
+    def test_data_applies_machine_and_component_filters(self) -> None:
+        """The JSON endpoint narrows the payload by machine and component."""
+        self.client.force_login(self.user)
+        component = self.machine.components.first()
+        response = self.client.get(
+            reverse("apps.dashboard:data"),
+            {"machine": self.machine.pk, "component": component.pk},
+        )
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["kpis"]["total"], 1)
+        self.assertEqual(
+            {row["machine"] for row in payload["recent_reports"]},
+            {self.machine.name},
+        )
+
+    def test_data_rejects_component_without_machine(self) -> None:
+        """A component without a machine is an invalid filter combination."""
+        self.client.force_login(self.user)
+        component = self.machine.components.first()
+        response = self.client.get(
+            reverse("apps.dashboard:data"), {"component": component.pk}
+        )
+        self.assertEqual(response.status_code, 400)
+
     def test_data_handles_invalid_filter(self) -> None:
         """An invalid filter value returns HTTP 400."""
         self.client.force_login(self.user)

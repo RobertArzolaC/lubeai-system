@@ -5,6 +5,12 @@
 {% block title_page %}{% trans "Dashboard" %}{% endblock %}
 {% block toolbar_title %}{% trans "Main Menu" %}{% endblock %}
 
+{% block extra_css %}
+{{ filter_form.media }}
+<link rel="stylesheet" href="{% static 'css/select2-custom.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard-filters.css' %}">
+{% endblock extra_css %}
+
 {% block content %}
 <div
     id="dashboard-root"

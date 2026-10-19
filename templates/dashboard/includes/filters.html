@@ -1,15 +1,14 @@
 {% load i18n %}
 <div class="rounded-2xl border border-gray-200 bg-white p-4 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark">
     <form id="dashboard-filters" class="flex flex-wrap items-end gap-3">
-        <label class="flex w-full flex-col gap-1 sm:w-64">
+        <label class="flex w-full flex-col gap-1 sm:w-80">
             <span class="text-xs font-medium text-gray-500">{% trans "Search" %}</span>
-            <input type="search" name="search"
-                placeholder="{% trans 'Lab no., machine or component...' %}"
-                class="rounded-lg border border-gray-200 bg-transparent px-3 py-2 text-sm dark:border-gray-700 dark:text-white">
+            <input type="search" name="search" class="filter-control w-full"
+                placeholder="{% trans 'Lab no., machine or component...' %}">
         </label>
-        <label class="flex flex-col gap-1">
+        <label class="flex w-full flex-col gap-1 sm:w-32">
             <span class="text-xs font-medium text-gray-500">{% trans "Year" %}</span>
-            <select name="year" class="rounded-lg border border-gray-200 bg-transparent px-3 py-2 text-sm dark:border-gray-700 dark:text-white">
+            <select name="year" class="filter-control w-full">
                 <option value="">{% trans "All" %}</option>
                 {% for year in filter_options.years %}
                 <option value="{{ year }}">{{ year }}</option>
@@ -17,9 +16,9 @@
             </select>
         </label>
         {% if config.ENABLE_FLEET %}
-        <label class="flex flex-col gap-1">
+        <label class="flex w-full flex-col gap-1 sm:w-48">
             <span class="text-xs font-medium text-gray-500">{% trans "Fleet" %}</span>
-            <select name="fleet" class="rounded-lg border border-gray-200 bg-transparent px-3 py-2 text-sm dark:border-gray-700 dark:text-white">
+            <select name="fleet" class="filter-control w-full">
                 <option value="">{% trans "All" %}</option>
                 {% for fleet in filter_options.fleets %}
                 <option value="{{ fleet.pk }}">{{ fleet.name }}</option>
@@ -27,25 +26,15 @@
             </select>
         </label>
         {% endif %}
-        <label class="flex flex-col gap-1">
-            <span class="text-xs font-medium text-gray-500">{% trans "Machine" %}</span>
-            <select name="machine" class="rounded-lg border border-gray-200 bg-transparent px-3 py-2 text-sm dark:border-gray-700 dark:text-white">
-                <option value="">{% trans "All" %}</option>
-                {% for machine in filter_options.machines %}
-                <option value="{{ machine.pk }}">{{ machine.name }}</option>
-                {% endfor %}
-            </select>
+        <label class="flex w-full flex-col gap-1 sm:w-64" for="{{ filter_form.machine.id_for_label }}">
+            <span class="text-xs font-medium text-gray-500">{{ filter_form.machine.label }}</span>
+            {{ filter_form.machine }}
         </label>
-        <label class="flex flex-col gap-1">
-            <span class="text-xs font-medium text-gray-500">{% trans "Component" %}</span>
-            <select name="component_type" class="rounded-lg border border-gray-200 bg-transparent px-3 py-2 text-sm dark:border-gray-700 dark:text-white">
-                <option value="">{% trans "All" %}</option>
-                {% for component_type in filter_options.component_types %}
-                <option value="{{ component_type.pk }}">{{ component_type.name }}</option>
-                {% endfor %}
-            </select>
+        <label class="flex w-full flex-col gap-1 sm:w-64" for="{{ filter_form.component.id_for_label }}">
+            <span class="text-xs font-medium text-gray-500">{{ filter_form.component.label }}</span>
+            {{ filter_form.component }}
         </label>
-        <button type="button" id="dashboard-reset" class="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-white dark:hover:bg-white/5">
+        <button type="button" id="dashboard-reset" class="h-11 rounded-lg border border-gray-200 px-4 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-white dark:hover:bg-white/5">
             {% trans "Reset" %}
         </button>
         <div class="ml-auto flex items-center gap-4 text-sm text-gray-500">

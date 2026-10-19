@@ -26,7 +26,7 @@ class DashboardFilters:
     year: int | None = None
     fleet_id: int | None = None
     machine_id: int | None = None
-    component_type_id: int | None = None
+    component_id: int | None = None
 
 
 class DashboardService:
@@ -58,10 +58,8 @@ class DashboardService:
             queryset = queryset.filter(machine__fleet_id=self.filters.fleet_id)
         if self.filters.machine_id is not None:
             queryset = queryset.filter(machine_id=self.filters.machine_id)
-        if self.filters.component_type_id is not None:
-            queryset = queryset.filter(
-                component__type_id=self.filters.component_type_id
-            )
+        if self.filters.component_id is not None:
+            queryset = queryset.filter(component_id=self.filters.component_id)
         return queryset
 
     def get_alerts(self) -> QuerySet:
@@ -81,10 +79,8 @@ class DashboardService:
             queryset = queryset.filter(machine__fleet_id=self.filters.fleet_id)
         if self.filters.machine_id is not None:
             queryset = queryset.filter(machine_id=self.filters.machine_id)
-        if self.filters.component_type_id is not None:
-            queryset = queryset.filter(
-                component__type_id=self.filters.component_type_id
-            )
+        if self.filters.component_id is not None:
+            queryset = queryset.filter(component_id=self.filters.component_id)
         return queryset
 
     def get_kpis(self, reports: QuerySet | None = None) -> dict[str, Any]:
@@ -301,7 +297,7 @@ class DashboardService:
         )
         return (
             f"{filters.search or ''}:{filters.year}:{filters.fleet_id}:"
-            f"{filters.machine_id}:{filters.component_type_id}:{org_part}"
+            f"{filters.machine_id}:{filters.component_id}:{org_part}"
         )
 
     @staticmethod
@@ -324,11 +320,9 @@ class DashboardService:
             is_active=True, sample_date__isnull=False
         )
         fleets_qs = equipment_models.Fleet.objects.filter(is_active=True)
-        machines_qs = equipment_models.Machine.objects.filter(is_active=True)
         if organization_ids is not None:
             years_qs = years_qs.filter(organization_id__in=organization_ids)
             fleets_qs = fleets_qs.filter(organization_id__in=organization_ids)
-            machines_qs = machines_qs.filter(organization_id__in=organization_ids)
 
         years = (
             years_qs.values_list("sample_date__year", flat=True)
@@ -338,10 +332,6 @@ class DashboardService:
         options = {
             "years": [year for year in years if year is not None],
             "fleets": list(fleets_qs),
-            "machines": list(machines_qs),
-            "component_types": list(
-                equipment_models.ComponentType.objects.filter(is_active=True)
-            ),
         }
         dashboard_cache.safe_cache_set(key, options, constants.DEFAULT_CACHE_TIMEOUT)
         return options
