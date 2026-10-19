@@ -20,6 +20,18 @@
         return document.documentElement.classList.contains("dark");
     }
 
+    function debounce(callback, delay) {
+        var timer = null;
+        return function () {
+            var args = arguments;
+            if (timer) clearTimeout(timer);
+            timer = setTimeout(function () {
+                timer = null;
+                callback.apply(null, args);
+            }, delay || 300);
+        };
+    }
+
     function baseOptions() {
         return {
             chart: {
@@ -301,7 +313,11 @@
         var form = document.getElementById("dashboard-filters");
         if (form) {
             Array.prototype.forEach.call(form.elements, function (field) {
-                if (field.tagName === "SELECT") field.addEventListener("change", refresh);
+                if (field.tagName === "SELECT") {
+                    field.addEventListener("change", refresh);
+                } else if (field.type === "search") {
+                    field.addEventListener("input", debounce(refresh));
+                }
             });
         }
         var reset = document.getElementById("dashboard-reset");
@@ -309,7 +325,9 @@
             reset.addEventListener("click", function () {
                 if (form) {
                     Array.prototype.forEach.call(form.elements, function (field) {
-                        if (field.tagName === "SELECT") field.value = "";
+                        if (field.tagName === "SELECT" || field.type === "search") {
+                            field.value = "";
+                        }
                     });
                 }
                 refresh();

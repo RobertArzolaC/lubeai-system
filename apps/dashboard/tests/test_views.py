@@ -108,6 +108,40 @@ class DashboardViewTests(TenantSchemaTestCase):
         response = self.client.get(reverse("apps.dashboard:data"), {"year": 2023})
         self.assertEqual(response.json()["kpis"]["total"], 0)
 
+    def test_data_applies_search_filter(self) -> None:
+        """The JSON endpoint narrows the payload by the free-text search."""
+        self.machine.name = "Remolcador Zafiro"
+        self.machine.save(update_fields=["name"])
+        self.client.force_login(self.user)
+
+        response = self.client.get(
+            reverse("apps.dashboard:data"), {"search": "zafiro"}
+        )
+
+        payload = response.json()
+        self.assertEqual(payload["kpis"]["total"], 2)
+        self.assertEqual(
+            {row["machine"] for row in payload["recent_reports"]},
+            {"Remolcador Zafiro"},
+        )
+
+        response = self.client.get(
+            reverse("apps.dashboard:data"), {"search": "sin-coincidencias"}
+        )
+        self.assertEqual(response.json()["kpis"]["total"], 0)
+
+    def test_data_search_is_part_of_the_cache_key(self) -> None:
+        """Two searches do not share a cached payload."""
+        self.client.force_login(self.user)
+        first = self.client.get(
+            reverse("apps.dashboard:data"), {"search": "Buque"}
+        ).json()
+        second = self.client.get(
+            reverse("apps.dashboard:data"), {"search": "otro"}
+        ).json()
+        self.assertEqual(first["kpis"]["total"], 2)
+        self.assertEqual(second["kpis"]["total"], 0)
+
     def test_data_handles_invalid_filter(self) -> None:
         """An invalid filter value returns HTTP 400."""
         self.client.force_login(self.user)

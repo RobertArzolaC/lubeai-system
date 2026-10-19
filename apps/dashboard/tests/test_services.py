@@ -295,3 +295,41 @@ class DashboardServiceBuildContextTests(TenantSchemaTestCase):
         self.assertEqual(set(payload.keys()), expected_keys)
         serialised = json.dumps(payload)
         self.assertIsInstance(serialised, str)
+
+    def test_search_narrows_reports_and_alerts(self) -> None:
+        """The search text filters the sample dataset and its alerts."""
+        other = equipment_factories.MachineFactory(name="Buque Seis")
+        reports_factories.ReportFactory(machine=other, condition="NORMAL")
+        alerts_factories.AlertFactory(
+            report=None,
+            component=None,
+            machine=other,
+            severity="CAUTION",
+            detected_at=None,
+        )
+        searched = DashboardService(DashboardFilters(search="cinco"))
+        unfiltered = DashboardService()
+
+        self.assertEqual(searched.get_reports().count(), 1)
+        self.assertEqual(unfiltered.get_reports().count(), 2)
+        self.assertEqual(searched.get_alerts().filter(machine=other).count(), 0)
+        self.assertLess(
+            searched.get_alerts().count(), unfiltered.get_alerts().count()
+        )
+
+        payload = searched.build_context()
+        self.assertEqual(payload["kpis"]["total"], 1)
+        self.assertEqual(
+            {row["machine"] for row in payload["recent_reports"]}, {"Buque Cinco"}
+        )
+
+    def test_search_key_distinguishes_cached_payloads(self) -> None:
+        """The search text is part of the filter signature."""
+        other = equipment_factories.MachineFactory(name="Buque Seis")
+        reports_factories.ReportFactory(machine=other, condition="NORMAL")
+        searched = DashboardService(DashboardFilters(search="cinco"))
+        blank = DashboardService()
+
+        self.assertNotEqual(searched.get_filters_key(), blank.get_filters_key())
+        self.assertEqual(searched.get_kpis()["total"], 1)
+        self.assertEqual(blank.get_kpis()["total"], 2)

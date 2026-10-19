@@ -56,3 +56,42 @@ class DashboardFilterTests(TenantSchemaTestCase):
         """An empty filterset keeps the full queryset."""
         filterset = DashboardFilter({}, queryset=reports_models.Report.objects.all())
         self.assertEqual(filterset.qs.count(), 2)
+
+    def test_filter_by_lab_number(self) -> None:
+        """The search matches the report's identifiers."""
+        self.match.lab_number = "INFORME-UNICO"
+        self.match.save(update_fields=["lab_number"])
+
+        filterset = DashboardFilter(
+            {"search": "unico"}, queryset=reports_models.Report.objects.all()
+        )
+        self.assertEqual(list(filterset.qs), [self.match])
+
+    def test_filter_by_machine_name(self) -> None:
+        """The search matches the machine's name."""
+        self.machine.name = "Remolcador Zafiro"
+        self.machine.save(update_fields=["name"])
+        self.other.machine.name = "Buque Gris"
+        self.other.machine.save(update_fields=["name"])
+
+        filterset = DashboardFilter(
+            {"search": "zafiro"}, queryset=reports_models.Report.objects.all()
+        )
+        self.assertEqual(list(filterset.qs), [self.match])
+
+    def test_filter_by_component_type_name(self) -> None:
+        """The search reaches the component type through the component."""
+        self.other.component.type.name = "Compresor"
+        self.other.component.type.save(update_fields=["name"])
+
+        filterset = DashboardFilter(
+            {"search": "bomba"}, queryset=reports_models.Report.objects.all()
+        )
+        self.assertEqual(list(filterset.qs), [self.match])
+
+    def test_search_matches_nothing(self) -> None:
+        """A search with no match narrows the queryset to zero rows."""
+        filterset = DashboardFilter(
+            {"search": "sin-coincidencias"}, queryset=reports_models.Report.objects.all()
+        )
+        self.assertEqual(filterset.qs.count(), 0)

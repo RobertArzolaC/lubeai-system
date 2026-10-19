@@ -41,3 +41,9 @@ class DashboardTemplateContentTests(SimpleTestCase):
             self.assertIn(label, content)
         for label in ("Trends", "Wear", "Contamination", "Oil Health", "References"):
             self.assertNotIn(label, content)
+
+    def test_filters_expose_the_search_box(self) -> None:
+        """The filter bar offers a free-text search next to the selects."""
+        content = self._read(TEMPLATE_DIR / "includes" / "filters.html")
+        self.assertIn('name="search"', content)
+        self.assertIn('type="search"', content)

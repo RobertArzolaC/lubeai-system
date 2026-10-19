@@ -12,6 +12,7 @@ from apps.alerts import choices as alerts_choices
 from apps.alerts import models as alerts_models
 from apps.dashboard import cache as dashboard_cache
 from apps.dashboard import constants
+from apps.dashboard import search as dashboard_search
 from apps.equipment import models as equipment_models
 from apps.reports import choices as report_choices
 from apps.reports import models as reports_models
@@ -21,6 +22,7 @@ from apps.reports import models as reports_models
 class DashboardFilters:
     """Validated filters applied to the dashboard querysets."""
 
+    search: str | None = None
     year: int | None = None
     fleet_id: int | None = None
     machine_id: int | None = None
@@ -44,6 +46,12 @@ class DashboardService:
         queryset = reports_models.Report.objects.filter(is_active=True)
         if self.organization_ids is not None:
             queryset = queryset.filter(organization_id__in=self.organization_ids)
+        if self.filters.search:
+            queryset = queryset.filter(
+                dashboard_search.build_search_q(
+                    dashboard_search.REPORT_SEARCH_FIELDS, self.filters.search
+                )
+            )
         if self.filters.year is not None:
             queryset = queryset.filter(sample_date__year=self.filters.year)
         if self.filters.fleet_id is not None:
@@ -61,6 +69,12 @@ class DashboardService:
         queryset = alerts_models.Alert.objects.all()
         if self.organization_ids is not None:
             queryset = queryset.filter(organization_id__in=self.organization_ids)
+        if self.filters.search:
+            queryset = queryset.filter(
+                dashboard_search.build_search_q(
+                    dashboard_search.ALERT_SEARCH_FIELDS, self.filters.search
+                )
+            )
         if self.filters.year is not None:
             queryset = queryset.filter(detected_at__year=self.filters.year)
         if self.filters.fleet_id is not None:
@@ -286,7 +300,7 @@ class DashboardService:
             else ",".join(str(i) for i in sorted(self.organization_ids))
         )
         return (
-            f"{filters.year}:{filters.fleet_id}:"
+            f"{filters.search or ''}:{filters.year}:{filters.fleet_id}:"
             f"{filters.machine_id}:{filters.component_type_id}:{org_part}"
         )
 

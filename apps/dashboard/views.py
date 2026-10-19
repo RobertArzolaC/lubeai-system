@@ -82,6 +82,7 @@ class DashboardDataView(LoginRequiredMixin, View):
             )
         cleaned = filterset.form.cleaned_data
         filters = DashboardFilters(
+            search=cleaned.get("search") or None,
             year=cleaned.get("year"),
             fleet_id=cleaned["fleet"].pk if cleaned.get("fleet") else None,
             machine_id=cleaned["machine"].pk if cleaned.get("machine") else None,
