@@ -209,11 +209,16 @@ class SeedDemoDataTests(TenantProvisionTestCase):
             self.assertEqual(equipment_models.Component.objects.count(), 72)
 
     def test_seed_creates_long_component_history(self) -> None:
-        """Each seeded component keeps a 36-month monthly report history."""
+        """Each seeded component keeps a 36-month monthly report history.
+
+        Only one machine and one component per branch are seeded: the assertion
+        measures the *depth* of a component's history, so widening the equipment
+        tree would multiply the row count without strengthening the test.
+        """
         parser = Command().create_parser("manage.py", "seed_demo_data")
         self.assertEqual(parser.parse_args([]).months, 36)
 
-        self.seed(months=36)
+        self.seed(months=36, machines=1, components=1)
 
         with tenant_context(self.tenant):
             component_ids = list(
