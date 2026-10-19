@@ -8,15 +8,45 @@ Usage::
 The command is a thin wrapper around :func:`apps.tenancy.services.provision_tenant`
 so the same behaviour is available from code (the platform's own tenant
 administration) and from a shell.
+
+The administrator password follows the same criterion as the tenant console: it
+is validated with Django's configured validators and there is no repository
+default to fall back on. When ``--default-password`` is omitted a random one is
+generated and printed **once**; because the service only applies a password to a
+newly created administrator, the command prints it only when it is actually
+applied.
 """
 
 from __future__ import annotations
 
+import secrets
+import string
 from typing import Any
 
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 from django.core.management.base import BaseCommand, CommandError, CommandParser
+from django_tenants.utils import schema_exists, tenant_context
 
-from apps.tenancy import choices, constants, services
+from apps.tenancy import choices, models, services
+
+#: Alphabet used for generated passwords. Avoids characters that are easy to
+#: confuse when read from a terminal (``l``/``1``, ``O``/``0``).
+PASSWORD_ALPHABET: str = string.ascii_letters + string.digits + "!@#$%^&*-_=+"
+PASSWORD_LENGTH: int = 16
+
+
+def generate_password(length: int = PASSWORD_LENGTH) -> str:
+    """Return a random administrator password.
+
+    Args:
+        length: Number of characters to draw from :data:`PASSWORD_ALPHABET`.
+
+    Returns:
+        A cryptographically random password, long enough to pass Django's
+        default length validator.
+    """
+    return "".join(secrets.choice(PASSWORD_ALPHABET) for _ in range(length))
 
 
 class Command(BaseCommand):
@@ -46,8 +76,12 @@ class Command(BaseCommand):
         )
         parser.add_argument(
             "--default-password",
-            default=constants.DEMO_PASSWORD,
-            help="Password for the admin when it is created.",
+            default=None,
+            help=(
+                "Password for the administrator. A random one is generated and "
+                "printed once when omitted. Either way it is only applied when "
+                "the administrator is created."
+            ),
         )
         parser.add_argument(
             "--domain",
@@ -64,26 +98,110 @@ class Command(BaseCommand):
 
         Raises:
             CommandError: If the tenant kind is invalid, the slug is the public
-                schema or the domain already belongs to another tenant.
+                schema, the domain already belongs to another tenant or the
+                password does not pass Django's validators.
         """
+        password = self._resolve_password(options["default_password"])
+        admin_existed = self._admin_exists(
+            slug=options["slug"], email=options["admin_email"]
+        )
+
         try:
             tenant = services.provision_tenant(
                 slug=options["slug"],
                 name=options["name"],
                 kind=options["kind"],
                 admin_email=options["admin_email"],
-                default_password=options["default_password"],
+                default_password=password,
                 domain=options["domain"],
             )
         except ValueError as error:
             raise CommandError(str(error)) from error
 
-        domain = tenant.get_primary_domain()
+        applied_password = None if admin_existed else password
         self.stdout.write(
-            self.style.SUCCESS(
-                f"Tenant '{tenant.name}' provisioned.\n"
-                f"- Schema: {tenant.schema_name}\n"
-                f"- Domain: {domain.domain if domain else '-'}\n"
-                f"- Admin: {options['admin_email']}"
-            )
+            self.style.SUCCESS(self._summary(tenant, options, applied_password))
         )
+        if admin_existed:
+            self.stdout.write(
+                "The administrator already existed, so its password was not changed."
+            )
+        else:
+            self.stdout.write(
+                "Store the password now: it is only shown once and is not "
+                "recoverable from the platform."
+            )
+
+    @staticmethod
+    def _resolve_password(provided: str | None) -> str:
+        """Return a validated administrator password.
+
+        There is no repository default: a publicly known password must never be
+        able to stand up a production client, which is why the tenant console
+        requires one too.
+
+        Args:
+            provided: Password from ``--default-password``, if any.
+
+        Returns:
+            ``provided`` when given, otherwise a freshly generated password.
+
+        Raises:
+            CommandError: If the password fails Django's configured validators.
+        """
+        password = provided or generate_password()
+        try:
+            validate_password(password)
+        except ValidationError as error:
+            raise CommandError("; ".join(error.messages)) from error
+        return password
+
+    @staticmethod
+    def _admin_exists(*, slug: str, email: str) -> bool:
+        """Return whether the tenant's schema already holds that administrator.
+
+        Mirrors the condition :func:`apps.tenancy.services.provision_tenant` uses
+        to decide whether a password is applied: an administrator that already
+        exists keeps its password.
+
+        Args:
+            slug: Tenant slug, which is also the schema name.
+            email: Administrator email.
+
+        Returns:
+            ``True`` when the tenant schema already contains that user.
+        """
+        if not schema_exists(slug):
+            return False
+
+        from apps.users.models import User
+
+        tenant = models.Tenant.objects.get(schema_name=slug)
+        with tenant_context(tenant):
+            return User.objects.filter(email=email).exists()
+
+    @staticmethod
+    def _summary(
+        tenant: models.Tenant, options: dict[str, Any], password: str | None
+    ) -> str:
+        """Return the operator summary printed after provisioning.
+
+        Args:
+            tenant: The provisioned tenant.
+            options: Parsed management options.
+            password: The password actually applied to a new administrator, or
+                ``None`` when an existing administrator kept its own.
+
+        Returns:
+            The multi-line summary.
+        """
+        domain = tenant.get_primary_domain()
+        lines = [
+            f"Tenant '{tenant.name}' provisioned.",
+            f"- Schema: {tenant.schema_name}",
+            f"- Domain: {domain.domain if domain else '-'}",
+            f"- Admin: {options['admin_email']}",
+        ]
+        if password is not None:
+            lines.append(f"- Admin password: {password}")
+        return "\n".join(lines)

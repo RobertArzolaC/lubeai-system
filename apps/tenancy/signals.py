@@ -16,6 +16,12 @@ The receiver connects with easy-audit's ``dispatch_uid`` on purpose: it must win
 over easy-audit's own handler, which is why ``apps.tenancy`` has to be listed
 before ``easyaudit`` in ``INSTALLED_APPS``. With the same ``dispatch_uid``,
 easy-audit's later connection is ignored and this one stays the only receiver.
+
+That contract is third-party and could change silently: if easy-audit renames
+its ``dispatch_uid``, its handler is no longer replaced and every request would
+be written twice (two ``RequestEvent`` rows for one request). :func:`connect`
+verifies the takeover instead of trusting it, and fails at start-up when the
+replacement did not happen.
 """
 
 from __future__ import annotations
@@ -23,6 +29,7 @@ from __future__ import annotations
 from typing import Any
 
 from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
 from django.core.signals import request_started
 from django.db import connection
 from django_tenants.utils import (
@@ -91,11 +98,34 @@ def _host_from_signal(kwargs: dict[str, Any]) -> str | None:
 
 
 def connect() -> None:
-    """Subscribe the tenant resolver to ``request_started`` (idempotent)."""
+    """Subscribe the tenant resolver to ``request_started`` (idempotent).
+
+    easy-audit's receiver is imported first, so its own connection has run and
+    the ``disconnect`` below has a deterministic result regardless of the order
+    of ``INSTALLED_APPS``. Replacing it keeps a single receiver for every
+    request: easy-audit's handler is not connected twice, it is only called by
+    this module's receiver.
+
+    Raises:
+        ImproperlyConfigured: If no receiver is connected under
+            :data:`DISPATCH_UID` once easy-audit's module has been imported.
+            That means easy-audit renamed its ``dispatch_uid``, so its handler
+            would run alongside this one and every request would produce two
+            ``RequestEvent`` rows. Failing at start-up is deliberate: the
+            duplicated audit rows are silent otherwise.
+    """
     if not getattr(settings, "DJANGO_EASY_AUDIT_WATCH_REQUEST_EVENTS", False):
         return
-    # Same ``dispatch_uid`` as easy-audit's receiver: whichever connects first
-    # wins, and the other is ignored. Disconnecting first keeps this module the
-    # winner even if easy-audit's ``ready`` ran before this one.
-    request_started.disconnect(dispatch_uid=DISPATCH_UID)
+
+    # Importing the module runs easy-audit's own ``request_started`` connection.
+    from easyaudit.signals import request_signals  # noqa: F401
+
+    if not request_started.disconnect(dispatch_uid=DISPATCH_UID):
+        raise ImproperlyConfigured(
+            "easy-audit's request receiver is not connected under "
+            f"{DISPATCH_UID!r}: its dispatch_uid probably changed. Update "
+            "apps.tenancy.signals.DISPATCH_UID, otherwise easy-audit's own "
+            "receiver runs next to this one and logs every request twice."
+        )
+
     request_started.connect(request_started_handler, dispatch_uid=DISPATCH_UID)

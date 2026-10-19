@@ -9,11 +9,13 @@ types exist. The public schema is not a client: it has its own tenant row and
 
 from __future__ import annotations
 
+from io import StringIO
 from typing import ClassVar
 
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.management import call_command
+from django.core.management.base import CommandError
 from django.db import connection
 from django.test import TestCase, override_settings
 from django_tenants.utils import get_public_schema_name, schema_exists, tenant_context
@@ -162,6 +164,89 @@ class ProvisionTenantTests(TenantProvisionTestCase):
         self.assertTrue(schema_exists("acme"))
         with tenant_context(tenant):
             self.assertTrue(User.objects.filter(email="admin@acme.pe").exists())
+
+    def test_provision_command_generates_a_password_when_omitted(self) -> None:
+        """There is no repository default: a random password is printed once."""
+        output = self._run_command()
+
+        tenant = models.Tenant.objects.get(slug="acme")
+        self.addCleanup(self.drop_tenant, tenant)
+
+        password = self._printed_password(output)
+        self.assertNotEqual(password, constants.DEMO_PASSWORD)
+        with tenant_context(tenant):
+            admin = User.objects.get(email="admin@acme.pe")
+            self.assertTrue(admin.check_password(password))
+
+    def test_provision_command_rejects_a_weak_password(self) -> None:
+        """The CLI validates the password exactly like the tenant console."""
+        with self.assertRaises(CommandError):
+            call_command(
+                "provision_tenant",
+                slug="acme",
+                name="ACME",
+                kind=choices.TenantKind.INTERMEDIARY.value,
+                admin_email="admin@acme.pe",
+                default_password="123",
+                verbosity=0,
+                no_color=True,
+            )
+
+        self.assertFalse(models.Tenant.objects.filter(slug="acme").exists())
+
+    def test_provision_command_keeps_an_existing_password(self) -> None:
+        """An existing administrator keeps it, so nothing is echoed."""
+        tenant = self.provision()
+
+        output = self._run_command(default_password="OtherPassword123!")
+
+        self.assertNotIn("OtherPassword123!", output)
+        self.assertIn("password was not changed", output)
+        with tenant_context(tenant):
+            admin = User.objects.get(email="admin@acme.pe")
+            self.assertTrue(admin.check_password("Demo12345!"))
+            self.assertFalse(admin.check_password("OtherPassword123!"))
+
+    def _run_command(self, **overrides: object) -> str:
+        """Run the provisioning command and return its stdout.
+
+        Args:
+            **overrides: Options forwarded to ``call_command``.
+
+        Returns:
+            Everything the command wrote to stdout.
+        """
+        options: dict[str, object] = {
+            "slug": "acme",
+            "name": "ACME",
+            "kind": choices.TenantKind.INTERMEDIARY.value,
+            "admin_email": "admin@acme.pe",
+            "verbosity": 0,
+            "no_color": True,
+        }
+        options.update(overrides)
+        output = StringIO()
+        call_command("provision_tenant", stdout=output, **options)
+        return output.getvalue()
+
+    @staticmethod
+    def _printed_password(output: str) -> str:
+        """Return the administrator password echoed by the command.
+
+        Args:
+            output: The command's stdout.
+
+        Returns:
+            The password printed on the ``- Admin password:`` line.
+
+        Raises:
+            AssertionError: If the command did not print a password.
+        """
+        marker = "- Admin password:"
+        for line in output.splitlines():
+            if line.startswith(marker):
+                return line[len(marker) :].strip()
+        raise AssertionError(f"The command printed no administrator password: {output}")
 
 
 class RequestStartedSignalTests(TenantProvisionTestCase):
