@@ -17,7 +17,7 @@ from django.template.loader import render_to_string
 from django.test import RequestFactory
 from django.urls import reverse
 
-from apps.tenancy import choices, constants, models
+from apps.tenancy import choices, constants, forms, models
 from apps.tenancy.tests.base import TenantProvisionTestCase
 from apps.users.factories import UserFactory
 
@@ -71,6 +71,38 @@ class OpsTenantTestCase(TenantProvisionTestCase):
     def get_test_schema_name(cls) -> str:
         """Name the throwaway schema ``ops`` so it is the operations tenant."""
         return constants.OPS_TENANT_SLUG
+
+
+class TenantProvisionFormTests(TenantProvisionTestCase):
+    """The create form never falls back to a public default password."""
+
+    def payload(self, **overrides: Any) -> dict[str, Any]:
+        """Return a valid provisioning payload."""
+        data: dict[str, Any] = {
+            "name": "Nueva Planta",
+            "slug": "nueva",
+            "kind": "final",
+            "domain": "",
+            "admin_email": "admin@nueva.pe",
+            "default_password": "Str0ng-Pass!",
+            "capabilities": "",
+        }
+        data.update(overrides)
+        return data
+
+    def test_password_is_required(self) -> None:
+        """An empty password is a validation error, not a repository default."""
+        form = forms.TenantProvisionForm(self.payload(default_password=""))
+
+        self.assertFalse(form.is_valid())
+        self.assertIn("default_password", form.errors)
+
+    def test_weak_password_is_rejected(self) -> None:
+        """Django's password validators run on the administrator password."""
+        form = forms.TenantProvisionForm(self.payload(default_password="password"))
+
+        self.assertFalse(form.is_valid())
+        self.assertIn("default_password", form.errors)
 
 
 class TenantListViewTests(OpsTenantTestCase):
@@ -191,6 +223,17 @@ class TenantCreateViewTests(OpsTenantTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("slug", response.context["form"].errors)
+
+    def test_create_requires_a_password(self) -> None:
+        """An empty administrator password is refused, never defaulted."""
+        response = self.client.post(
+            reverse("apps.tenancy:tenant_create"),
+            self.provision_payload(default_password=""),
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("default_password", response.context["form"].errors)
+        self.assertFalse(models.Tenant.objects.filter(slug="nueva").exists())
 
     def test_create_rejects_a_used_domain(self) -> None:
         """A host name already served by another tenant is refused."""

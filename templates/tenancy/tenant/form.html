@@ -91,7 +91,9 @@
                             {% for error in form.admin_email.errors %}<p class="mt-1 text-xs text-danger">{{ error }}</p>{% endfor %}
                         </div>
                         <div class="w-full sm:w-1/2">
-                            <label class="mb-3 block text-sm font-medium text-black dark:text-white" for="{{ form.default_password.id_for_label }}">{{ form.default_password.label }}</label>
+                            <label class="mb-3 block text-sm font-medium text-black dark:text-white" for="{{ form.default_password.id_for_label }}">
+                                {{ form.default_password.label }} <span class="text-danger" aria-hidden="true">*</span>
+                            </label>
                             {% render_field form.default_password class="w-full rounded border border-stroke bg-gray py-3 px-4.5 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white" %}
                             {% if form.default_password.help_text %}<p class="mt-1 text-xs text-bodydark2">{{ form.default_password.help_text }}</p>{% endif %}
                             {% for error in form.default_password.errors %}<p class="mt-1 text-xs text-danger">{{ error }}</p>{% endfor %}

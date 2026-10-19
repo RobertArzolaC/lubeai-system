@@ -13,6 +13,8 @@ from __future__ import annotations
 from typing import Any, ClassVar
 
 from django import forms
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 from apps.tenancy import choices, constants, models, services
@@ -62,7 +64,6 @@ class TenantProvisionForm(forms.Form):
     )
     default_password = forms.CharField(
         label=_("Administrator password"),
-        required=False,
         help_text=_("Only applied when the administrator is created"),
         widget=forms.PasswordInput(attrs={"class": "form-control"}),
     )
@@ -131,6 +132,27 @@ class TenantProvisionForm(forms.Form):
             raise forms.ValidationError(_("That domain is already in use."))
         return domain
 
+    def clean_default_password(self) -> str:
+        """Validate the administrator password with Django's validators.
+
+        The password is required: falling back to a repository default would let
+        an operator stand up a production client with a publicly known password
+        in a single click.
+
+        Returns:
+            The validated password.
+
+        Raises:
+            ValidationError: If the password fails Django's configured password
+                validators (length, common passwords, all-numeric, ...).
+        """
+        password = self.cleaned_data["default_password"]
+        try:
+            validate_password(password)
+        except ValidationError as error:
+            raise forms.ValidationError(error.messages) from error
+        return password
+
     def build_branding(self) -> dict[str, str]:
         """Return the non-empty branding slots selected in the form."""
         return {
@@ -151,7 +173,7 @@ class TenantProvisionForm(forms.Form):
             name=data["name"],
             kind=data["kind"],
             admin_email=data["admin_email"],
-            default_password=data.get("default_password") or constants.DEMO_PASSWORD,
+            default_password=data["default_password"],
             domain=data.get("domain") or None,
             branding=self.build_branding(),
             capabilities=data.get("capabilities") or {},

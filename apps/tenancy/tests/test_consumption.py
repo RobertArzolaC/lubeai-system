@@ -8,12 +8,37 @@ regular factories.
 from __future__ import annotations
 
 from django.contrib import admin as django_admin
+from django.db import connection
 
 from apps.reports import factories as report_factories
 from apps.tenancy import models, services
 from apps.tenancy.admin import TenantAdmin
 from apps.tenancy.tests.base import TenantProvisionTestCase
 from apps.users import factories as user_factories
+
+
+def create_registry_tenant(slug: str = "ghost", name: str = "Ghost") -> models.Tenant:
+    """Create a registry row in ``public`` whose schema does not exist.
+
+    The console and the graduation runbook both write the ``Tenant`` row before
+    its schema is restored, which is exactly the state this helper reproduces.
+
+    Args:
+        slug: Tenant slug and (missing) schema name.
+        name: Human-readable tenant name.
+
+    Returns:
+        The saved, schema-less tenant.
+    """
+    previous_tenant = connection.tenant
+    connection.set_schema_to_public()
+    try:
+        tenant = models.Tenant(slug=slug, name=name)
+        tenant.auto_create_schema = False
+        tenant.save()
+    finally:
+        connection.set_tenant(previous_tenant)
+    return tenant
 
 
 class ConsumptionServiceTests(TenantProvisionTestCase):
@@ -58,6 +83,23 @@ class ConsumptionServiceTests(TenantProvisionTestCase):
 
         self.assertEqual(data["rows"], 0)
         self.assertGreaterEqual(data["bytes"], 0)
+
+    def test_consumption_of_a_missing_schema_returns_zeros(self) -> None:
+        """A registry row without a schema is measured as empty, not public.
+
+        Counting under ``tenant_context`` would resolve the counted models
+        against a non-existent schema (an error, or a silent read of the
+        ``public`` tables of the same name), so the guard must return zeros.
+        """
+        ghost = create_registry_tenant()
+
+        data = services.TenantService.consumption(ghost)
+
+        self.assertEqual(data["schema_name"], "ghost")
+        self.assertEqual(data["bytes"], 0)
+        self.assertEqual(data["rows"], 0)
+        for key in services.TenantService.COUNTED_MODELS:
+            self.assertEqual(data[key], 0)
 
 
 class TenantServiceActivationTests(TenantProvisionTestCase):

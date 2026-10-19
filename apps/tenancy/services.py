@@ -18,7 +18,7 @@ from django.apps import apps
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.db import connection, transaction
-from django_tenants.utils import get_public_schema_name, tenant_context
+from django_tenants.utils import get_public_schema_name, schema_exists, tenant_context
 
 from apps.tenancy import choices, constants, models
 
@@ -363,6 +363,21 @@ class TenantService:
             entry of :attr:`COUNTED_MODELS`.
         """
         schema_name = tenant.schema_name
+        # A registry row may exist before its schema does: the console and the
+        # graduation runbook both create the ``Tenant`` row first. Counting the
+        # models under ``tenant_context`` would then resolve the unqualified
+        # table names against a non-existent schema — an error, or worse, a
+        # silent read of the ``public`` tables with the same name. Guarding on
+        # the schema keeps the measurement honest: no schema, no usage.
+        if not schema_exists(schema_name):
+            empty: dict[str, Any] = {
+                "schema_name": schema_name,
+                "bytes": 0,
+                "rows": 0,
+            }
+            empty.update(dict.fromkeys(cls.COUNTED_MODELS, 0))
+            return empty
+
         with connection.cursor() as cursor:
             cursor.execute(
                 """
