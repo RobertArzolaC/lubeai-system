@@ -1,29 +1,37 @@
 {% load i18n %}
 
-<div class="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
-    {% for group in form.permission_groups %}
-    {% with group_index=forloop.counter %}
-    <div class="flex flex-col rounded-xl border border-stroke bg-white dark:border-strokedark dark:bg-boxdark-2">
-        <div class="flex items-center justify-between border-b border-stroke px-4 py-3 dark:border-strokedark">
-            <span class="text-sm font-bold text-black dark:text-white">{{ group.label }}</span>
-            <label class="flex cursor-pointer items-center gap-1.5 text-xs font-semibold text-bodydark2 hover:text-primary">
-                <input type="checkbox" data-select-all="{{ group_index }}" class="h-4 w-4 rounded border-stroke text-primary focus:ring-primary" />
-                {% trans "All" %}
-            </label>
+<div class="flex flex-col gap-8">
+    {% for module in form.permission_modules %}
+    <section>
+        <div class="mb-4 flex items-center gap-3">
+            <h4 class="text-lg font-bold text-black dark:text-white">{{ module.label }}</h4>
+            <span class="h-px flex-1 bg-stroke dark:bg-strokedark" aria-hidden="true"></span>
         </div>
-        <div class="flex flex-col gap-2 p-4">
-            {% for permission in group.permissions %}
-            <label class="flex cursor-pointer items-center gap-2.5 text-sm text-black dark:text-white">
-                <input type="checkbox" name="permissions" value="{{ permission.pk }}"
-                       data-group="{{ group_index }}"
-                       class="h-4.5 w-4.5 rounded border-stroke text-primary focus:ring-primary"
-                       {% if permission.pk|stringformat:"s" in form.selected_permission_ids %}checked{% endif %} />
-                <span>{{ permission.label }}</span>
-            </label>
+        <div class="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+            {% for group in module.groups %}
+            <div class="flex flex-col rounded-xl border border-stroke bg-white dark:border-strokedark dark:bg-boxdark-2">
+                <div class="flex items-center justify-between border-b border-stroke px-4 py-3 dark:border-strokedark">
+                    <span class="text-sm font-bold text-black dark:text-white">{{ group.label }}</span>
+                    <label class="flex cursor-pointer items-center gap-1.5 text-xs font-semibold text-bodydark2 hover:text-primary">
+                        <input type="checkbox" data-select-all="{{ group.key }}" class="h-4 w-4 rounded border-stroke text-primary focus:ring-primary" />
+                        {% trans "All" %}
+                    </label>
+                </div>
+                <div class="flex flex-col gap-2 p-4">
+                    {% for permission in group.permissions %}
+                    <label class="flex cursor-pointer items-center gap-2.5 text-sm text-black dark:text-white">
+                        <input type="checkbox" name="permissions" value="{{ permission.pk }}"
+                               data-group="{{ group.key }}"
+                               class="h-4.5 w-4.5 rounded border-stroke text-primary focus:ring-primary"
+                               {% if permission.pk|stringformat:"s" in form.selected_permission_ids %}checked{% endif %} />
+                        <span>{{ permission.label }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
             {% endfor %}
         </div>
-    </div>
-    {% endwith %}
+    </section>
     {% empty %}
     <p class="text-sm font-medium text-bodydark2">{% trans "No permissions available." %}</p>
     {% endfor %}
@@ -32,8 +40,8 @@
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('[data-select-all]').forEach((toggle) => {
-            const group = toggle.dataset.selectAll;
-            const boxes = document.querySelectorAll(`input[data-group="${group}"]`);
+            const key = toggle.dataset.selectAll;
+            const boxes = document.querySelectorAll(`input[data-group="${key}"]`);
             const sync = () => {
                 const allChecked = boxes.length > 0 && Array.from(boxes).every((box) => box.checked);
                 toggle.checked = allChecked;

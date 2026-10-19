@@ -40,6 +40,28 @@ class RoleViewTests(UserTenantTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Analista")
 
+    def test_create_renders_only_dashboard_permission_modules(self) -> None:
+        """The matrix shows dashboard modules and no Django/third-party groups."""
+        grant(self.user, "add_role")
+        response = self.client.get(reverse("apps.users:role_create"))
+        self.assertEqual(response.status_code, 200)
+        for header in (
+            "Equipos",
+            "Informes",
+            "Alertas",
+            "Clientes",
+            "Cuentas y accesos",
+        ):
+            self.assertContains(response, header)
+        for system_header in (
+            "Entrada de registro",
+            "Tarea periódica",
+            "Token",
+            "Tipo de contenido",
+        ):
+            self.assertNotContains(response, system_header)
+        self.assertContains(response, "Ver Máquina")
+
     def test_create_persists_role_and_permissions(self) -> None:
         """Posting the form creates the role with the selected permissions."""
         grant(self.user, "view_role", "add_role")

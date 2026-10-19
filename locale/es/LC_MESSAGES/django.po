@@ -2203,6 +2203,10 @@ msgstr "Apellido"
 msgid "Permissions"
 msgstr "Permisos"
 
+#: apps/users/constants.py:18
+msgid "Accounts and access"
+msgstr "Cuentas y accesos"
+
 #: apps/users/forms.py:231 apps/users/services.py:210
 msgid "A user with this email already exists."
 msgstr "Ya existe un usuario con este correo electrónico."

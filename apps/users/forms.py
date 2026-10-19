@@ -146,6 +146,22 @@ class RoleForm(core_mixins.OrganizationScopeFormMixin, forms.ModelForm):
             )
         return groups
 
+    @property
+    def permission_modules(self) -> list[dict]:
+        """Group the permission cards by dashboard module, in menu order."""
+        groups_by_app: dict[str, list[dict]] = {}
+        for group in self.permission_groups:
+            groups_by_app.setdefault(group["app_label"], []).append(group)
+        return [
+            {
+                "app_label": app_label,
+                "label": label,
+                "groups": groups_by_app[app_label],
+            }
+            for app_label, label in constants.ROLE_PERMISSION_MODULES.items()
+            if app_label in groups_by_app
+        ]
+
     def _resolve_organization(self) -> object:
         """Return the selected organization or fall back to the actor's own."""
         return (
