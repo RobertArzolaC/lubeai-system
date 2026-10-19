@@ -20,6 +20,7 @@ from django.contrib.sites.models import Site
 from django.db import connection, transaction
 from django_tenants.utils import get_public_schema_name, schema_exists, tenant_context
 
+from apps.tenancy import branding as client_branding
 from apps.tenancy import choices, constants, models
 
 if TYPE_CHECKING:
@@ -91,13 +92,21 @@ def provision_tenant(
         # failure would leave an orphan schema behind.
         _assert_domain_available(slug=slug, domain=resolved_domain)
 
+        # A client with a known brand (see ``apps.tenancy.branding``) is created
+        # branded: creating the MARCO tenant must give MARCO's brand, not the
+        # platform default. An explicit ``branding`` argument always wins.
+        effective_branding = (
+            branding if branding is not None else client_branding.branding_for(slug)
+        )
+
         tenant = _upsert_tenant(
             slug=slug,
             name=name,
             kind=kind,
-            branding=branding,
+            branding=effective_branding,
             capabilities=capabilities,
         )
+        _install_known_logo(tenant)
         _ensure_domain(tenant=tenant, domain=resolved_domain)
 
         with tenant_context(tenant), transaction.atomic():
@@ -169,6 +178,27 @@ def _assert_domain_available(*, slug: str, domain: str) -> None:
     )
     if conflict:
         raise ValueError(f"Domain '{domain}' already belongs to another tenant.")
+
+
+def _install_known_logo(tenant: models.Tenant) -> None:
+    """Copy the client's official logo into storage when it has none.
+
+    The asset ships with the app (see :mod:`apps.tenancy.branding`), so a client
+    with a known brand is provisioned with its logo instead of the platform's.
+    A tenant that already has a logo keeps it.
+
+    Args:
+        tenant: The tenant being provisioned.
+    """
+    if tenant.logo:
+        return
+
+    logo_name = client_branding.install_logo(tenant.slug)
+    if not logo_name:
+        return
+
+    tenant.logo = logo_name
+    tenant.save(verbosity=0)
 
 
 def _upsert_tenant(
@@ -284,16 +314,19 @@ def _ensure_root_organization(
         for slot in constants.BRANDING_SLOTS
         if (value := getattr(tenant, slot, ""))
     }
+    logo = tenant.logo or ""
     root = OrganizationService.resolve_root(required=False)
     if root is None:
         return organization_models.Organization.objects.create(
-            slug=slug, name=name, kind=kind, **branding
+            slug=slug, name=name, kind=kind, logo=logo, **branding
         )
 
     root.name = name
     root.kind = kind
     for slot, value in branding.items():
         setattr(root, slot, value)
+    if logo and not root.logo:
+        root.logo = logo
     root.save()
     return root
 

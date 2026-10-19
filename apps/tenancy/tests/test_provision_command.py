@@ -9,6 +9,7 @@ types exist. The public schema is not a client: it has its own tenant row and
 
 from __future__ import annotations
 
+import tempfile
 from io import StringIO
 from typing import ClassVar
 
@@ -23,7 +24,7 @@ from django_tenants.utils import get_public_schema_name, schema_exists, tenant_c
 from apps.equipment import models as equipment_models
 from apps.organizations import choices as organization_choices
 from apps.organizations import models as organization_models
-from apps.tenancy import choices, constants, models, services, signals
+from apps.tenancy import branding, choices, constants, models, services, signals
 from apps.tenancy.management.commands.provision_tenant import Command
 from apps.tenancy.tests.base import TenantProvisionTestCase
 from apps.users.models import User
@@ -403,3 +404,51 @@ class PublicTenantTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "public/landing.html")
+
+
+class KnownBrandProvisionTests(TenantProvisionTestCase):
+    """A client with a known brand is provisioned already branded."""
+
+    def test_provision_applies_the_known_brand_of_its_client(self) -> None:
+        """Creating the MARCO tenant gives MARCO's brand, not the default."""
+        with tempfile.TemporaryDirectory() as media_root, override_settings(
+            MEDIA_ROOT=media_root
+        ):
+            tenant = self.provision(
+                slug="marco",
+                name="MARCO Peruana",
+                kind=choices.TenantKind.LAB.value,
+                admin_email="admin@marco.pe",
+            )
+
+            expected = branding.KNOWN_BRANDS["marco"]
+            self.assertEqual(tenant.primary_color, expected["primary_color"])
+            self.assertEqual(tenant.chart_info, expected["chart_info"])
+            self.assertTrue(tenant.logo)
+
+            with tenant_context(tenant):
+                root = organization_models.Organization.objects.get(
+                    parent__isnull=True
+                )
+                self.assertEqual(root.primary_color, expected["primary_color"])
+                self.assertTrue(root.logo)
+
+    def test_an_explicit_branding_argument_wins_over_the_known_brand(self) -> None:
+        """The caller can override a client's brand slots."""
+        with tempfile.TemporaryDirectory() as media_root, override_settings(
+            MEDIA_ROOT=media_root
+        ):
+            tenant = self.provision(
+                slug="marco",
+                kind=choices.TenantKind.LAB.value,
+                branding={"primary_color": "#123456"},
+            )
+
+            self.assertEqual(tenant.primary_color, "#123456")
+
+    def test_a_client_without_a_known_brand_keeps_the_defaults(self) -> None:
+        """An unknown slug is not branded by guessing."""
+        tenant = self.provision()
+
+        self.assertEqual(tenant.primary_color, "")
+        self.assertFalse(tenant.logo)
