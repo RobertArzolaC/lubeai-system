@@ -306,9 +306,6 @@
   let pqIndexChart = null;
   let fuelDilutionChart = null;
 
-  // Current component type key
-  let currentComponentTypeKey = '';
-
   // Current wear sources data
   let currentWearSources = {};
 
@@ -422,8 +419,7 @@
   }
 
   function displayAnalysisData(data) {
-    // Store component type key and wear sources
-    currentComponentTypeKey = data.summary.component_type_key || '';
+    // Store wear sources
     currentWearSources = data.wear_sources || {};
 
     // Update summary
@@ -460,9 +456,6 @@
     renderParticleDistributionChart(data.particle_distribution || null);
     renderPqIndexChart(data.pq_index_trend || null);
     renderFuelDilutionChart(data.fuel_dilution_trend || null);
-
-    // Show/hide sections based on component type
-    updateSectionVisibility();
 
     // Show results and export button
     showElement(document.getElementById('results-container'));
@@ -851,15 +844,6 @@
 
     usageCorrelationChart = new ApexCharts(document.querySelector("#usage-correlation-chart"), withBase(options));
     usageCorrelationChart.render();
-  }
-
-  function updateSectionVisibility() {
-    // Show/hide additives section based on component type
-    const additivesSection = document.getElementById('additives-section');
-    if (additivesSection) {
-      const showAdditives = ['MOTOR', ''].includes(currentComponentTypeKey);
-      additivesSection.classList.toggle('hidden', !showAdditives);
-    }
   }
 
   function renderWearTrendsChart(data) {
@@ -1307,9 +1291,6 @@
     if (particleDistributionChart) particleDistributionChart.destroy();
     if (pqIndexChart) pqIndexChart.destroy();
     if (fuelDilutionChart) fuelDilutionChart.destroy();
-
-    // Reset component type
-    currentComponentTypeKey = '';
   }
 
   async function exportChartsToPDF() {

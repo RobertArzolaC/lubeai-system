@@ -1,6 +1,9 @@
 """Rendering tests for the real reports templates."""
 
+from pathlib import Path
+
 from constance.test import override_config
+from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.template import Context, Template
 from django.test import SimpleTestCase
@@ -206,3 +209,21 @@ class ReportExportFlagTests(TenantSchemaTestCase):
         response = self.client.get(reverse("apps.reports:report_export"))
         self.assertContains(response, 'name="laboratory"')
         self.assertContains(response, 'for="id_laboratory"')
+
+
+class ComponentAnalysisTemplateContentTests(TenantSchemaTestCase):
+    """Static checks for the component analysis template."""
+
+    def test_additives_trend_is_not_hidden_by_component_type(self) -> None:
+        """The additives section is available for every component type."""
+        template = (
+            Path(settings.BASE_DIR)
+            / "templates"
+            / "reports"
+            / "report"
+            / "component_analysis.html"
+        )
+        content = template.read_text(encoding="utf-8")
+
+        self.assertNotIn("showAdditives", content)
+        self.assertNotIn("['MOTOR', '']", content)
