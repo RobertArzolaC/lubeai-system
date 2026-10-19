@@ -25,6 +25,7 @@ urlpatterns = [
 urlpatterns += [
     path("core/", include("apps.core.urls")),
     path("organizations/", include("apps.organizations.urls")),
+    path("tenancy/", include("apps.tenancy.urls")),
     path("users/", include("apps.users.urls")),
     path("dashboard/", include("apps.dashboard.urls")),
     path("authentication/", include("apps.authentication.urls")),

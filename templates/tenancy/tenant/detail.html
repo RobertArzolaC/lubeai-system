@@ -1,0 +1,140 @@
+{% extends "layouts/dashboard.html" %}
+{% load i18n %}
+
+{% block title_page %}{{ tenant.name }}{% endblock title_page %}
+{% block toolbar_title %}{{ tenant.name }}{% endblock %}
+
+{% block content %}
+<!-- Header card -->
+<div class="mb-8 rounded-2xl border border-stroke bg-white p-7 shadow-sm dark:border-strokedark dark:bg-boxdark">
+    <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+        <div class="flex items-start gap-5">
+            {% if tenant.logo %}
+            <img src="{{ tenant.logo.url }}" alt="{{ tenant.name }}" class="h-16 w-16 rounded-2xl border border-stroke object-contain p-1 dark:border-strokedark" />
+            {% else %}
+            <div class="flex h-16 w-16 items-center justify-center rounded-2xl border border-stroke bg-gray-2 dark:border-strokedark dark:bg-meta-4">
+                <i data-lucide="building-2" class="h-8 w-8 text-primary" stroke-width="1.8" aria-hidden="true"></i>
+            </div>
+            {% endif %}
+            <div>
+                <div class="flex items-center gap-3">
+                    <h2 class="text-2xl font-bold tracking-tight text-black dark:text-white">{{ tenant.name }}</h2>
+                    {% include "organizations/organization/_kind_badge.html" with kind=tenant.kind label=tenant.get_kind_display %}
+                </div>
+                <p class="mt-2 text-xs font-semibold uppercase tracking-wide text-bodydark2">
+                    {% trans "Schema" %}: {{ tenant.schema_name }} · {% trans "Slug" %}: {{ tenant.slug }}
+                </p>
+            </div>
+        </div>
+        <div class="flex items-center gap-3">
+            {% include "includes/status_badge.html" with is_active=tenant.is_active %}
+            {% if perms.tenancy.change_tenant %}
+            <a href="{% url 'apps.tenancy:tenant_update' tenant.pk %}" class="inline-flex items-center justify-center gap-2 rounded-lg border border-stroke py-2.5 px-5 text-sm font-semibold text-black transition hover:bg-gray-50 dark:border-strokedark dark:text-white dark:hover:bg-white/5">
+                <i data-lucide="pencil" class="h-4 w-4" stroke-width="1.8" aria-hidden="true"></i>
+                {% trans "Edit" %}
+            </a>
+            <form method="post" action="{% url 'apps.tenancy:tenant_toggle_active' tenant.pk %}">
+                {% csrf_token %}
+                {% if tenant.is_active %}
+                <button type="submit" class="inline-flex items-center justify-center gap-2 rounded-lg border border-danger/30 py-2.5 px-5 text-sm font-semibold text-danger transition hover:bg-danger/10">
+                    <i data-lucide="pause" class="h-4 w-4" stroke-width="1.8" aria-hidden="true"></i>
+                    {% trans "Suspend" %}
+                </button>
+                {% else %}
+                <button type="submit" class="inline-flex items-center justify-center gap-2 rounded-lg border border-success/30 py-2.5 px-5 text-sm font-semibold text-success transition hover:bg-success/10">
+                    <i data-lucide="play" class="h-4 w-4" stroke-width="1.8" aria-hidden="true"></i>
+                    {% trans "Activate" %}
+                </button>
+                {% endif %}
+            </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Branding + capabilities -->
+    <div class="mt-7 grid grid-cols-1 gap-6 border-t border-stroke pt-6 dark:border-strokedark lg:grid-cols-2">
+        <div>
+            <h3 class="mb-3 text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Branding" %}</h3>
+            <div class="flex flex-wrap items-center gap-3">
+                {% for slot, color in tenant_branding.items %}
+                {% if color %}
+                <div class="flex items-center gap-2">
+                    <span class="h-5 w-5 rounded-md border border-stroke dark:border-strokedark" style="background-color: {{ color }}"></span>
+                    <span class="text-[11px] font-medium text-bodydark2">{{ slot }}</span>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        <div>
+            <h3 class="mb-3 text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Capabilities" %}</h3>
+            {% if tenant.capabilities %}
+            <div class="flex flex-wrap gap-2">
+                {% for key, enabled in tenant.capabilities.items %}
+                <span class="inline-flex items-center gap-1.5 rounded-full border py-1 px-3 text-xs font-bold {% if enabled %}border-success/20 bg-success/10 text-success{% else %}border-stroke bg-gray-2 text-bodydark2 dark:border-strokedark dark:bg-meta-4{% endif %}">
+                    {{ key }}
+                </span>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-sm font-medium text-bodydark2">{% trans "Using the kind defaults." %}</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 gap-9 lg:grid-cols-12">
+    <!-- Domains -->
+    <div class="lg:col-span-5 rounded-2xl border border-stroke bg-white shadow-sm dark:border-strokedark dark:bg-boxdark">
+        <div class="border-b border-stroke px-6 py-4 dark:border-strokedark">
+            <h3 class="text-sm font-bold text-black dark:text-white">{% trans "Domains" %}</h3>
+        </div>
+        <div class="flex flex-col">
+            {% for domain in domains %}
+            <div class="flex items-center justify-between border-b border-stroke px-6 py-4 last:border-b-0 dark:border-strokedark">
+                <span class="text-sm font-medium text-black dark:text-white">{{ domain.domain }}</span>
+                {% if domain.is_primary %}
+                <span class="inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-2.5 py-0.5 text-[10px] font-bold text-primary">{% trans "Primary" %}</span>
+                {% endif %}
+            </div>
+            {% empty %}
+            <p class="px-6 py-8 text-center text-sm font-medium text-bodydark2">{% trans "No domains registered." %}</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Consumption -->
+    <div class="lg:col-span-7 rounded-2xl border border-stroke bg-white shadow-sm dark:border-strokedark dark:bg-boxdark">
+        <div class="border-b border-stroke px-6 py-4 dark:border-strokedark">
+            <h3 class="text-sm font-bold text-black dark:text-white">{% trans "Consumption" %}</h3>
+            <p class="mt-1 text-xs font-medium text-bodydark2">{% trans "Measured on the tenant's PostgreSQL schema for billing." %}</p>
+        </div>
+        <div class="grid grid-cols-2 gap-4 p-6 sm:grid-cols-3">
+            <div class="rounded-xl border border-stroke bg-gray-2/50 p-4 dark:border-strokedark dark:bg-meta-4/30">
+                <p class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Storage" %}</p>
+                <p class="mt-1 text-xl font-bold text-black dark:text-white">{{ consumption.bytes|filesizeformat }}</p>
+            </div>
+            <div class="rounded-xl border border-stroke bg-gray-2/50 p-4 dark:border-strokedark dark:bg-meta-4/30">
+                <p class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Rows" %}</p>
+                <p class="mt-1 text-xl font-bold text-black dark:text-white">{{ consumption.rows }}</p>
+            </div>
+            <div class="rounded-xl border border-stroke bg-gray-2/50 p-4 dark:border-strokedark dark:bg-meta-4/30">
+                <p class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Organizations" %}</p>
+                <p class="mt-1 text-xl font-bold text-black dark:text-white">{{ consumption.organizations }}</p>
+            </div>
+            <div class="rounded-xl border border-stroke bg-gray-2/50 p-4 dark:border-strokedark dark:bg-meta-4/30">
+                <p class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Users" %}</p>
+                <p class="mt-1 text-xl font-bold text-black dark:text-white">{{ consumption.users }}</p>
+            </div>
+            <div class="rounded-xl border border-stroke bg-gray-2/50 p-4 dark:border-strokedark dark:bg-meta-4/30">
+                <p class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Machines" %}</p>
+                <p class="mt-1 text-xl font-bold text-black dark:text-white">{{ consumption.machines }}</p>
+            </div>
+            <div class="rounded-xl border border-stroke bg-gray-2/50 p-4 dark:border-strokedark dark:bg-meta-4/30">
+                <p class="text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Reports" %}</p>
+                <p class="mt-1 text-xl font-bold text-black dark:text-white">{{ consumption.reports }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

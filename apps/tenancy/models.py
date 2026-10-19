@@ -22,7 +22,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django_tenants.models import DomainMixin, TenantMixin
 
-from apps.tenancy import choices
+from apps.tenancy import choices, constants
 
 
 class Tenant(TenantMixin):
@@ -86,6 +86,17 @@ class Tenant(TenantMixin):
     def __str__(self) -> str:
         """Return the tenant name."""
         return self.name
+
+    @property
+    def is_ops(self) -> bool:
+        """Return ``True`` when this tenant is the platform's operations tenant.
+
+        The operations tenant is the only place where the tenant console (list,
+        create, suspend and brand clients) is reachable; every other tenant
+        answers 404 for those routes. It is identified by its slug so a plain
+        client can never claim the console by choosing a ``kind``.
+        """
+        return self.slug == constants.OPS_TENANT_SLUG
 
     def save(self, verbosity: int = 1, *args: Any, **kwargs: Any) -> None:
         """Derive the schema name from the slug, then persist the tenant.

@@ -12,8 +12,9 @@ the ``public`` registry schema, which is not a business tenant.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, ClassVar
 
+from django.apps import apps
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.db import connection, transaction
@@ -33,6 +34,9 @@ def provision_tenant(
     admin_email: str,
     default_password: str,
     domain: str | None = None,
+    *,
+    branding: dict[str, str] | None = None,
+    capabilities: dict[str, Any] | None = None,
 ) -> models.Tenant:
     """Create (or complete) a tenant and leave it ready to be served.
 
@@ -51,6 +55,11 @@ def provision_tenant(
             an existing administrator keeps its password.
         domain: Host name served by the tenant. Defaults to
             ``<slug>.<PLATFORM_DOMAIN>``.
+        branding: Optional mapping of branding slot (``primary_color``,
+            ``chart_*``) to value. Slots that are absent keep their current
+            value, so re-provisioning never erases a brand.
+        capabilities: Optional per-tenant capability overrides. ``None`` keeps
+            the current value.
 
     Returns:
         The provisioned tenant, refreshed after the writes.
@@ -77,7 +86,13 @@ def provision_tenant(
         # failure would leave an orphan schema behind.
         _assert_domain_available(slug=slug, domain=resolved_domain)
 
-        tenant = _upsert_tenant(slug=slug, name=name, kind=kind)
+        tenant = _upsert_tenant(
+            slug=slug,
+            name=name,
+            kind=kind,
+            branding=branding,
+            capabilities=capabilities,
+        )
         _ensure_domain(tenant=tenant, domain=resolved_domain)
 
         with tenant_context(tenant), transaction.atomic():
@@ -119,13 +134,23 @@ def _assert_domain_available(*, slug: str, domain: str) -> None:
         raise ValueError(f"Domain '{domain}' already belongs to another tenant.")
 
 
-def _upsert_tenant(*, slug: str, name: str, kind: str) -> models.Tenant:
+def _upsert_tenant(
+    *,
+    slug: str,
+    name: str,
+    kind: str,
+    branding: dict[str, str] | None = None,
+    capabilities: dict[str, Any] | None = None,
+) -> models.Tenant:
     """Create the tenant row or update its business fields.
 
     Args:
         slug: Business identifier; also the schema name.
         name: Human-readable tenant name.
         kind: Validated tenant kind.
+        branding: Branding slots to write; absent slots are left untouched.
+        capabilities: Capability overrides to write; ``None`` leaves the
+            current value untouched.
 
     Returns:
         The saved tenant.
@@ -136,6 +161,14 @@ def _upsert_tenant(*, slug: str, name: str, kind: str) -> models.Tenant:
     else:
         tenant.name = name
         tenant.kind = kind
+
+    if branding is not None:
+        for slot in constants.BRANDING_SLOTS:
+            if slot in branding:
+                setattr(tenant, slot, branding.get(slot) or "")
+    if capabilities is not None:
+        tenant.capabilities = capabilities
+
     tenant.save(verbosity=0)
     return tenant
 
@@ -287,3 +320,96 @@ def _ensure_component_types(*, root: Organization) -> None:
             name=name,
             defaults={"description": description},
         )
+
+
+class TenantService:
+    """Platform-side operations on the tenant registry.
+
+    The registry lives in the ``public`` schema and belongs to the platform, not
+    to any client: these operations are consumed by the operations tenant's
+    console (``apps.tenancy.views``) and by billing. Reading the registry works
+    from any tenant (``<tenant>, public`` is the search path); writing it is
+    restricted by ``TenantMixin.save`` to the public schema, so every method that
+    persists a row switches the connection to ``public`` first and restores the
+    caller's schema afterwards.
+    """
+
+    #: Models counted per tenant for billing. The values reuse each model's
+    #: ``_default_manager`` inside the tenant's schema.
+    COUNTED_MODELS: ClassVar[dict[str, tuple[str, str]]] = {
+        "organizations": ("organizations", "Organization"),
+        "users": ("users", "User"),
+        "machines": ("equipment", "Machine"),
+        "reports": ("reports", "Report"),
+    }
+
+    @classmethod
+    def consumption(cls, tenant: models.Tenant) -> dict[str, Any]:
+        """Return the measurable usage of ``tenant`` for billing.
+
+        ``bytes`` is the on-disk size of every table in the tenant's schema
+        (data, indexes and TOAST) as reported by ``pg_total_relation_size``;
+        ``rows`` is the sum of the counted rows. The per-model counts are also
+        flattened into the result (``organizations``, ``users``, ``machines``,
+        ``reports``), so a consumer can bill both storage and activity.
+
+        Args:
+            tenant: Tenant whose schema is measured. The ``public`` registry
+                schema is rejected by callers, not here; measuring it yields the
+                SHARED tables, which are not billable.
+
+        Returns:
+            A mapping with ``schema_name``, ``bytes``, ``rows`` and one key per
+            entry of :attr:`COUNTED_MODELS`.
+        """
+        schema_name = tenant.schema_name
+        with connection.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT COALESCE(SUM(pg_total_relation_size(c.oid)), 0)
+                FROM pg_catalog.pg_class AS c
+                JOIN pg_catalog.pg_namespace AS n ON n.oid = c.relnamespace
+                WHERE n.nspname = %s AND c.relkind IN ('r', 'p')
+                """,
+                [schema_name],
+            )
+            total_bytes = int(cursor.fetchone()[0] or 0)
+
+        counts: dict[str, int] = {}
+        with tenant_context(tenant):
+            for key, (app_label, model_name) in cls.COUNTED_MODELS.items():
+                model = apps.get_model(app_label, model_name)
+                counts[key] = model._default_manager.count()
+
+        usage: dict[str, Any] = {
+            "schema_name": schema_name,
+            "bytes": total_bytes,
+            "rows": sum(counts.values()),
+        }
+        usage.update(counts)
+        return usage
+
+    @staticmethod
+    def set_active(tenant: models.Tenant, is_active: bool) -> models.Tenant:
+        """Suspend or reactivate a tenant by toggling its ``is_active`` flag.
+
+        Writes to the registry require the ``public`` schema, so the connection
+        is switched for the write and restored afterwards (the console runs
+        inside the operations tenant).
+
+        Args:
+            tenant: Tenant to suspend (``is_active=False``) or activate.
+            is_active: The desired flag.
+
+        Returns:
+            The refreshed tenant.
+        """
+        previous_tenant = connection.tenant
+        try:
+            connection.set_schema_to_public()
+            tenant.is_active = is_active
+            tenant.save(verbosity=0, update_fields=["is_active"])
+        finally:
+            connection.set_tenant(previous_tenant)
+        tenant.refresh_from_db()
+        return tenant

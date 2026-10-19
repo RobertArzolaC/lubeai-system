@@ -27,3 +27,9 @@ DEFAULT_COMPONENT_TYPES: Final[tuple[tuple[str, str], ...]] = (
 
 # Password of the demo users created by ``seed_demo_data``.
 DEMO_PASSWORD: Final[str] = "Demo12345!"
+
+# Slug of the operations tenant: the platform's own client, where the tenant
+# console is served. The ``public`` schema has no session and no admin (``auth``
+# is a TENANT app), so platform administration cannot live there; it runs from
+# this tenant instead, which therefore answers on its own subdomain.
+OPS_TENANT_SLUG: Final[str] = "ops"
