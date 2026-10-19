@@ -7,7 +7,7 @@ from django.test import TestCase
 from apps.organizations import factories as organization_factories
 from apps.users import constants as users_constants
 from apps.users import forms as users_forms
-from apps.users.factories import UserFactory
+from apps.users.factories import RoleFactory, UserFactory
 from apps.users.tests.base import UserTenantTestCase
 
 User = get_user_model()
@@ -110,3 +110,20 @@ class RoleFormPermissionCatalogTests(UserTenantTestCase):
         ]
         self.assertIn("Ver Máquina", labels)
         self.assertIn("Puede ver el análisis de componentes", labels)
+
+    def test_permission_modules_keep_the_dashboard_order(self) -> None:
+        """Modules follow the menu order, not the alphabetical app order."""
+        self.assertEqual(
+            [module["label"] for module in self.form.permission_modules],
+            ["Equipos", "Informes", "Alertas", "Clientes", "Cuentas y accesos"],
+        )
+
+    def test_selected_permission_ids_is_cached(self) -> None:
+        """The selected ids are queried once per form instance, not per checkbox."""
+        role = RoleFactory(organization=self.organization)
+        form = users_forms.RoleForm(instance=role, user=self.user)
+        with self.assertNumQueries(1):
+            first = form.selected_permission_ids
+        with self.assertNumQueries(0):
+            second = form.selected_permission_ids
+        self.assertEqual(first, second)

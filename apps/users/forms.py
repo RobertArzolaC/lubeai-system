@@ -5,6 +5,7 @@ from django import forms
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 from django.contrib.auth.models import Permission
 from django.template.defaultfilters import capfirst
+from django.utils.functional import cached_property
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
@@ -48,6 +49,9 @@ class RoleForm(core_mixins.OrganizationScopeFormMixin, forms.ModelForm):
         required=False,
         widget=forms.CheckboxSelectMultiple,
         label=_("Permissions"),
+        error_messages={
+            "invalid_choice": _("One or more selected permissions are not available."),
+        },
     )
 
     class Meta:
@@ -82,7 +86,7 @@ class RoleForm(core_mixins.OrganizationScopeFormMixin, forms.ModelForm):
         if self.instance.pk and "organization" in self.fields:
             self.fields["organization"].disabled = True
 
-    @property
+    @cached_property
     def selected_permission_ids(self) -> set[str]:
         """Return the ids of the currently selected permissions as strings."""
         if self.is_bound:

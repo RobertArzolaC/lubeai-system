@@ -2207,6 +2207,10 @@ msgstr "Permisos"
 msgid "Accounts and access"
 msgstr "Cuentas y accesos"
 
+#: apps/users/forms.py:52
+msgid "One or more selected permissions are not available."
+msgstr "Uno o más permisos seleccionados no están disponibles."
+
 #: apps/users/forms.py:231 apps/users/services.py:210
 msgid "A user with this email already exists."
 msgstr "Ya existe un usuario con este correo electrónico."

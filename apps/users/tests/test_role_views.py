@@ -62,6 +62,28 @@ class RoleViewTests(UserTenantTestCase):
             self.assertNotContains(response, system_header)
         self.assertContains(response, "Ver Máquina")
 
+    def test_create_shows_error_for_out_of_scope_permission(self) -> None:
+        """A tampered permission is rejected with a visible error."""
+        grant(self.user, "add_role")
+        permission = Permission.objects.get(
+            content_type__app_label="auth", codename="add_group"
+        )
+        response = self.client.post(
+            reverse("apps.users:role_create"),
+            {
+                "organization": self.lab.pk,
+                "name": "Analista",
+                "description": "",
+                "is_active": "on",
+                "permissions": [permission.pk],
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response, "Uno o más permisos seleccionados no están disponibles."
+        )
+        self.assertFalse(users_models.Role.objects.filter(name="Analista").exists())
+
     def test_create_persists_role_and_permissions(self) -> None:
         """Posting the form creates the role with the selected permissions."""
         grant(self.user, "view_role", "add_role")
