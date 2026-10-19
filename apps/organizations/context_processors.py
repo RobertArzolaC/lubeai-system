@@ -2,15 +2,18 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from constance import config
 
 from apps.organizations import constants
 from apps.organizations import models as organization_models
 
+if TYPE_CHECKING:
+    from apps.tenancy.models import Tenant
 
-def _tenant_branding(tenant: Any) -> dict[str, Any]:
+
+def _tenant_branding(tenant: Tenant) -> dict[str, Any]:
     """Return the branding declared on the tenant itself.
 
     The tenant is the platform client and owns the brand; slots it leaves empty
@@ -33,7 +36,7 @@ def _tenant_branding(tenant: Any) -> dict[str, Any]:
     return branding
 
 
-def _tenant_capabilities(tenant: Any) -> dict[str, Any]:
+def _tenant_capabilities(tenant: Tenant) -> dict[str, Any]:
     """Return the capabilities of a tenant, overridden by its own JSON field.
 
     Args:
