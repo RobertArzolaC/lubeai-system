@@ -24,6 +24,7 @@ from apps.equipment import models as equipment_models
 from apps.organizations import choices as organization_choices
 from apps.organizations import models as organization_models
 from apps.tenancy import choices, constants, models, services, signals
+from apps.tenancy.management.commands.provision_tenant import Command
 from apps.tenancy.tests.base import TenantProvisionTestCase
 from apps.users.models import User
 
@@ -206,6 +207,35 @@ class ProvisionTenantTests(TenantProvisionTestCase):
             admin = User.objects.get(email="admin@acme.pe")
             self.assertTrue(admin.check_password("Demo12345!"))
             self.assertFalse(admin.check_password("OtherPassword123!"))
+
+    def test_provision_command_reports_a_service_error(self) -> None:
+        """A service ``ValueError`` reaches the operator as a ``CommandError``."""
+        with self.assertRaises(CommandError):
+            self._run_command(
+                slug="public",
+                name="Public",
+                kind=choices.TenantKind.PLATFORM.value,
+                admin_email="admin@public.test",
+            )
+
+    def test_admin_exists_ignores_an_unregistered_schema(self) -> None:
+        """A schema an operator created by hand is not a provisioned tenant."""
+        with connection.cursor() as cursor:
+            cursor.execute("CREATE SCHEMA IF NOT EXISTS outer_space")
+
+        self.assertTrue(schema_exists("outer_space"))
+        self.assertFalse(
+            Command._admin_exists(slug="outer_space", email="admin@outer.test")
+        )
+
+    def test_admin_exists_ignores_the_registry_schema(self) -> None:
+        """The public schema is not a client, so it is never probed."""
+        self.assertTrue(schema_exists(get_public_schema_name()))
+        self.assertFalse(
+            Command._admin_exists(
+                slug=get_public_schema_name(), email="admin@public.test"
+            )
+        )
 
     def _run_command(self, **overrides: object) -> str:
         """Run the provisioning command and return its stdout.

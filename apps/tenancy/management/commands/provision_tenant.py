@@ -26,7 +26,12 @@ from typing import Any
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.core.management.base import BaseCommand, CommandError, CommandParser
-from django_tenants.utils import schema_exists, tenant_context
+from django.db import DatabaseError
+from django_tenants.utils import (
+    get_public_schema_name,
+    schema_exists,
+    tenant_context,
+)
 
 from apps.tenancy import choices, models, services
 
@@ -162,7 +167,9 @@ class Command(BaseCommand):
 
         Mirrors the condition :func:`apps.tenancy.services.provision_tenant` uses
         to decide whether a password is applied: an administrator that already
-        exists keeps its password.
+        exists keeps its password. This is only a probe to keep the operator
+        message honest, so anything it cannot answer means "assume created" and
+        the service reports the real problem.
 
         Args:
             slug: Tenant slug, which is also the schema name.
@@ -171,14 +178,24 @@ class Command(BaseCommand):
         Returns:
             ``True`` when the tenant schema already contains that user.
         """
-        if not schema_exists(slug):
+        if slug == get_public_schema_name() or not schema_exists(slug):
+            # The registry schema is not a provisionable client, and a missing
+            # schema is about to be created by the service.
+            return False
+
+        tenant = models.Tenant.objects.filter(schema_name=slug).first()
+        if tenant is None:
             return False
 
         from apps.users.models import User
 
-        tenant = models.Tenant.objects.get(schema_name=slug)
-        with tenant_context(tenant):
-            return User.objects.filter(email=email).exists()
+        try:
+            with tenant_context(tenant):
+                return User.objects.filter(email=email).exists()
+        except DatabaseError:
+            # A registry row may exist before its schema is migrated; the probe
+            # is not the place to fail, the service is.
+            return False
 
     @staticmethod
     def _summary(

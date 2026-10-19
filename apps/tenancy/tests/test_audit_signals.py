@@ -12,8 +12,9 @@ from __future__ import annotations
 
 from django.core.exceptions import ImproperlyConfigured
 from django.core.signals import request_started
+from django.db import connection
 from django.test import override_settings
-from django_tenants.utils import tenant_context
+from django_tenants.utils import get_public_schema_name, tenant_context
 from easyaudit.models import RequestEvent
 from easyaudit.signals.request_signals import (
     request_started_handler as audit_request_handler,
@@ -73,3 +74,38 @@ class AuditRequestSignalTests(TenantProvisionTestCase):
             signals.DISPATCH_UID,
             [lookup_key[0] for lookup_key, *_ in request_started.receivers],
         )
+
+
+class RequestHostExtractionTests(TenantProvisionTestCase):
+    """The resolver reads the host from either WSGI or ASGI signal kwargs."""
+
+    def setUp(self) -> None:
+        """Always start from a known schema."""
+        super().setUp()
+        connection.set_schema_to_public()
+
+    def test_signal_without_a_request_context_is_ignored(self) -> None:
+        """A signal with no host leaves the connection untouched."""
+        signals.request_started_handler(None, environ={})
+
+        self.assertEqual(connection.schema_name, get_public_schema_name())
+
+    def test_asgi_scope_resolves_the_tenant(self) -> None:
+        """An ASGI request selects the tenant of its host header."""
+        self.provision()
+
+        signals.request_started_handler(
+            None, scope={"headers": [(b"host", b"acme.localhost")]}
+        )
+
+        self.assertEqual(connection.schema_name, "acme")
+
+    def test_host_with_port_is_normalised(self) -> None:
+        """The port is stripped before the domain is looked up."""
+        self.provision()
+
+        signals.request_started_handler(
+            None, environ={"HTTP_HOST": "acme.localhost:8000"}
+        )
+
+        self.assertEqual(connection.schema_name, "acme")
