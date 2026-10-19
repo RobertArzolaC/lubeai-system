@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-18 12:07-0500\n"
+"POT-Creation-Date: 2026-10-18 18:51-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -82,28 +82,32 @@ msgstr "Descartada"
 #: apps/alerts/filtersets.py:18 apps/equipment/filtersets.py:15
 #: apps/equipment/filtersets.py:38 apps/equipment/filtersets.py:71
 #: apps/equipment/filtersets.py:131 apps/organizations/filtersets.py:17
-#: apps/reports/filtersets.py:17 apps/reports/filtersets.py:45
-#: apps/reports/filtersets.py:193 apps/users/filtersets.py:15
-#: apps/users/filtersets.py:50
+#: apps/reports/filtersets.py:18 apps/reports/filtersets.py:46
+#: apps/reports/filtersets.py:201 apps/tenancy/filtersets.py:21
+#: apps/users/filtersets.py:15 apps/users/filtersets.py:50
 msgid "Search"
 msgstr "Buscar"
 
 #: apps/alerts/filtersets.py:21 apps/equipment/filtersets.py:41
 #: apps/equipment/filtersets.py:74 apps/equipment/filtersets.py:134
+#: apps/reports/filtersets.py:50 apps/reports/filtersets.py:206
 #: apps/users/filtersets.py:18 apps/users/filtersets.py:53
 msgid "All Clients"
 msgstr "Todos los clientes"
 
 #: apps/alerts/filtersets.py:22 apps/core/mixins/forms.py:73
 #: apps/equipment/filtersets.py:42 apps/equipment/filtersets.py:75
-#: apps/equipment/filtersets.py:135 apps/users/filtersets.py:19
+#: apps/equipment/filtersets.py:135 apps/reports/filtersets.py:51
+#: apps/reports/filtersets.py:207 apps/users/filtersets.py:19
 #: apps/users/filtersets.py:54 templates/alerts/alert/list.html:133
 #: templates/equipment/branch/detail.html:35
 #: templates/equipment/branch/list.html:69
 #: templates/equipment/component_type/detail.html:35
 #: templates/equipment/component_type/list.html:69
 #: templates/equipment/machine/detail.html:35
-#: templates/equipment/machine/list.html:79 templates/users/role/list.html:64
+#: templates/equipment/machine/list.html:79
+#: templates/reports/analysis_threshold/list.html:73
+#: templates/reports/report/list.html:129 templates/users/role/list.html:64
 #: templates/users/user/list.html:69
 msgid "Client"
 msgstr "Cliente"
@@ -118,8 +122,8 @@ msgstr "Todas las severidades"
 msgid "Severity"
 msgstr "Severidad"
 
-#: apps/alerts/filtersets.py:31 apps/reports/filtersets.py:64
-#: apps/reports/filtersets.py:157
+#: apps/alerts/filtersets.py:31 apps/reports/filtersets.py:70
+#: apps/reports/filtersets.py:165
 msgid "All Statuses"
 msgstr "Todos los estados"
 
@@ -127,8 +131,9 @@ msgstr "Todos los estados"
 #: apps/core/models.py:154 apps/equipment/filtersets.py:19
 #: apps/equipment/filtersets.py:47 apps/equipment/filtersets.py:90
 #: apps/equipment/filtersets.py:140 apps/organizations/filtersets.py:31
-#: apps/reports/models.py:152 apps/users/filtersets.py:24
-#: apps/users/filtersets.py:64 templates/alerts/alert/list.html:146
+#: apps/reports/models.py:152 apps/tenancy/filtersets.py:30
+#: apps/users/filtersets.py:24 apps/users/filtersets.py:64
+#: templates/alerts/alert/list.html:146
 #: templates/equipment/branch/detail.html:44
 #: templates/equipment/branch/list.html:76
 #: templates/equipment/component_type/detail.html:48
@@ -139,28 +144,29 @@ msgstr "Todos los estados"
 #: templates/equipment/machine/list.html:91
 #: templates/organizations/organization/list.html:71
 #: templates/reports/analysis_threshold/detail.html:45
-#: templates/reports/analysis_threshold/list.html:75
+#: templates/reports/analysis_threshold/list.html:86
 #: templates/reports/laboratory/detail.html:42
-#: templates/reports/laboratory/list.html:68 templates/users/profile.html:55
+#: templates/reports/laboratory/list.html:68
+#: templates/tenancy/tenant/list.html:63 templates/users/profile.html:55
 #: templates/users/role/list.html:71 templates/users/user/list.html:76
 msgid "Status"
 msgstr "Estado"
 
-#: apps/alerts/filtersets.py:36 apps/reports/filtersets.py:198
+#: apps/alerts/filtersets.py:36 apps/reports/filtersets.py:212
 msgid "All Categories"
 msgstr "Todas las categorías"
 
 #: apps/alerts/filtersets.py:37 apps/alerts/models.py:63
-#: apps/reports/filtersets.py:199 apps/reports/models.py:590
+#: apps/reports/filtersets.py:213 apps/reports/models.py:590
 #: templates/alerts/alert/list.html:137
 #: templates/alerts/email/alert_notification.html:19
 #: templates/reports/analysis_threshold/detail.html:37
-#: templates/reports/analysis_threshold/list.html:66
+#: templates/reports/analysis_threshold/list.html:77
 msgid "Category"
 msgstr "Categoría"
 
-#: apps/alerts/filtersets.py:41 apps/reports/filtersets.py:54
-#: apps/reports/filtersets.py:141
+#: apps/alerts/filtersets.py:41 apps/reports/filtersets.py:60
+#: apps/reports/filtersets.py:149
 msgid "All Machines"
 msgstr "Todas las máquinas"
 
@@ -168,8 +174,8 @@ msgstr "Todas las máquinas"
 #: apps/dashboard/filtersets.py:29 apps/equipment/models.py:119
 #: apps/equipment/models.py:176 apps/equipment/views.py:27
 #: apps/equipment/views.py:42 apps/equipment/views.py:70
-#: apps/equipment/views.py:111 apps/reports/filtersets.py:55
-#: apps/reports/filtersets.py:142 apps/reports/filtersets.py:238
+#: apps/equipment/views.py:111 apps/reports/filtersets.py:61
+#: apps/reports/filtersets.py:150 apps/reports/filtersets.py:262
 #: apps/reports/models.py:75 apps/reports/services/chart_export_pdf.py:212
 #: templates/alerts/alert/detail.html:38
 #: templates/alerts/email/alert_notification.html:21
@@ -181,14 +187,14 @@ msgstr "Todas las máquinas"
 msgid "Machine"
 msgstr "Máquina"
 
-#: apps/alerts/filtersets.py:46 apps/reports/filtersets.py:59
-#: apps/reports/filtersets.py:146
+#: apps/alerts/filtersets.py:46 apps/reports/filtersets.py:65
+#: apps/reports/filtersets.py:154
 msgid "All Components"
 msgstr "Todos los componentes"
 
 #: apps/alerts/filtersets.py:47 apps/alerts/models.py:37
-#: apps/equipment/models.py:192 apps/reports/filtersets.py:60
-#: apps/reports/filtersets.py:147 apps/reports/filtersets.py:251
+#: apps/equipment/models.py:192 apps/reports/filtersets.py:66
+#: apps/reports/filtersets.py:155 apps/reports/filtersets.py:275
 #: apps/reports/models.py:84 templates/alerts/alert/detail.html:46
 #: templates/dashboard/includes/filters.html:34
 #: templates/dashboard/includes/tabs.html:24
@@ -219,7 +225,7 @@ msgstr "Componente asociado con esta alerta"
 #: apps/alerts/models.py:46 apps/reports/models.py:239
 #: apps/reports/models.py:276 apps/reports/views.py:149
 #: apps/reports/views.py:174 apps/reports/views.py:202
-#: apps/reports/views.py:228 templates/reports/report/list.html:119
+#: apps/reports/views.py:228 templates/reports/report/list.html:125
 msgid "Report"
 msgstr "Informe"
 
@@ -229,7 +235,7 @@ msgstr "Informe de origen de esta alerta"
 
 #: apps/alerts/models.py:55 apps/equipment/models.py:15
 #: apps/equipment/models.py:42 apps/equipment/models.py:79
-#: apps/equipment/models.py:150 apps/organizations/models.py:85
+#: apps/equipment/models.py:150 apps/organizations/models.py:87
 #: apps/organizations/views.py:38 apps/organizations/views.py:129
 #: apps/organizations/views.py:156 apps/reports/models.py:66
 #: apps/users/admin.py:19 apps/users/models.py:20 apps/users/models.py:62
@@ -261,7 +267,7 @@ msgstr "Límite crítico"
 
 #: apps/alerts/models.py:83 apps/reports/models.py:610
 #: templates/reports/analysis_threshold/detail.html:70
-#: templates/reports/analysis_threshold/list.html:72
+#: templates/reports/analysis_threshold/list.html:83
 msgid "Unit"
 msgstr "Unidad"
 
@@ -327,7 +333,7 @@ msgstr "La dirección de correo electrónico no está registrada con nosotros."
 #: apps/core/breadcrumbs.py:15 apps/equipment/models.py:120
 #: apps/equipment/views.py:28 templates/equipment/branch/detail.html:90
 #: templates/equipment/fleet/detail.html:53 templates/includes/aside.html:47
-#: templates/includes/aside.html:49
+#: templates/includes/aside.html:49 templates/tenancy/tenant/detail.html:130
 msgid "Machines"
 msgstr "Máquinas"
 
@@ -359,6 +365,7 @@ msgstr "Laboratorios"
 #: apps/reports/views.py:150 templates/includes/aside.html:85
 #: templates/includes/aside.html:100 templates/includes/aside.html:102
 #: templates/reports/laboratory/list.html:65
+#: templates/tenancy/tenant/detail.html:134
 msgid "Reports"
 msgstr "Informes"
 
@@ -369,25 +376,26 @@ msgstr "Umbrales"
 
 #: apps/core/breadcrumbs.py:23 apps/users/views.py:190
 #: templates/dashboard/includes/administration.html:34
-#: templates/includes/aside.html:161 templates/includes/aside.html:163
+#: templates/includes/aside.html:169 templates/includes/aside.html:171
 #: templates/includes/navbar.html:75
 #: templates/organizations/organization/detail.html:87
-#: templates/users/profile.html:149
+#: templates/tenancy/tenant/detail.html:126 templates/users/profile.html:149
 msgid "Users"
 msgstr "Usuarios"
 
 #: apps/core/breadcrumbs.py:24 apps/users/forms.py:165 apps/users/models.py:84
 #: apps/users/views.py:100 templates/dashboard/includes/administration.html:49
-#: templates/includes/aside.html:170 templates/includes/aside.html:172
+#: templates/includes/aside.html:178 templates/includes/aside.html:180
 #: templates/organizations/organization/detail.html:92
 #: templates/users/user/form.html:63 templates/users/user/list.html:73
 msgid "Roles"
 msgstr "Roles"
 
-#: apps/core/breadcrumbs.py:25 apps/organizations/models.py:86
+#: apps/core/breadcrumbs.py:25 apps/organizations/models.py:88
 #: apps/organizations/views.py:39
 #: templates/dashboard/includes/administration.html:19
-#: templates/includes/aside.html:152 templates/includes/aside.html:154
+#: templates/includes/aside.html:160 templates/includes/aside.html:162
+#: templates/tenancy/tenant/detail.html:122
 msgid "Organizations"
 msgstr "Organizaciones"
 
@@ -415,7 +423,7 @@ msgstr "Eliminar"
 msgid "Dashboard"
 msgstr "Tablero"
 
-#: apps/core/breadcrumbs.py:39 apps/reports/views.py:506
+#: apps/core/breadcrumbs.py:39 apps/reports/views.py:518
 #: templates/includes/aside.html:119 templates/includes/aside.html:121
 #: templates/reports/report/component_analysis.html:5
 #: templates/reports/report/component_analysis.html:6
@@ -617,8 +625,9 @@ msgid "User account associated with this person"
 msgstr "Cuenta de usuario asociada con esta persona"
 
 #: apps/core/models.py:129 apps/equipment/models.py:12
-#: apps/equipment/models.py:96 apps/organizations/models.py:32
-#: apps/users/models.py:67 templates/equipment/branch/detail.html:40
+#: apps/equipment/models.py:96 apps/organizations/models.py:35
+#: apps/tenancy/forms.py:39 apps/tenancy/models.py:36 apps/users/models.py:67
+#: templates/equipment/branch/detail.html:40
 #: templates/equipment/branch/list.html:65
 #: templates/equipment/component_type/detail.html:40
 #: templates/equipment/component_type/list.html:65
@@ -629,7 +638,7 @@ msgstr "Cuenta de usuario asociada con esta persona"
 msgid "Name"
 msgstr "Nombre"
 
-#: apps/core/models.py:130 apps/organizations/models.py:47
+#: apps/core/models.py:130 apps/organizations/models.py:49
 #: apps/users/models.py:73 templates/equipment/branch/detail.html:50
 #: templates/equipment/component_type/detail.html:44
 #: templates/equipment/component_type/list.html:73
@@ -638,7 +647,7 @@ msgstr "Nombre"
 msgid "Description"
 msgstr "Descripción"
 
-#: apps/core/models.py:141
+#: apps/core/models.py:141 apps/tenancy/models.py:51
 msgid "Is active"
 msgstr "Está activo"
 
@@ -739,16 +748,17 @@ msgstr "Ambos"
 
 #: apps/equipment/filtersets.py:18 apps/equipment/filtersets.py:46
 #: apps/equipment/filtersets.py:89 apps/equipment/filtersets.py:139
-#: apps/organizations/filtersets.py:30 apps/users/filtersets.py:23
-#: apps/users/filtersets.py:63
+#: apps/organizations/filtersets.py:30 apps/tenancy/filtersets.py:29
+#: apps/users/filtersets.py:23 apps/users/filtersets.py:63
 msgid "Is Active?"
 msgstr "¿Está activo?"
 
 #: apps/equipment/filtersets.py:21 apps/equipment/filtersets.py:49
 #: apps/equipment/filtersets.py:92 apps/equipment/filtersets.py:142
-#: apps/organizations/filtersets.py:33 apps/reports/filtersets.py:23
-#: apps/reports/filtersets.py:79 apps/reports/filtersets.py:206
-#: apps/users/filtersets.py:26 apps/users/filtersets.py:66
+#: apps/organizations/filtersets.py:33 apps/reports/filtersets.py:24
+#: apps/reports/filtersets.py:85 apps/reports/filtersets.py:220
+#: apps/tenancy/filtersets.py:32 apps/users/filtersets.py:26
+#: apps/users/filtersets.py:66
 #: templates/equipment/component_type/detail.html:69
 #: templates/equipment/machine/detail.html:104
 #: templates/includes/status_badge.html:5 templates/users/profile.html:50
@@ -757,9 +767,10 @@ msgstr "Activo"
 
 #: apps/equipment/filtersets.py:22 apps/equipment/filtersets.py:50
 #: apps/equipment/filtersets.py:93 apps/equipment/filtersets.py:143
-#: apps/organizations/filtersets.py:34 apps/reports/filtersets.py:24
-#: apps/reports/filtersets.py:80 apps/reports/filtersets.py:207
-#: apps/users/filtersets.py:27 apps/users/filtersets.py:67
+#: apps/organizations/filtersets.py:34 apps/reports/filtersets.py:25
+#: apps/reports/filtersets.py:86 apps/reports/filtersets.py:221
+#: apps/tenancy/filtersets.py:33 apps/users/filtersets.py:27
+#: apps/users/filtersets.py:67
 #: templates/equipment/component_type/detail.html:71
 #: templates/equipment/machine/detail.html:106
 #: templates/includes/status_badge.html:9 templates/users/profile.html:52
@@ -919,15 +930,20 @@ msgstr "Tipo de componente actualizado correctamente"
 msgid "Contact"
 msgstr "Contacto"
 
-#: apps/organizations/admin.py:23
+#: apps/organizations/admin.py:23 apps/tenancy/admin.py:29
 #: templates/organizations/organization/detail.html:50
 #: templates/organizations/organization/form.html:96
+#: templates/tenancy/tenant/detail.html:57
+#: templates/tenancy/tenant/form.html:121
 msgid "Branding"
 msgstr "Marca"
 
-#: apps/organizations/admin.py:37 apps/organizations/models.py:78
+#: apps/organizations/admin.py:37 apps/organizations/models.py:80
+#: apps/tenancy/admin.py:43 apps/tenancy/forms.py:70 apps/tenancy/models.py:70
 #: templates/organizations/organization/detail.html:63
 #: templates/organizations/organization/form.html:82
+#: templates/tenancy/tenant/detail.html:70
+#: templates/tenancy/tenant/form.html:107
 msgid "Capabilities"
 msgstr "Capacidades"
 
@@ -936,33 +952,36 @@ msgstr "Capacidades"
 msgid "Organizations Management"
 msgstr "Gestión de organizaciones"
 
-#: apps/organizations/choices.py:8
+#: apps/organizations/choices.py:8 apps/tenancy/choices.py:16
+#: templates/public/landing.html:4
 msgid "Platform"
 msgstr "Plataforma"
 
-#: apps/organizations/choices.py:9 apps/reports/filtersets.py:50
-#: apps/reports/filtersets.py:137 apps/reports/models.py:34
+#: apps/organizations/choices.py:9 apps/reports/filtersets.py:56
+#: apps/reports/filtersets.py:145 apps/reports/models.py:34
 #: apps/reports/models.py:57 apps/reports/views.py:50 apps/reports/views.py:68
 #: apps/reports/views.py:95 apps/reports/views.py:114
-#: templates/reports/laboratory/list.html:59
+#: apps/tenancy/choices.py:17 templates/reports/laboratory/list.html:59
 #: templates/reports/report/detail.html:53
-#: templates/reports/report/list.html:126
+#: templates/reports/report/list.html:137
 msgid "Laboratory"
 msgstr "Laboratorio"
 
-#: apps/organizations/choices.py:10
+#: apps/organizations/choices.py:10 apps/tenancy/choices.py:18
 msgid "Intermediary"
 msgstr "Intermediario"
 
-#: apps/organizations/choices.py:11
+#: apps/organizations/choices.py:11 apps/tenancy/choices.py:19
 msgid "Final client"
 msgstr "Cliente final"
 
-#: apps/organizations/filtersets.py:20
+#: apps/organizations/filtersets.py:20 apps/tenancy/filtersets.py:24
 msgid "All kinds"
 msgstr "Todos los tipos"
 
-#: apps/organizations/filtersets.py:21 apps/organizations/models.py:58
+#: apps/organizations/filtersets.py:21 apps/organizations/models.py:60
+#: apps/tenancy/filtersets.py:25 apps/tenancy/forms.py:49
+#: apps/tenancy/models.py:44
 msgid "Kind"
 msgstr "Tipo"
 
@@ -983,77 +1002,90 @@ msgstr "No puedes usar ese padre."
 msgid "You cannot create a platform."
 msgstr "No puedes crear una plataforma."
 
-#: apps/organizations/models.py:34 apps/users/models.py:69
+#: apps/organizations/models.py:37 apps/tenancy/forms.py:44
+#: apps/tenancy/models.py:38 apps/users/models.py:69
+#: templates/tenancy/tenant/detail.html:25
 msgid "Slug"
 msgstr "Slug"
 
-#: apps/organizations/models.py:37
-msgid "Used to resolve the tenant from the request host"
-msgstr "Se usa para resolver el tenant a partir del host de la petición"
+#: apps/organizations/models.py:39
+#, fuzzy
+#| msgid "Stable identifier, unique within the organization"
+msgid "Business identifier, unique within the tenant schema"
+msgstr "Identificador estable, único dentro de la organización"
 
-#: apps/organizations/models.py:40 apps/reports/models.py:27
+#: apps/organizations/models.py:42 apps/reports/models.py:27
 #: templates/reports/laboratory/detail.html:38
 msgid "Code"
 msgstr "Código"
 
-#: apps/organizations/models.py:45
+#: apps/organizations/models.py:47
 msgid "Optional business code"
 msgstr "Código de negocio opcional"
 
-#: apps/organizations/models.py:50
+#: apps/organizations/models.py:52
 msgid "Parent organization"
 msgstr "Organización padre"
 
-#: apps/organizations/models.py:55
-msgid "Empty for a root tenant"
-msgstr "Vacío para un tenant raíz"
+#: apps/organizations/models.py:57
+#, fuzzy
+#| msgid "No roles for this organization."
+msgid "Empty only for the tenant's root organization"
+msgstr "No hay roles para esta organización."
 
-#: apps/organizations/models.py:62
+#: apps/organizations/models.py:64
 msgid "Determines default capabilities"
 msgstr "Determina las capacidades por defecto"
 
-#: apps/organizations/models.py:67
+#: apps/organizations/models.py:69 apps/tenancy/models.py:59
 msgid "Logo"
 msgstr "Logo"
 
-#: apps/organizations/models.py:69
+#: apps/organizations/models.py:71 apps/tenancy/forms.py:76
+#: apps/tenancy/models.py:61
 msgid "Primary color"
 msgstr "Color primario"
 
-#: apps/organizations/models.py:70
+#: apps/organizations/models.py:72 apps/tenancy/forms.py:82
+#: apps/tenancy/models.py:62
 msgid "Chart primary"
 msgstr "Gráfico: primario"
 
-#: apps/organizations/models.py:71
+#: apps/organizations/models.py:73 apps/tenancy/forms.py:88
+#: apps/tenancy/models.py:63
 msgid "Chart success"
 msgstr "Gráfico: éxito"
 
-#: apps/organizations/models.py:72
+#: apps/organizations/models.py:74 apps/tenancy/forms.py:94
+#: apps/tenancy/models.py:64
 msgid "Chart warning"
 msgstr "Gráfico: advertencia"
 
-#: apps/organizations/models.py:73
+#: apps/organizations/models.py:75 apps/tenancy/forms.py:100
+#: apps/tenancy/models.py:65
 msgid "Chart danger"
 msgstr "Gráfico: peligro"
 
-#: apps/organizations/models.py:74
+#: apps/organizations/models.py:76 apps/tenancy/forms.py:106
+#: apps/tenancy/models.py:66
 msgid "Chart info"
 msgstr "Gráfico: información"
 
-#: apps/organizations/models.py:75
+#: apps/organizations/models.py:77 apps/tenancy/forms.py:112
+#: apps/tenancy/models.py:67
 msgid "Chart dark"
 msgstr "Gráfico: oscuro"
 
-#: apps/organizations/models.py:81
+#: apps/organizations/models.py:83
 msgid "Per-organization overrides of the kind default capabilities"
 msgstr ""
 "Sobrescrituras por organización de las capacidades por defecto del tipo"
 
-#: apps/organizations/services.py:85
+#: apps/organizations/services.py:86
 msgid "An organization cannot be its own parent or descendant."
 msgstr "Una organización no puede ser su propio padre ni descendiente."
 
-#: apps/organizations/services.py:111
+#: apps/organizations/services.py:112
 msgid "This organization still has child organizations or users."
 msgstr "Esta organización aún tiene organizaciones hijas o usuarios."
 
@@ -1376,11 +1408,11 @@ msgstr "Resumen"
 msgid "Wear"
 msgstr "Desgaste"
 
-#: apps/reports/constants.py:109 apps/reports/filtersets.py:71
-#: apps/reports/filtersets.py:152 apps/reports/models.py:159
+#: apps/reports/constants.py:109 apps/reports/filtersets.py:77
+#: apps/reports/filtersets.py:160 apps/reports/models.py:159
 #: templates/dashboard/includes/tabs.html:26
 #: templates/reports/report/component_analysis.html:482
-#: templates/reports/report/list.html:133
+#: templates/reports/report/list.html:144
 msgid "Condition"
 msgstr "Condición"
 
@@ -1394,41 +1426,41 @@ msgstr "Tendencias"
 msgid "Advanced"
 msgstr "Avanzado"
 
-#: apps/reports/filtersets.py:20 apps/reports/filtersets.py:76
-#: apps/reports/filtersets.py:203
+#: apps/reports/filtersets.py:21 apps/reports/filtersets.py:82
+#: apps/reports/filtersets.py:217
 msgid "All Records"
 msgstr "Todos los registros"
 
-#: apps/reports/filtersets.py:21 apps/reports/filtersets.py:77
-#: apps/reports/filtersets.py:204
+#: apps/reports/filtersets.py:22 apps/reports/filtersets.py:83
+#: apps/reports/filtersets.py:218
 msgid "Record Status"
 msgstr "Estado del registro"
 
-#: apps/reports/filtersets.py:49 apps/reports/filtersets.py:136
+#: apps/reports/filtersets.py:55 apps/reports/filtersets.py:144
 msgid "All Laboratories"
 msgstr "Todos los laboratorios"
 
-#: apps/reports/filtersets.py:65 apps/reports/filtersets.py:158
+#: apps/reports/filtersets.py:71 apps/reports/filtersets.py:166
 msgid "Report Status"
 msgstr "Estado del informe"
 
-#: apps/reports/filtersets.py:70 apps/reports/filtersets.py:151
+#: apps/reports/filtersets.py:76 apps/reports/filtersets.py:159
 msgid "All Conditions"
 msgstr "Todas las condiciones"
 
-#: apps/reports/filtersets.py:127
+#: apps/reports/filtersets.py:135
 msgid "Start Date"
 msgstr "Fecha de inicio"
 
-#: apps/reports/filtersets.py:132
+#: apps/reports/filtersets.py:140
 msgid "End Date"
 msgstr "Fecha de fin"
 
-#: apps/reports/filtersets.py:237 apps/reports/filtersets.py:243
+#: apps/reports/filtersets.py:261 apps/reports/filtersets.py:267
 msgid "Select Machine"
 msgstr "Seleccionar equipo"
 
-#: apps/reports/filtersets.py:250 apps/reports/filtersets.py:257
+#: apps/reports/filtersets.py:274 apps/reports/filtersets.py:281
 msgid "Select Component"
 msgstr "Seleccionar componente"
 
@@ -1532,7 +1564,7 @@ msgstr "Código de número de serie del informe (Cód./Núm. de Serie)"
 #: templates/reports/report/component_analysis.html:1589
 #: templates/reports/report/component_analysis.html:1723
 #: templates/reports/report/detail.html:95
-#: templates/reports/report/list.html:130
+#: templates/reports/report/list.html:141
 msgid "Sample Date"
 msgstr "Fecha de muestra"
 
@@ -1868,7 +1900,7 @@ msgstr "Categoría a la que pertenece este umbral"
 
 #: apps/reports/models.py:596
 #: templates/reports/analysis_threshold/detail.html:33
-#: templates/reports/analysis_threshold/list.html:63
+#: templates/reports/analysis_threshold/list.html:69
 msgid "Parameter"
 msgstr "Parámetro"
 
@@ -1910,19 +1942,19 @@ msgstr "Descripción de la fuente de desgaste"
 msgid "Description of the wear source for this parameter"
 msgstr "Descripción de la fuente de desgaste para este parámetro"
 
-#: apps/reports/models.py:630 apps/reports/views.py:379
-#: apps/reports/views.py:399 apps/reports/views.py:427
-#: apps/reports/views.py:452
+#: apps/reports/models.py:630 apps/reports/views.py:391
+#: apps/reports/views.py:411 apps/reports/views.py:439
+#: apps/reports/views.py:464
 msgid "Analysis Threshold"
 msgstr "Umbral de análisis"
 
-#: apps/reports/models.py:631 apps/reports/views.py:380
+#: apps/reports/models.py:631 apps/reports/views.py:392
 msgid "Analysis Thresholds"
 msgstr "Umbrales de análisis"
 
 #: apps/reports/models.py:642
 #: templates/reports/analysis_threshold/detail.html:42
-#: templates/reports/analysis_threshold/list.html:88
+#: templates/reports/analysis_threshold/list.html:99
 msgid "Global"
 msgstr "Global"
 
@@ -2024,13 +2056,111 @@ msgid ""
 msgstr ""
 "El resultado supera el máximo de %(max)s registros. Refine sus filtros."
 
-#: apps/reports/views.py:415
+#: apps/reports/views.py:427
 msgid "Analysis threshold created successfully"
 msgstr "Umbral de análisis creado correctamente"
 
-#: apps/reports/views.py:439
+#: apps/reports/views.py:451
 msgid "Analysis threshold updated successfully"
 msgstr "Umbral de análisis actualizado correctamente"
+
+#: apps/tenancy/admin.py:44
+#: templates/reports/report/component_analysis.html:820
+msgid "Usage"
+msgstr "Uso"
+
+#: apps/tenancy/admin.py:47 templates/tenancy/tenant/detail.html:109
+#| msgid "Condition"
+msgid "Consumption"
+msgstr "Consumo"
+
+#: apps/tenancy/apps.py:18
+msgid "Tenancy"
+msgstr ""
+
+#: apps/tenancy/forms.py:46 apps/tenancy/models.py:41
+msgid "Business identifier; also used as the PostgreSQL schema name"
+msgstr "Identificador de negocio; también se usa como nombre del esquema PostgreSQL"
+
+#: apps/tenancy/forms.py:54 templates/tenancy/tenant/list.html:60
+msgid "Domain"
+msgstr "Dominio"
+
+#: apps/tenancy/forms.py:56
+msgid "Host name; defaults to <slug>.<platform domain>"
+msgstr "Nombre de host; por defecto <slug>.<dominio de la plataforma>"
+
+#: apps/tenancy/forms.py:60
+#| msgid "Administrator"
+msgid "Administrator email"
+msgstr "Correo del administrador"
+
+#: apps/tenancy/forms.py:64
+#| msgid "Administrator"
+msgid "Administrator password"
+msgstr "Contraseña del administrador"
+
+#: apps/tenancy/forms.py:66
+msgid "Only applied when the administrator is created"
+msgstr "Solo se aplica cuando se crea el administrador"
+
+#: apps/tenancy/forms.py:122
+msgid "The public schema is not a client."
+msgstr "El esquema público no es un cliente."
+
+#: apps/tenancy/forms.py:124
+#| msgid "A user with this email already exists."
+msgid "A tenant with that slug already exists."
+msgstr "Ya existe un cliente con ese slug."
+
+#: apps/tenancy/forms.py:131
+msgid "That domain is already in use."
+msgstr "Ese dominio ya está en uso."
+
+#: apps/tenancy/models.py:48
+msgid "Kind of client this tenant represents"
+msgstr "Tipo de cliente que representa este inquilino"
+
+#: apps/tenancy/models.py:53
+#, fuzzy
+#| msgid "Designates whether this entry is active"
+msgid "Designates whether the tenant is served"
+msgstr "Designa si esta entrada está activa"
+
+#: apps/tenancy/models.py:73
+#| msgid "Per-organization overrides of the kind default capabilities"
+msgid "Per-tenant overrides of the kind default capabilities"
+"Sobrescrituras por organización de las capacidades por defecto del tipo"
+msgstr "Ajustes por inquilino de las capacidades del tipo"
+
+#: apps/tenancy/models.py:82 apps/tenancy/views.py:69 apps/tenancy/views.py:131
+#: apps/tenancy/views.py:171 templates/tenancy/tenant/list.html:57
+msgid "Tenant"
+msgstr "Cliente"
+
+#: apps/tenancy/models.py:83 apps/tenancy/views.py:70
+#: templates/includes/aside.html:152 templates/includes/aside.html:154
+msgid "Tenants"
+msgstr "Clientes"
+
+#: apps/tenancy/views.py:109
+#| msgid "Fleet created successfully"
+msgid "Tenant created successfully"
+msgstr "Cliente creado correctamente."
+
+#: apps/tenancy/views.py:144
+#| msgid "Alert updated successfully"
+msgid "Tenant updated successfully"
+msgstr "Cliente actualizado correctamente."
+
+#: apps/tenancy/views.py:198
+#| msgid "Deactivate"
+msgid "Tenant activated."
+msgstr "Cliente activado."
+
+#: apps/tenancy/views.py:200
+msgid "Tenant suspended."
+msgstr "Cliente suspendido."
 
 #: apps/users/api.py:18
 msgid "User not found"
@@ -2135,7 +2265,7 @@ msgstr "Usuario no encontrado."
 msgid "The user was successfully deactivated."
 msgstr "El usuario se desactivó correctamente."
 
-#: config/settings/base.py:173
+#: config/settings/base.py:211
 msgid "Spanish"
 msgstr "Español"
 
@@ -2511,10 +2641,10 @@ msgstr "Buscar por máquina, componente o clave..."
 #: templates/equipment/fleet/list.html:46
 #: templates/equipment/machine/list.html:62
 #: templates/organizations/organization/list.html:50
-#: templates/reports/analysis_threshold/list.html:50
+#: templates/reports/analysis_threshold/list.html:56
 #: templates/reports/laboratory/list.html:46
-#: templates/reports/report/list.html:64 templates/users/role/list.html:48
-#: templates/users/user/list.html:53
+#: templates/reports/report/list.html:64 templates/tenancy/tenant/list.html:45
+#: templates/users/role/list.html:48 templates/users/user/list.html:53
 msgid "Apply"
 msgstr "Aplicar"
 
@@ -2529,11 +2659,11 @@ msgstr ""
 "Busca por máquina, componente o clave y luego refina con los filtros "
 "avanzados."
 
-#: templates/alerts/alert/list.html:119 templates/reports/report/list.html:109
+#: templates/alerts/alert/list.html:119 templates/reports/report/list.html:115
 msgid "Clear all filters"
 msgstr "Limpiar todos los filtros"
 
-#: templates/alerts/alert/list.html:140 templates/reports/report/list.html:122
+#: templates/alerts/alert/list.html:140 templates/reports/report/list.html:133
 msgid "Machine / Component"
 msgstr "Máquina / Componente"
 
@@ -2542,10 +2672,10 @@ msgstr "Máquina / Componente"
 #: templates/equipment/fleet/list.html:65
 #: templates/equipment/machine/list.html:94
 #: templates/organizations/organization/list.html:74
-#: templates/reports/analysis_threshold/list.html:78
+#: templates/reports/analysis_threshold/list.html:89
 #: templates/reports/laboratory/list.html:71
-#: templates/reports/report/list.html:136 templates/users/role/list.html:74
-#: templates/users/user/list.html:79
+#: templates/reports/report/list.html:147 templates/tenancy/tenant/list.html:66
+#: templates/users/role/list.html:74 templates/users/user/list.html:79
 msgid "Management"
 msgstr "Gestión"
 
@@ -2761,7 +2891,8 @@ msgstr "Buscar sucursales por nombre o dirección..."
 #: templates/equipment/fleet/list.html:49
 #: templates/organizations/organization/list.html:53
 #: templates/reports/report/component_analysis.html:52
-#: templates/users/role/list.html:51 templates/users/user/list.html:56
+#: templates/tenancy/tenant/list.html:48 templates/users/role/list.html:51
+#: templates/users/user/list.html:56
 msgid "Clear"
 msgstr "Limpiar"
 
@@ -2931,7 +3062,7 @@ msgid "Name, serial or model"
 msgstr "Nombre, serie o modelo"
 
 #: templates/equipment/machine/list.html:66
-#: templates/reports/analysis_threshold/list.html:54
+#: templates/reports/analysis_threshold/list.html:60
 #: templates/reports/laboratory/list.html:50
 msgid "Clear filters"
 msgstr "Limpiar filtros"
@@ -3011,20 +3142,22 @@ msgstr "Clientes"
 
 #: templates/includes/base_form.html:7
 #: templates/organizations/organization/form.html:24
-#: templates/users/role/form.html:19 templates/users/user/form.html:23
+#: templates/tenancy/tenant/form.html:23 templates/users/role/form.html:19
+#: templates/users/user/form.html:23
 msgid "Details"
 msgstr "Detalles"
 
 #: templates/includes/base_form.html:16
 #: templates/organizations/organization/form.html:127
-#: templates/users/role/form.html:82 templates/users/user/form.html:80
+#: templates/tenancy/tenant/form.html:144 templates/users/role/form.html:82
+#: templates/users/user/form.html:80
 msgid "Discard"
 msgstr "Descartar"
 
 #: templates/includes/base_form.html:19
 #: templates/organizations/organization/form.html:130
-#: templates/users/role/form.html:85 templates/users/settings.html:64
-#: templates/users/user/form.html:83
+#: templates/tenancy/tenant/form.html:147 templates/users/role/form.html:85
+#: templates/users/settings.html:64 templates/users/user/form.html:83
 msgid "Save Changes"
 msgstr "Guardar cambios"
 
@@ -3109,6 +3242,7 @@ msgstr "Siguiente"
 
 #: templates/includes/row_actions.html:5
 #: templates/organizations/organization/detail.html:119
+#: templates/tenancy/tenant/list.html:99
 msgid "View"
 msgstr "Ver"
 
@@ -3117,7 +3251,9 @@ msgstr "Ver"
 #: templates/organizations/organization/detail.html:158
 #: templates/organizations/organization/detail.html:192
 #: templates/organizations/organization/list.html:123
-#: templates/users/role/list.html:104 templates/users/user/list.html:119
+#: templates/tenancy/tenant/detail.html:34
+#: templates/tenancy/tenant/list.html:103 templates/users/role/list.html:104
+#: templates/users/user/list.html:119
 msgid "Edit"
 msgstr "Editar"
 
@@ -3170,6 +3306,7 @@ msgid "No roles for this organization."
 msgstr "No hay roles para esta organización."
 
 #: templates/organizations/organization/form.html:83
+#: templates/tenancy/tenant/form.html:108
 msgid ""
 "JSON overrides of the kind defaults (labs, fleet, thresholds, analysis, "
 "alerts)."
@@ -3223,6 +3360,22 @@ msgstr "Eliminar organización"
 msgid "Organization deleted successfully."
 msgstr "Organización eliminada correctamente."
 
+#: templates/public/landing.html:10
+#, fuzzy
+#| msgid "Laboratory Management"
+msgid "Laboratory management platform"
+msgstr "Gestión de laboratorios"
+
+#: templates/public/landing.html:13
+msgid ""
+"This is the platform's public page. Each client works on its own subdomain, "
+"with its own users and data."
+msgstr ""
+
+#: templates/public/landing.html:16
+msgid "Sign in from your workspace address, or ask your administrator for it."
+msgstr ""
+
 #: templates/reports/analysis_threshold/detail.html:22
 msgid "Edit Threshold"
 msgstr "Editar umbral"
@@ -3263,15 +3416,15 @@ msgstr "Crear umbral"
 msgid "Search by parameter or unit..."
 msgstr "Buscar por parámetro o unidad..."
 
-#: templates/reports/analysis_threshold/list.html:69
+#: templates/reports/analysis_threshold/list.html:80
 msgid "Warning / Critical"
 msgstr "Advertencia / Crítico"
 
-#: templates/reports/analysis_threshold/list.html:111
+#: templates/reports/analysis_threshold/list.html:129
 msgid "No thresholds found"
 msgstr "No se encontraron umbrales"
 
-#: templates/reports/analysis_threshold/list.html:112
+#: templates/reports/analysis_threshold/list.html:130
 msgid ""
 "We couldn't find any thresholds matching your search. Try adjusting your "
 "criteria or create a new threshold."
@@ -3279,11 +3432,11 @@ msgstr ""
 "No encontramos ningún umbral que coincida con su búsqueda. Ajuste sus "
 "criterios o cree un nuevo umbral."
 
-#: templates/reports/analysis_threshold/list.html:126
+#: templates/reports/analysis_threshold/list.html:144
 msgid "Delete Threshold"
 msgstr "Eliminar umbral"
 
-#: templates/reports/analysis_threshold/list.html:127
+#: templates/reports/analysis_threshold/list.html:145
 msgid "Analysis threshold deleted successfully."
 msgstr "Umbral de análisis eliminado correctamente."
 
@@ -3518,10 +3671,6 @@ msgstr "del límite crítico"
 msgid "No correlation data available"
 msgstr "No hay datos de correlación disponibles"
 
-#: templates/reports/report/component_analysis.html:820
-msgid "Usage"
-msgstr "Uso"
-
 #: templates/reports/report/component_analysis.html:884
 #: templates/reports/report/component_analysis.html:943
 #: templates/reports/report/component_analysis.html:1240
@@ -3689,18 +3838,18 @@ msgstr ""
 msgid "Lab, PER, serial or machine"
 msgstr "Lab, PER, serie o máquina"
 
-#: templates/reports/report/list.html:106
+#: templates/reports/report/list.html:112
 msgid ""
 "Search by lab, PER, serial or machine, then refine with the advanced filters."
 msgstr ""
 "Busque por lab, PER, serie o máquina y luego refine con los filtros "
 "avanzados."
 
-#: templates/reports/report/list.html:174
+#: templates/reports/report/list.html:192
 msgid "No reports found"
 msgstr "No se encontraron informes"
 
-#: templates/reports/report/list.html:175
+#: templates/reports/report/list.html:193
 msgid ""
 "We couldn't find any reports matching your search. Try adjusting your "
 "criteria or create a new report."
@@ -3708,13 +3857,108 @@ msgstr ""
 "No encontramos ningún informe que coincida con su búsqueda. Ajuste sus "
 "criterios o cree un nuevo informe."
 
-#: templates/reports/report/list.html:189
+#: templates/reports/report/list.html:207
 msgid "Delete Report"
 msgstr "Eliminar informe"
 
-#: templates/reports/report/list.html:190
+#: templates/reports/report/list.html:208
 msgid "Report deleted successfully."
 msgstr "Informe eliminado correctamente."
+
+#: templates/tenancy/tenant/detail.html:25
+msgid "Schema"
+msgstr "Esquema"
+
+#: templates/tenancy/tenant/detail.html:41
+#: templates/tenancy/tenant/list.html:109
+msgid "Suspend"
+msgstr "Suspender"
+
+#: templates/tenancy/tenant/detail.html:46
+#: templates/tenancy/tenant/list.html:113
+#| msgid "Active"
+msgid "Activate"
+msgstr "Activar"
+
+#: templates/tenancy/tenant/detail.html:80
+msgid "Using the kind defaults."
+msgstr "Usando los valores por defecto del tipo."
+
+#: templates/tenancy/tenant/detail.html:90
+msgid "Domains"
+msgstr "Dominios"
+
+#: templates/tenancy/tenant/detail.html:97
+#| msgid "Primary color"
+msgid "Primary"
+msgstr "Principal"
+
+#: templates/tenancy/tenant/detail.html:101
+msgid "No domains registered."
+msgstr "No hay dominios registrados."
+
+#: templates/tenancy/tenant/detail.html:110
+msgid "Measured on the tenant's PostgreSQL schema for billing."
+msgstr "Medido sobre el esquema PostgreSQL del cliente para facturación."
+
+#: templates/tenancy/tenant/detail.html:114
+msgid "Storage"
+msgstr "Almacenamiento"
+
+#: templates/tenancy/tenant/detail.html:118
+msgid "Rows"
+msgstr "Filas"
+
+#: templates/tenancy/tenant/form.html:75
+#| msgid "Success"
+msgid "Access"
+msgstr "Acceso"
+
+#: templates/tenancy/tenant/form.html:76
+msgid ""
+"The tenant is created with its schema, domain, root organization and "
+"administrator."
+msgstr ""
+
+#: templates/tenancy/tenant/form.html:122
+msgid "Empty slots fall back to the platform brand."
+msgstr "Los campos vacíos usan la marca de la plataforma."
+
+#: templates/tenancy/tenant/list.html:12
+#| msgid "Reports Management"
+msgid "Tenants Management"
+msgstr "Gestión de clientes"
+
+#: templates/tenancy/tenant/list.html:15
+msgid "Provision clients, suspend them and review their consumption."
+msgstr "Aprovisiona clientes, suspéndelos y revisa su consumo."
+
+#: templates/tenancy/tenant/list.html:22
+#| msgid "Create Fleet"
+msgid "Create Tenant"
+msgstr "Crear cliente"
+
+#: templates/tenancy/tenant/list.html:32
+#| msgid "Search roles..."
+msgid "Search tenants..."
+msgstr "Buscar clientes..."
+
+#: templates/tenancy/tenant/list.html:123
+#| msgid "No accounts found"
+msgid "No tenants found"
+msgstr "No se encontraron clientes"
+
+#: templates/tenancy/tenant/list.html:124
+#, fuzzy
+#| msgid ""
+#| "We couldn't find any roles matching your search. Try adjusting your "
+#| "criteria or create a new one."
+msgid ""
+"We couldn't find any tenants matching your search. Try adjusting your "
+"criteria or create a new one."
+msgstr ""
+"No encontramos roles que coincidan con tu búsqueda. Ajusta los criterios o "
+"crea uno nuevo."
 
 #: templates/users/profile.html:37
 msgid "Administrator"
@@ -3915,6 +4159,12 @@ msgstr "Desactivar usuario"
 msgid "User deactivated successfully."
 msgstr "Usuario desactivado correctamente."
 
+#~ msgid "Used to resolve the tenant from the request host"
+#~ msgstr "Se usa para resolver el tenant a partir del host de la petición"
+
+#~ msgid "Empty for a root tenant"
+#~ msgstr "Vacío para un tenant raíz"
+
 #~ msgid "Accounts"
 #~ msgstr "Cuentas"
 
@@ -4009,9 +4259,6 @@ msgstr "Usuario desactivado correctamente."
 
 #~ msgid "Remove Permanent"
 #~ msgstr "Eliminar permanentemente"
-
-#~ msgid "No accounts found"
-#~ msgstr "No se encontraron cuentas"
 
 #~ msgid ""
 #~ "We couldn't find any accounts matching your current search or filters. "
