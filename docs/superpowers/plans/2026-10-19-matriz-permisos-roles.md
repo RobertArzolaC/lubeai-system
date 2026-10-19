@@ -419,3 +419,8 @@ Print the module/group/permission structure from a Django shell in the `marco` t
   Clientes, Cuentas y accesos), 13 model cards, 54 permissions.
 - **Test DB isolation:** the verification runs used `TEST.NAME=test_django_role_matrix`
   because another process was holding the shared `test_django` database.
+- **Post-review fixes:** the fresh review found no Critical issues. Two Important
+  issues were fixed with red→green tests: the permission field's validation error
+  is now rendered (with a Spanish message) and `selected_permission_ids` is cached
+  so the update page no longer queries once per checkbox. The module order is also
+  pinned by a test. Final users suite: 100/100 pass.
