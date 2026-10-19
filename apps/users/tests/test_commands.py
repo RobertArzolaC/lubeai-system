@@ -6,6 +6,7 @@ from io import StringIO
 
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
+from django.core.management.base import CommandError
 from django.test import TestCase
 from django_tenants.management.commands import BaseTenantCommand
 
@@ -53,3 +54,31 @@ class AddDefaultUsersCommandTests(UserTenantTestCase):
 
         self.assertEqual(User.objects.count(), 3)
         self.assertIn("already exists", output.getvalue())
+
+    def test_command_rejects_a_weak_password(self) -> None:
+        """A weak ``--password`` is refused; no repository default exists."""
+        with self.assertRaises(CommandError):
+            call_command(
+                "add_default_users",
+                schema=self.tenant.schema_name,
+                password="123",
+                stdout=StringIO(),
+            )
+
+        self.assertFalse(User.objects.filter(email="admin@example.com").exists())
+
+    def test_command_generates_a_password_when_omitted(self) -> None:
+        """With no ``--password`` a random one is printed once and applied."""
+        output = StringIO()
+
+        self.run_command(output)
+
+        marker = "Generated password (shown once):"
+        line = next(
+            line
+            for line in output.getvalue().splitlines()
+            if line.startswith(marker)
+        )
+        password = line[len(marker) :].strip()
+        admin = User.objects.get(email="admin@example.com")
+        self.assertTrue(admin.check_password(password))

@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from django.core.management.base import CommandParser
 from django_tenants.management.commands import BaseTenantCommand
 
 
@@ -16,6 +17,27 @@ class Command(BaseTenantCommand):
     """Run the default-user seeding once per tenant schema."""
 
     COMMAND_NAME = "add_default_users_tenant"
+
+    def add_arguments(self, parser: CommandParser) -> None:
+        """Add the wrapper flags and the password the wrapped command accepts.
+
+        The wrapped command is not imported by ``BaseTenantCommand`` when the
+        parser is built, so the password option is declared here and forwarded
+        through :meth:`execute_command`.
+
+        Args:
+            parser: The command's argument parser.
+        """
+        super().add_arguments(parser)
+        parser.add_argument(
+            "--password",
+            default=None,
+            help=(
+                "Password for the created users, validated with Django's "
+                "configured validators. A random one is generated and printed "
+                "once when omitted."
+            ),
+        )
 
     def execute_command(
         self, tenant: Any, command_name: str, *args: Any, **options: Any

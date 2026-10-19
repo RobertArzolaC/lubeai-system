@@ -1018,6 +1018,10 @@ msgstr "Padre"
 msgid "You cannot use that parent."
 msgstr "No puedes usar ese padre."
 
+#: apps/organizations/forms.py
+msgid "This tenant already has a root organization."
+msgstr "Este tenant ya tiene una organización raíz."
+
 #: apps/organizations/forms.py:98
 msgid "You cannot create a platform."
 msgstr "No puedes crear una plataforma."

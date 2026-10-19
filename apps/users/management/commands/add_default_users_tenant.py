@@ -3,6 +3,11 @@
 This command is meant to be called through
 :mod:`apps.users.management.commands.add_default_users`, which selects a schema
 before handing over control.
+
+The password is never hard-coded: it comes from ``--password``, is validated
+with Django's configured validators, and when omitted a random one is generated
+and printed **once**. A repository default would let anyone stand up an
+administrator with a publicly known password in every tenant schema.
 """
 
 from __future__ import annotations
@@ -11,9 +16,13 @@ from typing import Any
 
 from allauth.account.models import EmailAddress
 from django.contrib.auth.models import Permission
-from django.core.management.base import BaseCommand
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
+from django.core.management.base import BaseCommand, CommandError, CommandParser
 
 from apps.organizations.models import Organization
+from apps.organizations.services import OrganizationService, RootOrganizationError
+from apps.tenancy.management.commands.provision_tenant import generate_password
 from apps.users.models import User
 
 
@@ -22,13 +31,35 @@ class Command(BaseCommand):
 
     help = "Generates default users including superuser and staff users"
 
+    def add_arguments(self, parser: CommandParser) -> None:
+        """Register the command options.
+
+        Args:
+            parser: The command's argument parser.
+        """
+        parser.add_argument(
+            "--password",
+            default=None,
+            help=(
+                "Password for the created users, validated with Django's "
+                "configured validators. A random one is generated and printed "
+                "once when omitted."
+            ),
+        )
+
     def handle(self, *args: Any, **options: Any) -> None:
         """Create every default user, skipping the ones that already exist.
 
         Args:
             *args: Unused positional arguments.
             **options: Parsed management options.
+
+        Raises:
+            CommandError: If the password fails Django's configured validators,
+                or the tenant schema has more than one root organization.
         """
+        password, generated = self._resolve_password(options.get("password"))
+
         superuser_data = {
             "email": "admin@example.com",
             "first_name": "Administrator",
@@ -52,12 +83,11 @@ class Command(BaseCommand):
             },
         ]
 
-        default_password = "holamundo"
         users_created = 0
         users_existed = 0
 
         superuser = self.create_user(
-            superuser_data, default_password, self.get_default_organization()
+            superuser_data, password, self.get_default_organization()
         )
         if superuser:
             users_created += 1
@@ -74,7 +104,7 @@ class Command(BaseCommand):
 
         for staff_data in staff_users_data:
             staff_user = self.create_user(
-                staff_data, default_password, self.get_default_organization()
+                staff_data, password, self.get_default_organization()
             )
             if staff_user:
                 users_created += 1
@@ -100,6 +130,38 @@ class Command(BaseCommand):
                 f"- Total users processed: {users_created + users_existed}"
             )
         )
+        if generated:
+            self.stdout.write(
+                self.style.WARNING(
+                    f"Generated password (shown once): {password}"
+                )
+            )
+
+    @staticmethod
+    def _resolve_password(provided: str | None) -> tuple[str, bool]:
+        """Return a validated password and whether it was generated.
+
+        There is no repository default: a publicly known password must never be
+        able to create a superuser, which is why the value is validated with the
+        same validators the tenant console and ``provision_tenant`` use.
+
+        Args:
+            provided: Password from ``--password``, if any.
+
+        Returns:
+            A ``(password, generated)`` pair; ``generated`` is ``True`` when the
+            caller omitted the option and a random password was drawn.
+
+        Raises:
+            CommandError: If the password fails Django's configured validators.
+        """
+        generated = provided is None
+        password = provided or generate_password()
+        try:
+            validate_password(password)
+        except ValidationError as error:
+            raise CommandError("; ".join(error.messages)) from error
+        return password, generated
 
     def create_user(
         self,
@@ -145,8 +207,15 @@ class Command(BaseCommand):
 
         Returns:
             The tenant's root organization, or ``None`` when it is missing.
+
+        Raises:
+            CommandError: If the schema holds more than one root organization,
+                because attaching the users to an arbitrary one would be wrong.
         """
-        return Organization.objects.filter(parent__isnull=True).order_by("pk").first()
+        try:
+            return OrganizationService.resolve_root(required=False)
+        except RootOrganizationError as error:
+            raise CommandError(str(error)) from error
 
     def assign_staff_permissions(self, user: User) -> None:
         """Grant the staff user the permissions the platform manages with.
