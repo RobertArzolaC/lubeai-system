@@ -1,12 +1,15 @@
 """Tests for the report export service."""
 
+from datetime import date
 from io import BytesIO
 
 from openpyxl import load_workbook
 
 from apps.core.tests.base import TenantSchemaTestCase
+from apps.equipment import factories as equipment_factories
 from apps.reports import factories, models
 from apps.reports.services import ReportExportService
+from apps.reports.services.component_analysis import ComponentAnalysisService
 
 
 class ReportExportServiceTests(TenantSchemaTestCase):
@@ -61,3 +64,62 @@ class ReportExportServiceTests(TenantSchemaTestCase):
         self.assertEqual(mapping["Cliente"], self.report.machine.branch.name)
         self.assertEqual(mapping["Equipo"], self.report.machine.name)
         self.assertEqual(mapping["Modelo"], self.report.machine.model)
+
+
+class ComponentAnalysisUsageCorrelationTests(TenantSchemaTestCase):
+    """Tests for the usage/wear correlation series."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.machine = equipment_factories.MachineFactory(measurement_unit="HOURS")
+        self.component_type = equipment_factories.ComponentTypeFactory(
+            name="Bomba Centrífuga"
+        )
+        self.component = equipment_factories.ComponentFactory(
+            machine=self.machine, type=self.component_type
+        )
+
+    def _build_report(self, **overrides: object) -> models.Report:
+        """Create a report with its lab analysis for the correlation series."""
+        report = factories.ReportFactory(
+            machine=self.machine,
+            component=self.component,
+            sample_date=date(2024, 1, 15),
+            **overrides,
+        )
+        factories.LabAnalysisFactory(report=report, iron_fe=42)
+        return report
+
+    def test_uses_lubricant_hours_when_present(self) -> None:
+        """The correlation prefers the lubricant hours over machine hours."""
+        self._build_report(lubricant_hours=320, machine_hours=1200)
+
+        data = ComponentAnalysisService(self.component.pk).get_usage_correlation()
+
+        self.assertEqual(data["series"][0]["data"][0]["x"], 320.0)
+
+    def test_falls_back_to_machine_hours(self) -> None:
+        """Missing lubricant hours fall back to machine hours."""
+        self._build_report(lubricant_hours=None, machine_hours=1200)
+
+        data = ComponentAnalysisService(self.component.pk).get_usage_correlation()
+
+        self.assertEqual(data["series"][0]["data"][0]["x"], 1200.0)
+
+    def test_falls_back_to_machine_kms(self) -> None:
+        """Missing lubricant kilometres fall back to machine kilometres."""
+        self.machine.measurement_unit = "KM"
+        self.machine.save(update_fields=["measurement_unit"])
+        self._build_report(lubricant_kms=None, machine_kms=45000)
+
+        data = ComponentAnalysisService(self.component.pk).get_usage_correlation()
+
+        self.assertEqual(data["series"][0]["data"][0]["x"], 45000.0)
+
+    def test_additives_trend_is_available_for_non_motor_components(self) -> None:
+        """Additives are returned for a non-motor component type."""
+        self._build_report(lubricant_hours=320, machine_hours=1200)
+
+        data = ComponentAnalysisService(self.component.pk).get_additives_trend()
+
+        self.assertEqual(len(data["series"]), 4)

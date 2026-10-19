@@ -566,9 +566,13 @@ class ComponentAnalysisService:
             # Get usage value based on measurement unit
             if measurement_unit == "hours":
                 usage = report.lubricant_hours
+                if usage is None:
+                    usage = report.machine_hours
                 usage_label = "Horas"
             else:
                 usage = report.lubricant_kms
+                if usage is None:
+                    usage = report.machine_kms
                 usage_label = "Kilómetros"
 
             if usage is None:
