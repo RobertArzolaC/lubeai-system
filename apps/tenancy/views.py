@@ -89,6 +89,7 @@ class TenantDetailView(OpsTenantRequiredMixin, core_mixins.BaseDetailView):
         """Measure the tenant's usage and expose its domains."""
         context = super().get_context_data(**kwargs)
         context["consumption"] = services.TenantService.consumption(self.object)
+        context["domains"] = self.object.domains.all()
         context["tenant_branding"] = {
             slot: getattr(self.object, slot, "") or ""
             for slot in constants.BRANDING_SLOTS

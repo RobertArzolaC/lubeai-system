@@ -339,6 +339,18 @@ class TenantUpdateViewTests(OpsTenantTestCase):
             response.context["consumption"]["schema_name"], self.tenant.schema_name
         )
 
+    def test_detail_lists_registered_domains(self) -> None:
+        """The detail page lists the tenant's domains instead of an empty panel."""
+        models.Domain.objects.create(domain="acme.test.com", tenant=self.acme)
+
+        response = self.client.get(
+            reverse("apps.tenancy:tenant_detail", args=[self.acme.pk])
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "acme.test.com")
+        self.assertNotContains(response, "No domains registered.")
+
 
 class TenantConsoleIsolationTests(TenantProvisionTestCase):
     """The console is only reachable from the operations tenant."""
