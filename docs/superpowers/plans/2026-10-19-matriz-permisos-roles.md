@@ -46,7 +46,7 @@
 - Produces: `RoleForm.permission_groups -> list[dict]` where each permission entry is `{"pk": int, "label": str}`.
 - Produces: `RoleForm._permission_label(permission: Permission) -> str`.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 Append to `apps/users/tests/test_forms.py`:
 
@@ -107,13 +107,13 @@ from apps.organizations import factories as organization_factories
 from apps.users import constants as users_constants
 ```
 
-- [ ] **Step 2: Run the tests to verify they fail**
+- [x] **Step 2: Run the tests to verify they fail**
 
 Run: `docker compose exec -T django python manage.py test apps.users.tests.test_forms.RoleFormPermissionCatalogTests --settings=config.settings.testing -v 2`
 
 Expected: FAIL — `apps.users.constants` does not exist / `RoleForm` has no attribute `permission_groups` entries with `label`.
 
-- [ ] **Step 3: Create the constants module**
+- [x] **Step 3: Create the constants module**
 
 `apps/users/constants.py`:
 
@@ -140,7 +140,7 @@ PERMISSION_ACTIONS: Final[dict[str, str]] = {
 }
 ```
 
-- [ ] **Step 4: Filter the queryset and build readable labels in `RoleForm`**
+- [x] **Step 4: Filter the queryset and build readable labels in `RoleForm`**
 
 In `apps/users/forms.py`:
 
@@ -194,17 +194,17 @@ def _permission_label(self, permission: Permission) -> str:
 
 - Use `capfirst(content_type.name)` for the group `label`.
 
-- [ ] **Step 5: Update the template to use the readable label**
+- [x] **Step 5: Update the template to use the readable label**
 
 In `templates/users/role/_permission_matrix.html`, replace `{{ permission.name }}` with `{{ permission.label }}`.
 
-- [ ] **Step 6: Run the tests to verify they pass**
+- [x] **Step 6: Run the tests to verify they pass**
 
 Run: `docker compose exec -T django python manage.py test apps.users.tests.test_forms.RoleFormPermissionCatalogTests --settings=config.settings.testing -v 2`
 
 Expected: PASS 3/3.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add apps/users/constants.py apps/users/forms.py templates/users/role/_permission_matrix.html apps/users/tests/test_forms.py
@@ -228,7 +228,7 @@ git commit -m "fix(users): scope role permissions to dashboard modules"
   `{"app_label": str, "label": str, "groups": list[dict]}`, in
   `ROLE_PERMISSION_MODULES` order.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Append to `apps/users/tests/test_role_views.py`:
 
@@ -257,13 +257,13 @@ def test_create_renders_only_dashboard_permission_modules(self) -> None:
     self.assertContains(response, "Ver Máquina")
 ```
 
-- [ ] **Step 2: Run the test to verify it fails**
+- [x] **Step 2: Run the test to verify it fails**
 
 Run: `docker compose exec -T django python manage.py test apps.users.tests.test_role_views.RoleViewTests.test_create_renders_only_dashboard_permission_modules --settings=config.settings.testing -v 2`
 
 Expected: FAIL — the module headers are not rendered and system groups still appear.
 
-- [ ] **Step 3: Add `permission_modules` to `RoleForm`**
+- [x] **Step 3: Add `permission_modules` to `RoleForm`**
 
 In `apps/users/forms.py`:
 
@@ -283,7 +283,7 @@ def permission_modules(self) -> list[dict]:
     ]
 ```
 
-- [ ] **Step 4: Render module sections in the template**
+- [x] **Step 4: Render module sections in the template**
 
 Replace the outer grid of `templates/users/role/_permission_matrix.html` with one section per module. Keep the existing card markup inside. Use `group.key` (for example `equipment.machine`) as the value of `data-select-all` and `data-group`; update the script to select by that key:
 
@@ -346,7 +346,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 ```
 
-- [ ] **Step 5: Add the missing translation and compile it**
+- [x] **Step 5: Add the missing translation and compile it**
 
 In `locale/es/LC_MESSAGES/django.po`, add:
 
@@ -363,13 +363,13 @@ docker compose exec -T django python manage.py compilemessages -l es
 
 Expected: no output or `processing file ... django.po`; a newer `django.mo` timestamp.
 
-- [ ] **Step 6: Run the tests to verify they pass**
+- [x] **Step 6: Run the tests to verify they pass**
 
 Run: `docker compose exec -T django python manage.py test apps.users.tests.test_forms.RoleFormPermissionCatalogTests apps.users.tests.test_role_views --settings=config.settings.testing -v 2`
 
 Expected: PASS.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add apps/users/forms.py templates/users/role/_permission_matrix.html locale/es/LC_MESSAGES/django.po apps/users/tests/test_role_views.py
@@ -383,22 +383,39 @@ git commit -m "feat(users): group role permissions by dashboard module"
 
 ### Task 3: Verificación final
 
-- [ ] **Step 1: Run the full users suite**
+- [x] **Step 1: Run the full users suite**
 
 Run: `docker compose exec -T django python manage.py test apps.users --settings=config.settings.testing -v 2`
 
 Expected: PASS, 0 failures.
 
-- [ ] **Step 2: Run the full project suite**
+- [x] **Step 2: Run the full project suite**
 
 Run: `docker compose exec -T django python manage.py test --settings=config.settings.testing -v 2`
 
-Expected: PASS, 0 failures.
+Expected: PASS, 0 failures. Executed: 781/782 pass; the only failure is a pre-existing equipment template assertion documented in the execution notes below.
 
-- [ ] **Step 3: Inspect the rendered page**
+- [x] **Step 3: Inspect the rendered page**
 
 Print the module/group/permission structure from a Django shell in the `marco` tenant, or open `/users/roles/create/` logged in as an admin:
 
 - 5 modules: Equipos, Informes, Alertas, Clientes, Cuentas y accesos.
 - 13 model cards, 54 permissions.
 - No `Entrada de registro`, `Tarea periódica`, `Sesión`, `Token` or `Tipo de contenido`.
+
+---
+
+## Execution Notes (2026-10-19)
+
+- **Targeted tests:** 11/11 pass (`RoleFormPermissionCatalogTests` + `RoleViewTests`).
+- **Users suite:** 97/97 pass under `config.settings.testing`.
+- **Full suite:** 781/782 pass. The single failure is pre-existing and unrelated to this plan:
+  `apps.equipment.tests.test_templates.DashboardModuleAccessTests.test_dashboard_hides_equipment_links_without_permission`
+  asserts that `/equipment/machines/` is absent from the dashboard response, but the
+  dashboard's machine autocomplete renders `/equipment/machines/autocomplete/`, which
+  contains that substring. The test fails in isolation on untouched equipment/dashboard
+  code; it is left as a separate fix.
+- **Rendered matrix in the `marco` tenant:** 5 modules (Equipos, Informes, Alertas,
+  Clientes, Cuentas y accesos), 13 model cards, 54 permissions.
+- **Test DB isolation:** the verification runs used `TEST.NAME=test_django_role_matrix`
+  because another process was holding the shared `test_django` database.
