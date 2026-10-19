@@ -12,8 +12,9 @@ idempotent — running it twice does not duplicate data.
 
 from __future__ import annotations
 
+import calendar
 import random
-from datetime import timedelta
+from datetime import date, timedelta
 from decimal import Decimal
 from typing import Any
 
@@ -29,7 +30,7 @@ from apps.organizations import choices as org_choices
 from apps.organizations import models as org_models
 from apps.reports import choices as report_choices
 from apps.reports import models as report_models
-from apps.tenancy import constants
+from apps.tenancy import branding, constants
 from apps.tenancy import models as tenancy_models
 from apps.users.models import User
 
@@ -149,6 +150,29 @@ DEMO_VIEW_PERMISSIONS: list[str] = [
 ]
 
 
+def add_months(base: date, months: int) -> date:
+    """Add whole calendar months to a date, clamping the day of month.
+
+    Calendar-aware addition is what keeps the ``lab_number`` (which embeds
+    ``%Y%m``) unique: adding 30 days at a time drifts across month boundaries
+    and can land two samples in the same calendar month, which
+    ``get_or_create`` would then silently collapse into one report.
+
+    Args:
+        base: Date to shift.
+        months: Signed number of months to add.
+
+    Returns:
+        The shifted date; its day is clamped to the last valid day of the
+        target month (e.g. ``Jan 31 + 1 month`` is ``Feb 28``).
+    """
+    month_index = base.month - 1 + months
+    year = base.year + month_index // 12
+    month = month_index % 12 + 1
+    day = min(base.day, calendar.monthrange(year, month)[1])
+    return date(year, month, day)
+
+
 class Command(BaseCommand):
     """Seed the demo dataset of one tenant."""
 
@@ -171,8 +195,8 @@ class Command(BaseCommand):
         parser.add_argument(
             "--months",
             type=int,
-            default=18,
-            help="Number of monthly samples per component (default: 18).",
+            default=36,
+            help="Number of monthly samples per component (default: 36).",
         )
         parser.add_argument(
             "--seed",
@@ -183,14 +207,14 @@ class Command(BaseCommand):
         parser.add_argument(
             "--machines",
             type=int,
-            default=1,
-            help="Number of machines per branch (default: 1).",
+            default=2,
+            help="Number of machines per branch (default: 2).",
         )
         parser.add_argument(
             "--components",
             type=int,
-            default=2,
-            help="Number of components per machine (default: 2).",
+            default=3,
+            help="Number of components per machine (default: 3).",
         )
 
     def handle(self, *args: Any, **options: Any) -> None:
@@ -214,8 +238,12 @@ class Command(BaseCommand):
         self.components = options["components"]
 
         tenant = self._resolve_tenant(options["schema"])
+        # Brand the registry row first (public), so the root organization the
+        # seeding reads next already inherits the client's palette and logo.
+        self._apply_known_brand(tenant)
         with tenant_context(tenant), transaction.atomic():
             root = self._root_organization(tenant)
+            self._apply_known_brand_to_root(root, tenant)
             self._seed_organization_tree(root)
             self._seed_users(root)
             self._seed_component_types(root)
@@ -230,6 +258,61 @@ class Command(BaseCommand):
                     f"{report_models.Report.objects.count()} reports."
                 )
             )
+
+    def _apply_known_brand(self, tenant: tenancy_models.Tenant) -> None:
+        """Write the tenant's known brand (palette and logo) to the registry.
+
+        The registry lives in ``public``, so the connection is switched for the
+        write and restored afterwards. A tenant whose slug has no known brand is
+        left untouched.
+
+        Args:
+            tenant: Tenant that will be seeded.
+        """
+        brand = branding.branding_for(tenant.slug)
+        if brand is None:
+            return
+
+        logo_name = branding.install_logo(tenant.slug)
+        fields = list(brand)
+        if logo_name:
+            tenant.logo.name = logo_name
+            fields.append("logo")
+        for slot, value in brand.items():
+            setattr(tenant, slot, value)
+
+        previous_tenant = connection.tenant
+        try:
+            connection.set_schema_to_public()
+            tenant.save(verbosity=0, update_fields=fields)
+        finally:
+            connection.set_tenant(previous_tenant)
+
+    def _apply_known_brand_to_root(
+        self, root: org_models.Organization, tenant: tenancy_models.Tenant
+    ) -> None:
+        """Copy the tenant's known brand onto its root organization.
+
+        The branding context processor reads the acting organization (or the
+        root) before the tenant, so the demo only shows the client's brand when
+        the root carries it too. The root reuses the tenant's stored logo name,
+        so the file is never duplicated.
+
+        Args:
+            root: Root organization of the tenant being seeded.
+            tenant: Tenant being seeded; its slug selects the brand.
+        """
+        brand = branding.branding_for(tenant.slug)
+        if brand is None:
+            return
+
+        fields = list(brand)
+        for slot, value in brand.items():
+            setattr(root, slot, value)
+        if tenant.logo:
+            root.logo.name = tenant.logo.name
+            fields.append("logo")
+        root.save(update_fields=fields)
 
     def _resolve_tenant(self, schema_name: str | None) -> tenancy_models.Tenant:
         """Return the tenant whose schema the command will seed.
@@ -486,14 +569,20 @@ class Command(BaseCommand):
         component: equipment_models.Component,
         laboratory: report_models.Laboratory,
     ) -> None:
-        """Create the monthly report history for a single component."""
-        start = timezone.localdate() - timedelta(days=30 * self.months)
+        """Create the monthly report history for a single component.
+
+        Samples are anchored to the first day of the current month and stepped
+        one calendar month at a time, so the series is stable while a month is
+        running (re-running the command does not move the ``lab_number``) and
+        always yields exactly one sample per month.
+        """
+        start = add_months(timezone.localdate().replace(day=1), -(self.months - 1))
         # Each component has a base condition trend (some degrade over time).
         base_condition = self.rng.choice(CONDITIONS)
         degrade = self.rng.random() < 0.5
 
         for month in range(self.months):
-            sample_date = start + timedelta(days=30 * month)
+            sample_date = add_months(start, month)
             condition = self._evolve_condition(base_condition, month, degrade)
             lab_number = f"{organization.slug[:8].upper()}-{machine.id}-{component.id}-{sample_date:%Y%m}"
             report, created = report_models.Report.objects.get_or_create(
