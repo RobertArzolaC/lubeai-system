@@ -1,9 +1,23 @@
 import sentry_sdk
 from celery.schedules import crontab
+from django.core.exceptions import ImproperlyConfigured
 
 from config.settings.base import *
 from config.settings.tools.django_constance import *
 from config.settings.tools.django_easy_audit import *
+
+# Fail fast on a placeholder host. The base settings default ``ALLOWED_HOSTS``
+# to ``.midominio.com,localhost`` so a local run works out of the box; shipping
+# that default to production would accept requests for a domain the operator
+# does not own (and reject the real one). Require an explicit value.
+if not ALLOWED_HOSTS or any(
+    "midominio.com" in host for host in ALLOWED_HOSTS
+):
+    raise ImproperlyConfigured(
+        "ALLOWED_HOSTS still contains the '.midominio.com' placeholder (or is "
+        "empty); set it to the real platform domain before deploying. See "
+        "docs/despliegue-multi-tenant.md."
+    )
 
 # Email settings
 # https://docs.djangoproject.com/en/5.0/topics/email/
