@@ -236,6 +236,8 @@ class Command(BaseCommand):
         self.months = options["months"]
         self.machines = options["machines"]
         self.components = options["components"]
+        if self.machines < 1 or self.components < 1:
+            raise CommandError("--machines and --components must be at least 1.")
 
         tenant = self._resolve_tenant(options["schema"])
         # Brand the registry row first (public), so the root organization the
@@ -354,14 +356,21 @@ class Command(BaseCommand):
             The root organization created by ``provision_tenant``.
 
         Raises:
-            CommandError: If the tenant has no root organization yet.
+            CommandError: If the tenant has no root organization yet, or if it
+                has more than one (an ambiguous tree is never seeded blindly).
         """
-        root = org_models.Organization.objects.filter(parent__isnull=True).first()
-        if root is None:
+        from apps.organizations.services import (
+            OrganizationService,
+            RootOrganizationError,
+        )
+
+        try:
+            root = OrganizationService.resolve_root()
+        except RootOrganizationError as error:
             raise CommandError(
-                f"Tenant '{tenant.slug}' has no root organization; "
+                f"Tenant '{tenant.slug}' has no single root organization; "
                 "run provision_tenant first."
-            )
+            ) from error
         return root
 
     def _seed_organization_tree(self, root: org_models.Organization) -> None:

@@ -244,6 +244,13 @@ class SeedDemoDataTests(TenantProvisionTestCase):
         with self.assertRaises(CommandError):
             call_command("seed_demo_data", schema="bare", verbosity=0)
 
+    def test_rejects_non_positive_equipment_counts(self) -> None:
+        """``--machines`` / ``--components`` below 1 fail loudly."""
+        with self.assertRaises(CommandError):
+            self.seed(months=1, machines=0)
+        with self.assertRaises(CommandError):
+            self.seed(months=1, components=-1)
+
 
 @override_settings(MEDIA_ROOT=BRAND_MEDIA_ROOT)
 class KnownBrandSeedTests(TenantProvisionTestCase):
