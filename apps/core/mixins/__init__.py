@@ -10,6 +10,7 @@ from apps.core.mixins.views import (
     BaseUpdateView,
     BaseView,
     ClientAttributionMixin,
+    scope_view_queryset,
 )
 
 __all__ = [
@@ -25,4 +26,5 @@ __all__ = [
     "ClientAttributionMixin",
     "OrganizationScopeFormMixin",
     "UserStampMixin",
+    "scope_view_queryset",
 ]

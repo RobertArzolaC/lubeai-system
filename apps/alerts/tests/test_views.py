@@ -7,6 +7,7 @@ from django.urls import NoReverseMatch, reverse
 
 from apps.alerts import factories, models
 from apps.alerts.tests.base import AlertTenantTestCase
+from apps.organizations import factories as organization_factories
 from apps.users import factories as users_factories
 
 ALERTS_TEMPLATES = [
@@ -191,3 +192,111 @@ class AlertViewTests(AlertTenantTestCase):
         """Alerts cannot be created manually, so no create URL exists."""
         with self.assertRaises(NoReverseMatch):
             reverse("apps.alerts:alert_create")
+
+
+class AlertStatusUpdateViewTests(AlertTenantTestCase):
+    """The status modal updates only the lifecycle status of an alert."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.user = users_factories.UserFactory()
+        self.alert = factories.AlertFactory(
+            status="OPEN",
+            severity="CRITICAL",
+            value=88.0,
+            unit="ppm",
+        )
+
+    def _url(self) -> str:
+        return reverse(
+            "apps.alerts:alert_status_update", kwargs={"pk": self.alert.pk}
+        )
+
+    def test_status_update_requires_login(self) -> None:
+        """Anonymous users are redirected to the login page."""
+        response = self.client.post(self._url(), {"status": "ACKNOWLEDGED"})
+        self.assertEqual(response.status_code, 302)
+
+    def test_status_update_requires_permission(self) -> None:
+        """Authenticated users without permission get a JSON 403."""
+        self.client.force_login(self.user)
+        response = self.client.post(self._url(), {"status": "ACKNOWLEDGED"})
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.json()["status"], "error")
+
+    def test_status_update_rejects_an_invalid_status(self) -> None:
+        """A value outside the enumeration is rejected with a JSON 400."""
+        grant_permissions(self.user, "change_alert")
+        self.client.force_login(self.user)
+        response = self.client.post(self._url(), {"status": "NOPE"})
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json()["status"], "error")
+        self.alert.refresh_from_db()
+        self.assertEqual(self.alert.status, "OPEN")
+
+    def test_status_update_acknowledges_the_alert(self) -> None:
+        """Acknowledging stamps the actor and the timestamp."""
+        grant_permissions(self.user, "change_alert")
+        self.client.force_login(self.user)
+        response = self.client.post(self._url(), {"status": "ACKNOWLEDGED"})
+
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["status"], "success")
+        self.assertEqual(payload["new_status"], "ACKNOWLEDGED")
+        self.alert.refresh_from_db()
+        self.assertEqual(self.alert.status, "ACKNOWLEDGED")
+        self.assertEqual(self.alert.acknowledged_by, self.user)
+        self.assertIsNotNone(self.alert.acknowledged_at)
+
+    def test_status_update_touches_nothing_else(self) -> None:
+        """The endpoint only changes the status and its lifecycle stamps."""
+        grant_permissions(self.user, "change_alert")
+        self.client.force_login(self.user)
+        self.client.post(self._url(), {"status": "RESOLVED"})
+
+        self.alert.refresh_from_db()
+        self.assertEqual(self.alert.severity, "CRITICAL")
+        self.assertEqual(self.alert.value, 88.0)
+        self.assertEqual(self.alert.unit, "ppm")
+        self.assertIsNotNone(self.alert.resolved_at)
+
+    def test_status_update_reopens_the_alert(self) -> None:
+        """Going back to open clears the acknowledgement fields."""
+        grant_permissions(self.user, "change_alert")
+        self.client.force_login(self.user)
+        self.client.post(self._url(), {"status": "ACKNOWLEDGED"})
+
+        self.client.post(self._url(), {"status": "OPEN"})
+
+        self.alert.refresh_from_db()
+        self.assertEqual(self.alert.status, "OPEN")
+        self.assertIsNone(self.alert.acknowledged_at)
+        self.assertIsNone(self.alert.acknowledged_by_id)
+        self.assertIsNone(self.alert.resolved_at)
+
+    def test_status_update_is_get_forbidden(self) -> None:
+        """The endpoint accepts POST only."""
+        grant_permissions(self.user, "change_alert")
+        self.client.force_login(self.user)
+        response = self.client.get(self._url())
+        self.assertEqual(response.status_code, 405)
+
+    def test_status_update_scopes_to_the_visible_organizations(self) -> None:
+        """An alert of an organization outside the user's subtree is a 404."""
+        home = organization_factories.OrganizationFactory(slug="casa")
+        self.user.organization = home
+        self.user.save(update_fields=["organization"])
+        grant_permissions(self.user, "change_alert")
+        foreign = organization_factories.OrganizationFactory(slug="ajena")
+        hidden = factories.AlertFactory(status="OPEN", organization=foreign)
+        self.client.force_login(self.user)
+
+        response = self.client.post(
+            reverse("apps.alerts:alert_status_update", kwargs={"pk": hidden.pk}),
+            {"status": "RESOLVED"},
+        )
+
+        self.assertEqual(response.status_code, 404)
+        hidden.refresh_from_db()
+        self.assertEqual(hidden.status, "OPEN")

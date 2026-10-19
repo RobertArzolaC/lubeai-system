@@ -10,6 +10,11 @@ urlpatterns = [
     path("", views.AlertListView.as_view(), name="alert_list"),
     path("<int:pk>/", views.AlertDetailView.as_view(), name="alert_detail"),
     path(
+        "<int:pk>/status/",
+        views.AlertStatusUpdateView.as_view(),
+        name="alert_status_update",
+    ),
+    path(
         "<int:pk>/update/",
         views.AlertUpdateView.as_view(),
         name="alert_update",

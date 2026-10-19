@@ -1,10 +1,12 @@
 from typing import Any
 
 from django.db.models import Count, Q, QuerySet
+from django.http import HttpResponseBase, JsonResponse
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
 from apps.alerts import choices, filtersets, forms, models
+from apps.alerts.services.alert_service import AlertService
 from apps.core import mixins as core_mixins
 
 
@@ -33,6 +35,7 @@ class AlertListView(core_mixins.ClientAttributionMixin, core_mixins.BaseListView
         context["entity"] = _("Alert")
         context["entity_plural"] = _("Alerts")
         context["back_url"] = reverse_lazy("apps.dashboard:index")
+        context["status_choices"] = choices.AlertStatus.choices
         context["status_counts"] = self.get_queryset().aggregate(
             total=Count("id"),
             open=Count("id", filter=Q(status=choices.AlertStatus.OPEN)),
@@ -104,3 +107,88 @@ class AlertDeleteView(core_mixins.BaseDeleteView):
 
     model = models.Alert
     permission_required = "alerts.delete_alert"
+
+
+class AlertStatusUpdateView(core_mixins.BaseView):
+    """Update only the lifecycle status of an alert.
+
+    Acknowledging or resolving an alert is the operation users perform from the
+    list, so it is a small AJAX endpoint instead of a full form round-trip: the
+    submitted ``status`` is applied through
+    :class:`~apps.alerts.services.alert_service.AlertService`, which keeps the
+    acknowledgement/resolution stamps in sync with it.
+    """
+
+    model = models.Alert
+    permission_required = "alerts.change_alert"
+
+    def handle_no_permission(self) -> HttpResponseBase:
+        """Redirect anonymous users, answer a JSON 403 to the others.
+
+        The modal calls this endpoint with ``fetch``, so an authenticated user
+        without ``alerts.change_alert`` must get a JSON body instead of the
+        HTML error page Django renders by default.
+        """
+        if self.request.user.is_authenticated:
+            return JsonResponse(
+                {
+                    "status": "error",
+                    "message": _("You do not have permission to change this alert."),
+                },
+                status=403,
+            )
+        return super().handle_no_permission()
+
+    def post(self, request, *args: Any, **kwargs: Any) -> JsonResponse:
+        """Apply the submitted status to the alert and answer as JSON.
+
+        Args:
+            request: The current POST request; ``status`` carries the new value.
+            *args: Unused positional arguments.
+            **kwargs: URL keyword arguments; ``pk`` identifies the alert.
+
+        Returns:
+            A JSON payload with the new status, or an error payload with the
+            matching HTTP status: 400 for an invalid value, 404 when the alert
+            is not reachable (including another organization's alert) and 403
+            when the user lacks ``alerts.change_alert``.
+        """
+        form = forms.AlertStatusForm(request.POST)
+        if not form.is_valid():
+            return JsonResponse(
+                {
+                    "status": "error",
+                    "message": _("Invalid status."),
+                    "errors": form.errors,
+                },
+                status=400,
+            )
+
+        try:
+            alert = core_mixins.scope_view_queryset(
+                self, self.model._default_manager.all()
+            ).get(pk=kwargs.get("pk"))
+        except self.model.DoesNotExist:
+            return JsonResponse(
+                {"status": "error", "message": _("Alert not found.")},
+                status=404,
+            )
+
+        alert.status = form.cleaned_data["status"]
+        AlertService().apply_status_transition(alert, request.user)
+        alert.save(
+            update_fields=[
+                "status",
+                "acknowledged_at",
+                "acknowledged_by",
+                "resolved_at",
+            ]
+        )
+        return JsonResponse(
+            {
+                "status": "success",
+                "message": _("Alert status updated."),
+                "new_status": alert.status,
+                "new_status_display": alert.get_status_display(),
+            }
+        )

@@ -189,6 +189,14 @@
                 {% url "apps.alerts:alert_detail" alert.pk as detail_url %}
                 {% url "apps.alerts:alert_update" alert.pk as update_url %}
                 {% url "apps.alerts:alert_delete" alert.pk as delete_url %}
+                {% if "alerts.change_alert" in perms %}
+                <button type="button" class="js-status mr-1.5 flex h-9 w-9 items-center justify-center rounded-lg bg-white text-bodydark2 transition-all duration-300 hover:text-primary hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 dark:bg-boxdark"
+                    data-url="{% url 'apps.alerts:alert_status_update' alert.pk %}"
+                    data-status="{{ alert.status }}"
+                    title="{% trans 'Change status' %}" aria-label="{% trans 'Change status' %}">
+                    <i data-lucide="refresh-cw" class="h-4.5 w-4.5" stroke-width="1.8" aria-hidden="true"></i>
+                </button>
+                {% endif %}
                 {% include "includes/row_actions.html" with detail_url=detail_url update_url=update_url delete_url=delete_url view_perm="alerts.view_alert" change_perm="alerts.change_alert" delete_perm="alerts.delete_alert" %}
             </div>
         </div>
@@ -211,4 +219,47 @@
 {% trans "Delete Alert" as confirm_title %}
 {% trans "Alert deleted successfully." as success_message %}
 {% include "includes/delete_script.html" with confirm_title=confirm_title success_message=success_message %}
+
+{% if "alerts.change_alert" in perms %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const statusLabels = {
+            {% for value, label in status_choices %}'{{ value }}': '{{ label|escapejs }}',{% endfor %}
+        };
+        document.querySelectorAll('.js-status').forEach((button) => {
+            button.addEventListener('click', async () => {
+                const { value: status } = await Swal.fire({
+                    title: '{% trans "Update alert status" %}',
+                    input: 'select',
+                    inputOptions: statusLabels,
+                    inputValue: button.dataset.status,
+                    showCancelButton: true,
+                    confirmButtonText: '{% trans "Save" %}',
+                    cancelButtonText: '{% trans "Cancel" %}',
+                });
+                if (!status) return;
+
+                try {
+                    const response = await fetch(button.dataset.url, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}',
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: new URLSearchParams({ status: status }),
+                    });
+                    const payload = await response.json();
+                    if (!response.ok) {
+                        throw new Error(payload.message || 'Request failed');
+                    }
+                    showAlert('{% trans "Success" %}', payload.message, 'success');
+                    setTimeout(() => location.reload(), 800);
+                } catch (error) {
+                    showAlert('{% trans "Error" %}', '{% trans "There was a problem processing your request." %}', 'error');
+                }
+            });
+        });
+    });
+</script>
+{% endif %}
 {% endblock extra_js %}

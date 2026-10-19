@@ -3,7 +3,7 @@ from typing import ClassVar
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
-from apps.alerts import models
+from apps.alerts import choices, models
 from apps.alerts.services.alert_service import AlertService
 from apps.equipment import models as equipment_models
 from apps.reports import models as report_models
@@ -113,3 +113,19 @@ class AlertForm(forms.ModelForm):
             alert.save()
             self.save_m2m()
         return alert
+
+
+class AlertStatusForm(forms.Form):
+    """Validate the single field the status modal submits.
+
+    Acknowledging or resolving an alert is the day-to-day operation, and it must
+    not require opening (and re-submitting) the whole edit form: this form
+    accepts the new ``status`` only, and
+    :class:`~apps.alerts.services.alert_service.AlertService` derives the
+    lifecycle timestamps from it.
+    """
+
+    status = forms.ChoiceField(
+        label=_("Status"),
+        choices=choices.AlertStatus.choices,
+    )

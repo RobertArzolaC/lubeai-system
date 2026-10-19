@@ -30,6 +30,15 @@ class AlertsTemplateRenderingTests(AlertTenantTestCase):
         self.assertNotContains(response, "Parameter")
         self.assertContains(response, self.alert.get_category_display())
 
+    def test_list_template_exposes_the_status_modal(self) -> None:
+        """The list offers the status modal next to the row actions."""
+        response = self.client.get(reverse("apps.alerts:alert_list"))
+        status_url = reverse(
+            "apps.alerts:alert_status_update", kwargs={"pk": self.alert.pk}
+        )
+        self.assertContains(response, 'class="js-status')
+        self.assertContains(response, f'data-url="{status_url}"')
+
     def test_list_avoids_n_plus_one_queries(self) -> None:
         """The list query count does not grow with the number of alerts."""
         # Warm up one-time writes (constance persists defaults on first read,
