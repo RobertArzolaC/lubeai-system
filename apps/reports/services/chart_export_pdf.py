@@ -1,7 +1,7 @@
 import base64
 import io
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any, ClassVar
 
 from django.http import HttpResponse
 from django.utils import timezone
@@ -31,7 +31,7 @@ class ChartExportPDFService:
     summary data, and wear source information.
     """
 
-    CHART_TITLES: List[str] = [
+    CHART_TITLES: ClassVar[list[str]] = [
         _("Wear Metals Profile (Fe, Cu, Al, Pb, Cr, Si, K)"),
         _("Wear Trends (Fe, Cu, Al)"),
         _("Contamination Alerts (Si, Na, K)"),
@@ -40,7 +40,7 @@ class ChartExportPDFService:
         _("Usage vs Wear Correlation"),
     ]
 
-    PARAM_LABELS: Dict[str, str] = {
+    PARAM_LABELS: ClassVar[dict[str, str]] = {
         "iron_fe": str(_("Iron (Fe)")),
         "copper_cu": str(_("Copper (Cu)")),
         "aluminum_al": str(_("Aluminum (Al)")),
@@ -52,9 +52,9 @@ class ChartExportPDFService:
 
     def __init__(
         self,
-        charts: List[str],
-        summary: Dict[str, Any],
-        organization_name: Optional[str] = None,
+        charts: list[str],
+        summary: dict[str, Any],
+        organization_name: str | None = None,
     ) -> None:
         """Initialize service with chart and summary data.
 
@@ -66,7 +66,7 @@ class ChartExportPDFService:
         self.charts = charts
         self.summary = summary
         self.organization_name = organization_name
-        self._styles: Dict[str, ParagraphStyle] = {}
+        self._styles: dict[str, ParagraphStyle] = {}
         self._init_styles()
 
     def _init_styles(self) -> None:
@@ -161,7 +161,7 @@ class ChartExportPDFService:
         )
         return response
 
-    def _build_elements(self, doc: SimpleDocTemplate) -> List[Any]:
+    def _build_elements(self, doc: SimpleDocTemplate) -> list[Any]:
         """Build the list of PDF flowable elements.
 
         Args:
@@ -170,7 +170,7 @@ class ChartExportPDFService:
         Returns:
             List of reportlab flowable elements.
         """
-        elements: List[Any] = []
+        elements: list[Any] = []
 
         # Title
         elements.append(
@@ -306,8 +306,8 @@ class ChartExportPDFService:
         Returns:
             A Table flowable containing wear source information.
         """
-        wear_sources_data: Dict[str, str] = self.summary.get("wear_sources", {})
-        elements: List[Any] = []
+        wear_sources_data: dict[str, str] = self.summary.get("wear_sources", {})
+        elements: list[Any] = []
 
         if wear_sources_data:
             elements.append(
@@ -372,7 +372,7 @@ class ChartExportPDFService:
 
     def _build_first_chart_section(
         self, doc: SimpleDocTemplate
-    ) -> Optional[KeepTogether]:
+    ) -> KeepTogether | None:
         """Build the first chart section with a two-column layout.
 
         The left column contains the radar chart and the right column
@@ -432,7 +432,7 @@ class ChartExportPDFService:
             logger.exception("Error building first chart section")
             return None
 
-    def _build_remaining_chart_sections(self, doc: SimpleDocTemplate) -> List[Any]:
+    def _build_remaining_chart_sections(self, doc: SimpleDocTemplate) -> list[Any]:
         """Build full-width sections for charts after the first one.
 
         Args:
@@ -441,7 +441,7 @@ class ChartExportPDFService:
         Returns:
             List of flowable elements for the remaining charts.
         """
-        elements: List[Any] = []
+        elements: list[Any] = []
         available_width = doc.width
         available_height = 3.5 * inch
 

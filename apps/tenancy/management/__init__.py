@@ -1,1 +1,1 @@
-"""Package for the tenancy app's management commands."""
+"""Management package for the tenancy app."""

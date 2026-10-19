@@ -1,5 +1,5 @@
 import logging
-from typing import Any
+from typing import Any, ClassVar
 
 from apps.equipment import models as equipment_models
 from apps.reports import constants, models, utils
@@ -11,7 +11,7 @@ class ComponentAnalysisService:
     """Service for handling component analysis data and calculations."""
 
     # Fallback threshold constants (used if database is not populated)
-    THRESHOLDS = {
+    THRESHOLDS: ClassVar[dict[str, Any]] = {
         "wear_metals": {
             "iron_fe": {"warning": 75, "critical": 100, "unit": "ppm"},
             "copper_cu": {"warning": 20, "critical": 30, "unit": "ppm"},
@@ -160,7 +160,7 @@ class ComponentAnalysisService:
                 )
                 self._thresholds_cache = self.THRESHOLDS
 
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             logger.error(f"Error loading thresholds from database: {e}")
             self._thresholds_cache = self.THRESHOLDS
 

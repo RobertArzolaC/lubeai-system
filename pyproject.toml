@@ -52,3 +52,8 @@ production = [
     "whitenoise==6.12.0",
     "sentry-sdk>=2.69.1",
 ]
+
+[tool.ruff.lint.per-file-ignores]
+# Django migrations are generated code: their ``dependencies``/``operations``
+# lists are mutable class attributes by design, so RUF012 does not apply.
+"*/migrations/*" = ["RUF012"]

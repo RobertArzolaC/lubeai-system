@@ -1,5 +1,3 @@
-from django.conf import settings
-
 from config.settings.base import *
 from config.settings.tools.django_constance import *
 from config.settings.tools.django_easy_audit import *

@@ -1,5 +1,7 @@
 """Tests for the removal of the legacy ``Account`` model."""
 
+from typing import ClassVar
+
 from django.db import connection
 from django.db.migrations.executor import MigrationExecutor
 from django.test import TestCase
@@ -29,8 +31,8 @@ class DeleteAccountMigrationTests(UserTenantTestCase):
     (Review Focus #2).
     """
 
-    migrate_from = [("users", "0004_role")]
-    migrate_to = [("users", "0005_delete_account")]
+    migrate_from: ClassVar[list[tuple[str, str]]] = [("users", "0004_role")]
+    migrate_to: ClassVar[list[tuple[str, str]]] = [("users", "0005_delete_account")]
 
     def _migrate(self, targets) -> None:
         executor = MigrationExecutor(connection)

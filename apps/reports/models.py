@@ -248,7 +248,7 @@ class Report(TimeStampedModel, core_models.BaseUserTracked, core_models.IsActive
             models.Index(fields=["status"]),
             models.Index(fields=["condition"]),
         ]
-        permissions = [
+        permissions: ClassVar[list[tuple[str, str]]] = [
             ("view_component_analysis", _("Can view component analysis")),
         ]
 
