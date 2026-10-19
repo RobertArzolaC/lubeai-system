@@ -91,7 +91,10 @@ class Command(BaseCommand):
         parser.add_argument(
             "--domain",
             default=None,
-            help="Host name (defaults to <slug>.<PLATFORM_DOMAIN>).",
+            help=(
+                "Host name served by the tenant. Defaults to "
+                "<slug>.<TENANT_HOST_SUFFIX>; required when that suffix is empty."
+            ),
         )
         parser.add_argument(
             "--promote",

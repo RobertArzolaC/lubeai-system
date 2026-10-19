@@ -238,6 +238,14 @@ TENANT_DOMAIN_MODEL = "tenancy.Domain"
 # resolves the public urlconf instead of answering 404.
 PLATFORM_DOMAIN = config("PLATFORM_DOMAIN", default="localhost")
 
+# Suffix used to derive a client host when ``provision_tenant`` runs without an
+# explicit ``--domain``. It defaults to ``PLATFORM_DOMAIN`` so that a
+# single-droplet deployment where every client is a subdomain needs no extra
+# setting. Set it to an empty value when clients use unrelated domains: the
+# command then *requires* ``--domain`` instead of inventing a host, which is the
+# honest model when several schemas share one droplet but not one domain.
+TENANT_HOST_SUFFIX = config("TENANT_HOST_SUFFIX", default=PLATFORM_DOMAIN)
+
 PUBLIC_SCHEMA_URLCONF = "config.urls_public"
 
 # Skip redundant ``SET search_path`` statements when the path is already right.

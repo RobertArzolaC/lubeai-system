@@ -94,20 +94,77 @@ FILE_UPLOAD_PERMISSIONS = 0o644
 FILE_UPLOAD_DIRECTORY_PERMISSIONS = 0o755
 FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10MB
 
+# Reverse proxy and TLS
+#
+# The application does not terminate TLS: a reverse proxy (nginx, Caddy,
+# Traefik) does, and it must forward the original scheme and host. Without
+# SECURE_PROXY_SSL_HEADER Django believes every request is HTTP, so the absolute
+# URLs it builds (password reset links, allauth emails) would use ``http://`` and
+# the CSRF origin check would compare against the wrong scheme.
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+USE_X_FORWARDED_HOST = True
+
 # Configuración de CSRF
 
 CSRF_USE_SESSIONS = True
 CSRF_COOKIE_HTTPONLY = True
 
-# Cambia a True cuando tengas HTTPS
+# Origins Django accepts unsafe requests from. When the setting is empty they
+# are derived from ``ALLOWED_HOSTS`` as ``https`` origins, expanding Django's
+# leading-dot subdomain wildcard (``.midominio.com`` -> ``https://*.midominio.com``).
+# The previous ``http://<host>`` derivation was wrong twice over: it used the
+# wrong scheme for a TLS deployment and turned the wildcard into the invalid
+# origin ``http://.midominio.com``.
+def _trusted_origins(hosts: list[str]) -> list[str]:
+    """Return ``https`` origins for the given allowed hosts.
 
-CSRF_COOKIE_SECURE = False
-SESSION_COOKIE_SECURE = False
-CSRF_TRUSTED_ORIGINS = [f"http://{host}" for host in ALLOWED_HOSTS]
+    Args:
+        hosts: Values from ``ALLOWED_HOSTS`` (a leading dot means "subdomains").
 
-# Configuración de seguridad para producción sin HTTPS
+    Returns:
+        Trusted origins, skipping the ``*`` catch-all which cannot be expressed
+        as an origin.
+    """
+    origins: list[str] = []
+    for host in hosts:
+        host = host.strip()
+        if not host or host == "*":
+            continue
+        if host.startswith("."):
+            origins.append(f"https://*{host}")
+            origins.append(f"https://{host[1:]}")
+        else:
+            origins.append(f"https://{host}")
+    return origins
 
-SECURE_SSL_REDIRECT = False
+
+CSRF_TRUSTED_ORIGINS = config(
+    "CSRF_TRUSTED_ORIGINS", default="", cast=Csv()
+) or _trusted_origins(ALLOWED_HOSTS)
+
+# Cookies must only travel over TLS once the proxy is in place. Both default to
+# ``True``; set them to ``False`` only for a deliberate HTTP-only deployment.
+CSRF_COOKIE_SECURE = config("CSRF_COOKIE_SECURE", default=True, cast=bool)
+SESSION_COOKIE_SECURE = config("SESSION_COOKIE_SECURE", default=True, cast=bool)
+
+# Never share the session or CSRF cookie across tenants. ``sessions``, ``auth``
+# and ``admin`` are TENANT_APPS, so each schema owns its own ``django_session``
+# table: a cookie scoped to the parent domain would be meaningless in another
+# tenant's schema, and a colliding session key would read the wrong tenant's
+# session. Leaving both unset is what makes cookies host-only (per subdomain).
+if config("SESSION_COOKIE_DOMAIN", default="") or config(
+    "CSRF_COOKIE_DOMAIN", default=""
+):
+    raise ImproperlyConfigured(
+        "SESSION_COOKIE_DOMAIN/CSRF_COOKIE_DOMAIN must not be set: sessions live "
+        "in each tenant's schema, so a cookie shared across subdomains would "
+        "break tenant isolation. Remove it from the environment. See "
+        "docs/despliegue-multi-tenant.md."
+    )
+
+# Configuración de seguridad para producción
+
+SECURE_SSL_REDIRECT = config("SECURE_SSL_REDIRECT", default=True, cast=bool)
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 

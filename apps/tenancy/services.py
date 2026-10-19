@@ -55,7 +55,8 @@ def provision_tenant(
         default_password: Password set on a newly created administrator only;
             an existing administrator keeps its password.
         domain: Host name served by the tenant. Defaults to
-            ``<slug>.<PLATFORM_DOMAIN>``.
+            ``<slug>.<TENANT_HOST_SUFFIX>``; when that suffix is empty the
+            argument is required.
         branding: Optional mapping of branding slot (``primary_color``,
             ``chart_*``) to value. Slots that are absent keep their current
             value, so re-provisioning never erases a brand.
@@ -84,7 +85,7 @@ def provision_tenant(
     try:
         connection.set_schema_to_public()
 
-        resolved_domain = domain or f"{slug}.{settings.PLATFORM_DOMAIN}"
+        resolved_domain = _resolve_domain(slug=slug, domain=domain)
         # Validate the host *before* touching the registry: ``Tenant.save``
         # creates and migrates the schema (DDL, not transactional), so a later
         # failure would leave an orphan schema behind.
@@ -116,6 +117,37 @@ def provision_tenant(
 
     tenant.refresh_from_db()
     return tenant
+
+
+def _resolve_domain(*, slug: str, domain: str | None) -> str:
+    """Return the host the tenant will answer on.
+
+    A client may use a domain unrelated to the platform's, so the derived
+    ``<slug>.<TENANT_HOST_SUFFIX>`` is only a convenience for the common
+    single-droplet case where every client is a subdomain. When the suffix is
+    empty the caller must pass ``domain`` explicitly: inventing a host would be
+    wrong, not merely inconvenient.
+
+    Args:
+        slug: Tenant slug, used to build the derived host.
+        domain: Explicit host, or ``None`` to derive it from the suffix.
+
+    Returns:
+        The host name to register for the tenant.
+
+    Raises:
+        ValueError: If no domain was given and ``TENANT_HOST_SUFFIX`` is empty.
+    """
+    if domain:
+        return domain
+
+    suffix = getattr(settings, "TENANT_HOST_SUFFIX", "")
+    if not suffix:
+        raise ValueError(
+            f"No domain given for tenant '{slug}' and TENANT_HOST_SUFFIX is "
+            "empty; pass an explicit domain instead of relying on a derived host."
+        )
+    return f"{slug}.{suffix}"
 
 
 def _assert_domain_available(*, slug: str, domain: str) -> None:

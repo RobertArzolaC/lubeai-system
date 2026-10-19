@@ -80,6 +80,31 @@ class ProvisionTenantTests(TenantProvisionTestCase):
         self.assertIsNotNone(domain)
         self.assertEqual(domain.domain, f"acme.{settings.PLATFORM_DOMAIN}")
 
+    @override_settings(TENANT_HOST_SUFFIX="example.test")
+    def test_the_derived_host_uses_the_tenant_host_suffix(self) -> None:
+        """The derived host follows ``TENANT_HOST_SUFFIX``, not the landing host."""
+        tenant = self.provision()
+
+        self.assertEqual(tenant.get_primary_domain().domain, "acme.example.test")
+
+    @override_settings(TENANT_HOST_SUFFIX="example.test")
+    def test_an_explicit_domain_wins_over_the_suffix(self) -> None:
+        """A client may use a domain unrelated to the platform's own."""
+        tenant = self.provision(domain="lubricantes-cliente.com")
+
+        self.assertEqual(
+            tenant.get_primary_domain().domain, "lubricantes-cliente.com"
+        )
+
+    @override_settings(TENANT_HOST_SUFFIX="")
+    def test_provision_requires_an_explicit_domain_without_a_suffix(self) -> None:
+        """With no suffix the command refuses to invent a host."""
+        with self.assertRaisesMessage(ValueError, "TENANT_HOST_SUFFIX"):
+            self.provision(domain=None)
+
+        self.assertFalse(models.Tenant.objects.filter(slug="acme").exists())
+        self.assertFalse(schema_exists("acme"))
+
     def test_provision_grants_the_admin_every_permission(self) -> None:
         """The admin is a superuser, so allauth and the admin work on login."""
         tenant = self.provision()
