@@ -140,8 +140,21 @@ class CrossTenantIsolationTests(TenantProvisionTestCase):
             )
 
     def test_same_email_is_a_different_user_per_tenant(self) -> None:
-        """Users belong to their tenant schema: the same email is two accounts."""
-        user_factories.UserFactory(email="shared@example.com")
+        """Users belong to their tenant schema: the same email is two accounts.
+
+        Creating the row in both schemas (instead of only asserting absence)
+        proves the queryset reads the *current* schema rather than being empty.
+        """
+        local = user_factories.UserFactory(email="shared@example.com")
 
         with tenant_context(self.other):
-            self.assertFalse(User.objects.filter(email="shared@example.com").exists())
+            other = user_factories.UserFactory(email="shared@example.com")
+            self.assertEqual(
+                User.objects.filter(email="shared@example.com").count(), 1
+            )
+            self.assertEqual(
+                User.objects.get(email="shared@example.com").pk, other.pk
+            )
+
+        self.assertNotEqual(local.pk, other.pk)
+        self.assertEqual(User.objects.get(email="shared@example.com").pk, local.pk)

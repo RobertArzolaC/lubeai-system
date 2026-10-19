@@ -96,13 +96,13 @@ class UserAdminOrganizationScopeTests(UserTenantTestCase):
         super().setUp()
         self.site = AdminSite()
         self.model_admin = users_admin.CustomUserAdmin(users_models.User, self.site)
-        self.tenant = org_factories.OrganizationFactory(
+        self.organization = org_factories.OrganizationFactory(
             slug="adm-tenant", kind=org_choices.OrganizationKind.LAB
         )
         self.child = org_factories.OrganizationFactory(
             slug="adm-child",
             kind=org_choices.OrganizationKind.FINAL,
-            parent=self.tenant,
+            parent=self.organization,
         )
         self.outsider = org_factories.OrganizationFactory(
             slug="adm-outsider", kind=org_choices.OrganizationKind.LAB
@@ -119,9 +119,10 @@ class UserAdminOrganizationScopeTests(UserTenantTestCase):
 
     def test_scoped_staff_sees_only_its_subtree(self) -> None:
         """A staff user with an organization sees it and its descendants."""
-        staff = UserFactory(is_staff=True, organization=self.tenant)
+        staff = UserFactory(is_staff=True, organization=self.organization)
         self.assertEqual(
-            self.field_organization_ids(staff), {self.tenant.id, self.child.id}
+            self.field_organization_ids(staff),
+            {self.organization.id, self.child.id},
         )
 
     def test_superuser_sees_every_organization(self) -> None:
@@ -129,7 +130,7 @@ class UserAdminOrganizationScopeTests(UserTenantTestCase):
         admin = UserFactory(is_staff=True, is_superuser=True)
         ids = self.field_organization_ids(admin)
         self.assertIn(self.outsider.id, ids)
-        self.assertIn(self.tenant.id, ids)
+        self.assertIn(self.organization.id, ids)
 
 
 class UserAdminScopedActorTests(UserTenantTestCase):
@@ -140,13 +141,13 @@ class UserAdminScopedActorTests(UserTenantTestCase):
         super().setUp()
         self.site = AdminSite()
         self.model_admin = users_admin.CustomUserAdmin(users_models.User, self.site)
-        self.tenant = org_factories.OrganizationFactory(
+        self.organization = org_factories.OrganizationFactory(
             slug="sa-tenant", kind=org_choices.OrganizationKind.LAB
         )
         self.child = org_factories.OrganizationFactory(
             slug="sa-child",
             kind=org_choices.OrganizationKind.FINAL,
-            parent=self.tenant,
+            parent=self.organization,
         )
         self.outsider = org_factories.OrganizationFactory(
             slug="sa-outsider", kind=org_choices.OrganizationKind.LAB
@@ -155,7 +156,7 @@ class UserAdminScopedActorTests(UserTenantTestCase):
             codename__in=["view_user", "change_user", "add_user"]
         )
         # A multi-organization actor (tenant + child) and a leaf actor (child).
-        self.actor = UserFactory(is_staff=True, organization=self.tenant)
+        self.actor = UserFactory(is_staff=True, organization=self.organization)
         self.actor.user_permissions.add(*permissions)
         self.leaf = UserFactory(is_staff=True, organization=self.child)
         self.leaf.user_permissions.add(*permissions)
@@ -221,5 +222,5 @@ class UserAdminScopedActorTests(UserTenantTestCase):
         )
         self.assertEqual(
             {value for value, _label in list_filter.lookup_choices},
-            {self.tenant.id, self.child.id},
+            {self.organization.id, self.child.id},
         )
