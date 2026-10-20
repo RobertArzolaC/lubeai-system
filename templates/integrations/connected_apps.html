@@ -1,0 +1,202 @@
+{% extends "layouts/dashboard.html" %}
+{% load i18n %}
+
+{% block title_page %}{% trans "Asistentes conectados" %}{% endblock %}
+{% block toolbar_title %}{% trans "Asistentes conectados" %}{% endblock %}
+
+{% block content %}
+<div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+        <h2 class="text-3xl font-bold tracking-tight text-black dark:text-white">
+            {% trans "Conecta tus asistentes de IA" %}
+        </h2>
+        <p class="mt-1 max-w-2xl text-sm font-medium text-bodydark2">
+            {% trans "Autoriza a ChatGPT, Claude o Gemini para consultar la información de tu organización. El acceso es de solo lectura y puedes desconectarlo cuando quieras." %}
+        </p>
+    </div>
+    <a href="{{ back_url }}" class="inline-flex items-center justify-center gap-2 rounded-xl border border-stroke px-5 py-3 text-sm font-semibold text-black transition hover:bg-gray-50 dark:border-strokedark dark:text-white dark:hover:bg-white/5">
+        <i data-lucide="arrow-left" class="h-4 w-4" stroke-width="1.8" aria-hidden="true"></i>
+        {% trans "Volver al panel" %}
+    </a>
+</div>
+
+{% if not has_organization %}
+<div class="mb-6 rounded-xl border border-warning/30 bg-warning/10 p-4 text-sm text-body dark:text-bodydark">
+    <div class="flex items-start gap-3">
+        <i data-lucide="triangle-alert" class="mt-0.5 h-5 w-5 shrink-0 text-warning" stroke-width="1.8" aria-hidden="true"></i>
+        <p>{% trans "Tu usuario no tiene una organización asignada. Un asistente no podrá consultar datos hasta que un administrador te asigne una." %}</p>
+    </div>
+</div>
+{% endif %}
+
+<div class="grid grid-cols-1 gap-6 xl:grid-cols-3">
+    <div class="xl:col-span-2 flex flex-col gap-6">
+        <div class="rounded-2xl border border-stroke bg-white shadow-sm dark:border-strokedark dark:bg-boxdark">
+            <div class="border-b border-stroke px-6 py-4 dark:border-strokedark">
+                <h3 class="font-semibold text-black dark:text-white">{% trans "1. Copia la URL de conexión" %}</h3>
+                <p class="mt-1 text-sm text-bodydark2">{% trans "Pega esta URL cuando el asistente te pida añadir un conector o servidor MCP." %}</p>
+            </div>
+            <div class="p-6">
+                <div class="flex flex-col gap-3 sm:flex-row">
+                    <code id="mcp-url" class="flex-1 break-all rounded-xl border border-stroke bg-gray-2 px-4 py-3 text-sm font-medium text-black dark:border-strokedark dark:bg-meta-4 dark:text-white">{{ mcp_url }}</code>
+                    <button type="button" id="copy-mcp-url"
+                            class="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-bold text-white transition hover:bg-opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
+                        <i data-lucide="copy" class="h-4 w-4" stroke-width="1.8" aria-hidden="true"></i>
+                        {% trans "Copiar URL" %}
+                    </button>
+                </div>
+                <p class="mt-3 text-xs font-medium text-bodydark2">
+                    {% trans "La URL no lleva barra final. Cada cliente tiene su propia URL y sus propios accesos." %}
+                </p>
+            </div>
+        </div>
+
+        <div class="rounded-2xl border border-stroke bg-white shadow-sm dark:border-strokedark dark:bg-boxdark">
+            <div class="border-b border-stroke px-6 py-4 dark:border-strokedark">
+                <h3 class="font-semibold text-black dark:text-white">{% trans "2. Añádela en tu asistente" %}</h3>
+                <p class="mt-1 text-sm text-bodydark2">{% trans "Los nombres de los menús pueden variar según el plan y la versión del asistente." %}</p>
+            </div>
+            <div class="divide-y divide-stroke dark:divide-strokedark">
+                <details class="group p-5" open>
+                    <summary class="flex cursor-pointer list-none items-center justify-between gap-3">
+                        <span class="flex items-center gap-3 font-semibold text-black dark:text-white">
+                            <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary"><i data-lucide="bot" class="h-5 w-5" stroke-width="1.8" aria-hidden="true"></i></span>
+                            ChatGPT
+                        </span>
+                        <i data-lucide="chevron-down" class="h-4 w-4 text-bodydark2 transition group-open:rotate-180" stroke-width="1.8" aria-hidden="true"></i>
+                    </summary>
+                    <p class="mt-3 pl-12 text-sm text-body dark:text-bodydark">
+                        {% trans "Configuración → Conectores → Añadir conector personalizado. Pega la URL y completa el inicio de sesión cuando se abra esta web." %}
+                    </p>
+                </details>
+                <details class="group p-5">
+                    <summary class="flex cursor-pointer list-none items-center justify-between gap-3">
+                        <span class="flex items-center gap-3 font-semibold text-black dark:text-white">
+                            <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary"><i data-lucide="sparkles" class="h-5 w-5" stroke-width="1.8" aria-hidden="true"></i></span>
+                            Claude
+                        </span>
+                        <i data-lucide="chevron-down" class="h-4 w-4 text-bodydark2 transition group-open:rotate-180" stroke-width="1.8" aria-hidden="true"></i>
+                    </summary>
+                    <p class="mt-3 pl-12 text-sm text-body dark:text-bodydark">
+                        {% trans "Configuración → Conectores → Añadir conector personalizado. Pega la URL y autoriza el acceso con tu cuenta." %}
+                    </p>
+                </details>
+                <details class="group p-5">
+                    <summary class="flex cursor-pointer list-none items-center justify-between gap-3">
+                        <span class="flex items-center gap-3 font-semibold text-black dark:text-white">
+                            <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary"><i data-lucide="gem" class="h-5 w-5" stroke-width="1.8" aria-hidden="true"></i></span>
+                            Gemini
+                        </span>
+                        <i data-lucide="chevron-down" class="h-4 w-4 text-bodydark2 transition group-open:rotate-180" stroke-width="1.8" aria-hidden="true"></i>
+                    </summary>
+                    <p class="mt-3 pl-12 text-sm text-body dark:text-bodydark">
+                        {% trans "Extensiones o Conectores → Añadir servidor MCP. Pega la URL y completa el inicio de sesión." %}
+                    </p>
+                </details>
+            </div>
+        </div>
+
+        <div class="rounded-2xl border border-stroke bg-white shadow-sm dark:border-strokedark dark:bg-boxdark">
+            <div class="border-b border-stroke px-6 py-4 dark:border-strokedark">
+                <h3 class="font-semibold text-black dark:text-white">{% trans "3. Autoriza el acceso" %}</h3>
+            </div>
+            <div class="p-6">
+                <p class="text-sm text-body dark:text-bodydark">
+                    {% trans "El asistente abrirá una página de esta plataforma. Inicia sesión con tu cuenta y pulsa “Permitir acceso”. Después podrás consultar tus equipos, reportes y alertas desde el asistente." %}
+                </p>
+                {% if not has_any_module %}
+                <p class="mt-3 text-sm font-medium text-warning">
+                    {% trans "Tu rol todavía no tiene módulos habilitados. Pide a un administrador que revise tus permisos." %}
+                </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="flex flex-col gap-6">
+        <div class="rounded-2xl border border-stroke bg-white shadow-sm dark:border-strokedark dark:bg-boxdark">
+            <div class="flex items-center justify-between border-b border-stroke px-6 py-4 dark:border-strokedark">
+                <h3 class="font-semibold text-black dark:text-white">{% trans "Conexiones" %}</h3>
+                <span class="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-bold text-primary">{{ connections|length }}</span>
+            </div>
+            <div class="divide-y divide-stroke dark:divide-strokedark">
+                {% for connection in connections %}
+                <div class="p-5">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0">
+                            <p class="truncate font-semibold text-black dark:text-white">{{ connection.client_name }}</p>
+                            <p class="mt-1 truncate text-xs font-medium text-bodydark2">{{ connection.redirect_host|default:"—" }}</p>
+                        </div>
+                        {% if connection.active %}
+                        <span class="inline-flex shrink-0 items-center rounded-full bg-success/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-success">{% trans "Activa" %}</span>
+                        {% else %}
+                        <span class="inline-flex shrink-0 items-center rounded-full bg-gray-2 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-bodydark2 dark:bg-meta-4">{% trans "Inactiva" %}</span>
+                        {% endif %}
+                    </div>
+                    <dl class="mt-3 grid grid-cols-2 gap-2 text-xs">
+                        <div>
+                            <dt class="font-medium text-bodydark2">{% trans "Conectada" %}</dt>
+                            <dd class="font-semibold text-black dark:text-white">{{ connection.connected_at|date:"d/m/Y" }}</dd>
+                        </div>
+                        <div>
+                            <dt class="font-medium text-bodydark2">{% trans "Expira" %}</dt>
+                            <dd class="font-semibold text-black dark:text-white">{{ connection.expires_at|date:"d/m/Y" }}</dd>
+                        </div>
+                    </dl>
+                    {% if connection.active %}
+                    <form method="post" action="{% url 'apps.integrations:disconnect_app' connection.client.pk %}" class="mt-4">
+                        {% csrf_token %}
+                        <button type="submit"
+                                class="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-danger/30 px-4 py-2 text-xs font-bold text-danger transition hover:bg-danger/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger/40">
+                            <i data-lucide="unplug" class="h-3.5 w-3.5" stroke-width="1.8" aria-hidden="true"></i>
+                            {% trans "Desconectar" %}
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+                {% empty %}
+                <div class="p-6 text-center">
+                    <span class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gray-2 text-bodydark2 dark:bg-meta-4">
+                        <i data-lucide="plug-zap" class="h-6 w-6" stroke-width="1.8" aria-hidden="true"></i>
+                    </span>
+                    <p class="mt-3 text-sm font-semibold text-black dark:text-white">{% trans "Aún no hay asistentes conectados" %}</p>
+                    <p class="mt-1 text-xs text-bodydark2">{% trans "Cuando autorices uno, aparecerá aquí para que puedas revisarlo o desconectarlo." %}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="rounded-2xl border border-stroke bg-white p-6 shadow-sm dark:border-strokedark dark:bg-boxdark">
+            <h3 class="flex items-center gap-2 font-semibold text-black dark:text-white">
+                <i data-lucide="shield-check" class="h-4 w-4 text-primary" stroke-width="1.8" aria-hidden="true"></i>
+                {% trans "Seguridad" %}
+            </h3>
+            <ul class="mt-3 space-y-2 text-xs text-body dark:text-bodydark">
+                <li>{% trans "El asistente solo puede consultar datos de tu organización." %}</li>
+                <li>{% trans "El acceso es de solo lectura: no puede modificar equipos, reportes ni alertas." %}</li>
+                <li>{% trans "Si desconectas un asistente, su acceso se corta de inmediato." %}</li>
+                <li>{% trans "Si ves una conexión que no reconoces, desconéctala y cambia tu contraseña." %}</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const copyButton = document.getElementById('copy-mcp-url');
+        const mcpUrl = document.getElementById('mcp-url');
+        if (!copyButton || !mcpUrl) return;
+
+        copyButton.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(mcpUrl.textContent.trim());
+                showAlert('', '{% trans "URL copiada." %}', 'success');
+            } catch (error) {
+                showAlert('{% trans "Error" %}', '{% trans "No se pudo copiar la URL. Selecciónala manualmente." %}', 'error');
+            }
+        });
+    });
+</script>
+{% endblock extra_js %}

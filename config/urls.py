@@ -6,12 +6,18 @@ from django.urls import include, path
 
 from apps.authentication.views import PasswordChangeView
 from apps.core import views as core_views
+from apps.integrations.mcp import server as mcp_server
 
 handler404 = core_views.Error404View.as_view()
 handler500 = core_views.Error500View.as_view()
 handler403 = core_views.Error403View.as_view()
 
 urlpatterns = [
+    # MCP OAuth discovery documents must live at the host root, outside the
+    # authorization server's path.
+    path("", include("django_mcpz.oauth.wellknown")),
+    path("mcp", mcp_server),
+    path("oauth/", include("django_mcpz.oauth.urls")),
     path("admin/", admin.site.urls),
     path(
         "authentication/password/change/",
@@ -32,6 +38,7 @@ urlpatterns += [
     path("equipment/", include("apps.equipment.urls")),
     path("reports/", include("apps.reports.urls")),
     path("alerts/", include("apps.alerts.urls")),
+    path("integrations/", include("apps.integrations.urls")),
 ]
 
 if settings.DEBUG:

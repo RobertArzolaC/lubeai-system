@@ -25,7 +25,12 @@ COPY --from=builder /app/.venv /app/.venv
 COPY . /app
 
 # Compile Tailwind CSS using the standalone binary (no Node.js required).
-RUN DEBUG=false python manage.py tailwind build
+# The settings module validates PostgreSQL/ALLOWED_HOSTS at import time, but
+# compiling CSS never touches the database, so the build uses throwaway values.
+RUN DATABASE_URL=postgres://build:build@localhost:5432/build \
+    ALLOWED_HOSTS=build.example.com \
+    SECRET_KEY=build-only-secret \
+    DEBUG=false python manage.py tailwind build
 
 # GNU gettext (msgfmt) is required at runtime to compile .po catalogs
 # on container startup (see docker/docker-entrypoint.sh).

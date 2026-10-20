@@ -84,6 +84,22 @@ organizaciones, equipos ni informes.
 Los usuarios demo usan la contraseña `Demo12345!` (por ejemplo
 `admin@marco.pe`, `laboratorio@marco.pe`, `operaciones@minera-andina.pe`).
 
+### Asistentes MCP (ChatGPT, Claude, Gemini)
+
+Cada tenant expone un servidor MCP en `https://<tenant>/mcp`. Los clientes se
+conectan con OAuth desde la pantalla **Integraciones → Asistentes conectados**;
+no se pega ningún token manualmente.
+
+- Guía funcional y de seguridad: [`docs/mcp.md`](docs/mcp.md).
+- Endpoint: `POST /mcp`.
+- Descubrimiento OAuth por tenant:
+  `/.well-known/oauth-protected-resource/mcp` y
+  `/.well-known/oauth-authorization-server/oauth`.
+- Limpieza diaria de tokens: `python manage.py clear_mcp_oauth`.
+
+Las tools son de solo lectura y respetan la organización y los permisos Django
+del usuario que autoriza el asistente.
+
 ### Production
 
 ```bash

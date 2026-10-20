@@ -77,6 +77,12 @@
                         </li>
                         {% endif %}
                         <li>
+                            <a href="{% url 'apps.integrations:connected_apps' %}" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 hover:text-primary transition-all">
+                                <i data-lucide="plug" class="h-4.5 w-4.5" stroke-width="1.8" aria-hidden="true"></i>
+                                {% trans "Asistentes conectados" %}
+                            </a>
+                        </li>
+                        <li>
                             <a href="{% url 'apps.users:settings' %}" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 hover:text-primary transition-all">
                                 <i data-lucide="settings" class="h-4.5 w-4.5" stroke-width="1.8" aria-hidden="true"></i>
                                 {% trans "Account Settings" %}

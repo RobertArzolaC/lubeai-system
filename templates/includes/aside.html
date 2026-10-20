@@ -140,6 +140,19 @@
                     </li>
                     {% endif %}
 
+                    <li class="group-[.collapsed]:hidden">
+                        <h3 class="mb-4 ml-4 mt-8 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                            {% trans "Integraciones" %}
+                        </h3>
+                    </li>
+                    <li>
+                        <a class="flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-gray-600 dark:text-bodydark1 duration-300 ease-in-out hover:bg-gray-2 dark:hover:bg-meta-4 transition-all group-[.collapsed]:justify-center group-[.collapsed]:px-0 {% if '/integrations/mcp' in request.path %}bg-gray-2 dark:bg-meta-4 !text-primary{% endif %}"
+                           href="{% url 'apps.integrations:connected_apps' %}" title="{% trans 'Asistentes conectados' %}">
+                            <i data-lucide="plug" class="h-5 w-5 flex-shrink-0" stroke-width="1.8" aria-hidden="true"></i>
+                            <span class="group-[.collapsed]:hidden duration-300 ease-in-out overflow-hidden whitespace-nowrap">{% trans "Asistentes conectados" %}</span>
+                        </a>
+                    </li>
+
                     {% if perms.organizations.view_organization or perms.users.view_user or perms.users.view_role or current_tenant.is_ops and perms.tenancy.view_tenant %}
                     <li class="group-[.collapsed]:hidden">
                         <h3 class="mb-4 ml-4 mt-8 text-xs font-semibold text-gray-500 uppercase tracking-wider">

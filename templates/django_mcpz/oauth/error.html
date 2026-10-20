@@ -1,0 +1,25 @@
+{% extends "django_mcpz/oauth/base.html" %}
+{% load i18n %}
+
+{% block oauth_title %}{% trans "No se pudo conectar" %}{% endblock %}
+
+{% block oauth_content %}
+<div class="text-center">
+    <span class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-danger/10 text-danger">
+        <i data-lucide="shield-x" class="h-7 w-7" stroke-width="1.8" aria-hidden="true"></i>
+    </span>
+    <h2 class="mt-4 text-xl font-bold text-black dark:text-white">
+        {% trans "No se pudo completar la conexión" %}
+    </h2>
+    <p class="mt-2 text-sm text-body dark:text-bodydark">
+        {{ description }}
+    </p>
+    <p class="mt-4 text-xs font-medium text-bodydark2">
+        {% trans "Código de error" %}: <code class="rounded bg-gray-2 px-1.5 py-0.5 dark:bg-meta-4">{{ error }}</code>
+    </p>
+    <a href="{% url 'apps.dashboard:index' %}"
+       class="mt-6 inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-bold text-white transition hover:bg-opacity-90">
+        {% trans "Volver al panel" %}
+    </a>
+</div>
+{% endblock %}

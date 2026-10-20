@@ -329,7 +329,7 @@ SELECT * FROM public.django_migrations
 WHERE app IN (
   'auth', 'admin', 'sessions', 'sites', 'messages', 'staticfiles', 'humanize',
   'allauth', 'account', 'easyaudit', 'widget_tweaks', 'django_filters',
-  'django_extensions', 'rest_framework', 'authtoken', 'sesame', 'dal',
+  'django_extensions', 'django_mcpz_oauth', 'dal',
   'dal_select2', 'tailwind', 'core', 'authentication', 'users', 'theme',
   'organizations', 'equipment', 'reports', 'alerts', 'dashboard'
 );

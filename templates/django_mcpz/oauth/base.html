@@ -1,0 +1,35 @@
+{% extends "layouts/home.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block extra_css %}
+<meta name="robots" content="noindex">
+{% endblock extra_css %}
+
+{% block title_page %}{% block oauth_title %}{% endblock %}{% endblock %}
+
+{% block content %}
+<div class="mx-auto w-full max-w-2xl">
+    <div class="mb-8 flex flex-col items-center text-center">
+        {% if branding.logo %}
+        <img src="{{ branding.logo.url }}" alt="{% firstof current_organization.name current_tenant.name 'LubeAI' %}" class="mb-4 h-14 w-auto" />
+        {% else %}
+        <img src="{% static 'assets/images/logos/logo.png' %}" alt="LubeAI" class="mb-4 h-14 w-auto" />
+        {% endif %}
+        <p class="text-sm font-semibold uppercase tracking-[0.18em] text-primary">
+            {% trans "Conexión segura" %}
+        </p>
+        <h1 class="mt-2 text-2xl font-bold text-black dark:text-white sm:text-3xl">
+            {% firstof current_organization.name current_tenant.name "LubeAI" %}
+        </h1>
+    </div>
+
+    <div class="rounded-2xl border border-stroke bg-white p-6 shadow-theme-lg dark:border-strokedark dark:bg-boxdark sm:p-8">
+        {% block oauth_content %}{% endblock %}
+    </div>
+
+    <p class="mt-6 text-center text-xs font-medium text-bodydark2">
+        {% trans "Autorización gestionada por LubeAI. Nunca compartas tu contraseña con un asistente." %}
+    </p>
+</div>
+{% endblock content %}

@@ -10,9 +10,7 @@ from config.settings.tools.django_easy_audit import *
 # to ``.midominio.com,localhost`` so a local run works out of the box; shipping
 # that default to production would accept requests for a domain the operator
 # does not own (and reject the real one). Require an explicit value.
-if not ALLOWED_HOSTS or any(
-    "midominio.com" in host for host in ALLOWED_HOSTS
-):
+if not ALLOWED_HOSTS or any("midominio.com" in host for host in ALLOWED_HOSTS):
     raise ImproperlyConfigured(
         "ALLOWED_HOSTS still contains the '.midominio.com' placeholder (or is "
         "empty); set it to the real platform domain before deploying. See "
@@ -75,6 +73,11 @@ LOGGING = {
             "level": "DEBUG",
             "propagate": False,
         },
+        "django_mcpz.calls": {
+            "handlers": ["console", "file"],
+            "level": "INFO",
+            "propagate": False,
+        },
         "django.request": {
             "handlers": ["mail_admins"],
             "level": "ERROR",
@@ -108,6 +111,7 @@ USE_X_FORWARDED_HOST = True
 
 CSRF_USE_SESSIONS = True
 CSRF_COOKIE_HTTPONLY = True
+
 
 # Origins Django accepts unsafe requests from. When the setting is empty they
 # are derived from ``ALLOWED_HOSTS`` as ``https`` origins, expanding Django's

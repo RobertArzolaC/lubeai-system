@@ -33,9 +33,16 @@
         <div class="w-full xl:w-1/2 border-l border-gray-200 dark:border-gray-800">
             <div class="w-full p-8 sm:p-12.5 xl:p-15">
                 <span class="mb-1.5 block font-medium text-primary">{% trans "Welcome back" %}</span>
-                <h2 class="mb-9 text-2xl font-bold text-black dark:text-white sm:text-3xl">
+                <h2 class="mb-3 text-2xl font-bold text-black dark:text-white sm:text-3xl">
                     {% trans "Sign In" %}
                 </h2>
+                {% if request.GET.next and '/oauth/authorize' in request.GET.next %}
+                <p class="mb-7 rounded-lg border border-primary/20 bg-primary/5 px-4 py-3 text-sm font-medium text-body dark:text-bodydark">
+                    {% trans "Inicia sesión para conectar tu asistente. Después podrás revisar y autorizar el acceso." %}
+                </p>
+                {% else %}
+                <div class="mb-7"></div>
+                {% endif %}
 
                 <form method="POST" action="{% url "account_login" %}">
                     {% csrf_token %}
@@ -84,8 +91,7 @@
 
                     <div class="mt-6 text-center">
                         <p class="font-medium text-gray-500">
-                            {% trans "Don't have an account?" %}
-                            <a href="{% url 'account_signup' %}" class="text-primary hover:underline font-bold">{% trans "Sign Up" %}</a>
+                            {% trans "¿No tienes acceso? Contacta al administrador de tu organización." %}
                         </p>
                     </div>
                 </form>

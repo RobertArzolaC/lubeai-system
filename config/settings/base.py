@@ -1,3 +1,4 @@
+from datetime import timedelta
 from pathlib import Path
 
 from decouple import Csv, config
@@ -59,10 +60,9 @@ TENANT_APPS = [
     "widget_tweaks",
     "django_filters",
     "django_extensions",
-    "rest_framework",
-    "rest_framework.authtoken",
     "django_celery_beat",
-    "sesame",
+    "django_mcpz",
+    "django_mcpz.oauth",
     "dal",
     "dal_select2",
     "tailwind",
@@ -75,6 +75,7 @@ TENANT_APPS = [
     "apps.reports",
     "apps.alerts",
     "apps.dashboard",
+    "apps.integrations",
 ]
 
 INSTALLED_APPS = list(SHARED_APPS) + [
@@ -286,17 +287,19 @@ AUTHENTICATION_BACKENDS = [
 ACCOUNT_FORMS = {"signup": "apps.authentication.forms.CustomSignupForm"}
 
 
-# Django Rest Framework
+# MCP (Model Context Protocol)
+#
+# Hosted assistants (ChatGPT, Claude, Gemini) connect through OAuth 2.1 with
+# PKCE. ``django_mcpz.oauth`` derives the authorization-server URLs from the
+# current tenant host, so each client gets its own issuer and its tokens are
+# bound to that host's ``/mcp`` endpoint.
 
-REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.BasicAuthentication",
-        "rest_framework.authentication.SessionAuthentication",
-    ],
-    "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
-    ],
-}
+MCPZ_OAUTH_ACCESS_TOKEN_LIFETIME = timedelta(hours=1)
+MCPZ_OAUTH_REFRESH_TOKEN_LIFETIME = timedelta(days=90)
+MCPZ_OAUTH_DYNAMIC_REGISTRATION = True
+
+MCP_TOOL_DEFAULT_PAGE_SIZE = 25
+MCP_TOOL_MAX_PAGE_SIZE = 100
 
 # Celery settings
 

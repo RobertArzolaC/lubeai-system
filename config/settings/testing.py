@@ -13,6 +13,10 @@ DJANGO_EASY_AUDIT_WATCH_REQUEST_EVENTS = False
 # imported by config.urls and real error handlers (404/500/403) are used.
 DEBUG = False
 
+# Tests create many users and tenant schemas. Keep password hashing cheap; the
+# suite never asserts the production hasher.
+PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
+
 # Email settings
 EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 
