@@ -22,7 +22,7 @@ def _report_queryset(request) -> QuerySet:
     """Return the report queryset scoped to the caller's organization tree."""
     return scoped_queryset(
         request,
-        report_models.Report.objects.filter(is_active=True),
+        report_models.Report.objects.all(),
         field="organization",
     ).select_related("laboratory", "machine", "component", "component__type")
 

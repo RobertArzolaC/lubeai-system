@@ -42,8 +42,8 @@ class DashboardService:
         self.organization_ids = organization_ids
 
     def get_reports(self) -> QuerySet:
-        """Return the active reports filtered by the current filters."""
-        queryset = reports_models.Report.objects.filter(is_active=True)
+        """Return the reports filtered by the current filters."""
+        queryset = reports_models.Report.objects.all()
         if self.organization_ids is not None:
             queryset = queryset.filter(organization_id__in=self.organization_ids)
         if self.filters.search:
@@ -316,9 +316,7 @@ class DashboardService:
         if cached is not None:
             return cached
 
-        years_qs = reports_models.Report.objects.filter(
-            is_active=True, sample_date__isnull=False
-        )
+        years_qs = reports_models.Report.objects.filter(sample_date__isnull=False)
         fleets_qs = equipment_models.Fleet.objects.filter(is_active=True)
         if organization_ids is not None:
             years_qs = years_qs.filter(organization_id__in=organization_ids)

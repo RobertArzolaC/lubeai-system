@@ -51,7 +51,6 @@ class ReportFormTests(TenantSchemaTestCase):
             "sample_date": "2024-01-15",
             "status": "PENDING",
             "condition": "NORMAL",
-            "is_active": True,
         }
         data.update(overrides)
         return data

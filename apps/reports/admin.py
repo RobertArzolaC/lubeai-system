@@ -196,12 +196,10 @@ class ReportAdmin(admin.ModelAdmin):
         "status_badge",
         "condition_badge",
         "has_analysis",
-        "is_active",
     )
     list_filter = (
         "status",
         "condition",
-        "is_active",
         "laboratory",
         "component__type",
         "sample_date",
@@ -241,7 +239,6 @@ class ReportAdmin(admin.ModelAdmin):
                     ("lubricant", "serial_number_code"),
                     "status",
                     "condition",
-                    "is_active",
                 )
             },
         ),

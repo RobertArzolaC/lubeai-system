@@ -44,7 +44,7 @@ class Laboratory(
         return f"{self.name} ({self.code})"
 
 
-class Report(TimeStampedModel, core_models.BaseUserTracked, core_models.IsActive):
+class Report(TimeStampedModel, core_models.BaseUserTracked):
     """
     Report model.
 
@@ -243,8 +243,6 @@ class Report(TimeStampedModel, core_models.BaseUserTracked, core_models.IsActive
             models.Index(fields=["lab_number"]),
             models.Index(fields=["per_number"]),
             models.Index(fields=["sample_date"]),
-            models.Index(fields=["is_active"]),
-            models.Index(fields=["machine", "is_active"]),
             models.Index(fields=["status"]),
             models.Index(fields=["condition"]),
         ]

@@ -69,9 +69,9 @@ class AlertForm(forms.ModelForm):
         self.fields["component"].queryset = equipment_models.Component.objects.filter(
             is_active=True
         ).select_related("type")
-        self.fields["report"].queryset = report_models.Report.objects.filter(
-            is_active=True
-        ).select_related("machine", "component")
+        self.fields["report"].queryset = (
+            report_models.Report.objects.all().select_related("machine", "component")
+        )
 
     def clean(self) -> dict:
         """Validate that warning and critical limits are distinct.

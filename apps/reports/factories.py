@@ -160,7 +160,6 @@ class ReportFactory(factory.django.DjangoModelFactory):
         "random_element", elements=["PRE-PM", "POST-PM", "INSP"]
     )
     turnaround_days = factory.Faker("random_int", min=1, max=10)
-    is_active = True
     created_by = factory.SubFactory(user_factories.UserFactory)
     updated_by = factory.SelfAttribute("created_by")
 

@@ -34,7 +34,7 @@ class LaboratoryListView(core_mixins.BaseListView):
     def get_queryset(self) -> QuerySet:
         """Return laboratories annotated with their visible report count."""
         visible = scoping.user_visible_organization_ids(self.request.user)
-        report_filter = Q(reports__is_active=True)
+        report_filter = Q()
         if visible is not None:
             report_filter &= Q(reports__organization_id__in=visible)
         return (
@@ -71,9 +71,7 @@ class LaboratoryDetailView(core_mixins.BaseDetailView):
             "apps.reports:laboratory_update", kwargs={"pk": self.object.pk}
         )
         context["reports"] = scoping.scope_queryset(
-            self.object.reports.select_related("machine", "component").filter(
-                is_active=True
-            ),
+            self.object.reports.select_related("machine", "component"),
             self.request.user,
         )[:10]
         return context

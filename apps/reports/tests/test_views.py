@@ -73,7 +73,6 @@ def report_payload(**overrides: object) -> dict:
         "sample_date": "2024-01-15",
         "status": "PENDING",
         "condition": "NORMAL",
-        "is_active": True,
     }
     data.update(overrides)
     return data

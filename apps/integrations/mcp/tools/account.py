@@ -48,7 +48,7 @@ def get_account_overview(request) -> AccountOverviewResult:
     if can_view_reports:
         reports = scoped_queryset(
             request,
-            report_models.Report.objects.filter(is_active=True),
+            report_models.Report.objects.all(),
             field="organization",
         )
         report_count = reports.count()

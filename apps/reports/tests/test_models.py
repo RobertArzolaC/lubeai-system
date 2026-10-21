@@ -23,6 +23,11 @@ class LaboratoryModelTests(TenantSchemaTestCase):
 class ReportModelTests(TenantSchemaTestCase):
     """Tests for the :class:`Report` model."""
 
+    def test_report_no_longer_has_is_active_field(self) -> None:
+        """The report lifecycle is tracked by ``status`` instead of ``is_active``."""
+        field_names = {field.name for field in models.Report._meta.get_fields()}
+        self.assertNotIn("is_active", field_names)
+
     def test_str_returns_lab_number_and_condition(self) -> None:
         """The string representation includes the lab number and condition."""
         report = factories.ReportFactory(lab_number="LAB-123", condition="CRITICAL")

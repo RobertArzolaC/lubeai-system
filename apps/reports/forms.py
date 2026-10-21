@@ -61,7 +61,6 @@ class ReportForm(forms.ModelForm):
             "action_required",
             "turnaround_days",
             "notes",
-            "is_active",
         ]
         widgets: ClassVar[dict] = {
             "laboratory": forms.Select(attrs={"class": "form-select"}),
@@ -101,7 +100,6 @@ class ReportForm(forms.ModelForm):
             ),
             "turnaround_days": forms.NumberInput(attrs={"class": "form-control"}),
             "notes": forms.Textarea(attrs={"class": "form-control", "rows": 4}),
-            "is_active": forms.CheckboxInput(attrs={"class": "form-check-input"}),
         }
 
     def __init__(self, *args, user=None, **kwargs) -> None:

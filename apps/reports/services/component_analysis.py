@@ -196,7 +196,6 @@ class ComponentAnalysisService:
             self.reports_qs = (
                 models.Report.objects.filter(
                     component=self.component,
-                    is_active=True,
                     sample_date__isnull=False,
                 )
                 .select_related("analysis")
