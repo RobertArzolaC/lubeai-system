@@ -10,17 +10,27 @@ from __future__ import annotations
 from django_mcpz.oauth.auth import oauth_auth
 from django_mcpz.server import Icon, MCPServer
 
+from apps.integrations.constants import (
+    MCP_SERVER_DESCRIPTION,
+    MCP_SERVER_NAME,
+    MCP_SERVER_TITLE,
+)
+
 server = MCPServer(
-    name="lubeai",
-    title="LubeAI",
+    name=MCP_SERVER_NAME,
+    title=MCP_SERVER_TITLE,
     version="1.0.0",
-    description="Consulta de equipos, reportes y alertas de lubricación.",
+    description=MCP_SERVER_DESCRIPTION,
     instructions=(
-        "Este servidor expone datos de monitoreo de condición de equipos. "
-        "Empieza con get_account_overview para conocer la organización y los "
-        "módulos disponibles. Usa las tools de listado con filtros y paginación; "
-        "no inventes identificadores. Toda la información es de solo lectura y "
-        "está limitada a la organización del usuario autenticado."
+        "Este servidor permite consultar, en modo de solo lectura, los equipos, "
+        "componentes, reportes de laboratorio y alertas de la organización del "
+        "usuario autenticado. Empieza siempre con get_account_overview para "
+        "conocer la organización y los módulos disponibles. Usa list_equipment, "
+        "list_components, list_reports y list_alerts con sus filtros y "
+        "paginación; después get_equipment, get_report o get_alert para el "
+        "detalle. No inventes identificadores ni datos: si una consulta no "
+        "devuelve resultados, dilo. No puedes modificar información. Responde en "
+        "el idioma del usuario y nunca reveles datos de otras organizaciones."
     ),
     icons=[Icon(static="assets/images/logos/logo.png", sizes=("any",))],
     auth=oauth_auth,
