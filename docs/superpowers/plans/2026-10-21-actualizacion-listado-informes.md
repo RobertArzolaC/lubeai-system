@@ -1,6 +1,6 @@
 # Actualización del listado de informes — Plan de implementación
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** eliminar el filtro por estado, dejar los filtros avanzados en cascada Máquina → Componente y retirar `IsActive` de `Report` porque su ciclo de vida ya lo cubre `status`.
 
@@ -52,7 +52,7 @@
 - Produces: `Report` without an `is_active` field; `ReportFactory` without `is_active`.
 - Consumes: none.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```python
 def test_report_no_longer_has_is_active_field(self) -> None:
@@ -60,34 +60,34 @@ def test_report_no_longer_has_is_active_field(self) -> None:
     self.assertNotIn("is_active", field_names)
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `uv run python manage.py test apps.reports.tests.test_models.ReportModelTests --settings=config.settings.testing`
 Expected: FAIL because `is_active` is still present.
 
-- [ ] **Step 3: Remove `core_models.IsActive` and its indexes from `Report`**
+- [x] **Step 3: Remove `core_models.IsActive` and its indexes from `Report`**
 
 Keep `status`, `condition` and their indexes.
 
-- [ ] **Step 4: Generate the migration**
+- [x] **Step 4: Generate the migration**
 
 Run: `uv run python manage.py makemigrations reports --name remove_report_is_active --settings=config.settings.testing`
 Expected: a migration with `RemoveField("report", "is_active")` plus index operations.
 
-- [ ] **Step 5: Update every `Report.is_active` usage**
+- [x] **Step 5: Update every `Report.is_active` usage**
 
 Update factories, forms, admin, laboratory views, dashboard service, MCP tools, alerts form and component analysis service. Do not touch `is_active` on Laboratory, AnalysisThreshold, Machine, Component, Fleet, Branch or Tenant.
 
-- [ ] **Step 6: Update test payloads**
+- [x] **Step 6: Update test payloads**
 
 Remove `"is_active": True` from `report_payload()` in `apps/reports/tests/test_views.py` and `apps/reports/tests/test_forms.py`.
 
-- [ ] **Step 7: Run the affected suite**
+- [x] **Step 7: Run the affected suite**
 
 Run: `uv run python manage.py test apps.reports apps.dashboard apps.integrations apps.alerts --settings=config.settings.testing`
 Expected: PASS.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add apps docs
@@ -110,7 +110,7 @@ git commit -m "refactor(reports): drop is_active from Report"
 - Consumes: `Report` from Task 1 (no `is_active`).
 - Produces: `ReportFilter` with only `lab_number_search`, `organization`, `laboratory`, `machine`, `component`, `condition`; `ReportExportFilter` without `status`.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 ```python
 def test_status_and_is_active_filters_removed(self) -> None:
@@ -125,29 +125,29 @@ def test_export_status_filter_removed(self) -> None:
 
 Also assert the report list response has no `name="status"` / `name="is_active"` and the export page has no `id_status`.
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 Run: `uv run python manage.py test apps.reports.tests.test_filtersets apps.reports.tests.test_views apps.reports.tests.test_templates --settings=config.settings.testing`
 Expected: FAIL on the new assertions.
 
-- [ ] **Step 3: Update the filtersets**
+- [x] **Step 3: Update the filtersets**
 
 Remove `status` and `is_active` from `ReportFilter` (declarations and `Meta.fields`). Remove `status` from `ReportExportFilter` (declaration and `Meta.fields`). Keep `condition`.
 
-- [ ] **Step 4: Update the list template**
+- [x] **Step 4: Update the list template**
 
 Primary row: search 6 columns, condition 3, Apply 3. Remove the status select. In the advanced `{% with %}` remove `act`; remove the `is_active` block.
 
-- [ ] **Step 5: Update the export template**
+- [x] **Step 5: Update the export template**
 
 Remove the `id_status` block.
 
-- [ ] **Step 6: Replace the old status-filter test and run the suite**
+- [x] **Step 6: Replace the old status-filter test and run the suite**
 
 Run: `uv run python manage.py test apps.reports.tests.test_filtersets apps.reports.tests.test_views apps.reports.tests.test_templates --settings=config.settings.testing`
 Expected: PASS.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add apps/reports/filtersets.py templates/reports/report apps/reports/tests
@@ -168,7 +168,7 @@ git commit -m "feat(reports): remove status and record-status filters from lists
 - Consumes: `ReportFilter` from Task 2, `apps.equipment:autocomplete_machine` and `apps.equipment:autocomplete_component`.
 - Produces: `ReportFilter._narrow_component_choices() -> None`, called from `__init__`.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 ```python
 def test_component_choices_are_narrowed_by_machine(self) -> None:
@@ -188,25 +188,25 @@ def test_component_choices_empty_without_machine(self) -> None:
     self.assertFalse(filterset.filters["component"].field.queryset.exists())
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 Run: `uv run python manage.py test apps.reports.tests.test_filtersets.ReportFilterTests --settings=config.settings.testing`
 Expected: FAIL because component choices are not narrowed.
 
-- [ ] **Step 3: Implement the cascade**
+- [x] **Step 3: Implement the cascade**
 
 Add `ThemeModelSelect2` widgets with `forward=["machine"]` on `component`, then call `_narrow_component_choices()` after `scoping.scope_choices` in `ReportFilter.__init__`.
 
-- [ ] **Step 4: Wire the template**
+- [x] **Step 4: Wire the template**
 
 Add `{% block extra_css %}{{ filter.form.media }}<link rel="stylesheet" href="{% static 'css/select2-custom.css' %}">{% endblock %}` and render `{{ filter.form.machine }}` / `{{ filter.form.component }}`. Add a minimal JS handler that clears the component when the machine changes.
 
-- [ ] **Step 5: Run the suite**
+- [x] **Step 5: Run the suite**
 
 Run: `uv run python manage.py test apps.reports.tests.test_filtersets apps.reports.tests.test_views apps.equipment.tests.test_autocomplete --settings=config.settings.testing`
 Expected: PASS.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add apps/reports/filtersets.py templates/reports/report/list.html apps/reports/tests
@@ -224,12 +224,12 @@ git commit -m "feat(reports): cascade machine and component filters"
 - Consumes: all previous tasks.
 - Produces: a reviewed, green branch.
 
-- [ ] **Step 1: Run project checks**
+- [x] **Step 1: Run project checks**
 
 Run: `uv run python manage.py check --settings=config.settings.testing`
 Expected: `System check identified no issues`.
 
-- [ ] **Step 2: Run lint and formatting**
+- [x] **Step 2: Run lint and formatting**
 
 Run: `uv run ruff check apps/reports apps/dashboard apps/integrations apps/alerts`
 Expected: no errors.
@@ -237,16 +237,16 @@ Expected: no errors.
 Run: `uv run ruff format --check apps/reports apps/dashboard apps/integrations apps/alerts`
 Expected: no reformat needed.
 
-- [ ] **Step 3: Run the full affected suite**
+- [x] **Step 3: Run the full affected suite**
 
 Run: `uv run python manage.py test apps.reports apps.dashboard apps.integrations apps.alerts apps.tenancy --settings=config.settings.testing`
 Expected: PASS.
 
-- [ ] **Step 4: Apply django-reviewer to the diff**
+- [x] **Step 4: Apply django-reviewer to the diff**
 
 Review scoping, N+1 queries, component/machine validation and project conventions. Fix only findings inside the scope, then rerun Step 3.
 
-- [ ] **Step 5: Commit review fixes if any**
+- [x] **Step 5: Commit review fixes if any**
 
 ```bash
 git add -A
