@@ -34,13 +34,15 @@ class LaboratoryListView(core_mixins.BaseListView):
     def get_queryset(self) -> QuerySet:
         """Return laboratories annotated with their visible report count."""
         visible = scoping.user_visible_organization_ids(self.request.user)
-        report_filter = Q()
+        reports_count = Count("reports")
         if visible is not None:
-            report_filter &= Q(reports__organization_id__in=visible)
+            reports_count = Count(
+                "reports", filter=Q(reports__organization_id__in=visible)
+            )
         return (
             super()
             .get_queryset()
-            .annotate(reports_count=Count("reports", filter=report_filter))
+            .annotate(reports_count=reports_count)
             .order_by("name")
         )
 
@@ -137,8 +139,10 @@ class ReportListView(core_mixins.ClientAttributionMixin, core_mixins.BaseListVie
 
     def get_queryset(self) -> QuerySet:
         """Return reports with related objects to avoid N+1 queries."""
-        return super().get_queryset().select_related(
-            "laboratory", "machine", "component"
+        return (
+            super()
+            .get_queryset()
+            .select_related("laboratory", "machine", "component", "component__type")
         )
 
     def get_context_data(self, **kwargs: Any) -> dict:

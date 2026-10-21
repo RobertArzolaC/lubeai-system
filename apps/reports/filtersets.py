@@ -99,7 +99,7 @@ class ReportFilter(django_filters.FilterSet):
         ]
 
     def __init__(self, *args, **kwargs) -> None:
-        """Hide the laboratory filter when the flag is disabled."""
+        """Hide the laboratory filter when disabled and narrow components."""
         super().__init__(*args, **kwargs)
         if not config.ENABLE_LABS:
             self.filters.pop("laboratory", None)

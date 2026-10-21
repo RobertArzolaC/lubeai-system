@@ -4,22 +4,21 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('reports', '0003_report_organization'),
+        ("reports", "0003_report_organization"),
     ]
 
     operations = [
         migrations.RemoveIndex(
-            model_name='report',
-            name='reports_rep_is_acti_d57b35_idx',
+            model_name="report",
+            name="reports_rep_is_acti_d57b35_idx",
         ),
         migrations.RemoveIndex(
-            model_name='report',
-            name='reports_rep_machine_86ea8f_idx',
+            model_name="report",
+            name="reports_rep_machine_86ea8f_idx",
         ),
         migrations.RemoveField(
-            model_name='report',
-            name='is_active',
+            model_name="report",
+            name="is_active",
         ),
     ]

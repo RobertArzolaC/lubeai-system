@@ -91,8 +91,9 @@ def get_equipment(request, params: GetEquipmentParams) -> EquipmentDetailResult:
     last_report = None
     if request.user.has_perm("reports.view_report"):
         last_report = (
-            machine.reports.all()
-            .select_related("laboratory", "machine", "component", "component__type")
+            machine.reports.select_related(
+                "laboratory", "machine", "component", "component__type"
+            )
             .order_by(F("sample_date").desc(nulls_last=True), "-created")
             .first()
         )
