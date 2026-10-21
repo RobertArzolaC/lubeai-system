@@ -57,8 +57,3 @@ def scoped_queryset(
     """
     request_organization(request)
     return scoping.scope_queryset(queryset, request.user, field=field)
-
-
-def display_name(value) -> str | None:
-    """Return a related object's display name without raising on ``None``."""
-    return str(value) if value is not None else None

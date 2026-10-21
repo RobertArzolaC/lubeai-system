@@ -31,9 +31,6 @@ class MCPConnection:
     connected_at: datetime
     expires_at: datetime
     active: bool
-    scope: str
-    access_token_count: int
-    refresh_token_count: int
 
 
 class MCPConnectionService:
@@ -86,9 +83,6 @@ class MCPConnectionService:
             ] or [token.expires_at for token in all_tokens]
             redirect_uris = client.redirect_uris or [""]
             redirect_host = urlsplit(str(redirect_uris[0])).hostname or ""
-            scope = next(
-                (token.scope for token in (*access, *refresh) if token.scope), ""
-            )
             connections.append(
                 MCPConnection(
                     client=client,
@@ -97,9 +91,6 @@ class MCPConnectionService:
                     connected_at=min(token.created_at for token in all_tokens),
                     expires_at=max(expiry_candidates),
                     active=bool(valid_access or valid_refresh),
-                    scope=scope,
-                    access_token_count=len(access),
-                    refresh_token_count=len(refresh),
                 )
             )
 
@@ -107,15 +98,12 @@ class MCPConnectionService:
             connections, key=lambda connection: connection.client_name.lower()
         )
 
-    def disconnect(self, user, client_id: int) -> dict[str, int]:
+    def disconnect(self, user, client_id: int) -> None:
         """Revoke every token and pending code for one user and client.
 
         Args:
             user: The authenticated user.
             client_id: Primary key of the OAuth client.
-
-        Returns:
-            Counts of revoked access tokens, refresh tokens and pending codes.
 
         Raises:
             Client.DoesNotExist: When the user has no tokens for that client.
@@ -130,17 +118,12 @@ class MCPConnectionService:
 
         now = timezone.now()
         with transaction.atomic():
-            access_count = AccessToken.objects.filter(
+            AccessToken.objects.filter(
                 user=user, client=client, revoked_at__isnull=True
             ).update(revoked_at=now)
-            refresh_count = RefreshToken.objects.filter(
+            RefreshToken.objects.filter(
                 user=user, client=client, revoked_at__isnull=True
             ).update(revoked_at=now)
-            code_count = AuthorizationCode.objects.filter(
+            AuthorizationCode.objects.filter(
                 user=user, client=client, used_at__isnull=True
             ).update(used_at=now)
-        return {
-            "access_tokens": access_count,
-            "refresh_tokens": refresh_count,
-            "codes": code_count,
-        }
