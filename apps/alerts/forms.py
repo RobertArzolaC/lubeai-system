@@ -3,7 +3,7 @@ from typing import ClassVar
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
-from apps.alerts import choices, models
+from apps.alerts import choices, models, validators
 from apps.alerts.services.alert_service import AlertService
 from apps.equipment import models as equipment_models
 from apps.organizations import scoping
@@ -122,16 +122,30 @@ class AlertForm(forms.ModelForm):
 
 
 class AlertStatusForm(forms.Form):
-    """Validate the single field the status modal submits.
+    """Validate the payload submitted by the status modal.
 
-    Acknowledging or resolving an alert is the day-to-day operation, and it must
-    not require opening (and re-submitting) the whole edit form: this form
-    accepts the new ``status`` only, and
+    Acknowledging or resolving an alert must not require opening (and
+    re-submitting) the whole edit form: this form accepts the new ``status``,
+    an optional description and an optional evidence file.
     :class:`~apps.alerts.services.alert_service.AlertService` derives the
-    lifecycle timestamps from it.
+    lifecycle timestamps from the status and records the history entry.
     """
 
     status = forms.ChoiceField(
         label=_("Status"),
         choices=choices.AlertStatus.choices,
+    )
+    note = forms.CharField(
+        label=_("Description"),
+        required=False,
+        max_length=1000,
+        widget=forms.Textarea(attrs={"rows": 3, "maxlength": 1000}),
+    )
+    attachment = forms.FileField(
+        label=_("Attachment"),
+        required=False,
+        validators=[validators.validate_alert_attachment],
+        widget=forms.ClearableFileInput(
+            attrs={"accept": validators.ATTACHMENT_ACCEPT}
+        ),
     )

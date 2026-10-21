@@ -2,6 +2,8 @@
 
 from typing import Any
 
+from django.core.files.uploadedfile import UploadedFile
+from django.db import transaction
 from django.utils import timezone
 
 from apps.alerts import choices, models
@@ -46,3 +48,49 @@ class AlertService:
             alert.resolved_at = None
 
         return alert
+
+    @transaction.atomic
+    def change_status(
+        self,
+        alert: models.Alert,
+        *,
+        status: str,
+        user: Any,
+        note: str = "",
+        attachment: UploadedFile | None = None,
+    ) -> models.AlertStatusHistory:
+        """Apply a status change and record its history entry.
+
+        Args:
+            alert: The alert being updated.
+            status: The new lifecycle status.
+            user: The user performing the change.
+            note: Optional description written in the status modal.
+            attachment: Optional evidence file uploaded from the status modal.
+
+        Returns:
+            The history entry created for this change.
+        """
+        previous_status = alert.status
+        alert.status = status
+        self.apply_status_transition(alert, user)
+        alert.updated_by = user
+        alert.save(
+            update_fields=[
+                "status",
+                "acknowledged_at",
+                "acknowledged_by",
+                "resolved_at",
+                "updated_by",
+                "modified",
+            ]
+        )
+        return models.AlertStatusHistory.objects.create(
+            alert=alert,
+            status=status,
+            previous_status=previous_status,
+            note=note,
+            attachment=attachment,
+            created_by=user,
+            updated_by=user,
+        )

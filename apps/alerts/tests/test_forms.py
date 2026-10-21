@@ -1,6 +1,12 @@
 """Tests for the ``apps.alerts.forms`` module."""
 
-from apps.alerts import factories, forms
+import shutil
+import tempfile
+
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import override_settings
+
+from apps.alerts import factories, forms, validators
 from apps.alerts.tests.base import AlertTenantTestCase
 from apps.equipment import factories as equipment_factories
 from apps.organizations import choices
@@ -132,3 +138,82 @@ class AlertFormTests(AlertTenantTestCase):
 
         self.alert.refresh_from_db()
         self.assertIsNotNone(self.alert.resolved_at)
+
+
+FORM_MEDIA_ROOT = tempfile.mkdtemp(prefix="lubeai-alert-form-attachments-")
+
+
+@override_settings(MEDIA_ROOT=FORM_MEDIA_ROOT)
+class AlertStatusFormTests(AlertTenantTestCase):
+    """Validation rules for the status modal form."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        """Keep uploaded files out of the repository's media directory."""
+        super().setUpClass()
+        cls.addClassCleanup(shutil.rmtree, FORM_MEDIA_ROOT, ignore_errors=True)
+
+    def test_note_and_attachment_are_optional(self) -> None:
+        """A status change can be submitted without note or file."""
+        form = forms.AlertStatusForm(data={"status": "RESOLVED"})
+
+        self.assertTrue(form.is_valid(), form.errors)
+        self.assertEqual(form.cleaned_data["note"], "")
+        self.assertIsNone(form.cleaned_data["attachment"])
+
+    def test_rejects_an_attachment_over_ten_megabytes(self) -> None:
+        """The configured size limit is enforced by the form."""
+        file = SimpleUploadedFile(
+            "evidence.pdf",
+            b"%PDF-" + b"0" * validators.MAX_ALERT_ATTACHMENT_SIZE,
+            content_type="application/pdf",
+        )
+
+        form = forms.AlertStatusForm(
+            data={"status": "RESOLVED"},
+            files={"attachment": file},
+        )
+
+        self.assertFalse(form.is_valid())
+        self.assertIn("attachment", form.errors)
+
+    def test_rejects_a_disallowed_extension(self) -> None:
+        """Executable files cannot be attached to a status change."""
+        file = SimpleUploadedFile("evidence.exe", b"MZ")
+
+        form = forms.AlertStatusForm(
+            data={"status": "RESOLVED"},
+            files={"attachment": file},
+        )
+
+        self.assertFalse(form.is_valid())
+        self.assertIn("attachment", form.errors)
+
+    def test_rejects_a_fake_pdf(self) -> None:
+        """A .pdf extension without the PDF signature is rejected."""
+        file = SimpleUploadedFile("evidence.pdf", b"not a pdf")
+
+        form = forms.AlertStatusForm(
+            data={"status": "RESOLVED"},
+            files={"attachment": file},
+        )
+
+        self.assertFalse(form.is_valid())
+        self.assertIn("attachment", form.errors)
+
+    def test_accepts_pdf_and_image_signatures(self) -> None:
+        """PDF, PNG, JPEG and WEBP files pass validation."""
+        samples = {
+            "evidence.pdf": b"%PDF-1.4 test",
+            "evidence.png": b"\x89PNG\r\n\x1a\n" + b"0" * 8,
+            "evidence.jpg": b"\xff\xd8\xff" + b"0" * 8,
+            "evidence.webp": b"RIFF0000WEBP" + b"0" * 8,
+        }
+
+        for filename, content in samples.items():
+            with self.subTest(filename=filename):
+                form = forms.AlertStatusForm(
+                    data={"status": "RESOLVED"},
+                    files={"attachment": SimpleUploadedFile(filename, content)},
+                )
+                self.assertTrue(form.is_valid(), form.errors)
