@@ -70,10 +70,17 @@ class ReportsTemplateRenderingTests(TenantSchemaTestCase):
                 response = self.client.get(reverse(f"apps.reports:{name}"))
                 self.assertEqual(response.status_code, 200)
 
+    def test_report_list_has_no_status_or_record_status_filter(self) -> None:
+        """The real report list renders no status or record-status filters."""
+        response = self.client.get(reverse("apps.reports:report_list"))
+        self.assertNotContains(response, 'name="status"')
+        self.assertNotContains(response, 'name="is_active"')
+
     def test_export_page_renders(self) -> None:
         """The export page renders successfully for authorized users."""
         response = self.client.get(reverse("apps.reports:report_export"))
         self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, "id_status")
 
 
 class ReportsMenuFlagTests(TenantSchemaTestCase):

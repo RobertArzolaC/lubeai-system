@@ -64,13 +64,11 @@ class ReportFilterTests(TenantSchemaTestCase):
         self.assertIn(self.report, filterset.qs)
         self.assertNotIn(self.other, filterset.qs)
 
-    def test_filter_by_status(self) -> None:
-        """``status`` filters by report status."""
-        filterset = filtersets.ReportFilter(
-            {"status": "APPROVED"}, queryset=models.Report.objects.all()
-        )
-        self.assertIn(self.report, filterset.qs)
-        self.assertNotIn(self.other, filterset.qs)
+    def test_status_and_is_active_filters_removed(self) -> None:
+        """The report list is filtered by condition, not by status or record flag."""
+        filterset = filtersets.ReportFilter(queryset=models.Report.objects.all())
+        self.assertNotIn("status", filterset.filters)
+        self.assertNotIn("is_active", filterset.filters)
 
     def test_filter_by_condition(self) -> None:
         """``condition`` filters by equipment condition."""
@@ -150,6 +148,11 @@ class ReportExportFilterTests(TenantSchemaTestCase):
         )
         self.assertIn(in_range, filterset.qs)
         self.assertNotIn(out_of_range, filterset.qs)
+
+    def test_export_status_filter_removed(self) -> None:
+        """The export no longer filters by report status."""
+        filterset = filtersets.ReportExportFilter(queryset=models.Report.objects.all())
+        self.assertNotIn("status", filterset.filters)
 
     def test_export_filter_accepts_component(self) -> None:
         """The export filter exposes a component relation filter."""

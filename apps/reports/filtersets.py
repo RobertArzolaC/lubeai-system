@@ -65,26 +65,11 @@ class ReportFilter(django_filters.FilterSet):
         empty_label=_("All Components"),
         label=_("Component"),
     )
-    status = django_filters.ChoiceFilter(
-        field_name="status",
-        empty_label=_("All Statuses"),
-        label=_("Report Status"),
-        choices=choices.ReportStatus.choices,
-    )
     condition = django_filters.ChoiceFilter(
         field_name="condition",
         empty_label=_("All Conditions"),
         label=_("Condition"),
         choices=choices.ReportCondition.choices,
-    )
-    is_active = django_filters.ChoiceFilter(
-        field_name="is_active",
-        empty_label=_("All Records"),
-        label=_("Record Status"),
-        choices=(
-            (True, _("Active")),
-            (False, _("Inactive")),
-        ),
     )
 
     class Meta:
@@ -95,9 +80,7 @@ class ReportFilter(django_filters.FilterSet):
             "laboratory",
             "machine",
             "component",
-            "status",
             "condition",
-            "is_active",
         ]
 
     def __init__(self, *args, **kwargs) -> None:
@@ -160,12 +143,6 @@ class ReportExportFilter(django_filters.FilterSet):
         label=_("Condition"),
         choices=choices.ReportCondition.choices,
     )
-    status = django_filters.ChoiceFilter(
-        field_name="status",
-        empty_label=_("All Statuses"),
-        label=_("Report Status"),
-        choices=choices.ReportStatus.choices,
-    )
 
     class Meta:
         model = models.Report
@@ -176,7 +153,6 @@ class ReportExportFilter(django_filters.FilterSet):
             "machine",
             "component",
             "condition",
-            "status",
         ]
 
     def __init__(self, *args, **kwargs) -> None:

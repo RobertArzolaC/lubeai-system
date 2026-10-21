@@ -214,17 +214,6 @@ class ReportViewTests(TenantSchemaTestCase):
         self.assertTemplateUsed(response, "reports/report/list.html")
         self.assertIn(self.report, response.context["reports"])
 
-    def test_list_filters_by_status(self) -> None:
-        """The report list applies the status filter."""
-        other = factories.ReportFactory(status="REJECTED")
-        grant_permissions(self.user, "view_report")
-        self.client.force_login(self.user)
-        response = self.client.get(
-            reverse("apps.reports:report_list"), {"status": "REJECTED"}
-        )
-        self.assertIn(other, response.context["reports"])
-        self.assertNotIn(self.report, response.context["reports"])
-
     def test_detail_renders(self) -> None:
         """Authorized users can open the report detail."""
         grant_permissions(self.user, "view_report")
