@@ -8,3 +8,7 @@ class ReportsConfig(AppConfig):
     default_auto_field: str = "django.db.models.BigAutoField"
     name: str = "apps.reports"
     verbose_name: str = _("Reports Management")
+
+    def ready(self) -> None:
+        """Register the report PDF lifecycle signals."""
+        import apps.reports.signals  # noqa: F401

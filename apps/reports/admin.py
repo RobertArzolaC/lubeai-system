@@ -1,8 +1,12 @@
+from typing import ClassVar
+
+from django import forms
 from django.contrib import admin
+from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
-from apps.reports import models
+from apps.reports import models, widgets
 
 
 @admin.register(models.Laboratory)
@@ -181,9 +185,22 @@ class LabAnalysisInline(admin.StackedInline):
     readonly_fields = ("created", "modified", "created_by", "updated_by")
 
 
+class ReportAdminForm(forms.ModelForm):
+    """Admin form that uploads PDFs without exposing their media URL."""
+
+    class Meta:
+        model = models.Report
+        fields = "__all__"
+        widgets: ClassVar[dict] = {
+            "pdf_file": widgets.ReportPDFInput(attrs={"accept": "application/pdf"}),
+        }
+
+
 @admin.register(models.Report)
 class ReportAdmin(admin.ModelAdmin):
     """Admin configuration for Report model."""
+
+    form = ReportAdminForm
 
     list_display = (
         "lab_number",
@@ -222,6 +239,7 @@ class ReportAdmin(admin.ModelAdmin):
         "created_by",
         "updated_by",
         "component_name_display",
+        "pdf_download_link",
     )
     date_hierarchy = "sample_date"
     ordering = ("-sample_date", "-created")
@@ -239,6 +257,8 @@ class ReportAdmin(admin.ModelAdmin):
                     ("lubricant", "serial_number_code"),
                     "status",
                     "condition",
+                    "pdf_file",
+                    "pdf_download_link",
                 )
             },
         ),
@@ -351,6 +371,18 @@ class ReportAdmin(admin.ModelAdmin):
         return obj.component_name
 
     component_name_display.short_description = "Nombre del Componente"
+
+    @admin.display(description=_("Download PDF"))
+    def pdf_download_link(self, obj):
+        """Link to the permission-checked PDF download view."""
+        if not obj.pdf_file:
+            return "—"
+        url = reverse("apps.reports:report_pdf_download", args=[obj.pk])
+        return format_html(
+            '<a href="{}" target="_blank" rel="noopener">{}</a>',
+            url,
+            _("Download PDF"),
+        )
 
     def get_queryset(self, request):
         """Optimize queries."""
