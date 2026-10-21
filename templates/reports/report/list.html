@@ -150,7 +150,12 @@
         <div class="grid grid-cols-12 border-b border-stroke py-6 px-6 transition-all duration-200 last:border-b-0 hover:bg-gray-50 dark:border-strokedark dark:hover:bg-meta-4/20">
             <div class="col-span-{% if config.ENABLE_LABS or show_organization %}2{% else %}3{% endif %} flex items-center">
                 <div>
-                    <p class="text-base font-bold text-black dark:text-white">{{ report.lab_number }}</p>
+                    <div class="flex items-center gap-2">
+                        <p class="text-base font-bold text-black dark:text-white">{{ report.lab_number }}</p>
+                        {% if report.pdf_file %}
+                        <span class="inline-flex items-center rounded-md border border-danger/20 bg-danger/10 px-2 py-0.5 text-[10px] font-bold text-danger">PDF</span>
+                        {% endif %}
+                    </div>
                     <p class="text-xs font-medium text-bodydark2">{{ report.per_number|default:report.serial_number_code }}</p>
                 </div>
             </div>
@@ -182,7 +187,8 @@
                 {% url "apps.reports:report_detail" report.pk as detail_url %}
                 {% url "apps.reports:report_update" report.pk as update_url %}
                 {% url "apps.reports:report_delete" report.pk as delete_url %}
-                {% include "includes/row_actions.html" with detail_url=detail_url update_url=update_url delete_url=delete_url view_perm="reports.view_report" change_perm="reports.change_report" delete_perm="reports.delete_report" %}
+                {% url "apps.reports:report_pdf_download" report.pk as report_pdf_url %}
+                {% include "includes/row_actions.html" with detail_url=detail_url update_url=update_url delete_url=delete_url download_url=report_pdf_url download_enabled=report.pdf_file view_perm="reports.view_report" change_perm="reports.change_report" delete_perm="reports.delete_report" %}
             </div>
         </div>
         {% empty %}

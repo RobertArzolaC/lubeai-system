@@ -21,6 +21,12 @@
         </p>
     </div>
     <div class="flex items-center gap-3">
+        {% if report.pdf_file %}
+        <a href="{% url 'apps.reports:report_pdf_download' report.pk %}" class="inline-flex items-center justify-center gap-2 rounded-xl border border-danger/20 bg-danger/10 py-3 px-6 text-sm font-semibold text-danger transition hover:bg-danger/15">
+            <i data-lucide="file-down" class="h-4.5 w-4.5" stroke-width="1.8" aria-hidden="true"></i>
+            {% trans "Download PDF" %}
+        </a>
+        {% endif %}
         <a href="{{ back_url }}" class="inline-flex items-center justify-center rounded-xl border border-stroke py-3 px-6 text-sm font-semibold text-black transition hover:bg-gray-50 dark:border-strokedark dark:text-white dark:hover:bg-white/5">
             {% trans "Back" %}
         </a>

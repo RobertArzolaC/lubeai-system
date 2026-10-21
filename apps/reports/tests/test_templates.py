@@ -1,17 +1,22 @@
 """Rendering tests for the real reports templates."""
 
+import shutil
+import tempfile
 from pathlib import Path
 
 from constance.test import override_config
 from django.conf import settings
 from django.contrib.auth.models import Permission
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.template import Context, Template
-from django.test import SimpleTestCase
+from django.test import SimpleTestCase, override_settings
 from django.urls import reverse
 
 from apps.core.tests.base import TenantSchemaTestCase
 from apps.reports import factories
 from apps.users.factories import UserFactory
+
+PDF_TEMPLATE_MEDIA_ROOT = tempfile.mkdtemp(prefix="lubeai-report-template-pdf-")
 
 
 def grant_permissions(user, *codenames: str) -> None:
@@ -90,6 +95,71 @@ class ReportsTemplateRenderingTests(TenantSchemaTestCase):
         response = self.client.get(reverse("apps.reports:report_export"))
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, "id_status")
+
+
+@override_settings(MEDIA_ROOT=PDF_TEMPLATE_MEDIA_ROOT)
+class ReportPDFTemplateTests(TenantSchemaTestCase):
+    """The report list and detail expose the PDF when one is stored."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        """Create the temporary media root used by the file field."""
+        super().setUpClass()
+        cls.addClassCleanup(shutil.rmtree, PDF_TEMPLATE_MEDIA_ROOT, ignore_errors=True)
+
+    def setUp(self) -> None:
+        """Log in a superuser and create reports with and without a PDF."""
+        super().setUp()
+        self.user = UserFactory(is_staff=True, is_superuser=True)
+        self.client.force_login(self.user)
+        self.report_with_pdf = factories.ReportFactory(
+            pdf_file=SimpleUploadedFile(
+                "report.pdf", b"%PDF-1.4 test", content_type="application/pdf"
+            )
+        )
+        self.report_without_pdf = factories.ReportFactory()
+
+    def test_list_shows_pdf_badge_and_download_link(self) -> None:
+        """A report with a PDF exposes the badge and the download action."""
+        response = self.client.get(reverse("apps.reports:report_list"))
+        self.assertContains(
+            response,
+            reverse("apps.reports:report_pdf_download", args=[self.report_with_pdf.pk]),
+        )
+        self.assertContains(response, ">PDF<")
+
+    def test_list_hides_download_link_without_pdf(self) -> None:
+        """A report without a PDF has no download action."""
+        response = self.client.get(reverse("apps.reports:report_list"))
+        self.assertNotContains(
+            response,
+            reverse(
+                "apps.reports:report_pdf_download", args=[self.report_without_pdf.pk]
+            ),
+        )
+
+    def test_detail_shows_download_button(self) -> None:
+        """The detail page shows the PDF download button."""
+        response = self.client.get(
+            reverse("apps.reports:report_detail", args=[self.report_with_pdf.pk])
+        )
+        self.assertContains(
+            response,
+            reverse("apps.reports:report_pdf_download", args=[self.report_with_pdf.pk]),
+        )
+        self.assertContains(response, "Descargar PDF")
+
+    def test_detail_hides_button_without_pdf(self) -> None:
+        """The detail page omits the PDF button when there is no file."""
+        response = self.client.get(
+            reverse("apps.reports:report_detail", args=[self.report_without_pdf.pk])
+        )
+        self.assertNotContains(
+            response,
+            reverse(
+                "apps.reports:report_pdf_download", args=[self.report_without_pdf.pk]
+            ),
+        )
 
 
 class ReportsMenuFlagTests(TenantSchemaTestCase):

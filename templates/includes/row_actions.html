@@ -1,6 +1,11 @@
 {% load i18n %}
 
 <div class="flex items-center gap-1.5 rounded-xl border border-stroke bg-gray-2 p-1.5 shadow-inner dark:border-strokedark dark:bg-meta-4">
+    {% if download_url and download_enabled and view_perm in perms %}
+    <a href="{{ download_url }}" class="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-bodydark2 transition-all duration-300 hover:text-danger hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger/40 dark:bg-boxdark" title="{% trans 'Download PDF' %}" aria-label="{% trans 'Download PDF' %}">
+        <i data-lucide="file-down" class="h-4.5 w-4.5" stroke-width="1.8" aria-hidden="true"></i>
+    </a>
+    {% endif %}
     {% if view_perm in perms %}
     <a href="{{ detail_url }}" class="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-bodydark2 transition-all duration-300 hover:text-primary hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 dark:bg-boxdark" title="{% trans 'View' %}" aria-label="{% trans 'View' %}">
         <i data-lucide="eye" class="h-4.5 w-4.5" stroke-width="1.8" aria-hidden="true"></i>

@@ -3841,6 +3841,24 @@ msgstr "Vista previa"
 msgid "Download Excel"
 msgstr "Descargar Excel"
 
+msgid "Report PDF"
+msgstr "Archivo PDF"
+
+msgid "Download PDF"
+msgstr "Descargar PDF"
+
+msgid "The file must be a PDF."
+msgstr "El archivo debe ser un PDF."
+
+msgid "The file is not a valid PDF."
+msgstr "El archivo no es un PDF válido."
+
+msgid "The PDF exceeds the maximum size of %(size)s MB."
+msgstr "El PDF supera el tamaño máximo de %(size)s MB."
+
+msgid "PDF generated internally or received from the external provider"
+msgstr "PDF generado internamente o recibido del proveedor externo"
+
 #: templates/reports/report/export.html:70
 #, python-format
 msgid "A maximum of %(max_records)s records can be exported in a single file."
