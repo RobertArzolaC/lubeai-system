@@ -13,6 +13,9 @@ from django.utils.translation import gettext_lazy as _
 
 MAX_EXPORT_RECORDS = 10000
 
+# Maximum size accepted for an uploaded report PDF (20 MB).
+MAX_REPORT_PDF_SIZE = 20 * 1024 * 1024
+
 # ---------------------------------------------------------------------------
 # Component analysis configuration
 # ---------------------------------------------------------------------------

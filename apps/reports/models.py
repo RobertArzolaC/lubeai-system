@@ -1,4 +1,6 @@
+from pathlib import Path
 from typing import ClassVar
+from uuid import uuid4
 
 from django.db import models
 from django.utils.functional import cached_property
@@ -7,7 +9,7 @@ from model_utils.models import TimeStampedModel
 
 from apps.core import models as core_models
 from apps.equipment import models as equipment_models
-from apps.reports import choices
+from apps.reports import choices, validators
 
 
 class Laboratory(
@@ -42,6 +44,21 @@ class Laboratory(
     def __str__(self) -> str:
         """Return string representation of the laboratory."""
         return f"{self.name} ({self.code})"
+
+
+def report_pdf_upload_to(instance: "Report", filename: str) -> str:
+    """Return a non-guessable storage path for a report PDF.
+
+    Args:
+        instance: The report receiving the file.
+        filename: Original uploaded filename.
+
+    Returns:
+        Relative storage path under ``reports/pdfs``.
+    """
+    suffix = Path(filename).suffix.lower() or ".pdf"
+    organization = instance.organization_id or "unassigned"
+    return f"reports/pdfs/{organization}/{uuid4().hex}{suffix}"
 
 
 class Report(TimeStampedModel, core_models.BaseUserTracked):
@@ -87,6 +104,13 @@ class Report(TimeStampedModel, core_models.BaseUserTracked):
         blank=True,
         related_name="reports",
         help_text=_("Component associated with this report"),
+    )
+    pdf_file = models.FileField(
+        _("Report PDF"),
+        upload_to=report_pdf_upload_to,
+        validators=[validators.validate_report_pdf],
+        blank=True,
+        help_text=_("PDF generated internally or received from the external provider"),
     )
     lab_number = models.CharField(
         _("Lab Number"),

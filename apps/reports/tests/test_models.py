@@ -1,7 +1,75 @@
 """Tests for the ``apps.reports.models`` module."""
 
+import shutil
+import tempfile
+from unittest import mock
+
+from django.core.exceptions import ValidationError
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import override_settings
+
 from apps.core.tests.base import TenantSchemaTestCase
 from apps.reports import factories, models
+
+PDF_MEDIA_ROOT = tempfile.mkdtemp(prefix="lubeai-report-pdf-")
+
+
+@override_settings(MEDIA_ROOT=PDF_MEDIA_ROOT)
+class ReportPDFModelTests(TenantSchemaTestCase):
+    """Tests for the optional PDF attached to a report."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        """Create the temporary media root used by the file field."""
+        super().setUpClass()
+        cls.addClassCleanup(shutil.rmtree, PDF_MEDIA_ROOT, ignore_errors=True)
+
+    def pdf(self, content: bytes = b"%PDF-1.4 test") -> SimpleUploadedFile:
+        """Return an uploaded PDF-like file."""
+        return SimpleUploadedFile("report.pdf", content, content_type="application/pdf")
+
+    def test_report_has_optional_pdf_file_field(self) -> None:
+        """The PDF field is optional and defaults to an empty string."""
+        field = models.Report._meta.get_field("pdf_file")
+        self.assertTrue(field.blank)
+        self.assertFalse(field.null)
+
+    def test_valid_pdf_is_accepted(self) -> None:
+        """A file with a PDF header is accepted and stored under an org path."""
+        report = factories.ReportFactory()
+        report.pdf_file = self.pdf()
+        report.full_clean()
+        report.save()
+        self.assertTrue(report.pdf_file.name.startswith("reports/pdfs/"))
+        self.assertTrue(report.pdf_file.name.endswith(".pdf"))
+
+    def test_non_pdf_extension_is_rejected(self) -> None:
+        """A file without a PDF extension is rejected."""
+        report = factories.ReportFactory.build(
+            pdf_file=SimpleUploadedFile("report.txt", b"%PDF-1.4 test")
+        )
+        with self.assertRaises(ValidationError):
+            report.full_clean()
+
+    def test_file_without_pdf_header_is_rejected(self) -> None:
+        """A .pdf file with arbitrary content is rejected."""
+        report = factories.ReportFactory.build(pdf_file=self.pdf(b"not a real pdf"))
+        with self.assertRaises(ValidationError):
+            report.full_clean()
+
+    @mock.patch("apps.reports.validators.MAX_REPORT_PDF_SIZE", 10)
+    def test_oversized_pdf_is_rejected(self) -> None:
+        """A PDF above the configured size limit is rejected."""
+        report = factories.ReportFactory.build(
+            pdf_file=self.pdf(b"%PDF-1.4 this content is too long")
+        )
+        with self.assertRaises(ValidationError):
+            report.full_clean()
+
+    def test_report_can_be_saved_without_pdf(self) -> None:
+        """Reports remain optional for the PDF field."""
+        report = factories.ReportFactory()
+        self.assertFalse(report.pdf_file)
 
 
 class LaboratoryModelTests(TenantSchemaTestCase):
