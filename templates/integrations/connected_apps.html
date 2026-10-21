@@ -38,8 +38,10 @@
             </div>
             <div class="p-6">
                 <div class="flex flex-col gap-3 sm:flex-row">
-                    <code id="mcp-url" class="flex-1 break-all rounded-xl border border-stroke bg-gray-2 px-4 py-3 text-sm font-medium text-black dark:border-strokedark dark:bg-meta-4 dark:text-white">{{ mcp_url }}</code>
-                    <button type="button" id="copy-mcp-url"
+                    <code class="flex-1 break-all rounded-xl border border-stroke bg-gray-2 px-4 py-3 text-sm font-medium text-black dark:border-strokedark dark:bg-meta-4 dark:text-white">{{ mcp_url }}</code>
+                    <button type="button"
+                            data-copy-value="{{ mcp_url }}"
+                            aria-label="{% trans 'Copiar URL' %}"
                             class="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-bold text-white transition hover:bg-opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
                         <i data-lucide="copy" class="h-4 w-4" stroke-width="1.8" aria-hidden="true"></i>
                         {% trans "Copiar URL" %}
@@ -54,45 +56,83 @@
         <div class="rounded-2xl border border-stroke bg-white shadow-sm dark:border-strokedark dark:bg-boxdark">
             <div class="border-b border-stroke px-6 py-4 dark:border-strokedark">
                 <h3 class="font-semibold text-black dark:text-white">{% trans "2. Añádela en tu asistente" %}</h3>
-                <p class="mt-1 text-sm text-bodydark2">{% trans "Los nombres de los menús pueden variar según el plan y la versión del asistente." %}</p>
+                <p class="mt-1 text-sm text-bodydark2">{% trans "Elige tu asistente y sigue sus pasos. Los nombres de los menús pueden variar según el plan y la versión." %}</p>
             </div>
             <div class="divide-y divide-stroke dark:divide-strokedark">
-                <details class="group p-5" open>
-                    <summary class="flex cursor-pointer list-none items-center justify-between gap-3">
-                        <span class="flex items-center gap-3 font-semibold text-black dark:text-white">
-                            <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary"><i data-lucide="bot" class="h-5 w-5" stroke-width="1.8" aria-hidden="true"></i></span>
-                            ChatGPT
+                {% for provider in providers %}
+                <details class="group p-5" {% if forloop.first %}open{% endif %}>
+                    <summary class="flex cursor-pointer list-none items-start justify-between gap-3">
+                        <span class="flex min-w-0 items-start gap-3">
+                            <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                                <i data-lucide="{{ provider.icon }}" class="h-5 w-5" stroke-width="1.8" aria-hidden="true"></i>
+                            </span>
+                            <span class="min-w-0">
+                                <span class="flex flex-wrap items-center gap-2">
+                                    <span class="font-semibold text-black dark:text-white">{{ provider.name }}</span>
+                                    <span class="inline-flex items-center rounded-full bg-gray-2 px-2.5 py-1 text-[10px] font-bold text-bodydark2 dark:bg-meta-4">{{ provider.availability }}</span>
+                                </span>
+                                <span class="mt-1 block text-xs font-medium text-bodydark2">{{ provider.summary }}</span>
+                            </span>
                         </span>
-                        <i data-lucide="chevron-down" class="h-4 w-4 text-bodydark2 transition group-open:rotate-180" stroke-width="1.8" aria-hidden="true"></i>
+                        <i data-lucide="chevron-down" class="mt-1 h-4 w-4 shrink-0 text-bodydark2 transition group-open:rotate-180" stroke-width="1.8" aria-hidden="true"></i>
                     </summary>
-                    <p class="mt-3 pl-12 text-sm text-body dark:text-bodydark">
-                        {% trans "Configuración → Conectores → Añadir conector personalizado. Pega la URL y completa el inicio de sesión cuando se abra esta web." %}
-                    </p>
+                    <div class="mt-4 pl-12">
+                        <ol class="relative space-y-5 border-l border-stroke pl-6 dark:border-strokedark">
+                            {% for step in provider.steps %}
+                            <li class="relative">
+                                <span class="absolute -left-[2.15rem] flex h-6 w-6 items-center justify-center rounded-full border border-primary/20 bg-white text-[11px] font-bold text-primary dark:border-primary/40 dark:bg-boxdark">{{ forloop.counter }}</span>
+                                <p class="text-sm font-semibold text-black dark:text-white">{{ step.title }}</p>
+                                {% if step.detail %}
+                                <p class="mt-1 text-sm text-body dark:text-bodydark">{{ step.detail }}</p>
+                                {% endif %}
+                                {% if step.fields %}
+                                <dl class="mt-3 divide-y divide-stroke overflow-hidden rounded-xl border border-stroke bg-gray-2/50 dark:divide-strokedark dark:border-strokedark dark:bg-meta-4/30">
+                                    {% for field in step.fields %}
+                                    <div class="px-4 py-3">
+                                        <dt class="text-[11px] font-bold uppercase tracking-wider text-bodydark2">{{ field.label }}</dt>
+                                        {% if field.copyable %}
+                                        <dd class="mt-1 flex items-center gap-2">
+                                            <code class="min-w-0 flex-1 break-all text-xs font-semibold text-black dark:text-white">{{ field.value }}</code>
+                                            <button type="button"
+                                                    data-copy-value="{{ field.value }}"
+                                                    aria-label="{% trans 'Copiar' %} {{ field.label }}"
+                                                    class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-stroke bg-white text-bodydark2 transition hover:border-primary/40 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 dark:border-strokedark dark:bg-boxdark">
+                                                <i data-lucide="copy" class="h-3.5 w-3.5" stroke-width="1.8" aria-hidden="true"></i>
+                                            </button>
+                                        </dd>
+                                        {% else %}
+                                        <dd class="mt-1 text-xs text-body dark:text-bodydark">{{ field.hint }}</dd>
+                                        {% endif %}
+                                        {% if field.copyable and field.hint %}
+                                        <p class="mt-1 text-xs text-bodydark2">{{ field.hint }}</p>
+                                        {% endif %}
+                                    </div>
+                                    {% endfor %}
+                                </dl>
+                                {% endif %}
+                            </li>
+                            {% endfor %}
+                        </ol>
+                        {% if provider.notes %}
+                        <div class="mt-4 rounded-xl bg-gray-2/60 p-4 dark:bg-meta-4/30">
+                            <ul class="space-y-2 text-xs text-body dark:text-bodydark">
+                                {% for note in provider.notes %}
+                                <li class="flex items-start gap-2">
+                                    <i data-lucide="info" class="mt-0.5 h-3.5 w-3.5 shrink-0 text-bodydark2" stroke-width="1.8" aria-hidden="true"></i>
+                                    <span>{{ note }}</span>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+                        <a href="{{ provider.docs_url }}" target="_blank" rel="noopener noreferrer"
+                           class="mt-4 inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline">
+                            {% trans "Ver guía oficial" %}
+                            <i data-lucide="external-link" class="h-3.5 w-3.5" stroke-width="1.8" aria-hidden="true"></i>
+                        </a>
+                    </div>
                 </details>
-                <details class="group p-5">
-                    <summary class="flex cursor-pointer list-none items-center justify-between gap-3">
-                        <span class="flex items-center gap-3 font-semibold text-black dark:text-white">
-                            <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary"><i data-lucide="sparkles" class="h-5 w-5" stroke-width="1.8" aria-hidden="true"></i></span>
-                            Claude
-                        </span>
-                        <i data-lucide="chevron-down" class="h-4 w-4 text-bodydark2 transition group-open:rotate-180" stroke-width="1.8" aria-hidden="true"></i>
-                    </summary>
-                    <p class="mt-3 pl-12 text-sm text-body dark:text-bodydark">
-                        {% trans "Configuración → Conectores → Añadir conector personalizado. Pega la URL y autoriza el acceso con tu cuenta." %}
-                    </p>
-                </details>
-                <details class="group p-5">
-                    <summary class="flex cursor-pointer list-none items-center justify-between gap-3">
-                        <span class="flex items-center gap-3 font-semibold text-black dark:text-white">
-                            <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary"><i data-lucide="gem" class="h-5 w-5" stroke-width="1.8" aria-hidden="true"></i></span>
-                            Gemini
-                        </span>
-                        <i data-lucide="chevron-down" class="h-4 w-4 text-bodydark2 transition group-open:rotate-180" stroke-width="1.8" aria-hidden="true"></i>
-                    </summary>
-                    <p class="mt-3 pl-12 text-sm text-body dark:text-bodydark">
-                        {% trans "Extensiones o Conectores → Añadir servidor MCP. Pega la URL y completa el inicio de sesión." %}
-                    </p>
-                </details>
+                {% endfor %}
             </div>
         </div>
 
@@ -185,17 +225,18 @@
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const copyButton = document.getElementById('copy-mcp-url');
-        const mcpUrl = document.getElementById('mcp-url');
-        if (!copyButton || !mcpUrl) return;
+        document.querySelectorAll('[data-copy-value]').forEach((button) => {
+            button.addEventListener('click', async () => {
+                const value = button.getAttribute('data-copy-value');
+                if (!value) return;
 
-        copyButton.addEventListener('click', async () => {
-            try {
-                await navigator.clipboard.writeText(mcpUrl.textContent.trim());
-                showAlert('', '{% trans "URL copiada." %}', 'success');
-            } catch (error) {
-                showAlert('{% trans "Error" %}', '{% trans "No se pudo copiar la URL. Selecciónala manualmente." %}', 'error');
-            }
+                try {
+                    await navigator.clipboard.writeText(value);
+                    showAlert('', '{% trans "Copiado." %}', 'success');
+                } catch (error) {
+                    showAlert('{% trans "Error" %}', '{% trans "No se pudo copiar. Selecciona el texto manualmente." %}', 'error');
+                }
+            });
         });
     });
 </script>

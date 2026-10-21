@@ -15,6 +15,7 @@ from django.views.decorators.cache import never_cache
 from django.views.generic import TemplateView, View
 from django_mcpz.oauth.models import Client
 
+from apps.integrations.providers import provider_guides
 from apps.integrations.services import MCPConnectionService
 
 
@@ -34,6 +35,7 @@ class ConnectedAppsView(LoginRequiredMixin, TemplateView):
                 "entity": _("Asistentes conectados"),
                 "back_url": reverse_lazy("apps.dashboard:index"),
                 "mcp_url": resource,
+                "providers": provider_guides(resource),
                 "connections": MCPConnectionService().connections_for_user(
                     user, resource
                 ),

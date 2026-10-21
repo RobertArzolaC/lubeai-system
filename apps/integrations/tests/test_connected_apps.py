@@ -119,3 +119,30 @@ class ConnectedAppsTests(IntegrationTenantTestCase):
         self.client.force_login(self.user)
         response = self.client.get(self.url)
         self.assertIn("no-store", response["Cache-Control"])
+
+    def test_page_renders_verified_provider_steps(self) -> None:
+        """The page shows the current menu path for each provider."""
+        self.client.force_login(self.user)
+        response = self.client.get(self.url)
+        self.assertContains(response, "Complementos")
+        self.assertContains(response, "Agregar servidor MCP personalizado")
+        self.assertContains(response, "Agregar conector personalizado")
+        self.assertContains(response, "Inteligencia Personalizada")
+        self.assertContains(response, "Personalizado")
+
+    def test_page_renders_copyable_server_identity(self) -> None:
+        """The suggested name and description are ready to copy."""
+        self.client.force_login(self.user)
+        response = self.client.get(self.url)
+        self.assertContains(response, "LubeAI")
+        self.assertContains(
+            response, "Consulta de equipos, reportes y alertas de lubricación."
+        )
+
+    def test_page_renders_guides_without_organization(self) -> None:
+        """Users without an organization still see the steps and the warning."""
+        user = user_factories.UserFactory(organization=None)
+        self.client.force_login(user)
+        response = self.client.get(self.url)
+        self.assertContains(response, "no tiene una organización asignada")
+        self.assertContains(response, "Agregar servidor MCP personalizado")
