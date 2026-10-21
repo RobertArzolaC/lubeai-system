@@ -59,11 +59,26 @@ class ReportFilter(django_filters.FilterSet):
         queryset=equipment_models.Machine.objects.filter(is_active=True),
         empty_label=_("All Machines"),
         label=_("Machine"),
+        widget=core_widgets.ThemeModelSelect2(
+            url="apps.equipment:autocomplete_machine",
+            attrs={
+                "data-placeholder": _("Select Machine"),
+                "data-allow-clear": "true",
+            },
+        ),
     )
     component = django_filters.ModelChoiceFilter(
         queryset=equipment_models.Component.objects.filter(is_active=True),
         empty_label=_("All Components"),
         label=_("Component"),
+        widget=core_widgets.ThemeModelSelect2(
+            url="apps.equipment:autocomplete_component",
+            forward=["machine"],
+            attrs={
+                "data-placeholder": _("Select Component"),
+                "data-allow-clear": "true",
+            },
+        ),
     )
     condition = django_filters.ChoiceFilter(
         field_name="condition",
@@ -96,6 +111,26 @@ class ReportFilter(django_filters.FilterSet):
             },
         )
         scoping.scope_organization_filter(self, include_self=False)
+        self._narrow_component_choices()
+
+    def _narrow_component_choices(self) -> None:
+        """Limit component choices to the machine selected in the request.
+
+        A component only makes sense next to its machine: without a valid
+        machine the choices are empty, so a crafted request cannot combine a
+        component with a different machine.
+        """
+        if self.data is None:
+            return
+
+        queryset = self.filters["component"].field.queryset
+        try:
+            machine_id = int(self.data.get("machine"))
+        except (TypeError, ValueError):
+            queryset = queryset.none()
+        else:
+            queryset = queryset.filter(machine_id=machine_id)
+        self.filters["component"].field.queryset = queryset
 
     def filter_by_lab_number(
         self, queryset: QuerySet, name: str, value: str

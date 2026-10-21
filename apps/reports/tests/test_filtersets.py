@@ -79,13 +79,41 @@ class ReportFilterTests(TenantSchemaTestCase):
         self.assertNotIn(self.report, filterset.qs)
 
     def test_filter_by_component(self) -> None:
-        """``component`` filters by component."""
+        """``component`` filters by component within its machine."""
         filterset = filtersets.ReportFilter(
-            {"component": self.report.component_id},
+            {
+                "machine": self.report.machine_id,
+                "component": self.report.component_id,
+            },
             queryset=models.Report.objects.all(),
         )
         self.assertIn(self.report, filterset.qs)
         self.assertNotIn(self.other, filterset.qs)
+
+    def test_component_choices_are_narrowed_by_machine(self) -> None:
+        """Selecting a machine narrows the component choices to its own."""
+        machine = equipment_factories.MachineFactory()
+        other_machine = equipment_factories.MachineFactory()
+        component = equipment_factories.ComponentFactory(machine=machine)
+        other_component = equipment_factories.ComponentFactory(machine=other_machine)
+        filterset = filtersets.ReportFilter(
+            {"machine": machine.pk}, queryset=models.Report.objects.all()
+        )
+        choices = filterset.filters["component"].field.queryset
+        self.assertIn(component, choices)
+        self.assertNotIn(other_component, choices)
+
+    def test_component_choices_empty_without_machine(self) -> None:
+        """A component cannot be selected until a machine is chosen."""
+        filterset = filtersets.ReportFilter({}, queryset=models.Report.objects.all())
+        self.assertFalse(filterset.filters["component"].field.queryset.exists())
+
+    def test_component_widget_forwards_machine(self) -> None:
+        """The component autocomplete forwards the selected machine."""
+        filterset = filtersets.ReportFilter(queryset=models.Report.objects.all())
+        widget = filterset.filters["component"].field.widget
+        self.assertEqual(widget.url, reverse("apps.equipment:autocomplete_component"))
+        self.assertEqual(widget.forward, ["machine"])
 
     @override_config(ENABLE_LABS=False)
     def test_laboratory_filter_hidden_when_flag_disabled(self) -> None:

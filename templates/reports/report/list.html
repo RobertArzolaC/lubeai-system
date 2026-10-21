@@ -8,6 +8,11 @@
 
 {% block toolbar_title %}{{ entity_plural }}{% endblock %}
 
+{% block extra_css %}
+{{ filter.form.media }}
+<link rel="stylesheet" href="{% static 'css/select2-custom.css' %}">
+{% endblock extra_css %}
+
 {% block content %}
 <!-- Page Header & Actions -->
 <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -90,11 +95,11 @@
                 {% endif %}
                 <div class="md:col-span-3">
                     <label for="id_machine" class="mb-2.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{{ filter.form.machine.label }}</label>
-                    {% render_field filter.form.machine class="w-full rounded-xl border border-stroke bg-white py-3 px-4 text-sm font-semibold text-black outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/5 dark:border-form-strokedark dark:bg-meta-4 dark:text-white" %}
+                    {{ filter.form.machine }}
                 </div>
                 <div class="md:col-span-3">
                     <label for="id_component" class="mb-2.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{{ filter.form.component.label }}</label>
-                    {% render_field filter.form.component class="w-full rounded-xl border border-stroke bg-white py-3 px-4 text-sm font-semibold text-black outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/5 dark:border-form-strokedark dark:bg-meta-4 dark:text-white" %}
+                    {{ filter.form.component }}
                 </div>
             </div>
         </details>
@@ -196,6 +201,17 @@
 {% endblock content %}
 
 {% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const machineSelect = document.getElementById('id_machine');
+        const componentSelect = document.getElementById('id_component');
+        if (!machineSelect || !componentSelect || !window.jQuery) return;
+
+        window.jQuery(machineSelect).on('change', () => {
+            window.jQuery(componentSelect).val(null).trigger('change');
+        });
+    });
+</script>
 {% trans "Delete Report" as confirm_title %}
 {% trans "Report deleted successfully." as success_message %}
 {% include "includes/delete_script.html" with confirm_title=confirm_title success_message=success_message %}

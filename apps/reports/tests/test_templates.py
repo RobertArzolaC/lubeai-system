@@ -76,6 +76,15 @@ class ReportsTemplateRenderingTests(TenantSchemaTestCase):
         self.assertNotContains(response, 'name="status"')
         self.assertNotContains(response, 'name="is_active"')
 
+    def test_report_list_wires_machine_component_autocomplete(self) -> None:
+        """Machine and component use the forwarding autocomplete widgets."""
+        response = self.client.get(reverse("apps.reports:report_list"))
+        self.assertContains(response, "/equipment/machines/autocomplete/")
+        self.assertContains(response, "/equipment/components/autocomplete/")
+        self.assertContains(response, "select2-custom.css")
+        self.assertContains(response, "dal-forward-conf-for_id_component")
+        self.assertContains(response, '"src": "machine"')
+
     def test_export_page_renders(self) -> None:
         """The export page renders successfully for authorized users."""
         response = self.client.get(reverse("apps.reports:report_export"))
