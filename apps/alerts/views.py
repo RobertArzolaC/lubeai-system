@@ -10,7 +10,7 @@ from django.urls import reverse, reverse_lazy
 from django.utils.text import get_valid_filename
 from django.utils.translation import gettext_lazy as _
 
-from apps.alerts import choices, filtersets, forms, models
+from apps.alerts import choices, filtersets, forms, models, validators
 from apps.alerts.services.alert_service import AlertService
 from apps.core import mixins as core_mixins
 from apps.organizations import scoping
@@ -42,6 +42,8 @@ class AlertListView(core_mixins.ClientAttributionMixin, core_mixins.BaseListView
         context["entity_plural"] = _("Alerts")
         context["back_url"] = reverse_lazy("apps.dashboard:index")
         context["status_choices"] = choices.AlertStatus.choices
+        context["attachment_accept"] = validators.ATTACHMENT_ACCEPT
+        context["attachment_max_size"] = validators.MAX_ALERT_ATTACHMENT_SIZE
         context["status_counts"] = self.get_queryset().aggregate(
             total=Count("id"),
             open=Count("id", filter=Q(status=choices.AlertStatus.OPEN)),

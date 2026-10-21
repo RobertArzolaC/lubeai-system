@@ -39,6 +39,16 @@ class AlertsTemplateRenderingTests(AlertTenantTestCase):
         self.assertContains(response, 'class="js-status')
         self.assertContains(response, f'data-url="{status_url}"')
 
+    def test_status_modal_collects_note_and_attachment(self) -> None:
+        """The status modal exposes the description and optional file inputs."""
+        response = self.client.get(reverse("apps.alerts:alert_list"))
+
+        self.assertContains(response, 'id="alert-status-value"')
+        self.assertContains(response, 'id="alert-status-note"')
+        self.assertContains(response, 'id="alert-status-attachment"')
+        self.assertContains(response, 'accept=".pdf,.png,.jpg,.jpeg,.webp"')
+        self.assertContains(response, "FormData")
+
     def test_list_avoids_n_plus_one_queries(self) -> None:
         """The list query count does not grow with the number of alerts."""
         # Warm up one-time writes (constance persists defaults on first read,
