@@ -1,13 +1,19 @@
+import mimetypes
+from pathlib import Path
 from typing import Any
 
+from django.core.exceptions import SuspiciousFileOperation
 from django.db.models import Count, Q, QuerySet
-from django.http import HttpResponseBase, JsonResponse
-from django.urls import reverse_lazy
+from django.http import FileResponse, Http404, HttpResponseBase, JsonResponse
+from django.shortcuts import get_object_or_404
+from django.urls import reverse, reverse_lazy
+from django.utils.text import get_valid_filename
 from django.utils.translation import gettext_lazy as _
 
 from apps.alerts import choices, filtersets, forms, models
 from apps.alerts.services.alert_service import AlertService
 from apps.core import mixins as core_mixins
+from apps.organizations import scoping
 
 
 class AlertListView(core_mixins.ClientAttributionMixin, core_mixins.BaseListView):
@@ -110,13 +116,13 @@ class AlertDeleteView(core_mixins.BaseDeleteView):
 
 
 class AlertStatusUpdateView(core_mixins.BaseView):
-    """Update only the lifecycle status of an alert.
+    """Update the lifecycle status of an alert from the status modal.
 
     Acknowledging or resolving an alert is the operation users perform from the
-    list, so it is a small AJAX endpoint instead of a full form round-trip: the
-    submitted ``status`` is applied through
-    :class:`~apps.alerts.services.alert_service.AlertService`, which keeps the
-    acknowledgement/resolution stamps in sync with it.
+    list, so it is a small AJAX endpoint instead of a full form round-trip. The
+    submitted ``status``, description and optional attachment are applied
+    through :class:`~apps.alerts.services.alert_service.AlertService`, which
+    keeps the lifecycle stamps and the history entry in sync.
     """
 
     model = models.Alert
@@ -143,17 +149,19 @@ class AlertStatusUpdateView(core_mixins.BaseView):
         """Apply the submitted status to the alert and answer as JSON.
 
         Args:
-            request: The current POST request; ``status`` carries the new value.
+            request: The current POST request; ``status``, ``note`` and
+                ``attachment`` carry the new value and its optional context.
             *args: Unused positional arguments.
             **kwargs: URL keyword arguments; ``pk`` identifies the alert.
 
         Returns:
-            A JSON payload with the new status, or an error payload with the
-            matching HTTP status: 400 for an invalid value, 404 when the alert
-            is not reachable (including another organization's alert) and 403
-            when the user lacks ``alerts.change_alert``.
+            A JSON payload with the new status and its history entry, or an
+            error payload with the matching HTTP status: 400 for an invalid
+            value, 404 when the alert is not reachable (including another
+            organization's alert) and 403 when the user lacks
+            ``alerts.change_alert``.
         """
-        form = forms.AlertStatusForm(request.POST)
+        form = forms.AlertStatusForm(request.POST, request.FILES)
         if not form.is_valid():
             return JsonResponse(
                 {
@@ -174,21 +182,80 @@ class AlertStatusUpdateView(core_mixins.BaseView):
                 status=404,
             )
 
-        alert.status = form.cleaned_data["status"]
-        AlertService().apply_status_transition(alert, request.user)
-        alert.save(
-            update_fields=[
-                "status",
-                "acknowledged_at",
-                "acknowledged_by",
-                "resolved_at",
-            ]
+        history = AlertService().change_status(
+            alert,
+            status=form.cleaned_data["status"],
+            user=request.user,
+            note=form.cleaned_data["note"],
+            attachment=form.cleaned_data["attachment"],
         )
+        attachment_url = None
+        if history.attachment:
+            attachment_url = reverse(
+                "apps.alerts:alert_attachment_download",
+                kwargs={"pk": history.pk},
+            )
         return JsonResponse(
             {
                 "status": "success",
                 "message": _("Alert status updated."),
                 "new_status": alert.status,
                 "new_status_display": alert.get_status_display(),
+                "history_id": history.pk,
+                "attachment_url": attachment_url,
             }
         )
+
+
+class AlertAttachmentDownloadView(core_mixins.BaseView):
+    """Stream a status attachment to users allowed to view the alert."""
+
+    permission_required = "alerts.view_alert"
+
+    def get(self, request, *args: Any, **kwargs: Any) -> FileResponse:
+        """Return the stored attachment, scoped to the user's organizations.
+
+        Args:
+            request: The current HTTP request.
+            *args: Unused positional arguments.
+            **kwargs: URL keyword arguments; ``pk`` identifies the history entry.
+
+        Returns:
+            The attachment as a download.
+
+        Raises:
+            Http404: If the entry is not reachable, has no attachment or the
+                stored file is missing.
+        """
+        history = get_object_or_404(
+            scoping.scope_queryset(
+                models.AlertStatusHistory.objects.select_related("alert"),
+                request.user,
+                field="alert__organization",
+            ),
+            pk=kwargs["pk"],
+        )
+        if not history.attachment:
+            raise Http404
+        try:
+            file_handle = history.attachment.open("rb")
+        except OSError as exc:
+            raise Http404 from exc
+
+        original_name = Path(history.attachment.name).name
+        try:
+            filename = get_valid_filename(original_name)
+        except SuspiciousFileOperation:
+            filename = "attachment"
+
+        content_type = (
+            mimetypes.guess_type(original_name)[0] or "application/octet-stream"
+        )
+        response = FileResponse(
+            file_handle,
+            as_attachment=True,
+            filename=filename,
+            content_type=content_type,
+        )
+        response["Cache-Control"] = "private, no-store"
+        return response

@@ -15,6 +15,11 @@ urlpatterns = [
         name="alert_status_update",
     ),
     path(
+        "history/<int:pk>/attachment/",
+        views.AlertAttachmentDownloadView.as_view(),
+        name="alert_attachment_download",
+    ),
+    path(
         "<int:pk>/update/",
         views.AlertUpdateView.as_view(),
         name="alert_update",
