@@ -99,14 +99,33 @@ class ReportFilterTests(TenantSchemaTestCase):
         filterset = filtersets.ReportFilter(
             {"machine": machine.pk}, queryset=models.Report.objects.all()
         )
-        choices = filterset.filters["component"].field.queryset
+        choices = filterset.filters["component"].queryset
         self.assertIn(component, choices)
         self.assertNotIn(other_component, choices)
 
     def test_component_choices_empty_without_machine(self) -> None:
         """A component cannot be selected until a machine is chosen."""
         filterset = filtersets.ReportFilter({}, queryset=models.Report.objects.all())
-        self.assertFalse(filterset.filters["component"].field.queryset.exists())
+        self.assertFalse(filterset.filters["component"].queryset.exists())
+
+    def test_component_without_machine_returns_no_results(self) -> None:
+        """A component-only query is inconsistent and returns no rows."""
+        filterset = filtersets.ReportFilter(
+            {"component": self.report.component_id},
+            queryset=models.Report.objects.all(),
+        )
+        self.assertFalse(filterset.qs.exists())
+
+    def test_component_from_another_machine_returns_no_results(self) -> None:
+        """A component must belong to the selected machine."""
+        filterset = filtersets.ReportFilter(
+            {
+                "machine": self.report.machine_id,
+                "component": self.other.component_id,
+            },
+            queryset=models.Report.objects.all(),
+        )
+        self.assertFalse(filterset.qs.exists())
 
     def test_component_widget_forwards_machine(self) -> None:
         """The component autocomplete forwards the selected machine."""

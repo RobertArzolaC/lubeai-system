@@ -17,6 +17,8 @@ class Migration(migrations.Migration):
             model_name="report",
             name="reports_rep_machine_86ea8f_idx",
         ),
+        # The report lifecycle is tracked by ``status``. Dropping ``is_active``
+        # is irreversible: previously inactive reports become visible again.
         migrations.RemoveField(
             model_name="report",
             name="is_active",

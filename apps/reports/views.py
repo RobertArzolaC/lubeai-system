@@ -73,7 +73,9 @@ class LaboratoryDetailView(core_mixins.BaseDetailView):
             "apps.reports:laboratory_update", kwargs={"pk": self.object.pk}
         )
         context["reports"] = scoping.scope_queryset(
-            self.object.reports.select_related("machine", "component"),
+            self.object.reports.select_related(
+                "machine", "component", "component__type"
+            ),
             self.request.user,
         )[:10]
         return context
@@ -264,7 +266,7 @@ class ReportExportQueryMixin(LoginRequiredMixin, PermissionRequiredMixin):
             self.request.user,
         )
         self.filterset = filtersets.ReportExportFilter(
-            self.request.GET, queryset=queryset
+            self.request.GET, queryset=queryset, request=self.request
         )
         return self.filterset.qs
 

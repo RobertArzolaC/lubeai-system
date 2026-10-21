@@ -6,6 +6,7 @@ from django.utils.translation import gettext_lazy as _
 from apps.alerts import choices, models
 from apps.alerts.services.alert_service import AlertService
 from apps.equipment import models as equipment_models
+from apps.organizations import scoping
 from apps.reports import models as report_models
 
 
@@ -63,16 +64,20 @@ class AlertForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.user = user
         self._service = AlertService()
-        self.fields["machine"].queryset = equipment_models.Machine.objects.filter(
-            is_active=True
-        )
-        self.fields["component"].queryset = equipment_models.Component.objects.filter(
+        machines = equipment_models.Machine.objects.filter(is_active=True)
+        components = equipment_models.Component.objects.filter(
             is_active=True
         ).select_related("type")
-        report_queryset = report_models.Report.objects.all().select_related(
-            "machine", "component"
-        )
-        self.fields["report"].queryset = report_queryset
+        reports = report_models.Report.objects.select_related("machine", "component")
+        if user is not None:
+            machines = scoping.scope_queryset(machines, user)
+            components = scoping.scope_queryset(
+                components, user, field="machine__organization"
+            )
+            reports = scoping.scope_queryset(reports, user)
+        self.fields["machine"].queryset = machines
+        self.fields["component"].queryset = components
+        self.fields["report"].queryset = reports
 
     def clean(self) -> dict:
         """Validate that warning and critical limits are distinct.

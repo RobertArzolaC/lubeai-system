@@ -3,6 +3,9 @@
 from apps.alerts import factories, forms
 from apps.alerts.tests.base import AlertTenantTestCase
 from apps.equipment import factories as equipment_factories
+from apps.organizations import choices
+from apps.organizations import factories as organization_factories
+from apps.reports import factories as report_factories
 from apps.users import factories as user_factories
 
 
@@ -23,6 +26,33 @@ def alert_payload(alert, **overrides: object) -> dict:
     }
     data.update(overrides)
     return data
+
+
+class AlertFormScopingTests(AlertTenantTestCase):
+    """Alert relation choices stay inside the actor's organization tree."""
+
+    def setUp(self) -> None:
+        """Build one visible organization and one unrelated tenant."""
+        super().setUp()
+        self.org = organization_factories.OrganizationFactory(
+            slug="alert-form-own", kind=choices.OrganizationKind.FINAL
+        )
+        self.other = organization_factories.OrganizationFactory(
+            slug="alert-form-other", kind=choices.OrganizationKind.FINAL
+        )
+        self.user = user_factories.UserFactory()
+        self.user.organization = self.org
+        self.user.save(update_fields=["organization"])
+        foreign_machine = equipment_factories.MachineFactory(organization=self.other)
+        foreign_component = equipment_factories.ComponentFactory(machine=foreign_machine)
+        self.foreign_report = report_factories.ReportFactory(
+            machine=foreign_machine, component=foreign_component
+        )
+
+    def test_report_choices_exclude_other_organizations(self) -> None:
+        """The report dropdown does not expose reports from other tenants."""
+        form = forms.AlertForm(user=self.user)
+        self.assertNotIn(self.foreign_report, form.fields["report"].queryset)
 
 
 class AlertFormTests(AlertTenantTestCase):

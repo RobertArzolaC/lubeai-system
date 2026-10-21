@@ -39,6 +39,24 @@ class LaboratoryFilter(django_filters.FilterSet):
         )
 
 
+def _scope_report_relation_choices(filterset: django_filters.FilterSet) -> None:
+    """Scope machine and component choices to the request user's subtree.
+
+    ``Component`` has no direct organization field, so it is scoped through
+    its machine.
+    """
+    scoping.scope_choices(
+        filterset,
+        {"machine": equipment_models.Machine.objects.filter(is_active=True)},
+    )
+    if "component" in filterset.filters:
+        filterset.filters["component"].queryset = scoping.scope_queryset(
+            equipment_models.Component.objects.filter(is_active=True),
+            scoping.request_user(getattr(filterset, "request", None)),
+            field="machine__organization",
+        )
+
+
 class ReportFilter(django_filters.FilterSet):
     """Filter for reports."""
 
@@ -103,13 +121,7 @@ class ReportFilter(django_filters.FilterSet):
         super().__init__(*args, **kwargs)
         if not config.ENABLE_LABS:
             self.filters.pop("laboratory", None)
-        scoping.scope_choices(
-            self,
-            {
-                "machine": equipment_models.Machine.objects.filter(is_active=True),
-                "component": equipment_models.Component.objects.filter(is_active=True),
-            },
-        )
+        _scope_report_relation_choices(self)
         scoping.scope_organization_filter(self, include_self=False)
         self._narrow_component_choices()
 
@@ -120,17 +132,30 @@ class ReportFilter(django_filters.FilterSet):
         machine the choices are empty, so a crafted request cannot combine a
         component with a different machine.
         """
-        if self.data is None:
-            return
-
-        queryset = self.filters["component"].field.queryset
+        queryset = self.filters["component"].queryset
         try:
             machine_id = int(self.data.get("machine"))
         except (TypeError, ValueError):
             queryset = queryset.none()
         else:
             queryset = queryset.filter(machine_id=machine_id)
-        self.filters["component"].field.queryset = queryset
+        self.filters["component"].queryset = queryset
+
+    def filter_queryset(self, queryset: QuerySet) -> QuerySet:
+        """Reject inconsistent machine/component combinations explicitly.
+
+        django-filter drops invalid choices silently, which would widen the
+        result set instead of returning the empty result the user asked for.
+        """
+        raw_component = self.data.get("component")
+        if raw_component:
+            try:
+                component_id = int(raw_component)
+            except (TypeError, ValueError):
+                return queryset.none()
+            if not self.filters["component"].queryset.filter(pk=component_id).exists():
+                return queryset.none()
+        return super().filter_queryset(queryset)
 
     def filter_by_lab_number(
         self, queryset: QuerySet, name: str, value: str
@@ -191,17 +216,11 @@ class ReportExportFilter(django_filters.FilterSet):
         ]
 
     def __init__(self, *args, **kwargs) -> None:
-        """Hide the laboratory filter when the flag is disabled."""
+        """Hide the laboratory filter when disabled and scope relations."""
         super().__init__(*args, **kwargs)
         if not config.ENABLE_LABS:
             self.filters.pop("laboratory", None)
-        scoping.scope_choices(
-            self,
-            {
-                "machine": equipment_models.Machine.objects.filter(is_active=True),
-                "component": equipment_models.Component.objects.filter(is_active=True),
-            },
-        )
+        _scope_report_relation_choices(self)
 
 
 class AnalysisThresholdFilter(django_filters.FilterSet):

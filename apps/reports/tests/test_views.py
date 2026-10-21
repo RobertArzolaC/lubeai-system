@@ -118,6 +118,20 @@ class LaboratoryViewTests(TenantSchemaTestCase):
         self.assertIn(self.laboratory, response.context["laboratories"])
         self.assertNotIn(other, response.context["laboratories"])
 
+    def test_list_annotates_every_report(self) -> None:
+        """The laboratory count includes every report in its subtree."""
+        factories.ReportFactory(laboratory=self.laboratory)
+        factories.ReportFactory(laboratory=self.laboratory)
+        grant_permissions(self.user, "view_laboratory")
+        self.client.force_login(self.user)
+        response = self.client.get(reverse("apps.reports:laboratory_list"))
+        laboratory = next(
+            item
+            for item in response.context["laboratories"]
+            if item.pk == self.laboratory.pk
+        )
+        self.assertEqual(laboratory.reports_count, 2)
+
     def test_detail_renders(self) -> None:
         """Authorized users can open the laboratory detail."""
         grant_permissions(self.user, "view_laboratory")

@@ -94,6 +94,45 @@ class ReportClientAttributionTests(TenantSchemaTestCase):
         self.assertNotIn(report_lab.id, ids)
 
 
+class ReportComponentScopingTests(TenantSchemaTestCase):
+    """Component filter choices stay inside the user's organization tree."""
+
+    def setUp(self) -> None:
+        """Build one visible organization and one unrelated tenant."""
+        super().setUp()
+        self.org = organization_factories.OrganizationFactory(
+            slug="rcs-own", kind=choices.OrganizationKind.FINAL
+        )
+        self.other = organization_factories.OrganizationFactory(
+            slug="rcs-other", kind=choices.OrganizationKind.FINAL
+        )
+        self.user = user_for(self.org)
+        self.machine = equipment_factories.MachineFactory(organization=self.org)
+        self.component = equipment_factories.ComponentFactory(machine=self.machine)
+        self.foreign_machine = equipment_factories.MachineFactory(
+            organization=self.other
+        )
+        self.foreign_component = equipment_factories.ComponentFactory(
+            machine=self.foreign_machine
+        )
+
+    def test_component_choices_exclude_other_organizations(self) -> None:
+        """A machine from another tenant exposes none of its components."""
+        filterset = filtersets.ReportFilter(
+            {"machine": self.foreign_machine.pk},
+            queryset=models.Report.objects.all(),
+            request=SimpleNamespace(user=self.user),
+        )
+        self.assertFalse(filterset.filters["component"].queryset.exists())
+
+    def test_export_component_choices_exclude_other_organizations(self) -> None:
+        """The export page does not render components from other tenants."""
+        grant_permissions(self.user, "view_report")
+        self.client.force_login(self.user)
+        response = self.client.get(reverse("apps.reports:report_export"))
+        self.assertNotContains(response, str(self.foreign_component))
+
+
 class ReportClientColumnTemplateTests(TenantSchemaTestCase):
     """The report list renders the Client column and filter for parent users."""
 
