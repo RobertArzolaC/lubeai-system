@@ -16,6 +16,22 @@ MIDDLEWARE += [
 
 INTERNAL_IPS = ["localhost", "127.0.0.1"]
 
+# The dev server never terminates TLS, but tunnels such as ngrok do and forward
+# ``X-Forwarded-Proto: https``. Without this header Django believes every request
+# is HTTP: the MCP OAuth discovery would advertise ``http://`` issuers (hosted
+# assistants reject them) and the CSRF origin check would compare against the
+# wrong scheme.
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+# The same tunnels rewrite ``Host`` to whatever ``--host-header`` names (ngrok is
+# typically started with ``--host-header=<tenant>.localhost`` so the tenant
+# resolves) and carry the public name in ``X-Forwarded-Host``. Without this,
+# ``request.get_host()`` stays that internal name and ``django_mcpz`` advertises
+# ``https://<tenant>.localhost/...`` in the OAuth discovery documents, which a
+# hosted assistant cannot reach. The tunnel's public host must also exist as a
+# ``Domain`` row for the tenant, so the request still resolves to it.
+USE_X_FORWARDED_HOST = True
+
 DEBUG_TOOLBAR_PANELS = [
     "debug_toolbar.panels.cache.CachePanel",
 ]
