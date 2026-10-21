@@ -33,3 +33,17 @@ class AlertFactory(factory.django.DjangoModelFactory):
     dedup_key = factory.Sequence(lambda n: f"dedup-{n}")
     created_by = factory.SubFactory(user_factories.UserFactory)
     updated_by = factory.SelfAttribute("created_by")
+
+
+class AlertStatusHistoryFactory(factory.django.DjangoModelFactory):
+    """Factory for creating AlertStatusHistory test instances."""
+
+    class Meta:
+        model = models.AlertStatusHistory
+
+    alert = factory.SubFactory(AlertFactory)
+    status = "ACKNOWLEDGED"
+    previous_status = "OPEN"
+    note = ""
+    created_by = factory.SelfAttribute("alert.created_by")
+    updated_by = factory.SelfAttribute("created_by")

@@ -1,14 +1,16 @@
 """Models for the alerts app."""
 
+from pathlib import Path
 from typing import ClassVar
+from uuid import uuid4
 
 from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from model_utils.models import TimeStampedModel
 
-from apps.alerts import choices
-from apps.core.models import BaseUserTracked
+from apps.alerts import choices, validators
+from apps.core.models import BaseUserTracked, StatusHistory
 from apps.equipment.models import Component, Machine
 from apps.reports import choices as report_choices
 from apps.reports.models import Report
@@ -114,3 +116,85 @@ class Alert(TimeStampedModel, BaseUserTracked):
     def __str__(self) -> str:
         """Return string representation of the alert."""
         return f"Alert {self.get_category_display()} - {self.get_severity_display()}"
+
+
+def alert_attachment_upload_to(
+    instance: "AlertStatusHistory", filename: str
+) -> str:
+    """Return a non-guessable storage path for a status attachment.
+
+    Args:
+        instance: The history entry receiving the file.
+        filename: Original uploaded filename.
+
+    Returns:
+        Relative storage path under ``alerts/attachments``.
+    """
+    suffix = Path(filename).suffix.lower()
+    organization = instance.alert.organization_id or "unassigned"
+    return f"alerts/attachments/{organization}/{uuid4().hex}{suffix}"
+
+
+class AlertStatusHistory(StatusHistory):
+    """Record of a status change made from the alert status modal.
+
+    Each entry keeps the previous and new status, the optional description
+    written by the acting user and an optional evidence file, so reopening or
+    resolving an alert never overwrites the earlier context.
+    """
+
+    alert = models.ForeignKey(
+        Alert,
+        verbose_name=_("Alert"),
+        on_delete=models.CASCADE,
+        related_name="status_history",
+        help_text=_("Alert whose status changed"),
+    )
+    attachment = models.FileField(
+        _("Attachment"),
+        upload_to=alert_attachment_upload_to,
+        validators=[validators.validate_alert_attachment],
+        blank=True,
+        help_text=_("Optional evidence attached to the status change"),
+    )
+
+    class Meta:
+        verbose_name = _("Alert status history")
+        verbose_name_plural = _("Alert status histories")
+        ordering = ("-created",)
+        indexes: ClassVar[list[models.Index]] = [
+            models.Index(fields=["alert", "-created"]),
+            models.Index(fields=["created"]),
+        ]
+
+    @property
+    def status_label(self) -> str:
+        """Return the human-readable label of the new status."""
+        return self._label(self.status)
+
+    @property
+    def previous_status_label(self) -> str:
+        """Return the human-readable label of the previous status."""
+        return self._label(self.previous_status)
+
+    @property
+    def attachment_filename(self) -> str:
+        """Return the attachment's base filename, if any."""
+        return Path(self.attachment.name).name if self.attachment else ""
+
+    def get_parent_filters(self) -> dict:
+        """Return the filters that identify the owning alert."""
+        return {"alert_id": self.alert_id}
+
+    @classmethod
+    def get_parent_kwargs(cls, instance: Alert) -> dict:
+        """Return the kwargs that link a new entry to ``instance``."""
+        return {"alert": instance}
+
+    @staticmethod
+    def _label(value: str) -> str:
+        """Return the translated label for an alert status value."""
+        try:
+            return str(choices.AlertStatus(value).label)
+        except ValueError:
+            return value
