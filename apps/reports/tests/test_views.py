@@ -1,17 +1,24 @@
 """Tests for the ``apps.reports.views`` module."""
 
+import shutil
+import tempfile
 from io import BytesIO
 
 from django.conf import settings
 from django.contrib.auth.models import Permission
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import override_settings
 from django.urls import NoReverseMatch, reverse
 from openpyxl import load_workbook
 
 from apps.core.tests.base import TenantSchemaTestCase
 from apps.equipment import factories as equipment_factories
+from apps.organizations import choices as organization_choices
+from apps.organizations import factories as organization_factories
 from apps.reports import factories, models
 from apps.users import factories as users_factories
+
+PDF_VIEW_MEDIA_ROOT = tempfile.mkdtemp(prefix="lubeai-report-view-pdf-")
 
 REPORTS_TEMPLATES = [
     {
@@ -292,6 +299,94 @@ class ReportViewTests(TenantSchemaTestCase):
 
 
 @override_settings(TEMPLATES=REPORTS_TEMPLATES)
+@override_settings(MEDIA_ROOT=PDF_VIEW_MEDIA_ROOT)
+class ReportPDFDownloadViewTests(TenantSchemaTestCase):
+    """Download endpoint for the PDF attached to a report."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        """Create the temporary media root used by the file field."""
+        super().setUpClass()
+        cls.addClassCleanup(shutil.rmtree, PDF_VIEW_MEDIA_ROOT, ignore_errors=True)
+
+    def setUp(self) -> None:
+        """Create an authorized user."""
+        super().setUp()
+        self.user = users_factories.UserFactory()
+        grant_permissions(self.user, "view_report")
+
+    def with_pdf(self, **overrides: object) -> models.Report:
+        """Return a report with a minimal stored PDF."""
+        return factories.ReportFactory(
+            pdf_file=SimpleUploadedFile(
+                "report.pdf", b"%PDF-1.4 test", content_type="application/pdf"
+            ),
+            **overrides,
+        )
+
+    def test_download_returns_pdf_attachment(self) -> None:
+        """Authorized users receive the PDF as an attachment."""
+        report = self.with_pdf()
+        self.client.force_login(self.user)
+        response = self.client.get(
+            reverse("apps.reports:report_pdf_download", args=[report.pk])
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "application/pdf")
+        self.assertIn("attachment;", response["Content-Disposition"])
+        self.assertIn(".pdf", response["Content-Disposition"])
+
+    def test_download_without_pdf_returns_404(self) -> None:
+        """A report without a stored PDF cannot be downloaded."""
+        report = factories.ReportFactory()
+        self.client.force_login(self.user)
+        response = self.client.get(
+            reverse("apps.reports:report_pdf_download", args=[report.pk])
+        )
+        self.assertEqual(response.status_code, 404)
+
+    def test_download_requires_permission(self) -> None:
+        """Users without the report permission are rejected."""
+        report = self.with_pdf()
+        user = users_factories.UserFactory()
+        self.client.force_login(user)
+        response = self.client.get(
+            reverse("apps.reports:report_pdf_download", args=[report.pk])
+        )
+        self.assertEqual(response.status_code, 403)
+
+    def test_download_from_another_organization_returns_404(self) -> None:
+        """A report outside the user's organization tree is not downloadable."""
+        own_org = organization_factories.OrganizationFactory(
+            slug="pdf-own", kind=organization_choices.OrganizationKind.FINAL
+        )
+        other_org = organization_factories.OrganizationFactory(
+            slug="pdf-other", kind=organization_choices.OrganizationKind.FINAL
+        )
+        user = users_factories.UserFactory()
+        user.organization = own_org
+        user.save(update_fields=["organization"])
+        grant_permissions(user, "view_report")
+        other_machine = equipment_factories.MachineFactory(organization=other_org)
+        report = self.with_pdf(machine=other_machine)
+
+        self.client.force_login(user)
+        response = self.client.get(
+            reverse("apps.reports:report_pdf_download", args=[report.pk])
+        )
+        self.assertEqual(response.status_code, 404)
+
+    def test_missing_file_on_disk_returns_404(self) -> None:
+        """A database value pointing to a missing file returns 404."""
+        report = self.with_pdf()
+        report.pdf_file.storage.delete(report.pdf_file.name)
+        self.client.force_login(self.user)
+        response = self.client.get(
+            reverse("apps.reports:report_pdf_download", args=[report.pk])
+        )
+        self.assertEqual(response.status_code, 404)
+
+
 class AnalysisThresholdViewTests(TenantSchemaTestCase):
     """CRUD tests for the AnalysisThreshold views."""
 

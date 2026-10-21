@@ -38,6 +38,11 @@ urlpatterns = [
     path("create/", views.ReportCreateView.as_view(), name="report_create"),
     path("<int:pk>/", views.ReportDetailView.as_view(), name="report_detail"),
     path(
+        "<int:pk>/pdf/",
+        views.ReportPDFDownloadView.as_view(),
+        name="report_pdf_download",
+    ),
+    path(
         "<int:pk>/update/",
         views.ReportUpdateView.as_view(),
         name="report_update",

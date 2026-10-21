@@ -3,8 +3,10 @@ from typing import Any
 
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.db.models import Count, Q, QuerySet
-from django.http import HttpResponse, JsonResponse
+from django.http import FileResponse, Http404, HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
+from django.utils.text import get_valid_filename
 from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django_filters.views import FilterView
@@ -182,6 +184,48 @@ class ReportDetailView(core_mixins.BaseDetailView):
         )
         context["analysis"] = getattr(self.object, "analysis", None)
         return context
+
+
+class ReportPDFDownloadView(core_mixins.BaseView):
+    """Stream a report PDF to users allowed to view the report."""
+
+    permission_required = "reports.view_report"
+
+    def get(self, request, *args, **kwargs) -> FileResponse:
+        """Return the stored PDF as an attachment.
+
+        Args:
+            request: The current HTTP request.
+            *args: Unused positional arguments.
+            **kwargs: URL keyword arguments, including ``pk``.
+
+        Returns:
+            The PDF as an attachment.
+
+        Raises:
+            Http404: If the report has no PDF or the stored file is missing.
+        """
+        report = get_object_or_404(
+            scoping.scope_queryset(
+                models.Report.objects.only("pk", "lab_number", "pdf_file"),
+                request.user,
+            ),
+            pk=kwargs["pk"],
+        )
+        if not report.pdf_file:
+            raise Http404
+        try:
+            file_handle = report.pdf_file.open("rb")
+        except OSError as exc:
+            raise Http404 from exc
+
+        filename = f"{get_valid_filename(report.lab_number) or 'report'}.pdf"
+        return FileResponse(
+            file_handle,
+            as_attachment=True,
+            filename=filename,
+            content_type="application/pdf",
+        )
 
 
 class ReportCreateView(core_mixins.BaseCreateView):
