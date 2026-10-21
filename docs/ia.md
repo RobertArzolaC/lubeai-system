@@ -86,7 +86,8 @@ puedes pedir directamente: “Consulta los equipos de mi organización”.
 3. **Agregar +**
    Pulsa el botón **+** que está junto a Conectores.
 4. **Agregar conector personalizado**
-   Elige **Personalizado → Web** (en inglés: **Custom → Web**) y completa:
+   Elige **Agregar conector personalizado**. Si tu interfaz muestra
+   **Personalizado → Web** (en inglés: **Custom → Web**), selecciónalo y completa:
    - **Nombre:** `LubeAI`.
    - **URL del servidor MCP:** pega la URL copiada en el paso previo.
    Pulsa **Continuar**.
@@ -129,11 +130,12 @@ conversación. También puedes escribir `/` y elegir Conectores.
    Abre [gemini.google.com](https://gemini.google.com) en la web e inicia sesión
    con una cuenta personal de Google. Pulsa **Ajustes**.
 2. **Inteligencia Personalizada**
-   Entra a **Inteligencia Personalizada** (en inglés: **Personal Intelligence**).
+   Entra a **Inteligencia Personalizada** (en inglés: **Personal Intelligence**) y
+   luego a **Aplicaciones conectadas** (en inglés: **Connected Apps**).
 3. **Personalizado +**
    En **Personalizado** (en inglés: **Custom apps**), pulsa **+**. Si no ves esa
-   opción, entra a **Aplicaciones conectadas** (en inglés: **Connected Apps**) y
-   busca la sección de aplicaciones personalizadas.
+   sección, entra directamente a **Aplicaciones conectadas** y busca las
+   aplicaciones personalizadas.
    - **URL del servidor MCP:** pega la URL copiada en el paso previo.
    Pulsa **Siguiente**.
 4. **Autoriza el acceso**

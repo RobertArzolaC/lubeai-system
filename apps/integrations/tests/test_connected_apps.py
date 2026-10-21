@@ -146,3 +146,46 @@ class ConnectedAppsTests(IntegrationTenantTestCase):
         response = self.client.get(self.url)
         self.assertContains(response, "no tiene una organización asignada")
         self.assertContains(response, "Agregar servidor MCP personalizado")
+
+    def test_page_renders_gemini_requirements(self) -> None:
+        """Gemini's account, region and language restrictions are explicit."""
+        self.client.force_login(self.user)
+        response = self.client.get(self.url)
+        for text in (
+            "cuenta personal",
+            "18 años",
+            "Estados Unidos",
+            "inglés",
+            "Keep Activity",
+            "Conexión solo por web",
+        ):
+            self.assertContains(response, text)
+
+    def test_page_exposes_copyable_values(self) -> None:
+        """The tenant URL, name and description are copy-ready attributes."""
+        self.client.force_login(self.user)
+        response = self.client.get(self.url)
+        resource = self.resource_url()
+        self.assertContains(response, f'data-copy-value="{resource}"')
+        self.assertContains(response, 'data-copy-value="LubeAI"')
+        self.assertContains(
+            response,
+            'data-copy-value="Consulta de equipos, reportes y alertas de lubricación."',
+        )
+        self.assertNotContains(response, f"{resource}/")
+
+    def test_copy_handler_handles_clipboard_failures(self) -> None:
+        """The copy handler uses the Clipboard API inside a try/catch."""
+        self.client.force_login(self.user)
+        response = self.client.get(self.url)
+        self.assertContains(response, "navigator.clipboard.writeText")
+        self.assertContains(response, "catch (error)")
+
+    def test_page_renders_module_warning_without_permissions(self) -> None:
+        """Users with an organization but no modules see the permissions hint."""
+        user = user_factories.UserFactory(organization=self.organization)
+        self.client.force_login(user)
+        response = self.client.get(self.url)
+        self.assertContains(
+            response, "Tu rol todavía no tiene módulos habilitados"
+        )

@@ -178,8 +178,8 @@ def provider_guides(mcp_url: str) -> tuple[MCPProviderGuide, ...]:
                 ProviderStep(
                     title=_("Elige Agregar conector personalizado"),
                     detail=_(
-                        "Selecciona Personalizado → Web (Custom → Web) y "
-                        "completa los datos."
+                        "Selecciona Agregar conector personalizado (Custom → Web "
+                        "si tu interfaz lo muestra) y completa los datos."
                     ),
                     fields=(
                         ProviderField(
@@ -222,7 +222,9 @@ def provider_guides(mcp_url: str) -> tuple[MCPProviderGuide, ...]:
             summary=_(
                 "Conecta LubeAI como aplicación personalizada en Gemini."
             ),
-            availability=_("Solo web · Cuenta personal, EE. UU. e inglés"),
+            availability=_(
+                "Conexión solo por web · Cuenta personal, EE. UU. e inglés"
+            ),
             steps=(
                 ProviderStep(
                     title=_("Abre Ajustes"),
@@ -235,14 +237,16 @@ def provider_guides(mcp_url: str) -> tuple[MCPProviderGuide, ...]:
                     title=_("Entra a Inteligencia Personalizada"),
                     detail=_(
                         "Selecciona Inteligencia Personalizada (Personal "
-                        "Intelligence)."
+                        "Intelligence) y luego Aplicaciones conectadas "
+                        "(Connected Apps)."
                     ),
                 ),
                 ProviderStep(
                     title=_("Pulsa Personalizado +"),
                     detail=_(
                         "En Personalizado (Custom apps), pulsa +. Si no ves esa "
-                        "opción, entra a Aplicaciones conectadas (Connected Apps)."
+                        "sección, entra directamente a Aplicaciones conectadas "
+                        "(Connected Apps)."
                     ),
                     fields=(
                         ProviderField(
