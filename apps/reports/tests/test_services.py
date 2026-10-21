@@ -10,6 +10,23 @@ from apps.equipment import factories as equipment_factories
 from apps.reports import factories, models
 from apps.reports.services import ReportExportService
 from apps.reports.services.component_analysis import ComponentAnalysisService
+from apps.reports.services.dummy_pdf import build_dummy_report_pdf
+
+
+class DummyReportPDFServiceTests(TenantSchemaTestCase):
+    """Tests for the placeholder PDF generator."""
+
+    def test_dummy_pdf_has_pdf_header(self) -> None:
+        """The generated document is a valid PDF container."""
+        content = build_dummy_report_pdf("INFORME-000001")
+        self.assertTrue(content.startswith(b"%PDF-"))
+        self.assertGreater(len(content), 200)
+
+    def test_dummy_pdf_includes_the_report_number_metadata(self) -> None:
+        """Two different reports produce different document sizes/content."""
+        first = build_dummy_report_pdf("INFORME-000001")
+        second = build_dummy_report_pdf("INFORME-999999")
+        self.assertNotEqual(first, second)
 
 
 class ReportExportServiceTests(TenantSchemaTestCase):
