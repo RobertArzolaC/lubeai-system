@@ -1,6 +1,11 @@
 """Rendering tests for the real alerts templates."""
 
+import shutil
+import tempfile
+
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db import connection
+from django.test import override_settings
 from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 
@@ -8,9 +13,18 @@ from apps.alerts import factories
 from apps.alerts.tests.base import AlertTenantTestCase
 from apps.users.factories import UserFactory
 
+DETAIL_MEDIA_ROOT = tempfile.mkdtemp(prefix="lubeai-alert-template-attachments-")
 
+
+@override_settings(MEDIA_ROOT=DETAIL_MEDIA_ROOT)
 class AlertsTemplateRenderingTests(AlertTenantTestCase):
     """Render the real alerts templates to catch syntax and wiring errors."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        """Keep uploaded files out of the repository's media directory."""
+        super().setUpClass()
+        cls.addClassCleanup(shutil.rmtree, DETAIL_MEDIA_ROOT, ignore_errors=True)
 
     def setUp(self) -> None:
         super().setUp()
@@ -69,6 +83,44 @@ class AlertsTemplateRenderingTests(AlertTenantTestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "alerts/alert/detail.html")
+
+    def test_detail_renders_the_status_history(self) -> None:
+        """The detail shows the note and a link to the attachment."""
+        entry = factories.AlertStatusHistoryFactory(
+            alert=self.alert,
+            previous_status="OPEN",
+            status="RESOLVED",
+            note="Se reemplazó el filtro y se recargó el aceite.",
+            attachment=SimpleUploadedFile(
+                "evidencia.pdf", b"%PDF-1.4 test", content_type="application/pdf"
+            ),
+        )
+
+        response = self.client.get(
+            reverse("apps.alerts:alert_detail", kwargs={"pk": self.alert.pk})
+        )
+
+        self.assertContains(response, "Se reemplazó el filtro y se recargó el aceite.")
+        self.assertContains(
+            response,
+            reverse(
+                "apps.alerts:alert_attachment_download", kwargs={"pk": entry.pk}
+            ),
+        )
+        self.assertContains(response, entry.attachment_filename)
+
+    def test_detail_query_count_is_stable_with_history(self) -> None:
+        """The detail query count does not grow with the history entries."""
+        detail_url = reverse(
+            "apps.alerts:alert_detail", kwargs={"pk": self.alert.pk}
+        )
+        self.client.get(detail_url)
+        with CaptureQueriesContext(connection) as few:
+            self.client.get(detail_url)
+        factories.AlertStatusHistoryFactory.create_batch(5, alert=self.alert)
+        with CaptureQueriesContext(connection) as many:
+            self.client.get(detail_url)
+        self.assertEqual(len(few.captured_queries), len(many.captured_queries))
 
     def test_form_template_renders(self) -> None:
         """The alert edit form template renders successfully."""

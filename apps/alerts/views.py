@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Any
 
 from django.core.exceptions import SuspiciousFileOperation
-from django.db.models import Count, Q, QuerySet
+from django.db.models import Count, Prefetch, Q, QuerySet
 from django.http import FileResponse, Http404, HttpResponseBase, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
@@ -64,14 +64,26 @@ class AlertDetailView(core_mixins.BaseDetailView):
 
     def get_queryset(self) -> QuerySet:
         """Optimize the query with the related objects used by the template."""
-        return super().get_queryset().select_related(
-            "machine",
-            "component",
-            "component__type",
-            "component__machine",
-            "report",
-            "report__laboratory",
-            "acknowledged_by",
+        return (
+            super()
+            .get_queryset()
+            .select_related(
+                "machine",
+                "component",
+                "component__type",
+                "component__machine",
+                "report",
+                "report__laboratory",
+                "acknowledged_by",
+            )
+            .prefetch_related(
+                Prefetch(
+                    "status_history",
+                    queryset=models.AlertStatusHistory.objects.select_related(
+                        "created_by"
+                    ),
+                )
+            )
         )
 
     def get_context_data(self, **kwargs: Any) -> dict:
