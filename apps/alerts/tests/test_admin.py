@@ -51,3 +51,30 @@ class AlertAdminAttachmentTests(AlertTenantTestCase):
         )
         self.assertContains(response, "evidencia.pdf")
         self.assertNotContains(response, self.entry.attachment.url)
+
+    def test_history_change_page_is_read_only(self) -> None:
+        """The history admin cannot replace or clear the evidence file."""
+        response = self.client.get(
+            reverse("admin:alerts_alertstatushistory_change", args=[self.entry.pk])
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response,
+            reverse("apps.alerts:alert_attachment_download", args=[self.entry.pk]),
+        )
+        self.assertContains(response, "evidencia.pdf")
+        self.assertNotContains(response, self.entry.attachment.url)
+        self.assertNotContains(response, 'name="attachment"')
+        self.assertNotContains(response, 'name="original_filename"')
+
+    def test_history_admin_cannot_add_or_delete(self) -> None:
+        """Audit entries are created by the modal only and never deleted."""
+        add_response = self.client.get(reverse("admin:alerts_alertstatushistory_add"))
+        self.assertEqual(add_response.status_code, 403)
+
+        delete_response = self.client.post(
+            reverse("admin:alerts_alertstatushistory_delete", args=[self.entry.pk]),
+            {"post": "yes"},
+        )
+        self.assertEqual(delete_response.status_code, 403)

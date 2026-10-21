@@ -127,6 +127,11 @@ class AlertFormTests(AlertTenantTestCase):
         self.alert.refresh_from_db()
         self.assertEqual(self.alert.acknowledged_by, self.user)
         self.assertIsNotNone(self.alert.acknowledged_at)
+        history = self.alert.status_history.get()
+        self.assertEqual(history.previous_status, "OPEN")
+        self.assertEqual(history.status, "ACKNOWLEDGED")
+        self.assertEqual(history.note, "")
+        self.assertEqual(history.created_by, self.user)
 
     def test_save_applies_resolution_transition(self) -> None:
         """Saving with RESOLVED stamps the resolution timestamp."""
@@ -140,6 +145,21 @@ class AlertFormTests(AlertTenantTestCase):
 
         self.alert.refresh_from_db()
         self.assertIsNotNone(self.alert.resolved_at)
+        self.assertEqual(self.alert.status_history.get().status, "RESOLVED")
+
+    def test_save_without_status_change_does_not_record_history(self) -> None:
+        """Editing other fields does not create audit noise."""
+        form = forms.AlertForm(
+            data=alert_payload(self.alert, value=91.0),
+            instance=self.alert,
+            user=self.user,
+        )
+        self.assertTrue(form.is_valid(), form.errors)
+        form.save()
+
+        self.alert.refresh_from_db()
+        self.assertEqual(self.alert.value, 91.0)
+        self.assertFalse(self.alert.status_history.exists())
 
 
 FORM_MEDIA_ROOT = tempfile.mkdtemp(prefix="lubeai-alert-form-attachments-")

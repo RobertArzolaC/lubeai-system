@@ -8,9 +8,8 @@ from django.contrib.auth.models import Permission
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import override_settings
 from django.urls import NoReverseMatch, reverse
-from django.utils.translation import gettext
 
-from apps.alerts import factories, models
+from apps.alerts import factories, models, validators
 from apps.alerts.tests.base import AlertTenantTestCase
 from apps.organizations import factories as organization_factories
 from apps.users import factories as users_factories
@@ -407,7 +406,45 @@ class AlertStatusAttachmentTests(AlertTenantTestCase):
         self.assertEqual(response.status_code, 400)
         payload = response.json()
         self.assertEqual(payload["status"], "error")
-        self.assertEqual(payload["message"], str(gettext("Invalid status change.")))
+        self.assertEqual(payload["message"], "Cambio de estado no válido.")
+        self.alert.refresh_from_db()
+        self.assertEqual(self.alert.status, "OPEN")
+        self.assertFalse(self.alert.status_history.exists())
+
+    def test_status_update_rejects_a_fake_pdf(self) -> None:
+        """A .pdf extension without the PDF signature is a JSON 400."""
+        grant_permissions(self.user, "change_alert")
+        self.client.force_login(self.user)
+
+        response = self.client.post(
+            self._status_url(),
+            {
+                "status": "RESOLVED",
+                "attachment": SimpleUploadedFile("evidence.pdf", b"not a pdf"),
+            },
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.alert.refresh_from_db()
+        self.assertEqual(self.alert.status, "OPEN")
+        self.assertFalse(self.alert.status_history.exists())
+
+    def test_status_update_rejects_an_oversized_attachment(self) -> None:
+        """The endpoint enforces the same size limit as the form."""
+        grant_permissions(self.user, "change_alert")
+        self.client.force_login(self.user)
+        oversized = SimpleUploadedFile(
+            "evidence.pdf",
+            b"%PDF-" + b"0" * validators.MAX_ALERT_ATTACHMENT_SIZE,
+            content_type="application/pdf",
+        )
+
+        response = self.client.post(
+            self._status_url(),
+            {"status": "RESOLVED", "attachment": oversized},
+        )
+
+        self.assertEqual(response.status_code, 400)
         self.alert.refresh_from_db()
         self.assertEqual(self.alert.status, "OPEN")
         self.assertFalse(self.alert.status_history.exists())

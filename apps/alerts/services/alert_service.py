@@ -7,7 +7,7 @@ from django.core.files.uploadedfile import UploadedFile
 from django.db import transaction
 from django.utils import timezone
 
-from apps.alerts import choices, models
+from apps.alerts import choices, models, validators
 
 
 class AlertService:
@@ -71,7 +71,16 @@ class AlertService:
 
         Returns:
             The history entry created for this change.
+
+        Raises:
+            ValueError: If ``status`` is not a valid alert status.
+            ValidationError: If ``attachment`` does not pass the file rules.
         """
+        if status not in choices.AlertStatus.values:
+            raise ValueError("Invalid alert status.")
+        if attachment is not None:
+            validators.validate_alert_attachment(attachment)
+
         previous_status = alert.status
         alert.status = status
         self.apply_status_transition(alert, user)
@@ -86,6 +95,38 @@ class AlertService:
                 "modified",
             ]
         )
+        return self.record_history(
+            alert,
+            previous_status=previous_status,
+            status=status,
+            user=user,
+            note=note,
+            attachment=attachment,
+        )
+
+    def record_history(
+        self,
+        alert: models.Alert,
+        *,
+        previous_status: str,
+        status: str,
+        user: Any,
+        note: str = "",
+        attachment: UploadedFile | None = None,
+    ) -> models.AlertStatusHistory:
+        """Create the audit entry for a status change.
+
+        Args:
+            alert: The alert whose status changed.
+            previous_status: Status before the change.
+            status: Status after the change.
+            user: The user performing the change.
+            note: Optional description written by the user.
+            attachment: Optional evidence file uploaded by the user.
+
+        Returns:
+            The created history entry.
+        """
         return models.AlertStatusHistory.objects.create(
             alert=alert,
             status=status,

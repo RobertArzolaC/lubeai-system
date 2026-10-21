@@ -3,6 +3,7 @@
 import shutil
 import tempfile
 
+from django.contrib.auth.models import Permission
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db import connection
 from django.test import override_settings
@@ -14,6 +15,15 @@ from apps.alerts.tests.base import AlertTenantTestCase
 from apps.users.factories import UserFactory
 
 DETAIL_MEDIA_ROOT = tempfile.mkdtemp(prefix="lubeai-alert-template-attachments-")
+
+
+def grant_permissions(user, *codenames: str) -> None:
+    """Grant the given alerts permission codenames to ``user``."""
+    permissions = Permission.objects.filter(
+        content_type__app_label="alerts",
+        codename__in=codenames,
+    )
+    user.user_permissions.add(*permissions)
 
 
 @override_settings(MEDIA_ROOT=DETAIL_MEDIA_ROOT)
@@ -57,11 +67,20 @@ class AlertsTemplateRenderingTests(AlertTenantTestCase):
         """The status modal exposes the description and optional file inputs."""
         response = self.client.get(reverse("apps.alerts:alert_list"))
 
+        self.assertContains(response, 'id="alert-status-modal-template"')
         self.assertContains(response, 'id="alert-status-value"')
         self.assertContains(response, 'id="alert-status-note"')
         self.assertContains(response, 'id="alert-status-attachment"')
+        self.assertContains(response, 'id="alert-status-help"')
         self.assertContains(response, 'accept=".pdf,.png,.jpg,.jpeg,.webp"')
+        self.assertContains(response, 'maxlength="1000"')
         self.assertContains(response, "FormData")
+        self.assertContains(response, "payload.errors")
+        self.assertContains(
+            response,
+            "const modalTemplate = document.getElementById('alert-status-modal-template');",
+        )
+        self.assertContains(response, "html: modalTemplate.innerHTML")
 
     def test_list_avoids_n_plus_one_queries(self) -> None:
         """The list query count does not grow with the number of alerts."""
@@ -106,6 +125,32 @@ class AlertsTemplateRenderingTests(AlertTenantTestCase):
             reverse("apps.alerts:alert_attachment_download", kwargs={"pk": entry.pk}),
         )
         self.assertContains(response, entry.attachment_filename)
+
+    def test_list_hides_the_status_modal_without_change_permission(self) -> None:
+        """Users who can only view alerts do not receive the modal markup."""
+        user = UserFactory()
+        grant_permissions(user, "view_alert")
+        self.client.force_login(user)
+
+        response = self.client.get(reverse("apps.alerts:alert_list"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, "js-status")
+        self.assertNotContains(response, 'id="alert-status-modal-template"')
+
+    def test_detail_escapes_the_status_note(self) -> None:
+        """A note with HTML is rendered escaped in the timeline."""
+        factories.AlertStatusHistoryFactory(
+            alert=self.alert,
+            note="<script>alert(1)</script>",
+        )
+
+        response = self.client.get(
+            reverse("apps.alerts:alert_detail", kwargs={"pk": self.alert.pk})
+        )
+
+        self.assertContains(response, "&lt;script&gt;alert(1)&lt;/script&gt;")
+        self.assertNotContains(response, "<script>alert(1)</script>")
 
     def test_detail_query_count_is_stable_with_history(self) -> None:
         """The detail query count does not grow with the history entries."""

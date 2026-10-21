@@ -70,14 +70,24 @@ class AlertStatusHistoryAdmin(AttachmentLinkMixin, admin.ModelAdmin):
     list_display = ("alert", "previous_status", "status", "created_by", "created")
     list_filter = ("status",)
     search_fields = ("alert__dedup_key", "note")
-    readonly_fields = (
+    fields = (
         "alert",
         "status",
         "previous_status",
         "note",
+        "original_filename",
         "attachment_link",
         "created_by",
         "updated_by",
         "created",
         "modified",
     )
+    readonly_fields = fields
+
+    def has_add_permission(self, request, obj=None) -> bool:
+        """Audit entries are created only by the status modal."""
+        return False
+
+    def has_delete_permission(self, request, obj=None) -> bool:
+        """Audit entries are immutable evidence."""
+        return False

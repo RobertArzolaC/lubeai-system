@@ -64,6 +64,7 @@ class AlertForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.user = user
         self._service = AlertService()
+        self._previous_status = self.instance.status if self.instance.pk else ""
         machines = equipment_models.Machine.objects.filter(is_active=True)
         components = equipment_models.Component.objects.filter(
             is_active=True
@@ -105,7 +106,7 @@ class AlertForm(forms.ModelForm):
         return cleaned_data
 
     def save(self, commit: bool = True) -> models.Alert:
-        """Persist the alert, syncing its lifecycle timestamps.
+        """Persist the alert, syncing timestamps and recording status changes.
 
         Args:
             commit: Whether to write the instance to the database.
@@ -114,10 +115,18 @@ class AlertForm(forms.ModelForm):
             The saved :class:`~apps.alerts.models.Alert` instance.
         """
         alert = super().save(commit=False)
+        status_changed = alert.status != self._previous_status
         self._service.apply_status_transition(alert, self.user)
         if commit:
             alert.save()
             self.save_m2m()
+            if status_changed:
+                self._service.record_history(
+                    alert,
+                    previous_status=self._previous_status,
+                    status=alert.status,
+                    user=self.user,
+                )
         return alert
 
 
@@ -138,8 +147,10 @@ class AlertStatusForm(forms.Form):
     note = forms.CharField(
         label=_("Description"),
         required=False,
-        max_length=1000,
-        widget=forms.Textarea(attrs={"rows": 3, "maxlength": 1000}),
+        max_length=validators.MAX_ALERT_NOTE_LENGTH,
+        widget=forms.Textarea(
+            attrs={"rows": 3, "maxlength": validators.MAX_ALERT_NOTE_LENGTH}
+        ),
     )
     attachment = forms.FileField(
         label=_("Attachment"),

@@ -1,6 +1,9 @@
 """Tests for the ``apps.alerts.services`` module."""
 
-from apps.alerts import factories
+from django.core.exceptions import ValidationError
+from django.core.files.uploadedfile import SimpleUploadedFile
+
+from apps.alerts import factories, models
 from apps.alerts.services.alert_service import AlertService
 from apps.alerts.services.notifications import AlertNotificationService
 from apps.alerts.tests.base import AlertTenantTestCase
@@ -141,6 +144,47 @@ class AlertStatusChangeTests(AlertTenantTestCase):
         self.assertIsNone(self.alert.acknowledged_by)
         self.assertIsNone(self.alert.resolved_at)
         self.assertEqual(self.alert.status_history.count(), 2)
+
+    def test_two_stale_instances_keep_both_history_entries(self) -> None:
+        """Last write wins on the alert without dropping audit entries."""
+        first = models.Alert.objects.get(pk=self.alert.pk)
+        second = models.Alert.objects.get(pk=self.alert.pk)
+
+        self.service.change_status(first, status="ACKNOWLEDGED", user=self.user)
+        self.service.change_status(second, status="RESOLVED", user=self.user)
+
+        self.assertEqual(self.alert.status_history.count(), 2)
+        self.alert.refresh_from_db()
+        self.assertEqual(self.alert.status, "RESOLVED")
+        self.assertEqual(
+            set(self.alert.status_history.values_list("previous_status", flat=True)),
+            {"OPEN"},
+        )
+
+    def test_change_status_rejects_an_unknown_status(self) -> None:
+        """The service rejects values outside the enumeration."""
+        with self.assertRaises(ValueError):
+            self.service.change_status(
+                self.alert, status="NOT_A_STATUS", user=self.user
+            )
+
+        self.alert.refresh_from_db()
+        self.assertEqual(self.alert.status, "OPEN")
+        self.assertFalse(self.alert.status_history.exists())
+
+    def test_change_status_rejects_an_invalid_attachment(self) -> None:
+        """The service validates the file even without the form."""
+        with self.assertRaises(ValidationError):
+            self.service.change_status(
+                self.alert,
+                status="RESOLVED",
+                user=self.user,
+                attachment=SimpleUploadedFile("evidence.pdf", b"not a pdf"),
+            )
+
+        self.alert.refresh_from_db()
+        self.assertEqual(self.alert.status, "OPEN")
+        self.assertFalse(self.alert.status_history.exists())
 
 
 class AlertNotificationServiceTests(AlertTenantTestCase):

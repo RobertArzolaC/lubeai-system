@@ -222,12 +222,6 @@
 
 {% if "alerts.change_alert" in perms %}
 {% trans "Update alert status" as modal_title %}
-{% trans "Status" as status_label %}
-{% trans "Description" as description_label %}
-{% trans "Attachment" as attachment_label %}
-{% trans "optional" as optional_label %}
-{% trans "Describe what changed (optional)." as note_placeholder %}
-{% trans "Max. 10 MB. PDF or image (PNG, JPG, WEBP)." as attachment_help %}
 {% trans "Select a status." as status_required %}
 {% trans "The attachment exceeds the maximum size of 10 MB." as attachment_too_large %}
 {% trans "There was a problem processing your request." as generic_error %}
@@ -235,36 +229,38 @@
 {% trans "Cancel" as cancel_label %}
 {% trans "Success" as success_label %}
 {% trans "Error" as error_label %}
+<template id="alert-status-modal-template">
+    <div class="space-y-5 text-left">
+        <div>
+            <label for="alert-status-value" class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Status" %}</label>
+            <select id="alert-status-value" class="w-full rounded-xl border border-stroke bg-whiten px-3.5 py-2.5 text-sm font-semibold text-black outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/5 dark:border-strokedark dark:bg-boxdark-2 dark:text-white">
+                {% for value, label in status_choices %}
+                <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label for="alert-status-note" class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Description" %}</label>
+            <textarea id="alert-status-note" rows="3" maxlength="{{ note_max_length }}" placeholder="{% trans 'Describe what changed (optional).' %}" class="w-full resize-none rounded-xl border border-stroke bg-whiten px-3.5 py-2.5 text-sm text-black outline-none transition placeholder:text-bodydark2 focus:border-primary focus:ring-4 focus:ring-primary/5 dark:border-strokedark dark:bg-boxdark-2 dark:text-white"></textarea>
+        </div>
+        <div>
+            <label for="alert-status-attachment" class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{% trans "Attachment" %} <span class="font-medium normal-case tracking-normal">({% trans "optional" %})</span></label>
+            <input id="alert-status-attachment" type="file" accept="{{ attachment_accept }}" aria-describedby="alert-status-help" class="block w-full cursor-pointer rounded-xl border border-stroke bg-whiten px-3.5 py-2.5 text-sm text-bodydark2 transition file:mr-3 file:rounded-lg file:border-0 file:bg-primary/10 file:px-3 file:py-1.5 file:text-xs file:font-bold file:text-primary hover:file:bg-primary/20 dark:border-strokedark dark:bg-boxdark-2">
+            <p id="alert-status-help" class="mt-1.5 text-xs font-medium text-bodydark2">{% blocktrans with size=attachment_max_mb %}Max. {{ size }} MB. PDF or image (PNG, JPG, WEBP).{% endblocktrans %}</p>
+        </div>
+    </div>
+</template>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const maxAttachmentSize = {{ attachment_max_size }};
+        const modalTemplate = document.getElementById('alert-status-modal-template');
 
         document.querySelectorAll('.js-status').forEach((button) => {
             button.addEventListener('click', async () => {
                 const { value } = await Swal.fire({
                     title: '{{ modal_title|escapejs }}',
                     width: '32rem',
-                    html: `
-                        <div class="space-y-5 text-left">
-                            <div>
-                                <label for="alert-status-value" class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{{ status_label }}</label>
-                                <select id="alert-status-value" class="w-full rounded-xl border border-stroke bg-whiten px-3.5 py-2.5 text-sm font-semibold text-black outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/5 dark:border-strokedark dark:bg-boxdark-2 dark:text-white">
-                                    {% for value, label in status_choices %}
-                                    <option value="{{ value }}">{{ label }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div>
-                                <label for="alert-status-note" class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{{ description_label }}</label>
-                                <textarea id="alert-status-note" rows="3" maxlength="1000" placeholder="{{ note_placeholder }}" class="w-full resize-none rounded-xl border border-stroke bg-whiten px-3.5 py-2.5 text-sm text-black outline-none transition placeholder:text-bodydark2 focus:border-primary focus:ring-4 focus:ring-primary/5 dark:border-strokedark dark:bg-boxdark-2 dark:text-white"></textarea>
-                            </div>
-                            <div>
-                                <label for="alert-status-attachment" class="mb-1.5 block text-xs font-bold uppercase tracking-wider text-bodydark2">{{ attachment_label }} <span class="font-medium normal-case tracking-normal">({{ optional_label }})</span></label>
-                                <input id="alert-status-attachment" type="file" accept="{{ attachment_accept }}" class="block w-full cursor-pointer rounded-xl border border-stroke bg-whiten px-3.5 py-2.5 text-sm text-bodydark2 transition file:mr-3 file:rounded-lg file:border-0 file:bg-primary/10 file:px-3 file:py-1.5 file:text-xs file:font-bold file:text-primary hover:file:bg-primary/20 dark:border-strokedark dark:bg-boxdark-2">
-                                <p class="mt-1.5 text-xs font-medium text-bodydark2">{{ attachment_help }}</p>
-                            </div>
-                        </div>
-                    `,
+                    html: modalTemplate.innerHTML,
                     focusConfirm: false,
                     showCancelButton: true,
                     confirmButtonText: '{{ save_label|escapejs }}',
@@ -307,9 +303,10 @@
                         headers: { 'X-CSRFToken': '{{ csrf_token }}' },
                         body: formData,
                     });
-                    const payload = await response.json();
+                    const payload = await response.json().catch(() => ({}));
                     if (!response.ok) {
-                        throw new Error(payload.message || '{{ generic_error|escapejs }}');
+                        const errors = payload.errors ? Object.values(payload.errors).flat() : [];
+                        throw new Error(errors[0] || payload.message || '{{ generic_error|escapejs }}');
                     }
                     showAlert('{{ success_label|escapejs }}', payload.message, 'success');
                     setTimeout(() => location.reload(), 800);

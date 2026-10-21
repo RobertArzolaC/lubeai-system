@@ -48,6 +48,10 @@ class AlertListView(core_mixins.ClientAttributionMixin, core_mixins.BaseListView
         context["status_choices"] = choices.AlertStatus.choices
         context["attachment_accept"] = validators.ATTACHMENT_ACCEPT
         context["attachment_max_size"] = validators.MAX_ALERT_ATTACHMENT_SIZE
+        context["attachment_max_mb"] = validators.MAX_ALERT_ATTACHMENT_SIZE // (
+            1024 * 1024
+        )
+        context["note_max_length"] = validators.MAX_ALERT_NOTE_LENGTH
         context["status_counts"] = self.get_queryset().aggregate(
             total=Count("id"),
             open=Count("id", filter=Q(status=choices.AlertStatus.OPEN)),

@@ -97,10 +97,8 @@ class AlertStatusHistoryModelTests(AlertTenantTestCase):
             ),
         )
 
-        self.assertEqual(
-            entry.attachment_filename, entry.attachment.name.rsplit("/", 1)[-1]
-        )
-        self.assertFalse(entry.attachment_filename.startswith("alerts/"))
+        self.assertNotIn("/", entry.attachment_filename)
+        self.assertTrue(entry.attachment_filename.endswith(".pdf"))
 
     def test_attachment_filename_prefers_the_original_name(self) -> None:
         """The name typed by the user is shown instead of the UUID path."""

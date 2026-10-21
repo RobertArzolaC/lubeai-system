@@ -19,6 +19,9 @@ ATTACHMENT_ACCEPT: Final[str] = ",".join(ALLOWED_ATTACHMENT_EXTENSIONS)
 # Maximum size accepted for a status attachment (10 MB).
 MAX_ALERT_ATTACHMENT_SIZE: Final[int] = 10 * 1024 * 1024
 
+# Maximum length accepted for the optional description of a status change.
+MAX_ALERT_NOTE_LENGTH: Final[int] = 1000
+
 _HEADER_SIZE: Final[int] = 16
 _PDF_HEADER: Final[bytes] = b"%PDF-"
 _PNG_HEADER: Final[bytes] = b"\x89PNG\r\n\x1a\n"
