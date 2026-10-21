@@ -298,7 +298,6 @@ class ReportViewTests(TenantSchemaTestCase):
             reverse("apps.reports:report_bulk_upload")
 
 
-@override_settings(TEMPLATES=REPORTS_TEMPLATES)
 @override_settings(MEDIA_ROOT=PDF_VIEW_MEDIA_ROOT)
 class ReportPDFDownloadViewTests(TenantSchemaTestCase):
     """Download endpoint for the PDF attached to a report."""
@@ -355,6 +354,24 @@ class ReportPDFDownloadViewTests(TenantSchemaTestCase):
         )
         self.assertEqual(response.status_code, 403)
 
+    def test_download_from_own_organization_returns_200(self) -> None:
+        """A scoped user can download a report from its own organization."""
+        own_org = organization_factories.OrganizationFactory(
+            slug="pdf-own-ok", kind=organization_choices.OrganizationKind.FINAL
+        )
+        user = users_factories.UserFactory()
+        user.organization = own_org
+        user.save(update_fields=["organization"])
+        grant_permissions(user, "view_report")
+        machine = equipment_factories.MachineFactory(organization=own_org)
+        report = self.with_pdf(machine=machine)
+
+        self.client.force_login(user)
+        response = self.client.get(
+            reverse("apps.reports:report_pdf_download", args=[report.pk])
+        )
+        self.assertEqual(response.status_code, 200)
+
     def test_download_from_another_organization_returns_404(self) -> None:
         """A report outside the user's organization tree is not downloadable."""
         own_org = organization_factories.OrganizationFactory(
@@ -387,6 +404,7 @@ class ReportPDFDownloadViewTests(TenantSchemaTestCase):
         self.assertEqual(response.status_code, 404)
 
 
+@override_settings(TEMPLATES=REPORTS_TEMPLATES)
 class AnalysisThresholdViewTests(TenantSchemaTestCase):
     """CRUD tests for the AnalysisThreshold views."""
 

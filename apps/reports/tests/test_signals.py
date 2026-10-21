@@ -34,7 +34,8 @@ class ReportPDFSignalTests(TenantSchemaTestCase):
         old_name = report.pdf_file.name
 
         report.pdf_file = pdf_file("replacement.pdf")
-        report.save()
+        with self.captureOnCommitCallbacks(execute=True):
+            report.save()
 
         self.assertFalse(storage.exists(old_name))
         self.assertTrue(storage.exists(report.pdf_file.name))
@@ -45,6 +46,7 @@ class ReportPDFSignalTests(TenantSchemaTestCase):
         storage = report.pdf_file.storage
         stored_name = report.pdf_file.name
 
-        report.delete()
+        with self.captureOnCommitCallbacks(execute=True):
+            report.delete()
 
         self.assertFalse(storage.exists(stored_name))

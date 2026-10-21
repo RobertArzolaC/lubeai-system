@@ -25,5 +25,7 @@ class ReportPDFInput(forms.ClearableFileInput):
             The widget context with a ``filename`` entry.
         """
         context = super().get_context(name, value, attrs)
-        context["widget"]["filename"] = Path(value.name).name if value else ""
+        context["widget"]["filename"] = (
+            Path(getattr(value, "name", "")).name if value else ""
+        )
         return context

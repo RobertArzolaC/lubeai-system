@@ -3853,6 +3853,7 @@ msgstr "El archivo debe ser un PDF."
 msgid "The file is not a valid PDF."
 msgstr "El archivo no es un PDF válido."
 
+#, python-format
 msgid "The PDF exceeds the maximum size of %(size)s MB."
 msgstr "El PDF supera el tamaño máximo de %(size)s MB."
 

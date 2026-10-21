@@ -5,6 +5,8 @@ selected: this wrapper runs :mod:`add_dummy_report_pdfs_tenant` against every
 tenant, or against the one given with ``--schema``.
 """
 
+from __future__ import annotations
+
 from typing import Any
 
 from django.core.management.base import CommandParser
@@ -27,13 +29,18 @@ class Command(BaseTenantCommand):
         parser.add_argument(
             "--overwrite",
             action="store_true",
-            help="Replace existing PDFs as well.",
+            help="Replace existing PDFs as well. This deletes the current files.",
         )
         parser.add_argument(
             "--limit",
             type=int,
             default=None,
             help="Process at most this many reports per tenant.",
+        )
+        parser.add_argument(
+            "--dry-run",
+            action="store_true",
+            help="Only report how many reports would be updated.",
         )
 
     def execute_command(

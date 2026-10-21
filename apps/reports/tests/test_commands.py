@@ -3,6 +3,8 @@
 import shutil
 import tempfile
 from io import StringIO
+from types import SimpleNamespace
+from unittest import mock
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.management import call_command
@@ -32,6 +34,33 @@ class DummyPDFCommandWiringTests(SimpleTestCase):
         """The wrapper delegates to the per-schema command."""
         self.assertTrue(issubclass(BackfillCommand, BaseTenantCommand))
         self.assertEqual(BackfillCommand.COMMAND_NAME, "add_dummy_report_pdfs_tenant")
+
+    def test_wrapper_skips_public_by_default(self) -> None:
+        """The public schema has no reports table and is skipped by default."""
+        parser = BackfillCommand().create_parser("manage.py", "add_dummy_report_pdfs")
+        self.assertTrue(parser.parse_args([]).skip_public)
+
+    def test_execute_command_drops_wrapper_only_options(self) -> None:
+        """Only the options declared by the wrapped command are forwarded."""
+        command = BackfillCommand()
+        tenant = SimpleNamespace(schema_name="acme")
+        with mock.patch.object(BaseTenantCommand, "execute_command") as parent:
+            command.execute_command(
+                tenant,
+                "add_dummy_report_pdfs_tenant",
+                overwrite=True,
+                limit=1,
+                dry_run=True,
+                schema_name="acme",
+                skip_public=True,
+            )
+        parent.assert_called_once_with(
+            tenant,
+            "add_dummy_report_pdfs_tenant",
+            overwrite=True,
+            limit=1,
+            dry_run=True,
+        )
 
 
 @override_settings(MEDIA_ROOT=COMMAND_MEDIA_ROOT)
@@ -82,7 +111,8 @@ class DummyPDFBackfillCommandTests(TenantSchemaTestCase):
         storage = report.pdf_file.storage
         original_name = report.pdf_file.name
 
-        self.run_command(overwrite=True)
+        with self.captureOnCommitCallbacks(execute=True):
+            self.run_command(overwrite=True)
         report.refresh_from_db()
 
         self.assertNotEqual(report.pdf_file.name, original_name)
@@ -111,3 +141,13 @@ class DummyPDFBackfillCommandTests(TenantSchemaTestCase):
         for report in reports:
             report.refresh_from_db()
         self.assertEqual(sum(1 for report in reports if report.pdf_file), 1)
+
+    def test_dry_run_does_not_write_files(self) -> None:
+        """The dry run reports the candidates without storing anything."""
+        report = factories.ReportFactory()
+
+        output = self.run_command(dry_run=True)
+        report.refresh_from_db()
+
+        self.assertFalse(report.pdf_file)
+        self.assertIn("1 reports would be updated", output)

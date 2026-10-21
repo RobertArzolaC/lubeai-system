@@ -39,5 +39,5 @@ def validate_report_pdf(file: UploadedFile) -> None:
 
     header = file.read(HEADER_SIZE)
     file.seek(0)
-    if PDF_HEADER not in header:
+    if not header.startswith(PDF_HEADER):
         raise ValidationError(_("The file is not a valid PDF."))

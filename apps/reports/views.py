@@ -2,6 +2,7 @@ import json
 from typing import Any
 
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.core.exceptions import SuspiciousFileOperation
 from django.db.models import Count, Q, QuerySet
 from django.http import FileResponse, Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
@@ -219,13 +220,18 @@ class ReportPDFDownloadView(core_mixins.BaseView):
         except OSError as exc:
             raise Http404 from exc
 
-        filename = f"{get_valid_filename(report.lab_number) or 'report'}.pdf"
-        return FileResponse(
+        try:
+            filename = f"{get_valid_filename(report.lab_number)}.pdf"
+        except SuspiciousFileOperation:
+            filename = "report.pdf"
+        response = FileResponse(
             file_handle,
             as_attachment=True,
             filename=filename,
             content_type="application/pdf",
         )
+        response["Cache-Control"] = "private, no-store"
+        return response
 
 
 class ReportCreateView(core_mixins.BaseCreateView):
