@@ -1,6 +1,6 @@
 # PDF adjunto en Report — Plan de implementación
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** agregar un PDF opcional a `Report`, cargarlo desde el admin, descargarlo desde el listado/detalle con permisos y scoping, y rellenar los informes existentes con un PDF dummy mediante un comando idempotente.
 
@@ -43,7 +43,7 @@
 **Interfaces:**
 - Produces: `Report.pdf_file: FileField` opcional; `report_pdf_upload_to(instance, filename) -> str`; `validate_report_pdf(file) -> None`; `MAX_REPORT_PDF_SIZE`.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```python
 def test_report_has_optional_pdf_file_field(self) -> None:
@@ -61,27 +61,27 @@ def test_valid_pdf_is_accepted(self) -> None:
     self.assertTrue(report.pdf_file.name.startswith("reports/pdfs/"))
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `docker compose exec -T django python manage.py test apps.reports.tests.test_models.ReportModelTests --settings=config.settings.testing --noinput`
 Expected: FAIL because the field does not exist.
 
-- [ ] **Step 3: Implement the field and validator**
+- [x] **Step 3: Implement the field and validator**
 
 - `report_pdf_upload_to`: `reports/pdfs/<organization_id or "unassigned">/<uuid>.pdf`.
 - `validate_report_pdf`: skip non-`UploadedFile`; require `.pdf`; enforce `MAX_REPORT_PDF_SIZE`; require `b"%PDF-"` in the first 1024 bytes.
 - `Report.pdf_file = models.FileField(..., blank=True, validators=[validate_report_pdf])`.
 
-- [ ] **Step 4: Generate the migration**
+- [x] **Step 4: Generate the migration**
 
 Run: `docker compose exec -T django python manage.py makemigrations reports --name report_pdf_file --settings=config.settings.testing --skip-checks`
 Expected: `AddField` for `pdf_file`.
 
-- [ ] **Step 5: Add rejection tests**
+- [x] **Step 5: Add rejection tests**
 
 Tests for `.txt`, `.pdf` without header, and oversized file (patch `MAX_REPORT_PDF_SIZE`).
 
-- [ ] **Step 6: Run and commit**
+- [x] **Step 6: Run and commit**
 
 Run: `docker compose exec -T django python manage.py test apps.reports.tests.test_models.ReportModelTests --settings=config.settings.testing --noinput`
 Expected: PASS.
@@ -107,31 +107,31 @@ git add apps/reports && git commit -m "feat(reports): add optional PDF file to R
 - Consumes: `Report.pdf_file` from Task 1.
 - Produces: `ReportPDFInput`, `ReportAdminForm`, `pdf_download_link`, file lifecycle signals.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 - Admin form uses `ReportPDFInput`.
 - Admin change page contains the `report_pdf_download` URL and not `MEDIA_URL`.
 - Replacing the PDF deletes the old file.
 - Deleting the report deletes the PDF.
 
-- [ ] **Step 2: Implement the safe widget**
+- [x] **Step 2: Implement the safe widget**
 
 `ReportPDFInput(forms.ClearableFileInput)` with a custom template that shows the file name and clear checkbox without linking to `widget.value.url`.
 
-- [ ] **Step 3: Implement `ReportAdminForm` and admin fields**
+- [x] **Step 3: Implement `ReportAdminForm` and admin fields**
 
 - `widgets = {"pdf_file": ReportPDFInput(attrs={"accept": "application/pdf"})}`.
 - Add `"pdf_file"` and `"pdf_download_link"` to the “Información Básica” fieldset.
 - Add `pdf_download_link` to `readonly_fields`; link to `apps.reports:report_pdf_download`.
 
-- [ ] **Step 4: Implement the cleanup signals**
+- [x] **Step 4: Implement the cleanup signals**
 
 - `pre_save`: capture `instance._old_pdf_name` when `pk` exists.
 - `post_save`: delete the old file if the name changed.
 - `post_delete`: delete the current file.
 - Register with `ReportsConfig.ready()`.
 
-- [ ] **Step 5: Run and commit**
+- [x] **Step 5: Run and commit**
 
 Run: `docker compose exec -T django python manage.py test apps.reports.tests.test_admin apps.reports.tests.test_signals --settings=config.settings.testing --noinput`
 Expected: PASS.
@@ -152,7 +152,7 @@ git add apps/reports templates/reports/widgets && git commit -m "feat(reports): 
 **Interfaces:**
 - Produces: URL `reports/<pk>/pdf/` named `apps.reports:report_pdf_download`; `ReportPDFDownloadView`.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 - Authorized user gets `200`, `application/pdf`, attachment header.
 - Report without PDF → `404`.
@@ -160,11 +160,11 @@ git add apps/reports templates/reports/widgets && git commit -m "feat(reports): 
 - Report from another organization → `404`.
 - Missing file on disk → `404`.
 
-- [ ] **Step 2: Implement `ReportPDFDownloadView`**
+- [x] **Step 2: Implement `ReportPDFDownloadView`**
 
 Use `get_object_or_404` over `scoping.scope_queryset(Report.objects.only("pk", "lab_number", "pdf_file"), request.user)`, `report.pdf_file.open("rb")`, `get_valid_filename(report.lab_number)` and `FileResponse(..., as_attachment=True, content_type="application/pdf")`.
 
-- [ ] **Step 3: Add the URL before update/delete routes and run**
+- [x] **Step 3: Add the URL before update/delete routes and run**
 
 Run: `docker compose exec -T django python manage.py test apps.reports.tests.test_views --settings=config.settings.testing --noinput`
 Expected: PASS.
@@ -187,33 +187,33 @@ git add apps/reports && git commit -m "feat(reports): add scoped PDF download en
 **Interfaces:**
 - Consumes: `apps.reports:report_pdf_download` from Task 3.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 - List with PDF contains the download URL and the `PDF` badge.
 - List without PDF does not contain that report's download URL.
 - Detail with PDF contains the “Download PDF” button; without PDF it does not.
 
-- [ ] **Step 2: Extend `row_actions.html`**
+- [x] **Step 2: Extend `row_actions.html`**
 
 Optional `download_url` and `download_enabled`; render a `file-down` anchor gated by `view_perm`.
 
-- [ ] **Step 3: Update the list**
+- [x] **Step 3: Update the list**
 
 - Compute `{% url ... as report_pdf_url %}`.
 - Pass `download_url=report_pdf_url download_enabled=report.pdf_file`.
 - Add a `PDF` badge next to `lab_number`.
 
-- [ ] **Step 4: Update the detail**
+- [x] **Step 4: Update the detail**
 
 Add a “Download PDF” button next to Back/Edit when `report.pdf_file` exists.
 
-- [ ] **Step 5: Add Spanish translations and compile**
+- [x] **Step 5: Add Spanish translations and compile**
 
 ```bash
 docker compose exec -T django python manage.py compilemessages
 ```
 
-- [ ] **Step 6: Run and commit**
+- [x] **Step 6: Run and commit**
 
 Run: `docker compose exec -T django python manage.py test apps.reports.tests.test_templates --settings=config.settings.testing --noinput`
 Expected: PASS.
@@ -239,15 +239,15 @@ git add templates apps/reports/tests locale && git commit -m "feat(reports): sho
 - Consumes: `Report.pdf_file` and the cleanup signals.
 - Produces: `build_dummy_report_pdf(lab_number: str) -> bytes`; commands `add_dummy_report_pdfs` and `add_dummy_report_pdfs_tenant`.
 
-- [ ] **Step 1: Test the generator**
+- [x] **Step 1: Test the generator**
 
 `build_dummy_report_pdf("INFORME-000001")` starts with `b"%PDF-"` and is longer than 200 bytes.
 
-- [ ] **Step 2: Implement the generator**
+- [x] **Step 2: Implement the generator**
 
 Use `reportlab.pdfgen.canvas` with A4, title `DOCUMENTO DE EJEMPLO`, the report number and a placeholder note.
 
-- [ ] **Step 3: Test the per-schema command**
+- [x] **Step 3: Test the per-schema command**
 
 - Creates PDFs for reports without one.
 - Skips reports with a PDF.
@@ -255,15 +255,15 @@ Use `reportlab.pdfgen.canvas` with A4, title `DOCUMENTO DE EJEMPLO`, the report 
 - Re-running is idempotent.
 - `--limit` is respected.
 
-- [ ] **Step 4: Implement the per-schema command**
+- [x] **Step 4: Implement the per-schema command**
 
 Filter `Q(pdf_file="") | Q(pdf_file__isnull=True)` unless `--overwrite`; save `ContentFile(build_dummy_report_pdf(report.lab_number))`.
 
-- [ ] **Step 5: Implement the multi-tenant wrapper**
+- [x] **Step 5: Implement the multi-tenant wrapper**
 
 `BaseTenantCommand` with `COMMAND_NAME = "add_dummy_report_pdfs_tenant"`, `--overwrite`/`--limit`, `skip_public=True` by default and option forwarding like `add_default_users`.
 
-- [ ] **Step 6: Run, execute and commit**
+- [x] **Step 6: Run, execute and commit**
 
 Run: `docker compose exec -T django python manage.py test apps.reports.tests.test_commands apps.reports.tests.test_services --settings=config.settings.testing --noinput`
 Expected: PASS.
@@ -284,7 +284,7 @@ git add apps/reports && git commit -m "feat(reports): backfill dummy PDFs for ex
 
 ### Task 6: Validación final con django-reviewer
 
-- [ ] **Step 1: Checks**
+- [x] **Step 1: Checks**
 
 ```bash
 docker compose exec -T django python manage.py makemigrations reports --check --dry-run --settings=config.settings.testing --skip-checks
@@ -292,12 +292,12 @@ uv run ruff check apps/reports
 uv run ruff format --check apps/reports
 ```
 
-- [ ] **Step 2: Full suite**
+- [x] **Step 2: Full suite**
 
 ```bash
 docker compose exec -T django python manage.py test apps.reports apps.alerts apps.dashboard apps.integrations --settings=config.settings.testing --noinput
 ```
 
-- [ ] **Step 3: Apply django-reviewer to the diff**
+- [x] **Step 3: Apply django-reviewer to the diff**
 
 Review download scoping, direct media links, file cleanup, real PDF validation and N+1. Fix findings inside the scope and rerun the suite.
