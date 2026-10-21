@@ -118,9 +118,7 @@ class Alert(TimeStampedModel, BaseUserTracked):
         return f"Alert {self.get_category_display()} - {self.get_severity_display()}"
 
 
-def alert_attachment_upload_to(
-    instance: "AlertStatusHistory", filename: str
-) -> str:
+def alert_attachment_upload_to(instance: "AlertStatusHistory", filename: str) -> str:
     """Return a non-guessable storage path for a status attachment.
 
     Args:
@@ -149,6 +147,12 @@ class AlertStatusHistory(StatusHistory):
         on_delete=models.CASCADE,
         related_name="status_history",
         help_text=_("Alert whose status changed"),
+    )
+    original_filename = models.CharField(
+        _("Original filename"),
+        max_length=255,
+        blank=True,
+        help_text=_("Filename as uploaded by the user"),
     )
     attachment = models.FileField(
         _("Attachment"),
@@ -179,7 +183,9 @@ class AlertStatusHistory(StatusHistory):
 
     @property
     def attachment_filename(self) -> str:
-        """Return the attachment's base filename, if any."""
+        """Return the original filename, falling back to the stored name."""
+        if self.original_filename:
+            return self.original_filename
         return Path(self.attachment.name).name if self.attachment else ""
 
     def get_parent_filters(self) -> dict:

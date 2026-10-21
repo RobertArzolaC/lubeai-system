@@ -27,12 +27,16 @@ class AlertListView(core_mixins.ClientAttributionMixin, core_mixins.BaseListView
 
     def get_queryset(self) -> QuerySet:
         """Return alerts with related objects to avoid N+1 queries."""
-        return super().get_queryset().select_related(
-            "machine",
-            "component",
-            "component__type",
-            "component__machine",
-            "report",
+        return (
+            super()
+            .get_queryset()
+            .select_related(
+                "machine",
+                "component",
+                "component__type",
+                "component__machine",
+                "report",
+            )
         )
 
     def get_context_data(self, **kwargs: Any) -> dict:
@@ -180,7 +184,7 @@ class AlertStatusUpdateView(core_mixins.BaseView):
             return JsonResponse(
                 {
                     "status": "error",
-                    "message": _("Invalid status."),
+                    "message": _("Invalid status change."),
                     "errors": form.errors,
                 },
                 status=400,
@@ -256,7 +260,7 @@ class AlertAttachmentDownloadView(core_mixins.BaseView):
         except OSError as exc:
             raise Http404 from exc
 
-        original_name = Path(history.attachment.name).name
+        original_name = history.original_filename or Path(history.attachment.name).name
         try:
             filename = get_valid_filename(original_name)
         except SuspiciousFileOperation:

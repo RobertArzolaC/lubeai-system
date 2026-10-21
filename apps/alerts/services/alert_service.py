@@ -1,5 +1,6 @@
 """Alert lifecycle services."""
 
+from pathlib import Path
 from typing import Any
 
 from django.core.files.uploadedfile import UploadedFile
@@ -90,6 +91,7 @@ class AlertService:
             status=status,
             previous_status=previous_status,
             note=note,
+            original_filename=Path(attachment.name).name if attachment else "",
             attachment=attachment,
             created_by=user,
             updated_by=user,

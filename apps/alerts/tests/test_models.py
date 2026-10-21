@@ -1,6 +1,5 @@
 """Tests for the ``apps.alerts.models`` module."""
 
-import re
 import shutil
 import tempfile
 from datetime import timedelta
@@ -98,8 +97,22 @@ class AlertStatusHistoryModelTests(AlertTenantTestCase):
             ),
         )
 
-        self.assertEqual(entry.attachment_filename, entry.attachment.name.rsplit("/", 1)[-1])
+        self.assertEqual(
+            entry.attachment_filename, entry.attachment.name.rsplit("/", 1)[-1]
+        )
         self.assertFalse(entry.attachment_filename.startswith("alerts/"))
+
+    def test_attachment_filename_prefers_the_original_name(self) -> None:
+        """The name typed by the user is shown instead of the UUID path."""
+        entry = factories.AlertStatusHistoryFactory(
+            alert=self.alert,
+            original_filename="evidencia.pdf",
+            attachment=SimpleUploadedFile(
+                "evidence.pdf", b"%PDF-1.4 test", content_type="application/pdf"
+            ),
+        )
+
+        self.assertEqual(entry.attachment_filename, "evidencia.pdf")
 
 
 class AlertAttachmentValidatorTests(AlertTenantTestCase):

@@ -1,11 +1,37 @@
 """Admin configuration for the alerts app."""
 
 from django.contrib import admin
+from django.urls import reverse
+from django.utils.html import format_html
+from django.utils.translation import gettext_lazy as _
 
 from apps.alerts import models
 
 
-class AlertStatusHistoryInline(admin.TabularInline):
+class AttachmentLinkMixin:
+    """Render the attachment through the permission-checked download view."""
+
+    @admin.display(description=_("Attachment"))
+    def attachment_link(self, obj: models.AlertStatusHistory) -> str:
+        """Return a link to the scoped attachment download view.
+
+        Args:
+            obj: The history entry whose attachment is displayed.
+
+        Returns:
+            A safe HTML link, or an em dash when there is no attachment.
+        """
+        if not obj.attachment:
+            return "—"
+        url = reverse("apps.alerts:alert_attachment_download", args=[obj.pk])
+        return format_html(
+            '<a href="{}" target="_blank" rel="noopener">{}</a>',
+            url,
+            obj.attachment_filename,
+        )
+
+
+class AlertStatusHistoryInline(AttachmentLinkMixin, admin.TabularInline):
     """Read-only timeline of status changes shown on the alert page."""
 
     model = models.AlertStatusHistory
@@ -15,7 +41,7 @@ class AlertStatusHistoryInline(admin.TabularInline):
         "previous_status",
         "status",
         "note",
-        "attachment",
+        "attachment_link",
         "created_by",
         "created",
     )
@@ -38,7 +64,7 @@ class AlertAdmin(admin.ModelAdmin):
 
 
 @admin.register(models.AlertStatusHistory)
-class AlertStatusHistoryAdmin(admin.ModelAdmin):
+class AlertStatusHistoryAdmin(AttachmentLinkMixin, admin.ModelAdmin):
     """Admin configuration for the AlertStatusHistory model."""
 
     list_display = ("alert", "previous_status", "status", "created_by", "created")
@@ -49,7 +75,7 @@ class AlertStatusHistoryAdmin(admin.ModelAdmin):
         "status",
         "previous_status",
         "note",
-        "attachment",
+        "attachment_link",
         "created_by",
         "updated_by",
         "created",

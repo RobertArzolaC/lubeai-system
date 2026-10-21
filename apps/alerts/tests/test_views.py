@@ -8,6 +8,7 @@ from django.contrib.auth.models import Permission
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import override_settings
 from django.urls import NoReverseMatch, reverse
+from django.utils.translation import gettext
 
 from apps.alerts import factories, models
 from apps.alerts.tests.base import AlertTenantTestCase
@@ -212,9 +213,7 @@ class AlertStatusUpdateViewTests(AlertTenantTestCase):
         )
 
     def _url(self) -> str:
-        return reverse(
-            "apps.alerts:alert_status_update", kwargs={"pk": self.alert.pk}
-        )
+        return reverse("apps.alerts:alert_status_update", kwargs={"pk": self.alert.pk})
 
     def test_status_update_requires_login(self) -> None:
         """Anonymous users are redirected to the login page."""
@@ -360,14 +359,10 @@ class AlertStatusAttachmentTests(AlertTenantTestCase):
         self.alert = factories.AlertFactory(status="OPEN")
 
     def _status_url(self) -> str:
-        return reverse(
-            "apps.alerts:alert_status_update", kwargs={"pk": self.alert.pk}
-        )
+        return reverse("apps.alerts:alert_status_update", kwargs={"pk": self.alert.pk})
 
     def _download_url(self, entry) -> str:
-        return reverse(
-            "apps.alerts:alert_attachment_download", kwargs={"pk": entry.pk}
-        )
+        return reverse("apps.alerts:alert_attachment_download", kwargs={"pk": entry.pk})
 
     def _pdf(self, filename: str = "evidence.pdf") -> SimpleUploadedFile:
         return SimpleUploadedFile(
@@ -390,6 +385,7 @@ class AlertStatusAttachmentTests(AlertTenantTestCase):
         history = self.alert.status_history.get()
         self.assertTrue(history.attachment)
         self.assertTrue(history.attachment.storage.exists(history.attachment.name))
+        self.assertEqual(history.original_filename, "evidence.pdf")
         self.assertEqual(
             response.json()["attachment_url"],
             self._download_url(history),
@@ -409,7 +405,9 @@ class AlertStatusAttachmentTests(AlertTenantTestCase):
         )
 
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.json()["status"], "error")
+        payload = response.json()
+        self.assertEqual(payload["status"], "error")
+        self.assertEqual(payload["message"], str(gettext("Invalid status change.")))
         self.alert.refresh_from_db()
         self.assertEqual(self.alert.status, "OPEN")
         self.assertFalse(self.alert.status_history.exists())
@@ -438,7 +436,9 @@ class AlertStatusAttachmentTests(AlertTenantTestCase):
     def test_attachment_download_returns_an_attachment(self) -> None:
         """Authorized users receive the stored file as an attachment."""
         entry = factories.AlertStatusHistoryFactory(
-            alert=self.alert, attachment=self._pdf()
+            alert=self.alert,
+            original_filename="evidencia.pdf",
+            attachment=self._pdf(),
         )
         grant_permissions(self.user, "view_alert")
         self.client.force_login(self.user)
@@ -447,6 +447,7 @@ class AlertStatusAttachmentTests(AlertTenantTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("attachment;", response["Content-Disposition"])
+        self.assertIn("evidencia.pdf", response["Content-Disposition"])
         self.assertEqual(
             b"".join(response.streaming_content),
             b"%PDF-1.4 test",

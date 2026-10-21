@@ -145,7 +145,5 @@ class AlertStatusForm(forms.Form):
         label=_("Attachment"),
         required=False,
         validators=[validators.validate_alert_attachment],
-        widget=forms.ClearableFileInput(
-            attrs={"accept": validators.ATTACHMENT_ACCEPT}
-        ),
+        widget=forms.ClearableFileInput(attrs={"accept": validators.ATTACHMENT_ACCEPT}),
     )

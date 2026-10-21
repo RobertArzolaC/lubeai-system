@@ -103,17 +103,13 @@ class AlertsTemplateRenderingTests(AlertTenantTestCase):
         self.assertContains(response, "Se reemplazó el filtro y se recargó el aceite.")
         self.assertContains(
             response,
-            reverse(
-                "apps.alerts:alert_attachment_download", kwargs={"pk": entry.pk}
-            ),
+            reverse("apps.alerts:alert_attachment_download", kwargs={"pk": entry.pk}),
         )
         self.assertContains(response, entry.attachment_filename)
 
     def test_detail_query_count_is_stable_with_history(self) -> None:
         """The detail query count does not grow with the history entries."""
-        detail_url = reverse(
-            "apps.alerts:alert_detail", kwargs={"pk": self.alert.pk}
-        )
+        detail_url = reverse("apps.alerts:alert_detail", kwargs={"pk": self.alert.pk})
         self.client.get(detail_url)
         with CaptureQueriesContext(connection) as few:
             self.client.get(detail_url)

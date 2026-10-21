@@ -50,7 +50,9 @@ class AlertFormScopingTests(AlertTenantTestCase):
         self.user.organization = self.org
         self.user.save(update_fields=["organization"])
         foreign_machine = equipment_factories.MachineFactory(organization=self.other)
-        foreign_component = equipment_factories.ComponentFactory(machine=foreign_machine)
+        foreign_component = equipment_factories.ComponentFactory(
+            machine=foreign_machine
+        )
         self.foreign_report = report_factories.ReportFactory(
             machine=foreign_machine, component=foreign_component
         )
