@@ -90,7 +90,7 @@ Cada tenant expone un servidor MCP en `https://<tenant>/mcp`. Los clientes se
 conectan con OAuth desde la pantalla **Integraciones → Asistentes conectados**;
 no se pega ningún token manualmente.
 
-- Guía funcional y de seguridad: [`docs/mcp.md`](docs/mcp.md).
+- Guía funcional, requisitos y pasos por proveedor: [`docs/ia.md`](docs/ia.md).
 - Endpoint: `POST /mcp`.
 - Descubrimiento OAuth por tenant:
   `/.well-known/oauth-protected-resource/mcp` y
