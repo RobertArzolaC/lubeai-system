@@ -1,0 +1,6 @@
+Los clientes que tengo contemplados hasta el momento son:
+
+Laboratorio: Le ofrecemos la posibilidad de procesar ordenes de manera más eficiente y segura. Conectandonos con sus equipos o archivos para brindar la información desde nuestra plataforma, en el caso de que ya tengan implementado algun software, les ofrecemos integrar con el de ustedes. Adicionalmente ofrecemos un software de apoyo mas orientado en la gestión de alertas que nacen de los informes generados por sus equipos o nuestra plataforma. Tambien mediante nuestro mcp ofrecemos la opción de que conectes sus datos con las diferentes IA del mercado. Mediante nuestra plataforma pueden revender el servicio ofreciendolo a clientes finales o intermediarios que tendran sus propios clientes.
+Intermediarios: Le ofrecemos la posibilidad de revender el servicio ofreciendolo a clientes finales o intermediarios que tendran sus propios clientes.
+Finales: Empresas que recepcionan la muestra de 1 o mas laboratorios, les ofrecemos que gestionen sus reportes desde nuestra plataforma.
+Estamos pensando conectar con laboratorios para ofrecer nosotros de forma directa los analisis dando como valor agregado nuestra plataforma. No tengo claro como llamar a este cliente o como llamar mi servicio.
